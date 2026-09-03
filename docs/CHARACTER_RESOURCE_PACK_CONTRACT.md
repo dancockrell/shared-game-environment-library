@@ -9,8 +9,10 @@ the same asset or hiding a game-specific presentation behind neutral labels.
 
 Every character pack declares:
 
-- `packId`, author, rights holder, creation method, source-control revision,
-  and redistribution terms;
+- `packId`, provenance class (`borrowed_library`, `our_build`, or
+  `restricted_external`), author, rights holder, creation method,
+  source-control revision, borrowed-input lineage where relevant, and
+  redistribution terms;
 - `contentScope`: `shared`, `project_specific`, or `reference_only`;
 - `projectAffinity`: zero or more consuming-game identifiers;
 - `subjectScope`: `character` or `named_character`;
@@ -47,5 +49,6 @@ compatible; compatibility is never assumed from visual similarity.
 The shared repository preserves the source pack and its evidence. Each game
 records a separate adoption entry covering visual fit, camera scale,
 performance, content rating, animation retargeting, and final presentation.
-Project affinity tells teams where the pack originated; it does not grant a
-game permission to use it without that adoption record.
+Project affinity tells teams where the pack is intended to be used; it does
+not identify who owns it or grant permission to reuse it without that adoption
+record.

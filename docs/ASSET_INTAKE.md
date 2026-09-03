@@ -7,14 +7,15 @@ This procedure turns a useful-looking download into a traceable shared source, o
 ## Intake sequence
 
 1. **Classify the candidate.** Choose a literal domain first: terrain, flora, geology, water, architecture, prop, weapon, armour, material, rig infrastructure, character, or VFX reference. Add project affinity and subject scope as separate tags when applicable; do not replace literal classification with lore labels.
-2. **Capture source evidence.** Record the source page, publisher, creator where known, license page, archive name, and retrieval date before conversion or extraction.
-3. **Verify rights.** Confirm that the exact file is CC0 1.0. Record commercial-use and redistribution evidence. Quarantine any ambiguity.
-4. **Archive unchanged source.** Preserve the original archive or source file, then calculate SHA-256. Never overwrite raw source with an engine-converted file.
-5. **Review semantics.** Confirm what the asset literally depicts. A “generic shrine” cannot be admitted as “East-Asian shrine” merely because it seems close; use neutral tags or leave it project-specific.
-6. **Review technical fit.** Check scale, forward axis, origin/pivot, collision intent, material slots, texture size, animation/rig state, and expected Godot import path.
-7. **Write the catalog entry.** Validate it against `catalog/asset-manifest.schema.json`.
-8. **Approve or quarantine.** Only an `approved` CC0 entry may be put under `assets/approved_cc0/`. Every other result remains in a non-runtime lane.
-9. **Make consuming-project entries.** A game copies or derives the approved source into its own manifest and records its visual review. Library-authored or project-specific packs may remain here when their rights and affinity are recorded. This shared repository never declares an asset shipped.
+2. **Declare provenance class.** Use `borrowed_library`, `our_build`, or `restricted_external` before importing files. This answers rights and ownership; project affinity is a separate tag.
+3. **Capture evidence.** For a borrowed library, record source page, publisher, creator where known, license page, archive name, and retrieval date. For our build, record author, ownership, creation method, source-control revision, and every borrowed input. For restricted external material, record the owner/source and all permission limits.
+4. **Verify rights.** A borrowed library is admitted to `approved_cc0` only when the exact file is CC0 1.0 with commercial and redistribution evidence. Our builds require their own recorded ownership/license. Restricted external material is reference-only unless its exact permission record explicitly grants redistribution.
+5. **Archive unchanged source.** Preserve the original source archive or source file when rights allow, then calculate SHA-256. Never overwrite raw source with an engine-converted file.
+6. **Review semantics.** Confirm what the asset literally depicts. A “generic shrine” cannot be admitted as “East-Asian shrine” merely because it seems close; use neutral tags or a scoped project tag instead.
+7. **Review technical fit.** Check scale, forward axis, origin/pivot, collision intent, material slots, texture size, animation/rig state, and expected Godot import path.
+8. **Write the catalog entry.** Validate it against `catalog/asset-manifest.schema.json`.
+9. **Approve or quarantine.** Only a verified `borrowed_library` CC0 entry may be put under `assets/approved_cc0/`. Our builds go under `assets/library_authored/` when their ownership and lineage are recorded. Every other result remains in a non-runtime lane.
+10. **Make consuming-project entries.** A game copies or derives the approved source into its own manifest and records its visual review. This shared repository never declares an asset shipped.
 
 ## Required review questions
 

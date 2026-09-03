@@ -15,12 +15,16 @@
       "meaning": "A named member that has passed the consuming engine's import, scale, material, performance, and visual checks."
     }
   ],
+  "provenanceClasses": [
+    "borrowed_library",
+    "our_build",
+    "restricted_external"
+  ],
   "authoringStatuses": [
     "upstream_cc0",
     "library_derivative",
     "library_authored",
-    "project_adapter",
-    "project_authored"
+    "project_adapter"
   ],
   "domains": [
     {

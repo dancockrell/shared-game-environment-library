@@ -5,7 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "assetId", "admissionStatus", "assetKind", "domain", "sourceUrl",
+    "assetId", "admissionStatus", "assetKind", "domain", "provenanceClass", "sourceUrl",
     "sourcePublisher", "retrievedAt", "licenseSpdx", "licenseUrl",
     "commercialUseConfirmed", "redistributionConfirmed", "sourceFiles",
     "technicalContract", "tags"
@@ -15,6 +15,7 @@
     "admissionStatus": { "enum": ["source_verified_not_downloaded", "candidate", "approved", "quarantined", "rejected"] },
     "assetKind": { "enum": ["model", "character_model", "texture", "hdri", "material", "vfx_reference", "rig_component", "archive"] },
     "domain": { "enum": ["terrain", "flora", "geology", "water", "architecture", "neutral_prop", "weapon", "armour", "material", "rig_infrastructure", "character", "vfx"] },
+    "provenanceClass": { "enum": ["borrowed_library", "our_build", "restricted_external"] },
     "sourceUrl": { "type": "string", "format": "uri" },
     "sourcePublisher": { "type": "string", "minLength": 1 },
     "sourceCreator": { "type": "string" },
