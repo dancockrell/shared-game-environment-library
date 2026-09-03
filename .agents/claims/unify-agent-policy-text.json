@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "task_id": "unify-agent-policy-text",
+  "agent": "claude-code",
+  "summary": "Merge the two independently written no-fork policies into one canonical source rendered into every repository",
+  "status": "completed",
+  "claimed_at": "2026-09-03T13:55:00Z",
+  "updated_at": "2026-09-03T13:55:00Z",
+  "paths": ["AGENTS.md", "CLAUDE.md"],
+  "symbols": [],
+  "coordination": {
+    "depends_on": ["repository-agent-policy"],
+    "conflicts_with": ["repository-agent-policy"],
+    "notes": "Overlaps codex-root's active claim on AGENTS.md. Two policy documents saying the same thing is the defect the policy names, so this integrates rather than chooses by author: codex-root's operating standard and ledger protocol are kept near-verbatim, and the three moves, the 'no fourth move' framing, the justification tell, and the application to prose and history were added from the Claude side. Nothing was deleted; what lands here is a superset of what was here. Canonical source is now ~/.claude/CLAUDE.md section 0, rendered by dev/claude-config/stamp-rules.py into CLAUDE.md and AGENTS.md in each repository, so the copies cannot drift. The ledger section is stamped only into repositories that actually contain .agents/, since a mandatory check-in protocol pointing at a missing directory is an instruction to nowhere. Deduplicated by git remote: ~44 dr-companion worktrees under Documents/Codex were deliberately not stamped, because committing one policy 44 times into one repository is the fork this rule forbids. Authorized by Dan directly, 3 Sep 2026: 'ab compare and decide which is better or if they need combined somehow and then kill the duplicates'."
+  },
+  "completion": {
+    "commit": null,
+    "checks": [
+      "python stamp-rules.py (dry run) - passed, 34 repos, 4 with ledger, 4 duplicate checkouts skipped",
+      "python stamp-rules.py --write then re-run - passed, 68 targets already current (idempotent)",
+      "extract_rule guards: renamed rule and truncated rule both refused - passed",
+      "discover() dedup verified: exactly one dr-companion selected, the canonical dev/ checkout - passed"
+    ]
+  }
+}
