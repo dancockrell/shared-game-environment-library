@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$ArchivePath = "assets/approved_cc0/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
+    [string]$ArchivePath = "assets/approved_cc0/Kenney/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
     [string]$PackPath = "resource_packs/geology/basalt-cliff-core"
 )
 
@@ -61,7 +61,7 @@ $objLines.Add('usemtl basalt_rock')
 $vertexOffset = 0
 $uvOffset = 0
 $normalOffset = 0
-$bounds = @{ minX = [double]::PositiveInfinity; minY = [double]::PositiveInfinity; minZ = [double]::PositiveInfinity; maxX = [double]::NegativeInfinity; maxY = [double]::NegativeInfinity; maxZ = [double]::NegativeInfinity }
+$bounds = [ordered]@{ minX = [double]::PositiveInfinity; minY = [double]::PositiveInfinity; minZ = [double]::PositiveInfinity; maxX = [double]::NegativeInfinity; maxY = [double]::NegativeInfinity; maxZ = [double]::NegativeInfinity }
 
 foreach ($member in $members) {
     $vertexCount = 0; $uvCount = 0; $normalCount = 0

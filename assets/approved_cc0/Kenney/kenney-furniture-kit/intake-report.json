@@ -1,0 +1,28 @@
+{
+  "sourceId": "kenney-furniture-kit",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/furniture-kit",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/furniture-kit/440e0608a4-1677580847/kenney_furniture-kit.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-furniture-kit/source_archive/kenney_furniture-kit.zip",
+  "archiveFilename": "kenney_furniture-kit.zip",
+  "sha256": "e67652d0932cee41683f74711c03d3e192a2af9979ef8e6b237711f5482d46b0",
+  "bytes": 5130729,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-furniture-kit-LICENSE.txt",
+  "archiveEntryCount": 1557,
+  "typeTags": [
+    "interiors",
+    "furniture",
+    "domestic",
+    "workshop",
+    "neutral_props"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "low_poly",
+    "paintable_base"
+  ],
+  "qualityRole": "generic interior vocabulary"
+}

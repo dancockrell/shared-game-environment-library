@@ -1,0 +1,29 @@
+{
+  "sourceId": "kenney-pirate-kit",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/pirate-kit",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/pirate-kit/e6d4bb1525-1771333093/kenney_pirate-kit.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-pirate-kit/source_archive/kenney_pirate-kit.zip",
+  "archiveFilename": "kenney_pirate-kit.zip",
+  "sha256": "667ed2caf92954ddb98f7b7cede831fe99ab75063c26b25e23d32715bee9c943",
+  "bytes": 3154665,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-pirate-kit-LICENSE.txt",
+  "archiveEntryCount": 379,
+  "typeTags": [
+    "water",
+    "ships",
+    "docks",
+    "coastal",
+    "nautical_props",
+    "tropical"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "low_poly",
+    "paintable_base"
+  ],
+  "qualityRole": "nautical and coastal vocabulary"
+}

@@ -1,0 +1,29 @@
+{
+  "sourceId": "kenney-racing-kit",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/racing-kit",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/racing-kit/933b8fd9fd-1677580949/kenney_racing-kit.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-racing-kit/source_archive/kenney_racing-kit.zip",
+  "archiveFilename": "kenney_racing-kit.zip",
+  "sha256": "8a71ea16219315a01d00d5a90c4f6b5c090faddbc56d80ecf727e2b3b853c6c0",
+  "bytes": 6082755,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-racing-kit-LICENSE.txt",
+  "archiveEntryCount": 1274,
+  "typeTags": [
+    "modern",
+    "vehicles",
+    "roads",
+    "tracks",
+    "barriers",
+    "signage"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "low_poly",
+    "paintable_base"
+  ],
+  "qualityRole": "vehicle and route-building vocabulary"
+}

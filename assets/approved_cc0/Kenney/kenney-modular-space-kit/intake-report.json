@@ -1,0 +1,29 @@
+{
+  "sourceId": "kenney-modular-space-kit",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/modular-space-kit",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/modular-space-kit/8261428a47-1771146076/kenney_modular-space-kit_1.0.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-modular-space-kit/source_archive/kenney_modular-space-kit_1.0.zip",
+  "archiveFilename": "kenney_modular-space-kit_1.0.zip",
+  "sha256": "f394f7fd9eaf29c9de7e090e55b69926f699841af33b0b116f5cc0088de8a4dc",
+  "bytes": 6966606,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-modular-space-kit-LICENSE.txt",
+  "archiveEntryCount": 223,
+  "typeTags": [
+    "science_fiction",
+    "modular_architecture",
+    "interiors",
+    "stations",
+    "doors",
+    "walls"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "modular",
+    "paintable_base"
+  ],
+  "qualityRole": "science-fiction interior grammar"
+}

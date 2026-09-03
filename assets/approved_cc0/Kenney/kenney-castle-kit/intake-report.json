@@ -1,0 +1,29 @@
+{
+  "sourceId": "kenney-castle-kit",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/castle-kit",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/castle-kit/a395102d20-1711543616/kenney_castle-kit.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-castle-kit/source_archive/kenney_castle-kit.zip",
+  "archiveFilename": "kenney_castle-kit.zip",
+  "sha256": "921f3f73927bb23106cae34bc21d5ab4b033a9fc120475e96f714a406e3169df",
+  "bytes": 2232589,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-castle-kit-LICENSE.txt",
+  "archiveEntryCount": 406,
+  "typeTags": [
+    "fantasy",
+    "fortification",
+    "castle",
+    "walls",
+    "towers",
+    "stone_architecture"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "modular",
+    "paintable_base"
+  ],
+  "qualityRole": "fortification and stone-building grammar"
+}

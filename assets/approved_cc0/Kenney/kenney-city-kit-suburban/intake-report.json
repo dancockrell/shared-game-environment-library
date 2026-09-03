@@ -1,0 +1,28 @@
+{
+  "sourceId": "kenney-city-kit-suburban",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/city-kit-suburban",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/city-kit-suburban/2c871b7af2-1745479373/kenney_city-kit-suburban_20.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-city-kit-suburban/source_archive/kenney_city-kit-suburban_20.zip",
+  "archiveFilename": "kenney_city-kit-suburban_20.zip",
+  "sha256": "5869c35cf30b1c87bdb2d197b6d325eebadd2ef08ea27f04797e8e08d77a9a39",
+  "bytes": 3038740,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-city-kit-suburban-LICENSE.txt",
+  "archiveEntryCount": 225,
+  "typeTags": [
+    "modern",
+    "suburban",
+    "houses",
+    "yards",
+    "streetscape"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "low_poly",
+    "paintable_base"
+  ],
+  "qualityRole": "residential settlement vocabulary"
+}

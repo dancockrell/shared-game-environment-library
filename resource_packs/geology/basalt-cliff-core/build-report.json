@@ -30,12 +30,12 @@
     "materialSha256": "761d0fb463bdd3c67dae8fdc50e45acfda095b8f12bcd7295ee71d8d1df8c096"
   },
   "boundsMeters": {
-    "maxY": 1.47,
+    "minX": -1.1005607966083866,
+    "minY": 0.0,
     "minZ": -0.625,
     "maxX": 1.255,
-    "maxZ": 1.0350000000000001,
-    "minX": -1.1005607966083866,
-    "minY": 0.0
+    "maxY": 1.47,
+    "maxZ": 1.0350000000000001
   },
   "generatedGeometry": {
     "vertexCount": 102,

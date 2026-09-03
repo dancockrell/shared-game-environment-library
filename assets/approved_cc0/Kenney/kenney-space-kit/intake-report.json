@@ -1,0 +1,28 @@
+{
+  "sourceId": "kenney-space-kit",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/space-kit",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/space-kit/20874c75ac-1677698978/kenney_space-kit.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-space-kit/source_archive/kenney_space-kit.zip",
+  "archiveFilename": "kenney_space-kit.zip",
+  "sha256": "d5d7cdf2635ed5a43a9187deaf409b6f47484e402321128341d3c3698e9ef4d9",
+  "bytes": 6677531,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-space-kit-LICENSE.txt",
+  "archiveEntryCount": 1702,
+  "typeTags": [
+    "science_fiction",
+    "spacecraft",
+    "planets",
+    "space_props",
+    "vehicles"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "low_poly",
+    "paintable_base"
+  ],
+  "qualityRole": "broad science-fiction scene language"
+}

@@ -1,0 +1,63 @@
+{
+  "taxonomyVersion": 1,
+  "purpose": "A cross-project vocabulary for locating source archives and approved resource packs by literal use, visual language, origin, and readiness. Do not organize reusable content by consuming game.",
+  "lifecycleLayers": [
+    {
+      "id": "source_archive",
+      "meaning": "Original licensed upstream package retained for provenance and regeneration. Never imply engine readiness."
+    },
+    {
+      "id": "typed_resource_pack",
+      "meaning": "A small, literal-use collection with source lineage, semantic metadata, and an explicit technical/visual review state."
+    },
+    {
+      "id": "engine_reviewed_runtime_asset",
+      "meaning": "A named member that has passed the consuming engine's import, scale, material, performance, and visual checks."
+    }
+  ],
+  "authoringStatuses": [
+    "upstream_cc0",
+    "library_derivative",
+    "library_authored",
+    "project_adapter"
+  ],
+  "domains": [
+    {
+      "id": "environment-natural",
+      "groups": ["geology", "terrain", "flora", "water", "weather", "biomes"]
+    },
+    {
+      "id": "environment-built",
+      "groups": ["fantasy", "historic", "maritime", "modern", "industrial", "urban", "suburban", "sci-fi", "interior"]
+    },
+    {
+      "id": "objects-and-gear",
+      "groups": ["furniture", "props", "weapons", "armor", "tools", "vehicles", "watercraft"]
+    },
+    {
+      "id": "rendering-foundation",
+      "groups": ["materials", "decals", "lighting", "sky", "vfx", "audio"]
+    },
+    {
+      "id": "character-support",
+      "groups": ["rigs", "animation-tests", "silhouette-references", "clothing-modules"]
+    }
+  ],
+  "requiredResourcePackTags": [
+    "physicalType",
+    "literalUse",
+    "styleTags",
+    "originKind",
+    "authoringStatus",
+    "sourceLineage",
+    "technicalReviewState",
+    "visualReviewState",
+    "engineEligibility"
+  ],
+  "queryExamples": [
+    "physicalType=geology AND styleTags contains basalt",
+    "literalUse=street-road AND styleTags contains modern",
+    "physicalType=watercraft AND originKind=upstream_cc0",
+    "domain=rendering-foundation AND technicalReviewState=passed"
+  ]
+}

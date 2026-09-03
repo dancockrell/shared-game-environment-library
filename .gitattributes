@@ -8,3 +8,7 @@
 *.tga filter=lfs diff=lfs merge=lfs -text
 *.exr filter=lfs diff=lfs merge=lfs -text
 *.zip filter=lfs diff=lfs merge=lfs -text
+
+# Exact upstream license captures preserve publisher formatting; do not flag their
+# embedded CR/trailing whitespace as authored source whitespace.
+licenses/upstream/** -whitespace

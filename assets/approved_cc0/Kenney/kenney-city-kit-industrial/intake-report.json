@@ -1,0 +1,29 @@
+{
+  "sourceId": "kenney-city-kit-industrial",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/city-kit-industrial",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/city-kit-industrial/0ec35b139d-1788171848/kenney_city-kit-industrial_2.0.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-city-kit-industrial/source_archive/kenney_city-kit-industrial_2.0.zip",
+  "archiveFilename": "kenney_city-kit-industrial_2.0.zip",
+  "sha256": "5b381164e5760f3830a2dbee43b972deee38b2a695d091b56e238ab2910c96d2",
+  "bytes": 5045077,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-city-kit-industrial-LICENSE.txt",
+  "archiveEntryCount": 210,
+  "typeTags": [
+    "modern",
+    "industrial",
+    "warehouses",
+    "factories",
+    "infrastructure",
+    "energy"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "modular",
+    "paintable_base"
+  ],
+  "qualityRole": "industrial and utility scene language"
+}

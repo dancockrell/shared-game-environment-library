@@ -1,0 +1,28 @@
+{
+  "sourceId": "kenney-watercraft-kit",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/watercraft-kit",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/watercraft-kit/a335cfed49-1713519620/kenney_watercraft-pack.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-watercraft-kit/source_archive/kenney_watercraft-pack.zip",
+  "archiveFilename": "kenney_watercraft-pack.zip",
+  "sha256": "cd1470c1cf441c7f46d0944ae6d0d897242365dc97677c5079b3238965d659f3",
+  "bytes": 1870991,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-watercraft-kit-LICENSE.txt",
+  "archiveEntryCount": 248,
+  "typeTags": [
+    "water",
+    "vehicles",
+    "boats",
+    "ships",
+    "harbors"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "low_poly",
+    "paintable_base"
+  ],
+  "qualityRole": "water vehicle vocabulary"
+}

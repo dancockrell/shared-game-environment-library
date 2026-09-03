@@ -1,0 +1,29 @@
+{
+  "sourceId": "kenney-nature-kit",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/nature-kit",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/nature-kit/37ac38a37b-1677698939/kenney_nature-kit.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
+  "archiveFilename": "kenney_nature-kit.zip",
+  "sha256": "fa7974a0d342bfe63c38664ba9f8ec1a4aab8ea25f099bdc56870e33588c4d9d",
+  "bytes": 10537521,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-nature-kit-LICENSE.txt",
+  "archiveEntryCount": 3626,
+  "typeTags": [
+    "flora",
+    "geology",
+    "terrain",
+    "bridges",
+    "water_edge",
+    "caves"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "low_poly",
+    "paintable_base"
+  ],
+  "qualityRole": "foundational natural environment grammar"
+}

@@ -1,0 +1,28 @@
+{
+  "sourceId": "kenney-city-kit-commercial",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/city-kit-commercial",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/city-kit-commercial/a742d900eb-1753115042/kenney_city-kit-commercial_2.1.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-city-kit-commercial/source_archive/kenney_city-kit-commercial_2.1.zip",
+  "archiveFilename": "kenney_city-kit-commercial_2.1.zip",
+  "sha256": "f8b09b081c2bb88bcc126e2dec1cb40fd0dad7e7e591b6c26aaefe96fb35276b",
+  "bytes": 4096974,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-city-kit-commercial-LICENSE.txt",
+  "archiveEntryCount": 228,
+  "typeTags": [
+    "modern",
+    "commercial",
+    "city",
+    "buildings",
+    "streetscape"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "modular",
+    "paintable_base"
+  ],
+  "qualityRole": "commercial city massing"
+}

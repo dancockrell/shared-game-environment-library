@@ -1,39 +1,820 @@
 {
-  "ledgerVersion": 1,
-  "policy": "An approved source archive is legally cleared for this library. It is not automatically an approved runtime asset. Runtime admission requires an additional, individual technical and visual record.",
+  "ledgerVersion": 2,
+  "policy": "Approved source archives are CC0-cleared upstream inputs. Runtime assets are admitted only through typed resource packs with separate technical and visual review.",
+  "sourceArchiveCount": 12,
   "entries": [
     {
-      "sourceId": "kenney-nature-kit-2.1",
-      "sourceArchiveStatus": "approved_cc0",
+      "sourceId": "kenney-nature-kit",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
       "runtimeStatus": "not_reviewed",
       "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
       "sourcePublisher": "Kenney",
       "sourcePage": "https://kenney.nl/assets/nature-kit",
-      "sourceArchivePath": "assets/approved_cc0/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/nature-kit/37ac38a37b-1677698939/kenney_nature-kit.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
       "originalArchiveFilename": "kenney_nature-kit.zip",
       "sha256": "fa7974a0d342bfe63c38664ba9f8ec1a4aab8ea25f099bdc56870e33588c4d9d",
       "bytes": 10537521,
-      "retrievedAt": "2026-09-03",
       "licenseSpdx": "CC0-1.0",
-      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "licenseEvidencePath": "licenses/upstream/kenney/kenney-nature-kit-2.1-LICENSE.txt",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-nature-kit-LICENSE.txt",
       "commercialUseConfirmed": true,
       "redistributionConfirmed": true,
       "archiveContents": {
         "entryCount": 3626,
-        "notableTopLevelDirectories": ["Models", "Isometric", "Side"],
-        "modelFormatsObserved": ["DAE", "FBX", "OBJ"],
-        "knownFamilies": ["rocks", "stone cliffs", "caves", "bridges", "foliage", "canoes", "campfire dressing"]
+        "topLevelDirectories": [
+          "Instructions.url",
+          "Isometric",
+          "Kenney.url",
+          "License.txt",
+          "Models",
+          "Patreon.url",
+          "Preview.png",
+          "Sample.png",
+          "Side"
+        ],
+        "observedFormats": [
+          "DAE",
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "flora",
+          "geology",
+          "terrain",
+          "bridges",
+          "water_edge",
+          "caves"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "qualityRole": "foundational natural environment grammar"
       },
       "requiredBeforeRuntimeAdmission": [
-        "extract the exact candidate file without modifying the source archive",
-        "record per-file checksum and archive path",
-        "validate Godot import, scale, forward axis, pivot, and material slots",
-        "add collision, LOD, thumbnail, and visual-semantic review",
-        "record a consuming-project manifest entry"
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
       ],
-      "reviewer": "Codex",
-      "notes": "Raw upstream package retained through Git LFS. No individual model from this package is currently claimed as engine-ready."
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-furniture-kit",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/furniture-kit",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/furniture-kit/440e0608a4-1677580847/kenney_furniture-kit.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-furniture-kit/source_archive/kenney_furniture-kit.zip",
+      "originalArchiveFilename": "kenney_furniture-kit.zip",
+      "sha256": "e67652d0932cee41683f74711c03d3e192a2af9979ef8e6b237711f5482d46b0",
+      "bytes": 5130729,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-furniture-kit-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 1557,
+        "topLevelDirectories": [
+          "Instructions.url",
+          "Isometric",
+          "Kenney.url",
+          "License.txt",
+          "Models",
+          "Patreon.url",
+          "Preview.png",
+          "Sample.png",
+          "Side"
+        ],
+        "observedFormats": [
+          "DAE",
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "interiors",
+          "furniture",
+          "domestic",
+          "workshop",
+          "neutral_props"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "qualityRole": "generic interior vocabulary"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-space-kit",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/space-kit",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/space-kit/20874c75ac-1677698978/kenney_space-kit.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-space-kit/source_archive/kenney_space-kit.zip",
+      "originalArchiveFilename": "kenney_space-kit.zip",
+      "sha256": "d5d7cdf2635ed5a43a9187deaf409b6f47484e402321128341d3c3698e9ef4d9",
+      "bytes": 6677531,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-space-kit-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 1702,
+        "topLevelDirectories": [
+          "Instructions.url",
+          "Isometric",
+          "Kenney.url",
+          "License.txt",
+          "Models",
+          "Patreon.url",
+          "Preview.png",
+          "Sample.png",
+          "Side"
+        ],
+        "observedFormats": [
+          "DAE",
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "science_fiction",
+          "spacecraft",
+          "planets",
+          "space_props",
+          "vehicles"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "qualityRole": "broad science-fiction scene language"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-modular-space-kit",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/modular-space-kit",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/modular-space-kit/8261428a47-1771146076/kenney_modular-space-kit_1.0.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-modular-space-kit/source_archive/kenney_modular-space-kit_1.0.zip",
+      "originalArchiveFilename": "kenney_modular-space-kit_1.0.zip",
+      "sha256": "f394f7fd9eaf29c9de7e090e55b69926f699841af33b0b116f5cc0088de8a4dc",
+      "bytes": 6966606,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-modular-space-kit-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 223,
+        "topLevelDirectories": [
+          "License.txt",
+          "Models",
+          "Overview.html",
+          "Preview (Variation A).png",
+          "Preview (Variation B).png",
+          "Preview.png",
+          "Previews",
+          "Sample.png",
+          "View Documentation.url",
+          "Visit Kenney.url",
+          "Visit Patreon.url"
+        ],
+        "observedFormats": [
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "science_fiction",
+          "modular_architecture",
+          "interiors",
+          "stations",
+          "doors",
+          "walls"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "modular",
+          "paintable_base"
+        ],
+        "qualityRole": "science-fiction interior grammar"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-racing-kit",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/racing-kit",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/racing-kit/933b8fd9fd-1677580949/kenney_racing-kit.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-racing-kit/source_archive/kenney_racing-kit.zip",
+      "originalArchiveFilename": "kenney_racing-kit.zip",
+      "sha256": "8a71ea16219315a01d00d5a90c4f6b5c090faddbc56d80ecf727e2b3b853c6c0",
+      "bytes": 6082755,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-racing-kit-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 1274,
+        "topLevelDirectories": [
+          "Instructions.url",
+          "Isometric",
+          "Kenney.url",
+          "License.txt",
+          "Models",
+          "Patreon.url",
+          "Preview.png",
+          "Sample.png",
+          "Side"
+        ],
+        "observedFormats": [
+          "DAE",
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "modern",
+          "vehicles",
+          "roads",
+          "tracks",
+          "barriers",
+          "signage"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "qualityRole": "vehicle and route-building vocabulary"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-city-kit-roads",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/city-kit-roads",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/city-kit-roads/74288c9459-1787042796/kenney_city-kit-roads.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-city-kit-roads/source_archive/kenney_city-kit-roads.zip",
+      "originalArchiveFilename": "kenney_city-kit-roads.zip",
+      "sha256": "22058af3d68173a7cf9bda9f0e243a8cef6bd68168c302ebc76327063849674e",
+      "bytes": 2849382,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-city-kit-roads-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 496,
+        "topLevelDirectories": [
+          "License.txt",
+          "Models",
+          "Overview.html",
+          "Preview (Variation A).png",
+          "Preview.png",
+          "Previews",
+          "Sample.png",
+          "View Documentation.url",
+          "Visit Kenney.url",
+          "Visit Patreon.url"
+        ],
+        "observedFormats": [
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "modern",
+          "roads",
+          "sidewalks",
+          "traffic",
+          "street_furniture",
+          "signage"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "modular",
+          "paintable_base"
+        ],
+        "qualityRole": "modern circulation and street grammar"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-city-kit-industrial",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/city-kit-industrial",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/city-kit-industrial/0ec35b139d-1788171848/kenney_city-kit-industrial_2.0.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-city-kit-industrial/source_archive/kenney_city-kit-industrial_2.0.zip",
+      "originalArchiveFilename": "kenney_city-kit-industrial_2.0.zip",
+      "sha256": "5b381164e5760f3830a2dbee43b972deee38b2a695d091b56e238ab2910c96d2",
+      "bytes": 5045077,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-city-kit-industrial-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 210,
+        "topLevelDirectories": [
+          "License.txt",
+          "Models",
+          "Overview.html",
+          "Preview (Variation A).png",
+          "Preview (Variation B).png",
+          "Preview (Variation C).png",
+          "Preview.png",
+          "Previews",
+          "Sample.png",
+          "View Documentation.url",
+          "Visit Kenney.url",
+          "Visit Patreon.url"
+        ],
+        "observedFormats": [
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "modern",
+          "industrial",
+          "warehouses",
+          "factories",
+          "infrastructure",
+          "energy"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "modular",
+          "paintable_base"
+        ],
+        "qualityRole": "industrial and utility scene language"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-city-kit-commercial",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/city-kit-commercial",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/city-kit-commercial/a742d900eb-1753115042/kenney_city-kit-commercial_2.1.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-city-kit-commercial/source_archive/kenney_city-kit-commercial_2.1.zip",
+      "originalArchiveFilename": "kenney_city-kit-commercial_2.1.zip",
+      "sha256": "f8b09b081c2bb88bcc126e2dec1cb40fd0dad7e7e591b6c26aaefe96fb35276b",
+      "bytes": 4096974,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-city-kit-commercial-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 228,
+        "topLevelDirectories": [
+          "License.txt",
+          "Models",
+          "Overview.html",
+          "Preview (Variation A).png",
+          "Preview (Variation B).png",
+          "Preview.png",
+          "Previews",
+          "Sample.png",
+          "View Documentation.url",
+          "Visit Kenney.url",
+          "Visit Patreon.url"
+        ],
+        "observedFormats": [
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "modern",
+          "commercial",
+          "city",
+          "buildings",
+          "streetscape"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "modular",
+          "paintable_base"
+        ],
+        "qualityRole": "commercial city massing"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-city-kit-suburban",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/city-kit-suburban",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/city-kit-suburban/2c871b7af2-1745479373/kenney_city-kit-suburban_20.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-city-kit-suburban/source_archive/kenney_city-kit-suburban_20.zip",
+      "originalArchiveFilename": "kenney_city-kit-suburban_20.zip",
+      "sha256": "5869c35cf30b1c87bdb2d197b6d325eebadd2ef08ea27f04797e8e08d77a9a39",
+      "bytes": 3038740,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-city-kit-suburban-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 225,
+        "topLevelDirectories": [
+          "License.txt",
+          "Models",
+          "Overview.html",
+          "Preview (Variation A).png",
+          "Preview (Variation B).png",
+          "Preview (Variation C).png",
+          "Preview.png",
+          "Previews",
+          "Sample.png",
+          "View Documentation.url",
+          "Visit Kenney.url",
+          "Visit Patreon.url"
+        ],
+        "observedFormats": [
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "modern",
+          "suburban",
+          "houses",
+          "yards",
+          "streetscape"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "qualityRole": "residential settlement vocabulary"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-pirate-kit",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/pirate-kit",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/pirate-kit/e6d4bb1525-1771333093/kenney_pirate-kit.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-pirate-kit/source_archive/kenney_pirate-kit.zip",
+      "originalArchiveFilename": "kenney_pirate-kit.zip",
+      "sha256": "667ed2caf92954ddb98f7b7cede831fe99ab75063c26b25e23d32715bee9c943",
+      "bytes": 3154665,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-pirate-kit-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 379,
+        "topLevelDirectories": [
+          "License.txt",
+          "Models",
+          "Overview.html",
+          "Preview.png",
+          "Previews",
+          "Sample.png",
+          "View Documentation.url",
+          "Visit Kenney.url",
+          "Visit Patreon.url"
+        ],
+        "observedFormats": [
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "water",
+          "ships",
+          "docks",
+          "coastal",
+          "nautical_props",
+          "tropical"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "qualityRole": "nautical and coastal vocabulary"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-watercraft-kit",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/watercraft-kit",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/watercraft-kit/a335cfed49-1713519620/kenney_watercraft-pack.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-watercraft-kit/source_archive/kenney_watercraft-pack.zip",
+      "originalArchiveFilename": "kenney_watercraft-pack.zip",
+      "sha256": "cd1470c1cf441c7f46d0944ae6d0d897242365dc97677c5079b3238965d659f3",
+      "bytes": 1870991,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-watercraft-kit-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 248,
+        "topLevelDirectories": [
+          "License.txt",
+          "Models",
+          "Overview.html",
+          "Preview.png",
+          "Previews",
+          "View Documentation.url",
+          "Visit Kenney.url",
+          "Visit Patreon.url"
+        ],
+        "observedFormats": [
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "water",
+          "vehicles",
+          "boats",
+          "ships",
+          "harbors"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "qualityRole": "water vehicle vocabulary"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
+    },
+    {
+      "sourceId": "kenney-castle-kit",
+      "sourceArchiveStatus": "approved_cc0_source_archive",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/castle-kit",
+      "directDownloadUrl": "https://kenney.nl/media/pages/assets/castle-kit/a395102d20-1711543616/kenney_castle-kit.zip",
+      "sourceArchivePath": "assets/approved_cc0/Kenney/kenney-castle-kit/source_archive/kenney_castle-kit.zip",
+      "originalArchiveFilename": "kenney_castle-kit.zip",
+      "sha256": "921f3f73927bb23106cae34bc21d5ab4b033a9fc120475e96f714a406e3169df",
+      "bytes": 2232589,
+      "licenseSpdx": "CC0-1.0",
+      "capturedLicensePath": "licenses/upstream/kenney/kenney-castle-kit-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 406,
+        "topLevelDirectories": [
+          "License.txt",
+          "Models",
+          "Overview.html",
+          "Preview.png",
+          "Previews",
+          "Sample.png",
+          "View Documentation.url",
+          "Visit Kenney.url",
+          "Visit Patreon.url"
+        ],
+        "observedFormats": [
+          "FBX",
+          "GLB",
+          "OBJ",
+          "PNG"
+        ]
+      },
+      "classification": {
+        "typeTags": [
+          "fantasy",
+          "fortification",
+          "castle",
+          "walls",
+          "towers",
+          "stone_architecture"
+        ],
+        "styleTags": [
+          "stylized_3d",
+          "modular",
+          "paintable_base"
+        ],
+        "qualityRole": "fortification and stone-building grammar"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "select individual source member by literal semantics",
+        "record member archive path and checksum",
+        "validate engine import, units, forward axis, pivot, and material slots",
+        "author collision and LOD policy",
+        "add typed resource-pack metadata and consuming-project review"
+      ],
+      "review": {
+        "legal": "passed_embedded_cc0_evidence",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "archive_only_individual_asset_review_pending",
+        "visual": "archive_only_individual_asset_review_pending"
+      }
     }
   ]
 }

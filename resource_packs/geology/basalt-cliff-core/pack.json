@@ -14,7 +14,7 @@
   "sourceLineage": {
     "kind": "CC0_derived",
     "upstreamSourceId": "kenney-nature-kit-2.1",
-    "upstreamArchive": "assets/approved_cc0/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
+    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
     "upstreamLicenseSpdx": "CC0-1.0",
     "derivativeMethod": "deterministic OBJ composition with Y-axis rotation, placement, and original basalt material assignment",
     "sourceMembers": [

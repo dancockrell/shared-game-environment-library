@@ -1,0 +1,29 @@
+{
+  "sourceId": "kenney-city-kit-roads",
+  "sourceArchiveStatus": "downloaded_license_captured_pending_manual_approval",
+  "originKind": "upstream_cc0",
+  "publisher": "Kenney",
+  "sourcePage": "https://kenney.nl/assets/city-kit-roads",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/city-kit-roads/74288c9459-1787042796/kenney_city-kit-roads.zip",
+  "archivePath": "assets/approved_cc0/Kenney/kenney-city-kit-roads/source_archive/kenney_city-kit-roads.zip",
+  "archiveFilename": "kenney_city-kit-roads.zip",
+  "sha256": "22058af3d68173a7cf9bda9f0e243a8cef6bd68168c302ebc76327063849674e",
+  "bytes": 2849382,
+  "licenseSpdx": "CC0-1.0",
+  "capturedLicensePath": "licenses/upstream/kenney/kenney-city-kit-roads-LICENSE.txt",
+  "archiveEntryCount": 496,
+  "typeTags": [
+    "modern",
+    "roads",
+    "sidewalks",
+    "traffic",
+    "street_furniture",
+    "signage"
+  ],
+  "styleTags": [
+    "stylized_3d",
+    "modular",
+    "paintable_base"
+  ],
+  "qualityRole": "modern circulation and street grammar"
+}
