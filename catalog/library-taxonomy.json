@@ -1,6 +1,6 @@
 {
   "taxonomyVersion": 1,
-  "purpose": "A cross-project vocabulary for locating source archives and approved resource packs by literal use, visual language, origin, and readiness. Do not organize reusable content by consuming game.",
+  "purpose": "A cross-project vocabulary for locating source archives and approved resource packs by literal use, visual language, origin, scope, and readiness. Classify by literal type first; use project affinity as an additional facet when a pack is game-specific.",
   "lifecycleLayers": [
     {
       "id": "source_archive",
@@ -19,7 +19,8 @@
     "upstream_cc0",
     "library_derivative",
     "library_authored",
-    "project_adapter"
+    "project_adapter",
+    "project_authored"
   ],
   "domains": [
     {
@@ -40,7 +41,7 @@
     },
     {
       "id": "character-support",
-      "groups": ["rigs", "animation-tests", "silhouette-references", "clothing-modules"]
+      "groups": ["rigs", "animation-tests", "silhouette-references", "clothing-modules", "character-bases", "portraits"]
     }
   ],
   "requiredResourcePackTags": [
@@ -54,6 +55,12 @@
     "visualReviewState",
     "engineEligibility"
   ],
+  "scopeFacets": {
+    "contentScope": ["shared", "project_specific", "reference_only"],
+    "projectAffinityExamples": ["project-42-pirate-island-rpg", "dr-companion"],
+    "subjectScope": ["neutral", "character", "named_character", "setting_specific"],
+    "adultPresentation": ["not_applicable", "adult_only"]
+  },
   "queryExamples": [
     "physicalType=geology AND styleTags contains basalt",
     "literalUse=street-road AND styleTags contains modern",

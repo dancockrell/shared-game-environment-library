@@ -13,8 +13,8 @@
   "properties": {
     "assetId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$" },
     "admissionStatus": { "enum": ["source_verified_not_downloaded", "candidate", "approved", "quarantined", "rejected"] },
-    "assetKind": { "enum": ["model", "texture", "hdri", "material", "vfx_reference", "rig_component", "archive"] },
-    "domain": { "enum": ["terrain", "flora", "geology", "water", "architecture", "neutral_prop", "weapon", "armour", "material", "rig_infrastructure", "vfx"] },
+    "assetKind": { "enum": ["model", "character_model", "texture", "hdri", "material", "vfx_reference", "rig_component", "archive"] },
+    "domain": { "enum": ["terrain", "flora", "geology", "water", "architecture", "neutral_prop", "weapon", "armour", "material", "rig_infrastructure", "character", "vfx"] },
     "sourceUrl": { "type": "string", "format": "uri" },
     "sourcePublisher": { "type": "string", "minLength": 1 },
     "sourceCreator": { "type": "string" },
@@ -49,6 +49,22 @@
         "collisionPolicy": { "type": "string" },
         "materialSlots": { "type": "array", "items": { "type": "string" } },
         "lodPolicy": { "type": "string" }
+      }
+    },
+    "contentScope": { "enum": ["shared", "project_specific", "reference_only"] },
+    "projectAffinity": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "subjectScope": { "enum": ["neutral", "character", "named_character", "setting_specific"] },
+    "adultPresentation": { "enum": ["not_applicable", "adult_only"] },
+    "characterPresentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ageClass": { "const": "adult" },
+        "buildTags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "faceStyleTags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "bodyVariationTags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "rigProfile": { "type": "string" },
+        "modularSlots": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
       }
     },
     "tags": { "type": "array", "minItems": 1, "items": { "type": "string" } },
