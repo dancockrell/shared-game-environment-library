@@ -1,0 +1,34 @@
+{
+  "manifestVersion": 1,
+  "importId": "project42-shared-asset-platform-2026-09-03",
+  "status": "candidate_intake_only",
+  "purpose": "Preserve a generic cross-project asset-library transfer without granting approved-source, engine, or runtime status.",
+  "source": {
+    "repository": "https://github.com/dancockrell/project-42-pirate-island-rpg.git",
+    "branch": "codex/shared-asset-platform",
+    "commit": "74bd481",
+    "path": "resource-packs",
+    "transferMethod": "git archive; original hierarchy retained; no content transformation"
+  },
+  "destination": "assets/candidates_needing_review/project42-shared-asset-platform/resource-packs",
+  "transfer": {
+    "fileCount": 3182,
+    "sourceBlobBytes": 114327902,
+    "extractedBytes": 114422235,
+    "binaryCandidates": 3139,
+    "declaredUpstreamLicense": "CC0-1.0 license evidence retained inside the transferred source collections"
+  },
+  "eligibleFor": [],
+  "notEligibleFor": [
+    "approved_cc0_source_lane",
+    "engine_import",
+    "consumer_runtime_packaging",
+    "automatic_project_admission"
+  ],
+  "promotionRequirements": [
+    "Match each promoted collection to a verifiable upstream source and original archive.",
+    "Record archive checksum, source URL, license evidence path, and internal member paths in the approved-source ledger.",
+    "Create or update a typed literal-use resource pack with per-asset provenance and hashes.",
+    "Complete consumer-engine review for scale, pivots, collision, materials, LODs, visual fit, and licensing scope."
+  ]
+}
