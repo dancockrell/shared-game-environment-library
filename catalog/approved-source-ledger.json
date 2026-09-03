@@ -1,0 +1,39 @@
+{
+  "ledgerVersion": 1,
+  "policy": "An approved source archive is legally cleared for this library. It is not automatically an approved runtime asset. Runtime admission requires an additional, individual technical and visual record.",
+  "entries": [
+    {
+      "sourceId": "kenney-nature-kit-2.1",
+      "sourceArchiveStatus": "approved_cc0",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "source_archive",
+      "sourcePublisher": "Kenney",
+      "sourcePage": "https://kenney.nl/assets/nature-kit",
+      "sourceArchivePath": "assets/approved_cc0/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
+      "originalArchiveFilename": "kenney_nature-kit.zip",
+      "sha256": "fa7974a0d342bfe63c38664ba9f8ec1a4aab8ea25f099bdc56870e33588c4d9d",
+      "bytes": 10537521,
+      "retrievedAt": "2026-09-03",
+      "licenseSpdx": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "licenseEvidencePath": "licenses/upstream/kenney/kenney-nature-kit-2.1-LICENSE.txt",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "archiveContents": {
+        "entryCount": 3626,
+        "notableTopLevelDirectories": ["Models", "Isometric", "Side"],
+        "modelFormatsObserved": ["DAE", "FBX", "OBJ"],
+        "knownFamilies": ["rocks", "stone cliffs", "caves", "bridges", "foliage", "canoes", "campfire dressing"]
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "extract the exact candidate file without modifying the source archive",
+        "record per-file checksum and archive path",
+        "validate Godot import, scale, forward axis, pivot, and material slots",
+        "add collision, LOD, thumbnail, and visual-semantic review",
+        "record a consuming-project manifest entry"
+      ],
+      "reviewer": "Codex",
+      "notes": "Raw upstream package retained through Git LFS. No individual model from this package is currently claimed as engine-ready."
+    }
+  ]
+}
