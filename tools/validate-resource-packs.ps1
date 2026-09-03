@@ -20,9 +20,17 @@ foreach ($packFile in $packFiles) {
     try { $pack = Get-Content -Raw -LiteralPath $packFile.FullName | ConvertFrom-Json }
     catch { $failures.Add("$($packFile.FullName): invalid JSON: $($_.Exception.Message)"); continue }
 
-    foreach ($field in @('packId', 'packType', 'authoringStatus', 'engineEligibility', 'style', 'sourceLineage', 'outputs', 'review', 'searchTags')) {
+    foreach ($field in @('metadataVersion', 'packId', 'packType', 'authoringStatus', 'provenance', 'scope', 'engineEligibility', 'style', 'sourceLineage', 'outputs', 'review', 'searchTags')) {
         Assert-PackCondition ($null -ne $pack.$field) "$($packFile.FullName): missing required field '$field'."
     }
+    Assert-PackCondition ($pack.metadataVersion -eq 2) "$($packFile.FullName): expected metadataVersion 2."
+    Assert-PackCondition ($pack.provenance.class -in @('borrowed_library', 'our_build', 'restricted_external')) "$($packFile.FullName): unsupported provenance.class '$($pack.provenance.class)'."
+    Assert-PackCondition (-not [string]::IsNullOrWhiteSpace($pack.provenance.rightsStatus)) "$($packFile.FullName): provenance.rightsStatus is required."
+    Assert-PackCondition (-not [string]::IsNullOrWhiteSpace($pack.provenance.rightsRecord)) "$($packFile.FullName): provenance.rightsRecord is required."
+    Assert-PackCondition ($pack.scope.contentScope -in @('shared', 'project_specific', 'reference_only')) "$($packFile.FullName): unsupported scope.contentScope '$($pack.scope.contentScope)'."
+    Assert-PackCondition ($null -ne $pack.scope.projectAffinity) "$($packFile.FullName): scope.projectAffinity is required, use an empty array for shared scope."
+    Assert-PackCondition ($pack.scope.subjectScope -in @('neutral', 'character', 'named_character', 'setting_specific')) "$($packFile.FullName): unsupported scope.subjectScope '$($pack.scope.subjectScope)'."
+    Assert-PackCondition ($pack.scope.adultPresentation -in @('not_applicable', 'adult_only')) "$($packFile.FullName): unsupported scope.adultPresentation '$($pack.scope.adultPresentation)'."
     Assert-PackCondition ($pack.authoringStatus -in @('source_origin', 'derivative', 'reference_only')) "$($packFile.FullName): unsupported authoringStatus '$($pack.authoringStatus)'."
     Assert-PackCondition ($pack.searchTags.Count -ge 3) "$($packFile.FullName): requires at least three search tags."
 

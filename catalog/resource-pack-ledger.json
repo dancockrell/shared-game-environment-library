@@ -1,14 +1,26 @@
 {
-  "ledgerVersion": 1,
-  "policy": "Search this ledger by literal pack type, scene role, source lineage, or tags before selecting a physical asset. Individual outputs remain non-runtime until their engine eligibility changes.",
+  "ledgerVersion": 2,
+  "policy": "Search this ledger by provenance, scope, literal pack type, physical subject, render language, scene role, source lineage, or tags before selecting an asset. Individual outputs remain non-runtime until their engine eligibility changes.",
   "resourcePackCount": 5,
   "assetCount": 18,
   "entries": [
     {
+      "metadataVersion": 2,
       "packId": "fortifications.castle-core.v1",
       "displayName": "Castle Fortification Core",
       "packType": "fortifications",
       "authoringStatus": "source_origin",
+      "provenance": {
+        "class": "borrowed_library",
+        "rightsStatus": "redistributable_cc0_verified",
+        "rightsRecord": "catalog/approved-source-ledger.json#kenney-castle-kit"
+      },
+      "scope": {
+        "contentScope": "shared",
+        "projectAffinity": [],
+        "subjectScope": "neutral",
+        "adultPresentation": "not_applicable"
+      },
       "engineEligibility": "source_ready_not_engine_reviewed",
       "sourceLineage": {
         "kind": "CC0_member_extraction",
@@ -30,6 +42,17 @@
         "gate",
         "fantasy",
         "cc0_source"
+      ],
+      "renderLanguage": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
+      "physicalSubject": [
+        "wall",
+        "tower",
+        "gate",
+        "stone_stairs"
       ],
       "sceneRoles": [
         "fort",
@@ -85,10 +108,22 @@
       }
     },
     {
+      "metadataVersion": 2,
       "packId": "geology.basalt-cliff-core.v1",
       "displayName": "Basalt Cliff Core",
       "packType": "geology",
       "authoringStatus": "derivative",
+      "provenance": {
+        "class": "our_build",
+        "rightsStatus": "library_authored_cc0_derivative",
+        "rightsRecord": "resource_packs/geology/basalt-cliff-core/build-report.json"
+      },
+      "scope": {
+        "contentScope": "shared",
+        "projectAffinity": [],
+        "subjectScope": "neutral",
+        "adultPresentation": "not_applicable"
+      },
       "engineEligibility": "source_ready_not_engine_reviewed",
       "sourceLineage": {
         "kind": "CC0_derived",
@@ -114,6 +149,17 @@
         "low_poly",
         "cc0_derived",
         "neutral_environment"
+      ],
+      "renderLanguage": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
+      "physicalSubject": [
+        "basalt",
+        "cliff",
+        "cave_approach",
+        "rock_formation"
       ],
       "sceneRoles": [
         "foreground_anchor",
@@ -142,10 +188,22 @@
       }
     },
     {
+      "metadataVersion": 2,
       "packId": "maritime.pirate-prop-core.v1",
       "displayName": "Maritime Prop Core",
       "packType": "maritime",
       "authoringStatus": "source_origin",
+      "provenance": {
+        "class": "borrowed_library",
+        "rightsStatus": "redistributable_cc0_verified",
+        "rightsRecord": "catalog/approved-source-ledger.json#kenney-pirate-kit"
+      },
+      "scope": {
+        "contentScope": "shared",
+        "projectAffinity": [],
+        "subjectScope": "neutral",
+        "adultPresentation": "not_applicable"
+      },
       "engineEligibility": "source_ready_not_engine_reviewed",
       "sourceLineage": {
         "kind": "CC0_member_extraction",
@@ -167,6 +225,17 @@
         "barrel",
         "cannon",
         "cc0_source"
+      ],
+      "renderLanguage": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
+      "physicalSubject": [
+        "barrel",
+        "crate",
+        "rowboat",
+        "cannon"
       ],
       "sceneRoles": [
         "dock_dressing",
@@ -221,10 +290,22 @@
       }
     },
     {
+      "metadataVersion": 2,
       "packId": "roads.modern-street-core.v1",
       "displayName": "Modern Street Core",
       "packType": "roads",
       "authoringStatus": "source_origin",
+      "provenance": {
+        "class": "borrowed_library",
+        "rightsStatus": "redistributable_cc0_verified",
+        "rightsRecord": "catalog/approved-source-ledger.json#kenney-city-kit-roads"
+      },
+      "scope": {
+        "contentScope": "shared",
+        "projectAffinity": [],
+        "subjectScope": "neutral",
+        "adultPresentation": "not_applicable"
+      },
       "engineEligibility": "source_ready_not_engine_reviewed",
       "sourceLineage": {
         "kind": "CC0_member_extraction",
@@ -245,6 +326,17 @@
         "suburban",
         "modern",
         "cc0_source"
+      ],
+      "renderLanguage": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
+      "physicalSubject": [
+        "street",
+        "sidewalk",
+        "intersection",
+        "road"
       ],
       "sceneRoles": [
         "modern_city",
@@ -299,10 +391,22 @@
       }
     },
     {
+      "metadataVersion": 2,
       "packId": "sci-fi.modular-corridor-core.v1",
       "displayName": "Modular Corridor Core",
       "packType": "sci-fi",
       "authoringStatus": "source_origin",
+      "provenance": {
+        "class": "borrowed_library",
+        "rightsStatus": "redistributable_cc0_verified",
+        "rightsRecord": "catalog/approved-source-ledger.json#kenney-modular-space-kit"
+      },
+      "scope": {
+        "contentScope": "shared",
+        "projectAffinity": [],
+        "subjectScope": "neutral",
+        "adultPresentation": "not_applicable"
+      },
       "engineEligibility": "source_ready_not_engine_reviewed",
       "sourceLineage": {
         "kind": "CC0_member_extraction",
@@ -324,6 +428,17 @@
         "station",
         "interior",
         "cc0_source"
+      ],
+      "renderLanguage": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
+      "physicalSubject": [
+        "corridor",
+        "junction",
+        "room",
+        "door"
       ],
       "sceneRoles": [
         "station",

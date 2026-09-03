@@ -25,13 +25,18 @@ foreach ($packFile in $packFiles) {
         })
     }
     $entries.Add([ordered]@{
+        metadataVersion = $pack.metadataVersion
         packId = $pack.packId
         displayName = $pack.displayName
         packType = $pack.packType
         authoringStatus = $pack.authoringStatus
+        provenance = $pack.provenance
+        scope = $pack.scope
         engineEligibility = $pack.engineEligibility
         sourceLineage = $pack.sourceLineage
         searchTags = @($pack.searchTags)
+        renderLanguage = @($pack.style.renderLanguage)
+        physicalSubject = @($pack.style.physicalSubject)
         sceneRoles = @($pack.style.sceneRoles)
         outputs = @($outputEntries)
         review = $pack.review
@@ -39,8 +44,8 @@ foreach ($packFile in $packFiles) {
 }
 
 [ordered]@{
-    ledgerVersion = 1
-    policy = 'Search this ledger by literal pack type, scene role, source lineage, or tags before selecting a physical asset. Individual outputs remain non-runtime until their engine eligibility changes.'
+    ledgerVersion = 2
+    policy = 'Search this ledger by provenance, scope, literal pack type, physical subject, render language, scene role, source lineage, or tags before selecting an asset. Individual outputs remain non-runtime until their engine eligibility changes.'
     resourcePackCount = $entries.Count
     assetCount = @($entries.outputs).Count
     entries = @($entries)

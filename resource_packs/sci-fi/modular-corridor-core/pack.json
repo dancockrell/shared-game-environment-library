@@ -1,8 +1,20 @@
 {
+  "metadataVersion": 2,
   "packId": "sci-fi.modular-corridor-core.v1",
   "displayName": "Modular Corridor Core",
   "packType": "sci-fi",
   "authoringStatus": "source_origin",
+  "provenance": {
+    "class": "borrowed_library",
+    "rightsStatus": "redistributable_cc0_verified",
+    "rightsRecord": "catalog/approved-source-ledger.json#kenney-modular-space-kit"
+  },
+  "scope": {
+    "contentScope": "shared",
+    "projectAffinity": [],
+    "subjectScope": "neutral",
+    "adultPresentation": "not_applicable"
+  },
   "engineEligibility": "source_ready_not_engine_reviewed",
   "style": {
     "renderLanguage": [

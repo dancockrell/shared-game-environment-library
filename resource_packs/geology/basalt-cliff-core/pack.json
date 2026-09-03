@@ -1,8 +1,20 @@
 {
+  "metadataVersion": 2,
   "packId": "geology.basalt-cliff-core.v1",
   "displayName": "Basalt Cliff Core",
   "packType": "geology",
   "authoringStatus": "derivative",
+  "provenance": {
+    "class": "our_build",
+    "rightsStatus": "library_authored_cc0_derivative",
+    "rightsRecord": "resource_packs/geology/basalt-cliff-core/build-report.json"
+  },
+  "scope": {
+    "contentScope": "shared",
+    "projectAffinity": [],
+    "subjectScope": "neutral",
+    "adultPresentation": "not_applicable"
+  },
   "engineEligibility": "source_ready_not_engine_reviewed",
   "style": {
     "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"],
