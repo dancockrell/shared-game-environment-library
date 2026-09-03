@@ -1,0 +1,49 @@
+{
+  "sourceId": "fabric-pattern-05-1k",
+  "sourceAssetStatus": "downloaded_license_verified_pending_material_review",
+  "originKind": "upstream_cc0",
+  "publisher": "PolyHaven",
+  "sourcePage": "https://polyhaven.com/a/fabric_pattern_05",
+  "licenseUrl": "https://polyhaven.com/license",
+  "licenseSpdx": "CC0-1.0",
+  "physicalType": "material",
+  "literalUse": "woven-plaid-cloth-surface",
+  "typeTags": [
+    "fabric",
+    "plaid",
+    "cloth",
+    "material",
+    "pbr"
+  ],
+  "styleTags": [
+    "woven",
+    "olive",
+    "blue",
+    "interior",
+    "costume-capable"
+  ],
+  "qualityRole": "high-fidelity-material-seed",
+  "files": [
+    {
+      "role": "albedo",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_col_01_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/fabric-pattern-05-1k/source_files/fabric_pattern_05_col_01_1k.jpg",
+      "sha256": "b9ece89a45044945ce4d1402672cfd605f1f074b313cb3cc12b7b2ea66fad7fe",
+      "bytes": 797220
+    },
+    {
+      "role": "normal_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_nor_gl_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/fabric-pattern-05-1k/source_files/fabric_pattern_05_nor_gl_1k.jpg",
+      "sha256": "caa5a948c768c7173b1d8647aa2618d39b4ec5ba4575820e02fb500dac54596d",
+      "bytes": 903085
+    },
+    {
+      "role": "roughness",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_rough_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/fabric-pattern-05-1k/source_files/fabric_pattern_05_rough_1k.jpg",
+      "sha256": "e48d14e87a5493bc4ef9bea61e85b4397ec41f93d1c3fd1ac17494475781610e",
+      "bytes": 438194
+    }
+  ]
+}

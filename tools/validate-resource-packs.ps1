@@ -50,6 +50,24 @@ foreach ($packFile in $packFiles) {
                 }
             }
         }
+        if ([System.IO.Path]::GetExtension($assetPath).ToLowerInvariant() -eq '.glb' -and (Test-Path -LiteralPath $assetPath)) {
+            $stream = [System.IO.File]::OpenRead($assetPath)
+            try {
+                if ($stream.Length -lt 20) { $failures.Add("${assetPath}: GLB is shorter than its required header and first chunk header."); continue }
+                $reader = [System.IO.BinaryReader]::new($stream)
+                $magic = $reader.ReadUInt32()
+                $version = $reader.ReadUInt32()
+                $declaredLength = $reader.ReadUInt32()
+                $chunkLength = $reader.ReadUInt32()
+                $chunkType = $reader.ReadUInt32()
+                Assert-PackCondition ($magic -eq 0x46546C67) "${assetPath}: invalid GLB magic."
+                Assert-PackCondition ($version -eq 2) "${assetPath}: expected GLB version 2, found $version."
+                Assert-PackCondition ($declaredLength -eq $stream.Length) "${assetPath}: declared GLB length $declaredLength does not match file length $($stream.Length)."
+                Assert-PackCondition ($chunkType -eq 0x4E4F534A) "${assetPath}: first GLB chunk is not JSON."
+                Assert-PackCondition (($chunkLength + 20) -le $stream.Length) "${assetPath}: first GLB chunk length exceeds file size."
+            }
+            finally { $stream.Dispose() }
+        }
     }
 }
 

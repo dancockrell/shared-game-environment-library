@@ -1,0 +1,137 @@
+{
+  "packId": "maritime.pirate-prop-core.v1",
+  "displayName": "Maritime Prop Core",
+  "packType": "maritime",
+  "authoringStatus": "source_origin",
+  "engineEligibility": "source_ready_not_engine_reviewed",
+  "style": {
+    "renderLanguage": [
+      "stylized_3d",
+      "low_poly",
+      "paintable_base"
+    ],
+    "physicalSubject": [
+      "barrel",
+      "crate",
+      "rowboat",
+      "cannon"
+    ],
+    "sceneRoles": [
+      "dock_dressing",
+      "ship_dressing",
+      "coastal_outpost"
+    ],
+    "paletteIntent": [
+      "weathered_wood",
+      "iron",
+      "optional_faction_color"
+    ],
+    "forbiddenClaims": [
+      "named_ship",
+      "project_specific_symbol"
+    ]
+  },
+  "sourceLineage": {
+    "kind": "CC0_member_extraction",
+    "upstreamSourceId": "kenney-pirate-kit",
+    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-pirate-kit/source_archive/kenney_pirate-kit.zip",
+    "upstreamLicenseSpdx": "CC0-1.0",
+    "sourceMembers": [
+      "Models/GLB format/barrel.glb",
+      "Models/GLB format/crate.glb",
+      "Models/GLB format/boat-row-small.glb",
+      "Models/GLB format/cannon.glb"
+    ]
+  },
+  "outputs": [
+    {
+      "assetId": "maritime.pirate-prop-core.v1.barrel.mesh.v1",
+      "path": "artifacts/models/barrel.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/barrel.glb",
+      "sha256": "7616dedf7c1023afa6ecd3c52a4609460aae0e582dee14e60ec5e47c1174793b",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "maritime.pirate-prop-core.v1.crate.mesh.v1",
+      "path": "artifacts/models/crate.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/crate.glb",
+      "sha256": "b525674e07c8b83667512a8dd93be0d7684358347d0e64d2bb16b156ac382ed1",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "maritime.pirate-prop-core.v1.boat-row-small.mesh.v1",
+      "path": "artifacts/models/boat-row-small.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/boat-row-small.glb",
+      "sha256": "846d9b17a73f80e03f7201d3bf0ad1b1bbb49e114b99697740d3426e4f42482d",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "maritime.pirate-prop-core.v1.cannon.mesh.v1",
+      "path": "artifacts/models/cannon.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/cannon.glb",
+      "sha256": "b2ea71475fa52de312a0fe3fb9085e1a3f83f9e6bb167668fb62f71383cbc41a",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    }
+  ],
+  "review": {
+    "legal": "approved_cc0_source_lineage",
+    "literalSemantics": "approved_literal_member_selection",
+    "technical": "source_member_hashes_verified_import_pending",
+    "visual": "source_member_preview_pending",
+    "reviewer": "Codex",
+    "createdAt": "2026-09-03"
+  },
+  "searchTags": [
+    "maritime",
+    "pirate",
+    "dock",
+    "boat",
+    "barrel",
+    "cannon",
+    "cc0_source"
+  ]
+}

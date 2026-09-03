@@ -1,0 +1,135 @@
+{
+  "packId": "roads.modern-street-core.v1",
+  "displayName": "Modern Street Core",
+  "packType": "roads",
+  "authoringStatus": "source_origin",
+  "engineEligibility": "source_ready_not_engine_reviewed",
+  "style": {
+    "renderLanguage": [
+      "stylized_3d",
+      "low_poly",
+      "paintable_base"
+    ],
+    "physicalSubject": [
+      "street",
+      "sidewalk",
+      "intersection",
+      "road"
+    ],
+    "sceneRoles": [
+      "modern_city",
+      "suburb",
+      "industrial_approach"
+    ],
+    "paletteIntent": [
+      "neutral_asphalt",
+      "optional_project_decals"
+    ],
+    "forbiddenClaims": [
+      "named_city",
+      "project_specific_traffic_system"
+    ]
+  },
+  "sourceLineage": {
+    "kind": "CC0_member_extraction",
+    "upstreamSourceId": "kenney-city-kit-roads",
+    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-city-kit-roads/source_archive/kenney_city-kit-roads.zip",
+    "upstreamLicenseSpdx": "CC0-1.0",
+    "sourceMembers": [
+      "Models/GLB format/road-straight.glb",
+      "Models/GLB format/road-bend.glb",
+      "Models/GLB format/road-crossing.glb",
+      "Models/GLB format/road-end.glb"
+    ]
+  },
+  "outputs": [
+    {
+      "assetId": "roads.modern-street-core.v1.road-straight.mesh.v1",
+      "path": "artifacts/models/road-straight.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/road-straight.glb",
+      "sha256": "f8f744fb6fc96dedd5ad1f763b550166f2624a3757bf36b4b39969d2e7cacac5",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "roads.modern-street-core.v1.road-bend.mesh.v1",
+      "path": "artifacts/models/road-bend.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/road-bend.glb",
+      "sha256": "9752f63448c8e7a3d30ca2e0e1bb6784c5adb72b56a2b05667be8d546c1674bc",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "roads.modern-street-core.v1.road-crossing.mesh.v1",
+      "path": "artifacts/models/road-crossing.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/road-crossing.glb",
+      "sha256": "eb8575335f77da513add4a5277a7b60cad4886c07966f024b15cf55e5966cde3",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "roads.modern-street-core.v1.road-end.mesh.v1",
+      "path": "artifacts/models/road-end.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/road-end.glb",
+      "sha256": "bdf62518cfcc2c1a1425a4c8bc845e8e344f9c8b34dfb364b6b7d442e6171f11",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    }
+  ],
+  "review": {
+    "legal": "approved_cc0_source_lineage",
+    "literalSemantics": "approved_literal_member_selection",
+    "technical": "source_member_hashes_verified_import_pending",
+    "visual": "source_member_preview_pending",
+    "reviewer": "Codex",
+    "createdAt": "2026-09-03"
+  },
+  "searchTags": [
+    "roads",
+    "street",
+    "city",
+    "suburban",
+    "modern",
+    "cc0_source"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "sourceId": "rock-boulder-dry-1k",
+  "sourceAssetStatus": "downloaded_license_verified_pending_material_review",
+  "originKind": "upstream_cc0",
+  "publisher": "PolyHaven",
+  "sourcePage": "https://polyhaven.com/a/rock_boulder_dry",
+  "licenseUrl": "https://polyhaven.com/license",
+  "licenseSpdx": "CC0-1.0",
+  "physicalType": "material",
+  "literalUse": "dry-weathered-boulder-surface",
+  "typeTags": [
+    "geology",
+    "rock",
+    "boulder",
+    "material",
+    "pbr"
+  ],
+  "styleTags": [
+    "natural",
+    "weathered",
+    "cracked",
+    "outdoor",
+    "neutral"
+  ],
+  "qualityRole": "high-fidelity-material-seed",
+  "files": [
+    {
+      "role": "albedo",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_diff_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/rock_boulder_dry_diff_1k.jpg",
+      "sha256": "20f653a42fb24f42aa40641663070d578678da49af18cc1049dbdd4ed8679f3c",
+      "bytes": 859211
+    },
+    {
+      "role": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_arm_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/rock_boulder_dry_arm_1k.jpg",
+      "sha256": "350d01c63afc01cd9bcb9bc47afdd24292198ff1c5fcef1c49281c1b85dc2872",
+      "bytes": 784728
+    },
+    {
+      "role": "normal_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_nor_gl_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/rock_boulder_dry_nor_gl_1k.jpg",
+      "sha256": "5915fea28a97357c78a04fb31c2516f1f7ed1b3a9cef4ae25aa93e4655e6c595",
+      "bytes": 802497
+    }
+  ]
+}

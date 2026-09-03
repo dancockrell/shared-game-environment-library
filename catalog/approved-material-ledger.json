@@ -1,0 +1,414 @@
+{
+  "ledgerVersion": 1,
+  "policy": "Approved material source files are CC0-cleared inputs. Runtime material instances require separate engine and visual review.",
+  "materialSourceCount": 6,
+  "entries": [
+    {
+      "sourceId": "rock-boulder-dry-1k",
+      "sourceAssetStatus": "approved_cc0_material_source",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "material_source_files",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/rock_boulder_dry",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "physicalType": "material",
+      "literalUse": "dry-weathered-boulder-surface",
+      "files": [
+        {
+          "role": "albedo",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_diff_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/rock_boulder_dry_diff_1k.jpg",
+          "sha256": "20f653a42fb24f42aa40641663070d578678da49af18cc1049dbdd4ed8679f3c",
+          "bytes": 859211
+        },
+        {
+          "role": "arm",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_arm_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/rock_boulder_dry_arm_1k.jpg",
+          "sha256": "350d01c63afc01cd9bcb9bc47afdd24292198ff1c5fcef1c49281c1b85dc2872",
+          "bytes": 784728
+        },
+        {
+          "role": "normal_gl",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_nor_gl_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/rock_boulder_dry_nor_gl_1k.jpg",
+          "sha256": "5915fea28a97357c78a04fb31c2516f1f7ed1b3a9cef4ae25aa93e4655e6c595",
+          "bytes": 802497
+        }
+      ],
+      "classification": {
+        "typeTags": [
+          "geology",
+          "rock",
+          "boulder",
+          "material",
+          "pbr"
+        ],
+        "styleTags": [
+          "natural",
+          "weathered",
+          "cracked",
+          "outdoor",
+          "neutral"
+        ],
+        "qualityRole": "high-fidelity-material-seed"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "validate texture color space and channel packing",
+        "author engine material",
+        "review tiling and scale in a representative scene",
+        "record resolution and platform budget"
+      ],
+      "review": {
+        "legal": "passed_polyhaven_cc0_policy",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "individual_material_review_pending",
+        "visual": "individual_material_review_pending"
+      }
+    },
+    {
+      "sourceId": "aerial-rocks-04-1k",
+      "sourceAssetStatus": "approved_cc0_material_source",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "material_source_files",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/aerial_rocks_04",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "physicalType": "material",
+      "literalUse": "mossy-cliff-and-ground-surface",
+      "files": [
+        {
+          "role": "albedo",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_diff_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/aerial-rocks-04-1k/source_files/aerial_rocks_04_diff_1k.jpg",
+          "sha256": "5ac472016a6740bd3c62b1d719bf128e0659022fb35853f4e847737522337ffa",
+          "bytes": 841479
+        },
+        {
+          "role": "arm",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_arm_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/aerial-rocks-04-1k/source_files/aerial_rocks_04_arm_1k.jpg",
+          "sha256": "139cb622a103dd55e57de13d19e93f55977df2aaf9bf6a8a7b1de36da6d1c708",
+          "bytes": 245830
+        },
+        {
+          "role": "normal_gl",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_nor_gl_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/aerial-rocks-04-1k/source_files/aerial_rocks_04_nor_gl_1k.jpg",
+          "sha256": "b4fe185783020d81b595397ef3b920475268a4873dc8b6efdd58f4312e07140b",
+          "bytes": 1242717
+        }
+      ],
+      "classification": {
+        "typeTags": [
+          "geology",
+          "cliff",
+          "ground",
+          "moss",
+          "material",
+          "pbr"
+        ],
+        "styleTags": [
+          "natural",
+          "mossy",
+          "weathered",
+          "outdoor",
+          "cool"
+        ],
+        "qualityRole": "high-fidelity-material-seed"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "validate texture color space and channel packing",
+        "author engine material",
+        "review tiling and scale in a representative scene",
+        "record resolution and platform budget"
+      ],
+      "review": {
+        "legal": "passed_polyhaven_cc0_policy",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "individual_material_review_pending",
+        "visual": "individual_material_review_pending"
+      }
+    },
+    {
+      "sourceId": "fabric-pattern-05-1k",
+      "sourceAssetStatus": "approved_cc0_material_source",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "material_source_files",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/fabric_pattern_05",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "physicalType": "material",
+      "literalUse": "woven-plaid-cloth-surface",
+      "files": [
+        {
+          "role": "albedo",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_col_01_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/fabric-pattern-05-1k/source_files/fabric_pattern_05_col_01_1k.jpg",
+          "sha256": "b9ece89a45044945ce4d1402672cfd605f1f074b313cb3cc12b7b2ea66fad7fe",
+          "bytes": 797220
+        },
+        {
+          "role": "normal_gl",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_nor_gl_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/fabric-pattern-05-1k/source_files/fabric_pattern_05_nor_gl_1k.jpg",
+          "sha256": "caa5a948c768c7173b1d8647aa2618d39b4ec5ba4575820e02fb500dac54596d",
+          "bytes": 903085
+        },
+        {
+          "role": "roughness",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_rough_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/fabric-pattern-05-1k/source_files/fabric_pattern_05_rough_1k.jpg",
+          "sha256": "e48d14e87a5493bc4ef9bea61e85b4397ec41f93d1c3fd1ac17494475781610e",
+          "bytes": 438194
+        }
+      ],
+      "classification": {
+        "typeTags": [
+          "fabric",
+          "plaid",
+          "cloth",
+          "material",
+          "pbr"
+        ],
+        "styleTags": [
+          "woven",
+          "olive",
+          "blue",
+          "interior",
+          "costume-capable"
+        ],
+        "qualityRole": "high-fidelity-material-seed"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "validate texture color space and channel packing",
+        "author engine material",
+        "review tiling and scale in a representative scene",
+        "record resolution and platform budget"
+      ],
+      "review": {
+        "legal": "passed_polyhaven_cc0_policy",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "individual_material_review_pending",
+        "visual": "individual_material_review_pending"
+      }
+    },
+    {
+      "sourceId": "medieval-wood-1k",
+      "sourceAssetStatus": "approved_cc0_material_source",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "material_source_files",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/medieval_wood",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "physicalType": "material",
+      "literalUse": "weathered-medieval-timber-with-iron-rivets",
+      "files": [
+        {
+          "role": "albedo",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_diff_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_diff_1k.jpg",
+          "sha256": "66a36635dc3f2db696dbb6939b1d4f86c0b666c898c1b55c6b5d6d9f1896b43e",
+          "bytes": 747216
+        },
+        {
+          "role": "arm",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_arm_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_arm_1k.jpg",
+          "sha256": "0b1f8d9cef2b2b23d1e2b4d5c2322a1e0cd62ff6193cf5a819301266cc0a5734",
+          "bytes": 170315
+        },
+        {
+          "role": "normal_gl",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_nor_gl_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_nor_gl_1k.jpg",
+          "sha256": "90b0ce551282d55830497397edad9b0c3ea690728483de45b7df13eb0850df01",
+          "bytes": 827061
+        }
+      ],
+      "classification": {
+        "typeTags": [
+          "wood",
+          "plank",
+          "timber",
+          "medieval",
+          "material",
+          "pbr"
+        ],
+        "styleTags": [
+          "weathered",
+          "historic",
+          "fantasy-compatible",
+          "interior",
+          "exterior"
+        ],
+        "qualityRole": "high-fidelity-material-seed"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "validate texture color space and channel packing",
+        "author engine material",
+        "review tiling and scale in a representative scene",
+        "record resolution and platform budget"
+      ],
+      "review": {
+        "legal": "passed_polyhaven_cc0_policy",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "individual_material_review_pending",
+        "visual": "individual_material_review_pending"
+      }
+    },
+    {
+      "sourceId": "metal-plate-02-1k",
+      "sourceAssetStatus": "approved_cc0_material_source",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "material_source_files",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/metal_plate_02",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "physicalType": "material",
+      "literalUse": "corroded-steel-plate-surface",
+      "files": [
+        {
+          "role": "albedo",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_diff_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/metal-plate-02-1k/source_files/metal_plate_02_diff_1k.jpg",
+          "sha256": "6e80877d0e9d5973d96298c6091df7ace906b0a6760afc4f3592e4855f3f1d4c",
+          "bytes": 625917
+        },
+        {
+          "role": "arm",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_arm_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/metal-plate-02-1k/source_files/metal_plate_02_arm_1k.jpg",
+          "sha256": "e099a8385d53f4a515b7e0ce94f85d88657fcac49c23979474f5394b22dd550b",
+          "bytes": 1075839
+        },
+        {
+          "role": "normal_gl",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_nor_gl_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/metal-plate-02-1k/source_files/metal_plate_02_nor_gl_1k.jpg",
+          "sha256": "58736fbb8aa4fc6690cf8152b174db65caf22a766375b625fb0087e1bc955bc7",
+          "bytes": 183264
+        }
+      ],
+      "classification": {
+        "typeTags": [
+          "metal",
+          "steel",
+          "rust",
+          "industrial",
+          "material",
+          "pbr"
+        ],
+        "styleTags": [
+          "worn",
+          "oxidized",
+          "industrial",
+          "steampunk-compatible",
+          "sci-fi-compatible"
+        ],
+        "qualityRole": "high-fidelity-material-seed"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "validate texture color space and channel packing",
+        "author engine material",
+        "review tiling and scale in a representative scene",
+        "record resolution and platform budget"
+      ],
+      "review": {
+        "legal": "passed_polyhaven_cc0_policy",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "individual_material_review_pending",
+        "visual": "individual_material_review_pending"
+      }
+    },
+    {
+      "sourceId": "wood-planks-1k",
+      "sourceAssetStatus": "approved_cc0_material_source",
+      "runtimeStatus": "not_reviewed",
+      "assetKind": "material_source_files",
+      "originKind": "upstream_cc0",
+      "sourcePublisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/wood_planks",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "commercialUseConfirmed": true,
+      "redistributionConfirmed": true,
+      "physicalType": "material",
+      "literalUse": "aged-warm-wood-plank-surface",
+      "files": [
+        {
+          "role": "albedo",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_diff_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/wood-planks-1k/source_files/wood_planks_diff_1k.jpg",
+          "sha256": "3b0669f683e4bf10f5a55a381cfa9669a7b8dfd921901829daa3b35acc2bbdec",
+          "bytes": 609525
+        },
+        {
+          "role": "arm",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_arm_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/wood-planks-1k/source_files/wood_planks_arm_1k.jpg",
+          "sha256": "42ffe7f755e1a74c051342e8e5d48e573b6640f4313549f04ea127f19248babd",
+          "bytes": 383696
+        },
+        {
+          "role": "normal_gl",
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_nor_gl_1k.jpg",
+          "path": "assets/approved_cc0/PolyHaven/wood-planks-1k/source_files/wood_planks_nor_gl_1k.jpg",
+          "sha256": "d02abf113e17a8abe97e1be3e9d6d88add242e8c2291e2200d37aa8c68909f25",
+          "bytes": 652441
+        }
+      ],
+      "classification": {
+        "typeTags": [
+          "wood",
+          "plank",
+          "deck",
+          "furniture",
+          "material",
+          "pbr"
+        ],
+        "styleTags": [
+          "warm",
+          "weathered",
+          "coastal",
+          "historic",
+          "interior",
+          "exterior"
+        ],
+        "qualityRole": "high-fidelity-material-seed"
+      },
+      "requiredBeforeRuntimeAdmission": [
+        "validate texture color space and channel packing",
+        "author engine material",
+        "review tiling and scale in a representative scene",
+        "record resolution and platform budget"
+      ],
+      "review": {
+        "legal": "passed_polyhaven_cc0_policy",
+        "archiveIntegrity": "passed_sha256_matches_intake_report",
+        "technical": "individual_material_review_pending",
+        "visual": "individual_material_review_pending"
+      }
+    }
+  ]
+}

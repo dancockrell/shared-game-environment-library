@@ -1,0 +1,51 @@
+{
+  "sourceId": "wood-planks-1k",
+  "sourceAssetStatus": "downloaded_license_verified_pending_material_review",
+  "originKind": "upstream_cc0",
+  "publisher": "PolyHaven",
+  "sourcePage": "https://polyhaven.com/a/wood_planks",
+  "licenseUrl": "https://polyhaven.com/license",
+  "licenseSpdx": "CC0-1.0",
+  "physicalType": "material",
+  "literalUse": "aged-warm-wood-plank-surface",
+  "typeTags": [
+    "wood",
+    "plank",
+    "deck",
+    "furniture",
+    "material",
+    "pbr"
+  ],
+  "styleTags": [
+    "warm",
+    "weathered",
+    "coastal",
+    "historic",
+    "interior",
+    "exterior"
+  ],
+  "qualityRole": "high-fidelity-material-seed",
+  "files": [
+    {
+      "role": "albedo",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_diff_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/wood-planks-1k/source_files/wood_planks_diff_1k.jpg",
+      "sha256": "3b0669f683e4bf10f5a55a381cfa9669a7b8dfd921901829daa3b35acc2bbdec",
+      "bytes": 609525
+    },
+    {
+      "role": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_arm_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/wood-planks-1k/source_files/wood_planks_arm_1k.jpg",
+      "sha256": "42ffe7f755e1a74c051342e8e5d48e573b6640f4313549f04ea127f19248babd",
+      "bytes": 383696
+    },
+    {
+      "role": "normal_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_nor_gl_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/wood-planks-1k/source_files/wood_planks_nor_gl_1k.jpg",
+      "sha256": "d02abf113e17a8abe97e1be3e9d6d88add242e8c2291e2200d37aa8c68909f25",
+      "bytes": 652441
+    }
+  ]
+}

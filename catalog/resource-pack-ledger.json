@@ -1,0 +1,391 @@
+{
+  "ledgerVersion": 1,
+  "policy": "Search this ledger by literal pack type, scene role, source lineage, or tags before selecting a physical asset. Individual outputs remain non-runtime until their engine eligibility changes.",
+  "resourcePackCount": 5,
+  "assetCount": 18,
+  "entries": [
+    {
+      "packId": "fortifications.castle-core.v1",
+      "displayName": "Castle Fortification Core",
+      "packType": "fortifications",
+      "authoringStatus": "source_origin",
+      "engineEligibility": "source_ready_not_engine_reviewed",
+      "sourceLineage": {
+        "kind": "CC0_member_extraction",
+        "upstreamSourceId": "kenney-castle-kit",
+        "upstreamArchive": "assets/approved_cc0/Kenney/kenney-castle-kit/source_archive/kenney_castle-kit.zip",
+        "upstreamLicenseSpdx": "CC0-1.0",
+        "sourceMembers": [
+          "Models/GLB format/wall.glb",
+          "Models/GLB format/tower-base.glb",
+          "Models/GLB format/gate.glb",
+          "Models/GLB format/stairs-stone.glb"
+        ]
+      },
+      "searchTags": [
+        "fortification",
+        "castle",
+        "wall",
+        "tower",
+        "gate",
+        "fantasy",
+        "cc0_source"
+      ],
+      "sceneRoles": [
+        "fort",
+        "ruin",
+        "town_defense",
+        "stronghold"
+      ],
+      "outputs": [
+        {
+          "assetId": "fortifications.castle-core.v1.wall.mesh.v1",
+          "relativePath": "resource_packs/fortifications/castle-core/artifacts/models/wall.glb",
+          "format": "GLB",
+          "sha256": "b2ea00acbf4ba91ff0d4b8b942edf9fa12d821abd0b2c945c57a2b9b3153cfe3",
+          "bytes": 16552,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "fortifications.castle-core.v1.tower-base.mesh.v1",
+          "relativePath": "resource_packs/fortifications/castle-core/artifacts/models/tower-base.glb",
+          "format": "GLB",
+          "sha256": "575e6463b9bc58b8294690b2c1a15409b0624e0253af1a215bf67ea5e9cbaaba",
+          "bytes": 41724,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "fortifications.castle-core.v1.gate.mesh.v1",
+          "relativePath": "resource_packs/fortifications/castle-core/artifacts/models/gate.glb",
+          "format": "GLB",
+          "sha256": "fdc3d5b07f619dcacbf2af36024dc9a356696e541f6ce409a5305be782665ec9",
+          "bytes": 13880,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "fortifications.castle-core.v1.stairs-stone.mesh.v1",
+          "relativePath": "resource_packs/fortifications/castle-core/artifacts/models/stairs-stone.glb",
+          "format": "GLB",
+          "sha256": "ec21b1d65c04ba6384734c31ac542bb4015541e652c411796fd7bcf292e6413c",
+          "bytes": 9836,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        }
+      ],
+      "review": {
+        "legal": "approved_cc0_source_lineage",
+        "literalSemantics": "approved_literal_member_selection",
+        "technical": "source_member_hashes_verified_import_pending",
+        "visual": "source_member_preview_pending",
+        "reviewer": "Codex",
+        "createdAt": "2026-09-03"
+      }
+    },
+    {
+      "packId": "geology.basalt-cliff-core.v1",
+      "displayName": "Basalt Cliff Core",
+      "packType": "geology",
+      "authoringStatus": "derivative",
+      "engineEligibility": "source_ready_not_engine_reviewed",
+      "sourceLineage": {
+        "kind": "CC0_derived",
+        "upstreamSourceId": "kenney-nature-kit-2.1",
+        "upstreamArchive": "assets/approved_cc0/Kenney/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
+        "upstreamLicenseSpdx": "CC0-1.0",
+        "derivativeMethod": "deterministic OBJ composition with Y-axis rotation, placement, and original basalt material assignment",
+        "sourceMembers": [
+          "Models/OBJ format/cliff_cave_rock.obj",
+          "Models/OBJ format/cliff_half_rock.obj",
+          "Models/OBJ format/cliff_top_rock.obj"
+        ]
+      },
+      "searchTags": [
+        "geology",
+        "basalt",
+        "cliff",
+        "rock",
+        "cave",
+        "coast",
+        "volcanic",
+        "stylized",
+        "low_poly",
+        "cc0_derived",
+        "neutral_environment"
+      ],
+      "sceneRoles": [
+        "foreground_anchor",
+        "path_boundary",
+        "cave_mouth_dressing",
+        "coastal_escarpment"
+      ],
+      "outputs": [
+        {
+          "assetId": "geology.basalt-cliff-core.mesh.v1",
+          "relativePath": "resource_packs/geology/basalt-cliff-core/artifacts/meshes/basalt_cliff_core.obj",
+          "format": "OBJ",
+          "sha256": "c5cbe9b383c9b804aecd17b774a1fa530ce067d70d77a5260c401a106933a570",
+          "bytes": 14532,
+          "literalSelectionState": "approved_neutral_geology",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        }
+      ],
+      "review": {
+        "legal": "approved_cc0_source_lineage",
+        "literalSemantics": "approved_neutral_geology",
+        "technical": "mesh_composition_verified_import_pending",
+        "visual": "base_silhouette_verified_render_review_pending",
+        "reviewer": "Codex",
+        "createdAt": "2026-09-03"
+      }
+    },
+    {
+      "packId": "maritime.pirate-prop-core.v1",
+      "displayName": "Maritime Prop Core",
+      "packType": "maritime",
+      "authoringStatus": "source_origin",
+      "engineEligibility": "source_ready_not_engine_reviewed",
+      "sourceLineage": {
+        "kind": "CC0_member_extraction",
+        "upstreamSourceId": "kenney-pirate-kit",
+        "upstreamArchive": "assets/approved_cc0/Kenney/kenney-pirate-kit/source_archive/kenney_pirate-kit.zip",
+        "upstreamLicenseSpdx": "CC0-1.0",
+        "sourceMembers": [
+          "Models/GLB format/barrel.glb",
+          "Models/GLB format/crate.glb",
+          "Models/GLB format/boat-row-small.glb",
+          "Models/GLB format/cannon.glb"
+        ]
+      },
+      "searchTags": [
+        "maritime",
+        "pirate",
+        "dock",
+        "boat",
+        "barrel",
+        "cannon",
+        "cc0_source"
+      ],
+      "sceneRoles": [
+        "dock_dressing",
+        "ship_dressing",
+        "coastal_outpost"
+      ],
+      "outputs": [
+        {
+          "assetId": "maritime.pirate-prop-core.v1.barrel.mesh.v1",
+          "relativePath": "resource_packs/maritime/pirate-prop-core/artifacts/models/barrel.glb",
+          "format": "GLB",
+          "sha256": "7616dedf7c1023afa6ecd3c52a4609460aae0e582dee14e60ec5e47c1174793b",
+          "bytes": 14092,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "maritime.pirate-prop-core.v1.crate.mesh.v1",
+          "relativePath": "resource_packs/maritime/pirate-prop-core/artifacts/models/crate.glb",
+          "format": "GLB",
+          "sha256": "b525674e07c8b83667512a8dd93be0d7684358347d0e64d2bb16b156ac382ed1",
+          "bytes": 9232,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "maritime.pirate-prop-core.v1.boat-row-small.mesh.v1",
+          "relativePath": "resource_packs/maritime/pirate-prop-core/artifacts/models/boat-row-small.glb",
+          "format": "GLB",
+          "sha256": "846d9b17a73f80e03f7201d3bf0ad1b1bbb49e114b99697740d3426e4f42482d",
+          "bytes": 17616,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "maritime.pirate-prop-core.v1.cannon.mesh.v1",
+          "relativePath": "resource_packs/maritime/pirate-prop-core/artifacts/models/cannon.glb",
+          "format": "GLB",
+          "sha256": "b2ea71475fa52de312a0fe3fb9085e1a3f83f9e6bb167668fb62f71383cbc41a",
+          "bytes": 24024,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        }
+      ],
+      "review": {
+        "legal": "approved_cc0_source_lineage",
+        "literalSemantics": "approved_literal_member_selection",
+        "technical": "source_member_hashes_verified_import_pending",
+        "visual": "source_member_preview_pending",
+        "reviewer": "Codex",
+        "createdAt": "2026-09-03"
+      }
+    },
+    {
+      "packId": "roads.modern-street-core.v1",
+      "displayName": "Modern Street Core",
+      "packType": "roads",
+      "authoringStatus": "source_origin",
+      "engineEligibility": "source_ready_not_engine_reviewed",
+      "sourceLineage": {
+        "kind": "CC0_member_extraction",
+        "upstreamSourceId": "kenney-city-kit-roads",
+        "upstreamArchive": "assets/approved_cc0/Kenney/kenney-city-kit-roads/source_archive/kenney_city-kit-roads.zip",
+        "upstreamLicenseSpdx": "CC0-1.0",
+        "sourceMembers": [
+          "Models/GLB format/road-straight.glb",
+          "Models/GLB format/road-bend.glb",
+          "Models/GLB format/road-crossing.glb",
+          "Models/GLB format/road-end.glb"
+        ]
+      },
+      "searchTags": [
+        "roads",
+        "street",
+        "city",
+        "suburban",
+        "modern",
+        "cc0_source"
+      ],
+      "sceneRoles": [
+        "modern_city",
+        "suburb",
+        "industrial_approach"
+      ],
+      "outputs": [
+        {
+          "assetId": "roads.modern-street-core.v1.road-straight.mesh.v1",
+          "relativePath": "resource_packs/roads/modern-street-core/artifacts/models/road-straight.glb",
+          "format": "GLB",
+          "sha256": "f8f744fb6fc96dedd5ad1f763b550166f2624a3757bf36b4b39969d2e7cacac5",
+          "bytes": 5248,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "roads.modern-street-core.v1.road-bend.mesh.v1",
+          "relativePath": "resource_packs/roads/modern-street-core/artifacts/models/road-bend.glb",
+          "format": "GLB",
+          "sha256": "9752f63448c8e7a3d30ca2e0e1bb6784c5adb72b56a2b05667be8d546c1674bc",
+          "bytes": 20164,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "roads.modern-street-core.v1.road-crossing.mesh.v1",
+          "relativePath": "resource_packs/roads/modern-street-core/artifacts/models/road-crossing.glb",
+          "format": "GLB",
+          "sha256": "eb8575335f77da513add4a5277a7b60cad4886c07966f024b15cf55e5966cde3",
+          "bytes": 8700,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "roads.modern-street-core.v1.road-end.mesh.v1",
+          "relativePath": "resource_packs/roads/modern-street-core/artifacts/models/road-end.glb",
+          "format": "GLB",
+          "sha256": "bdf62518cfcc2c1a1425a4c8bc845e8e344f9c8b34dfb364b6b7d442e6171f11",
+          "bytes": 4940,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        }
+      ],
+      "review": {
+        "legal": "approved_cc0_source_lineage",
+        "literalSemantics": "approved_literal_member_selection",
+        "technical": "source_member_hashes_verified_import_pending",
+        "visual": "source_member_preview_pending",
+        "reviewer": "Codex",
+        "createdAt": "2026-09-03"
+      }
+    },
+    {
+      "packId": "sci-fi.modular-corridor-core.v1",
+      "displayName": "Modular Corridor Core",
+      "packType": "sci-fi",
+      "authoringStatus": "source_origin",
+      "engineEligibility": "source_ready_not_engine_reviewed",
+      "sourceLineage": {
+        "kind": "CC0_member_extraction",
+        "upstreamSourceId": "kenney-modular-space-kit",
+        "upstreamArchive": "assets/approved_cc0/Kenney/kenney-modular-space-kit/source_archive/kenney_modular-space-kit_1.0.zip",
+        "upstreamLicenseSpdx": "CC0-1.0",
+        "sourceMembers": [
+          "Models/GLB format/corridor.glb",
+          "Models/GLB format/corridor-corner.glb",
+          "Models/GLB format/corridor-intersection.glb",
+          "Models/GLB format/room-small.glb",
+          "Models/GLB format/gate-door.glb"
+        ]
+      },
+      "searchTags": [
+        "sci-fi",
+        "corridor",
+        "modular",
+        "station",
+        "interior",
+        "cc0_source"
+      ],
+      "sceneRoles": [
+        "station",
+        "ship_interior",
+        "research_base",
+        "sci_fi_dungeon"
+      ],
+      "outputs": [
+        {
+          "assetId": "sci-fi.modular-corridor-core.v1.corridor.mesh.v1",
+          "relativePath": "resource_packs/sci-fi/modular-corridor-core/artifacts/models/corridor.glb",
+          "format": "GLB",
+          "sha256": "6805b35312a2d51a7966459fc016e27ca788decc776ed40f584922e89f485f8b",
+          "bytes": 75632,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "sci-fi.modular-corridor-core.v1.corridor-corner.mesh.v1",
+          "relativePath": "resource_packs/sci-fi/modular-corridor-core/artifacts/models/corridor-corner.glb",
+          "format": "GLB",
+          "sha256": "e0cb429b03abc641d6e5c5c2df039a0ef9c50a9a56a58c0542c3cbaeada49019",
+          "bytes": 100020,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "sci-fi.modular-corridor-core.v1.corridor-intersection.mesh.v1",
+          "relativePath": "resource_packs/sci-fi/modular-corridor-core/artifacts/models/corridor-intersection.glb",
+          "format": "GLB",
+          "sha256": "128fef49b225e9394c52755128a1dc195b8c3776f58239daf0ec24ed512ba3d3",
+          "bytes": 25556,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "sci-fi.modular-corridor-core.v1.room-small.mesh.v1",
+          "relativePath": "resource_packs/sci-fi/modular-corridor-core/artifacts/models/room-small.glb",
+          "format": "GLB",
+          "sha256": "b77a7d211401bda96f611ff2b0a10c8aff1a41cccb9d46add21f86a4feb029a7",
+          "bytes": 424016,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        },
+        {
+          "assetId": "sci-fi.modular-corridor-core.v1.gate-door.mesh.v1",
+          "relativePath": "resource_packs/sci-fi/modular-corridor-core/artifacts/models/gate-door.glb",
+          "format": "GLB",
+          "sha256": "53e943314ba317a20bf0021d9cd474809779d25124f677f082cf28bad653812a",
+          "bytes": 139124,
+          "literalSelectionState": "approved_literal_member_selection",
+          "engineEligibility": "source_ready_not_engine_reviewed"
+        }
+      ],
+      "review": {
+        "legal": "approved_cc0_source_lineage",
+        "literalSemantics": "approved_literal_member_selection",
+        "technical": "source_member_hashes_verified_import_pending",
+        "visual": "source_member_preview_pending",
+        "reviewer": "Codex",
+        "createdAt": "2026-09-03"
+      }
+    }
+  ]
+}

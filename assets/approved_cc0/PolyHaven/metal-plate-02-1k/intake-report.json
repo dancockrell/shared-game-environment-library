@@ -1,0 +1,50 @@
+{
+  "sourceId": "metal-plate-02-1k",
+  "sourceAssetStatus": "downloaded_license_verified_pending_material_review",
+  "originKind": "upstream_cc0",
+  "publisher": "PolyHaven",
+  "sourcePage": "https://polyhaven.com/a/metal_plate_02",
+  "licenseUrl": "https://polyhaven.com/license",
+  "licenseSpdx": "CC0-1.0",
+  "physicalType": "material",
+  "literalUse": "corroded-steel-plate-surface",
+  "typeTags": [
+    "metal",
+    "steel",
+    "rust",
+    "industrial",
+    "material",
+    "pbr"
+  ],
+  "styleTags": [
+    "worn",
+    "oxidized",
+    "industrial",
+    "steampunk-compatible",
+    "sci-fi-compatible"
+  ],
+  "qualityRole": "high-fidelity-material-seed",
+  "files": [
+    {
+      "role": "albedo",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_diff_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/metal-plate-02-1k/source_files/metal_plate_02_diff_1k.jpg",
+      "sha256": "6e80877d0e9d5973d96298c6091df7ace906b0a6760afc4f3592e4855f3f1d4c",
+      "bytes": 625917
+    },
+    {
+      "role": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_arm_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/metal-plate-02-1k/source_files/metal_plate_02_arm_1k.jpg",
+      "sha256": "e099a8385d53f4a515b7e0ce94f85d88657fcac49c23979474f5394b22dd550b",
+      "bytes": 1075839
+    },
+    {
+      "role": "normal_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_nor_gl_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/metal-plate-02-1k/source_files/metal_plate_02_nor_gl_1k.jpg",
+      "sha256": "58736fbb8aa4fc6690cf8152b174db65caf22a766375b625fb0087e1bc955bc7",
+      "bytes": 183264
+    }
+  ]
+}

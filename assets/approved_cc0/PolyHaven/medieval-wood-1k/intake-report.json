@@ -1,0 +1,50 @@
+{
+  "sourceId": "medieval-wood-1k",
+  "sourceAssetStatus": "downloaded_license_verified_pending_material_review",
+  "originKind": "upstream_cc0",
+  "publisher": "PolyHaven",
+  "sourcePage": "https://polyhaven.com/a/medieval_wood",
+  "licenseUrl": "https://polyhaven.com/license",
+  "licenseSpdx": "CC0-1.0",
+  "physicalType": "material",
+  "literalUse": "weathered-medieval-timber-with-iron-rivets",
+  "typeTags": [
+    "wood",
+    "plank",
+    "timber",
+    "medieval",
+    "material",
+    "pbr"
+  ],
+  "styleTags": [
+    "weathered",
+    "historic",
+    "fantasy-compatible",
+    "interior",
+    "exterior"
+  ],
+  "qualityRole": "high-fidelity-material-seed",
+  "files": [
+    {
+      "role": "albedo",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_diff_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_diff_1k.jpg",
+      "sha256": "66a36635dc3f2db696dbb6939b1d4f86c0b666c898c1b55c6b5d6d9f1896b43e",
+      "bytes": 747216
+    },
+    {
+      "role": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_arm_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_arm_1k.jpg",
+      "sha256": "0b1f8d9cef2b2b23d1e2b4d5c2322a1e0cd62ff6193cf5a819301266cc0a5734",
+      "bytes": 170315
+    },
+    {
+      "role": "normal_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_nor_gl_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_nor_gl_1k.jpg",
+      "sha256": "90b0ce551282d55830497397edad9b0c3ea690728483de45b7df13eb0850df01",
+      "bytes": 827061
+    }
+  ]
+}

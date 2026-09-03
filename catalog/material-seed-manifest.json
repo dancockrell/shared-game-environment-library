@@ -1,0 +1,115 @@
+{
+  "manifestVersion": 1,
+  "purpose": "Small, literal-use PBR material seeds. These are canonical CC0 source inputs, not automatically approved runtime materials.",
+  "archiveRoot": "assets/approved_cc0/PolyHaven",
+  "entries": [
+    {
+      "sourceId": "rock-boulder-dry-1k",
+      "publisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/rock_boulder_dry",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "originKind": "upstream_cc0",
+      "physicalType": "material",
+      "literalUse": "dry-weathered-boulder-surface",
+      "typeTags": ["geology", "rock", "boulder", "material", "pbr"],
+      "styleTags": ["natural", "weathered", "cracked", "outdoor", "neutral"],
+      "qualityRole": "high-fidelity-material-seed",
+      "files": [
+        { "role": "albedo", "filename": "rock_boulder_dry_diff_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_diff_1k.jpg" },
+        { "role": "arm", "filename": "rock_boulder_dry_arm_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_arm_1k.jpg" },
+        { "role": "normal_gl", "filename": "rock_boulder_dry_nor_gl_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/rock_boulder_dry/rock_boulder_dry_nor_gl_1k.jpg" }
+      ]
+    },
+    {
+      "sourceId": "aerial-rocks-04-1k",
+      "publisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/aerial_rocks_04",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "originKind": "upstream_cc0",
+      "physicalType": "material",
+      "literalUse": "mossy-cliff-and-ground-surface",
+      "typeTags": ["geology", "cliff", "ground", "moss", "material", "pbr"],
+      "styleTags": ["natural", "mossy", "weathered", "outdoor", "cool"],
+      "qualityRole": "high-fidelity-material-seed",
+      "files": [
+        { "role": "albedo", "filename": "aerial_rocks_04_diff_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_diff_1k.jpg" },
+        { "role": "arm", "filename": "aerial_rocks_04_arm_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_arm_1k.jpg" },
+        { "role": "normal_gl", "filename": "aerial_rocks_04_nor_gl_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_nor_gl_1k.jpg" }
+      ]
+    },
+    {
+      "sourceId": "fabric-pattern-05-1k",
+      "publisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/fabric_pattern_05",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "originKind": "upstream_cc0",
+      "physicalType": "material",
+      "literalUse": "woven-plaid-cloth-surface",
+      "typeTags": ["fabric", "plaid", "cloth", "material", "pbr"],
+      "styleTags": ["woven", "olive", "blue", "interior", "costume-capable"],
+      "qualityRole": "high-fidelity-material-seed",
+      "files": [
+        { "role": "albedo", "filename": "fabric_pattern_05_col_01_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_col_01_1k.jpg" },
+        { "role": "normal_gl", "filename": "fabric_pattern_05_nor_gl_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_nor_gl_1k.jpg" },
+        { "role": "roughness", "filename": "fabric_pattern_05_rough_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_05/fabric_pattern_05_rough_1k.jpg" }
+      ]
+    },
+    {
+      "sourceId": "medieval-wood-1k",
+      "publisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/medieval_wood",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "originKind": "upstream_cc0",
+      "physicalType": "material",
+      "literalUse": "weathered-medieval-timber-with-iron-rivets",
+      "typeTags": ["wood", "plank", "timber", "medieval", "material", "pbr"],
+      "styleTags": ["weathered", "historic", "fantasy-compatible", "interior", "exterior"],
+      "qualityRole": "high-fidelity-material-seed",
+      "files": [
+        { "role": "albedo", "filename": "medieval_wood_diff_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_diff_1k.jpg" },
+        { "role": "arm", "filename": "medieval_wood_arm_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_arm_1k.jpg" },
+        { "role": "normal_gl", "filename": "medieval_wood_nor_gl_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_wood/medieval_wood_nor_gl_1k.jpg" }
+      ]
+    },
+    {
+      "sourceId": "metal-plate-02-1k",
+      "publisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/metal_plate_02",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "originKind": "upstream_cc0",
+      "physicalType": "material",
+      "literalUse": "corroded-steel-plate-surface",
+      "typeTags": ["metal", "steel", "rust", "industrial", "material", "pbr"],
+      "styleTags": ["worn", "oxidized", "industrial", "steampunk-compatible", "sci-fi-compatible"],
+      "qualityRole": "high-fidelity-material-seed",
+      "files": [
+        { "role": "albedo", "filename": "metal_plate_02_diff_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_diff_1k.jpg" },
+        { "role": "arm", "filename": "metal_plate_02_arm_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_arm_1k.jpg" },
+        { "role": "normal_gl", "filename": "metal_plate_02_nor_gl_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate_02/metal_plate_02_nor_gl_1k.jpg" }
+      ]
+    },
+    {
+      "sourceId": "wood-planks-1k",
+      "publisher": "PolyHaven",
+      "sourcePage": "https://polyhaven.com/a/wood_planks",
+      "licenseUrl": "https://polyhaven.com/license",
+      "licenseSpdx": "CC0-1.0",
+      "originKind": "upstream_cc0",
+      "physicalType": "material",
+      "literalUse": "aged-warm-wood-plank-surface",
+      "typeTags": ["wood", "plank", "deck", "furniture", "material", "pbr"],
+      "styleTags": ["warm", "weathered", "coastal", "historic", "interior", "exterior"],
+      "qualityRole": "high-fidelity-material-seed",
+      "files": [
+        { "role": "albedo", "filename": "wood_planks_diff_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_diff_1k.jpg" },
+        { "role": "arm", "filename": "wood_planks_arm_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_arm_1k.jpg" },
+        { "role": "normal_gl", "filename": "wood_planks_nor_gl_1k.jpg", "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_nor_gl_1k.jpg" }
+      ]
+    }
+  ]
+}

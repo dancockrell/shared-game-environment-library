@@ -1,0 +1,50 @@
+{
+  "sourceId": "aerial-rocks-04-1k",
+  "sourceAssetStatus": "downloaded_license_verified_pending_material_review",
+  "originKind": "upstream_cc0",
+  "publisher": "PolyHaven",
+  "sourcePage": "https://polyhaven.com/a/aerial_rocks_04",
+  "licenseUrl": "https://polyhaven.com/license",
+  "licenseSpdx": "CC0-1.0",
+  "physicalType": "material",
+  "literalUse": "mossy-cliff-and-ground-surface",
+  "typeTags": [
+    "geology",
+    "cliff",
+    "ground",
+    "moss",
+    "material",
+    "pbr"
+  ],
+  "styleTags": [
+    "natural",
+    "mossy",
+    "weathered",
+    "outdoor",
+    "cool"
+  ],
+  "qualityRole": "high-fidelity-material-seed",
+  "files": [
+    {
+      "role": "albedo",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_diff_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/aerial-rocks-04-1k/source_files/aerial_rocks_04_diff_1k.jpg",
+      "sha256": "5ac472016a6740bd3c62b1d719bf128e0659022fb35853f4e847737522337ffa",
+      "bytes": 841479
+    },
+    {
+      "role": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_arm_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/aerial-rocks-04-1k/source_files/aerial_rocks_04_arm_1k.jpg",
+      "sha256": "139cb622a103dd55e57de13d19e93f55977df2aaf9bf6a8a7b1de36da6d1c708",
+      "bytes": 245830
+    },
+    {
+      "role": "normal_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_04/aerial_rocks_04_nor_gl_1k.jpg",
+      "path": "assets/approved_cc0/PolyHaven/aerial-rocks-04-1k/source_files/aerial_rocks_04_nor_gl_1k.jpg",
+      "sha256": "b4fe185783020d81b595397ef3b920475268a4873dc8b6efdd58f4312e07140b",
+      "bytes": 1242717
+    }
+  ]
+}

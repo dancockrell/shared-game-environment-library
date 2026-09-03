@@ -1,0 +1,155 @@
+{
+  "packId": "sci-fi.modular-corridor-core.v1",
+  "displayName": "Modular Corridor Core",
+  "packType": "sci-fi",
+  "authoringStatus": "source_origin",
+  "engineEligibility": "source_ready_not_engine_reviewed",
+  "style": {
+    "renderLanguage": [
+      "stylized_3d",
+      "low_poly",
+      "paintable_base"
+    ],
+    "physicalSubject": [
+      "corridor",
+      "junction",
+      "room",
+      "door"
+    ],
+    "sceneRoles": [
+      "station",
+      "ship_interior",
+      "research_base",
+      "sci_fi_dungeon"
+    ],
+    "paletteIntent": [
+      "neutral_panels",
+      "project_emissive_accent"
+    ],
+    "forbiddenClaims": [
+      "named_vessel",
+      "project_specific_faction_marking"
+    ]
+  },
+  "sourceLineage": {
+    "kind": "CC0_member_extraction",
+    "upstreamSourceId": "kenney-modular-space-kit",
+    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-modular-space-kit/source_archive/kenney_modular-space-kit_1.0.zip",
+    "upstreamLicenseSpdx": "CC0-1.0",
+    "sourceMembers": [
+      "Models/GLB format/corridor.glb",
+      "Models/GLB format/corridor-corner.glb",
+      "Models/GLB format/corridor-intersection.glb",
+      "Models/GLB format/room-small.glb",
+      "Models/GLB format/gate-door.glb"
+    ]
+  },
+  "outputs": [
+    {
+      "assetId": "sci-fi.modular-corridor-core.v1.corridor.mesh.v1",
+      "path": "artifacts/models/corridor.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/corridor.glb",
+      "sha256": "6805b35312a2d51a7966459fc016e27ca788decc776ed40f584922e89f485f8b",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "sci-fi.modular-corridor-core.v1.corridor-corner.mesh.v1",
+      "path": "artifacts/models/corridor-corner.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/corridor-corner.glb",
+      "sha256": "e0cb429b03abc641d6e5c5c2df039a0ef9c50a9a56a58c0542c3cbaeada49019",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "sci-fi.modular-corridor-core.v1.corridor-intersection.mesh.v1",
+      "path": "artifacts/models/corridor-intersection.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/corridor-intersection.glb",
+      "sha256": "128fef49b225e9394c52755128a1dc195b8c3776f58239daf0ec24ed512ba3d3",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "sci-fi.modular-corridor-core.v1.room-small.mesh.v1",
+      "path": "artifacts/models/room-small.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/room-small.glb",
+      "sha256": "b77a7d211401bda96f611ff2b0a10c8aff1a41cccb9d46add21f86a4feb029a7",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "sci-fi.modular-corridor-core.v1.gate-door.mesh.v1",
+      "path": "artifacts/models/gate-door.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/gate-door.glb",
+      "sha256": "53e943314ba317a20bf0021d9cd474809779d25124f677f082cf28bad653812a",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    }
+  ],
+  "review": {
+    "legal": "approved_cc0_source_lineage",
+    "literalSemantics": "approved_literal_member_selection",
+    "technical": "source_member_hashes_verified_import_pending",
+    "visual": "source_member_preview_pending",
+    "reviewer": "Codex",
+    "createdAt": "2026-09-03"
+  },
+  "searchTags": [
+    "sci-fi",
+    "corridor",
+    "modular",
+    "station",
+    "interior",
+    "cc0_source"
+  ]
+}

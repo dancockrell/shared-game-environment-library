@@ -1,0 +1,138 @@
+{
+  "packId": "fortifications.castle-core.v1",
+  "displayName": "Castle Fortification Core",
+  "packType": "fortifications",
+  "authoringStatus": "source_origin",
+  "engineEligibility": "source_ready_not_engine_reviewed",
+  "style": {
+    "renderLanguage": [
+      "stylized_3d",
+      "low_poly",
+      "paintable_base"
+    ],
+    "physicalSubject": [
+      "wall",
+      "tower",
+      "gate",
+      "stone_stairs"
+    ],
+    "sceneRoles": [
+      "fort",
+      "ruin",
+      "town_defense",
+      "stronghold"
+    ],
+    "paletteIntent": [
+      "stone",
+      "weathered_metal",
+      "optional_banner_color"
+    ],
+    "forbiddenClaims": [
+      "named_fort",
+      "culture_specific_claim"
+    ]
+  },
+  "sourceLineage": {
+    "kind": "CC0_member_extraction",
+    "upstreamSourceId": "kenney-castle-kit",
+    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-castle-kit/source_archive/kenney_castle-kit.zip",
+    "upstreamLicenseSpdx": "CC0-1.0",
+    "sourceMembers": [
+      "Models/GLB format/wall.glb",
+      "Models/GLB format/tower-base.glb",
+      "Models/GLB format/gate.glb",
+      "Models/GLB format/stairs-stone.glb"
+    ]
+  },
+  "outputs": [
+    {
+      "assetId": "fortifications.castle-core.v1.wall.mesh.v1",
+      "path": "artifacts/models/wall.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/wall.glb",
+      "sha256": "b2ea00acbf4ba91ff0d4b8b942edf9fa12d821abd0b2c945c57a2b9b3153cfe3",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "fortifications.castle-core.v1.tower-base.mesh.v1",
+      "path": "artifacts/models/tower-base.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/tower-base.glb",
+      "sha256": "575e6463b9bc58b8294690b2c1a15409b0624e0253af1a215bf67ea5e9cbaaba",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "fortifications.castle-core.v1.gate.mesh.v1",
+      "path": "artifacts/models/gate.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/gate.glb",
+      "sha256": "fdc3d5b07f619dcacbf2af36024dc9a356696e541f6ce409a5305be782665ec9",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "fortifications.castle-core.v1.stairs-stone.mesh.v1",
+      "path": "artifacts/models/stairs-stone.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLB format/stairs-stone.glb",
+      "sha256": "ec21b1d65c04ba6384734c31ac542bb4015541e652c411796fd7bcf292e6413c",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    }
+  ],
+  "review": {
+    "legal": "approved_cc0_source_lineage",
+    "literalSemantics": "approved_literal_member_selection",
+    "technical": "source_member_hashes_verified_import_pending",
+    "visual": "source_member_preview_pending",
+    "reviewer": "Codex",
+    "createdAt": "2026-09-03"
+  },
+  "searchTags": [
+    "fortification",
+    "castle",
+    "wall",
+    "tower",
+    "gate",
+    "fantasy",
+    "cc0_source"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "manifestVersion": 1,
+  "purpose": "Named, literal-use extracts from approved CC0 source archives. The extracted GLBs remain source-origin assets until they pass engine-specific review.",
+  "packs": [
+    {
+      "packPath": "resource_packs/roads/modern-street-core",
+      "packId": "roads.modern-street-core.v1",
+      "displayName": "Modern Street Core",
+      "packType": "roads",
+      "upstreamSourceId": "kenney-city-kit-roads",
+      "upstreamArchive": "assets/approved_cc0/Kenney/kenney-city-kit-roads/source_archive/kenney_city-kit-roads.zip",
+      "style": { "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"], "physicalSubject": ["street", "sidewalk", "intersection", "road"], "sceneRoles": ["modern_city", "suburb", "industrial_approach"], "paletteIntent": ["neutral_asphalt", "optional_project_decals"], "forbiddenClaims": ["named_city", "project_specific_traffic_system"] },
+      "searchTags": ["roads", "street", "city", "suburban", "modern", "cc0_source"],
+      "members": ["Models/GLB format/road-straight.glb", "Models/GLB format/road-bend.glb", "Models/GLB format/road-crossing.glb", "Models/GLB format/road-end.glb"]
+    },
+    {
+      "packPath": "resource_packs/maritime/pirate-prop-core",
+      "packId": "maritime.pirate-prop-core.v1",
+      "displayName": "Maritime Prop Core",
+      "packType": "maritime",
+      "upstreamSourceId": "kenney-pirate-kit",
+      "upstreamArchive": "assets/approved_cc0/Kenney/kenney-pirate-kit/source_archive/kenney_pirate-kit.zip",
+      "style": { "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"], "physicalSubject": ["barrel", "crate", "rowboat", "cannon"], "sceneRoles": ["dock_dressing", "ship_dressing", "coastal_outpost"], "paletteIntent": ["weathered_wood", "iron", "optional_faction_color"], "forbiddenClaims": ["named_ship", "project_specific_symbol"] },
+      "searchTags": ["maritime", "pirate", "dock", "boat", "barrel", "cannon", "cc0_source"],
+      "members": ["Models/GLB format/barrel.glb", "Models/GLB format/crate.glb", "Models/GLB format/boat-row-small.glb", "Models/GLB format/cannon.glb"]
+    },
+    {
+      "packPath": "resource_packs/fortifications/castle-core",
+      "packId": "fortifications.castle-core.v1",
+      "displayName": "Castle Fortification Core",
+      "packType": "fortifications",
+      "upstreamSourceId": "kenney-castle-kit",
+      "upstreamArchive": "assets/approved_cc0/Kenney/kenney-castle-kit/source_archive/kenney_castle-kit.zip",
+      "style": { "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"], "physicalSubject": ["wall", "tower", "gate", "stone_stairs"], "sceneRoles": ["fort", "ruin", "town_defense", "stronghold"], "paletteIntent": ["stone", "weathered_metal", "optional_banner_color"], "forbiddenClaims": ["named_fort", "culture_specific_claim"] },
+      "searchTags": ["fortification", "castle", "wall", "tower", "gate", "fantasy", "cc0_source"],
+      "members": ["Models/GLB format/wall.glb", "Models/GLB format/tower-base.glb", "Models/GLB format/gate.glb", "Models/GLB format/stairs-stone.glb"]
+    },
+    {
+      "packPath": "resource_packs/sci-fi/modular-corridor-core",
+      "packId": "sci-fi.modular-corridor-core.v1",
+      "displayName": "Modular Corridor Core",
+      "packType": "sci-fi",
+      "upstreamSourceId": "kenney-modular-space-kit",
+      "upstreamArchive": "assets/approved_cc0/Kenney/kenney-modular-space-kit/source_archive/kenney_modular-space-kit_1.0.zip",
+      "style": { "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"], "physicalSubject": ["corridor", "junction", "room", "door"], "sceneRoles": ["station", "ship_interior", "research_base", "sci_fi_dungeon"], "paletteIntent": ["neutral_panels", "project_emissive_accent"], "forbiddenClaims": ["named_vessel", "project_specific_faction_marking"] },
+      "searchTags": ["sci-fi", "corridor", "modular", "station", "interior", "cc0_source"],
+      "members": ["Models/GLB format/corridor.glb", "Models/GLB format/corridor-corner.glb", "Models/GLB format/corridor-intersection.glb", "Models/GLB format/room-small.glb", "Models/GLB format/gate-door.glb"]
+    }
+  ]
+}
