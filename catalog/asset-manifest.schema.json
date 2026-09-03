@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dancockrell/shared-game-environment-library/catalog/asset-manifest.schema.json",
+  "title": "Shared Game Environment Library Asset Entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "assetId", "admissionStatus", "assetKind", "domain", "sourceUrl",
+    "sourcePublisher", "retrievedAt", "licenseSpdx", "licenseUrl",
+    "commercialUseConfirmed", "redistributionConfirmed", "sourceFiles",
+    "technicalContract", "tags"
+  ],
+  "properties": {
+    "assetId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$" },
+    "admissionStatus": { "enum": ["source_verified_not_downloaded", "candidate", "approved", "quarantined", "rejected"] },
+    "assetKind": { "enum": ["model", "texture", "hdri", "material", "vfx_reference", "rig_component", "archive"] },
+    "domain": { "enum": ["terrain", "flora", "geology", "water", "architecture", "neutral_prop", "weapon", "armour", "material", "rig_infrastructure", "vfx"] },
+    "sourceUrl": { "type": "string", "format": "uri" },
+    "sourcePublisher": { "type": "string", "minLength": 1 },
+    "sourceCreator": { "type": "string" },
+    "retrievedAt": { "type": "string", "format": "date" },
+    "licenseSpdx": { "type": "string" },
+    "licenseUrl": { "type": "string", "format": "uri" },
+    "licenseEvidencePath": { "type": "string" },
+    "commercialUseConfirmed": { "type": "boolean" },
+    "redistributionConfirmed": { "type": "boolean" },
+    "sourceFiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["originalFilename", "sha256", "admittedPaths"],
+        "properties": {
+          "originalFilename": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "admittedPaths": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "technicalContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scaleMeters", "forwardAxis", "pivotPolicy", "materialSlots", "lodPolicy"],
+      "properties": {
+        "scaleMeters": { "type": "number", "exclusiveMinimum": 0 },
+        "forwardAxis": { "const": "-Z" },
+        "pivotPolicy": { "type": "string" },
+        "collisionPolicy": { "type": "string" },
+        "materialSlots": { "type": "array", "items": { "type": "string" } },
+        "lodPolicy": { "type": "string" }
+      }
+    },
+    "tags": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "reviewer": { "type": "string" },
+    "notes": { "type": "string" }
+  }
+}
