@@ -1,0 +1,53 @@
+{
+  "packId": "geology.basalt-cliff-core.v1",
+  "displayName": "Basalt Cliff Core",
+  "packType": "geology",
+  "authoringStatus": "derivative",
+  "engineEligibility": "source_ready_not_engine_reviewed",
+  "style": {
+    "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"],
+    "physicalSubject": ["basalt", "cliff", "cave_approach", "rock_formation"],
+    "sceneRoles": ["foreground_anchor", "path_boundary", "cave_mouth_dressing", "coastal_escarpment"],
+    "paletteIntent": ["charcoal", "warm_black", "desaturated_brown", "optional_moss_overlay"],
+    "forbiddenClaims": ["named_location", "culture_specific_architecture", "project_specific_landmark"]
+  },
+  "sourceLineage": {
+    "kind": "CC0_derived",
+    "upstreamSourceId": "kenney-nature-kit-2.1",
+    "upstreamArchive": "assets/approved_cc0/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
+    "upstreamLicenseSpdx": "CC0-1.0",
+    "derivativeMethod": "deterministic OBJ composition with Y-axis rotation, placement, and original basalt material assignment",
+    "sourceMembers": [
+      "Models/OBJ format/cliff_cave_rock.obj",
+      "Models/OBJ format/cliff_half_rock.obj",
+      "Models/OBJ format/cliff_top_rock.obj"
+    ]
+  },
+  "outputs": [
+    {
+      "assetId": "geology.basalt-cliff-core.mesh.v1",
+      "path": "artifacts/meshes/basalt_cliff_core.obj",
+      "format": "OBJ",
+      "originPolicy": "floor_centered_derivative_local_origin",
+      "forwardAxis": "-Z",
+      "scaleMeters": 1,
+      "materialSlots": ["stone"],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    }
+  ],
+  "review": {
+    "legal": "approved_cc0_source_lineage",
+    "literalSemantics": "approved_neutral_geology",
+    "technical": "mesh_composition_verified_import_pending",
+    "visual": "base_silhouette_verified_render_review_pending",
+    "reviewer": "Codex",
+    "createdAt": "2026-09-03"
+  },
+  "searchTags": [
+    "geology", "basalt", "cliff", "rock", "cave", "coast", "volcanic", "stylized", "low_poly", "cc0_derived", "neutral_environment"
+  ]
+}

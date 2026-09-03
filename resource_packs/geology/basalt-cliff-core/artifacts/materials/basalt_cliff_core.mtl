@@ -1,0 +1,7 @@
+# Shared Game Environment Library derivative material
+newmtl basalt_rock
+# Neutral matte basalt base; consuming projects may replace this material.
+Kd 0.145 0.125 0.115
+Ka 0.025 0.020 0.018
+Ks 0.020 0.020 0.020
+Ns 12

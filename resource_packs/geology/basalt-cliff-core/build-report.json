@@ -1,0 +1,51 @@
+{
+  "packId": "geology.basalt-cliff-core.v1",
+  "buildContractVersion": 1,
+  "builder": "tools/build-basalt-cliff-pack.ps1",
+  "sourceArchiveSha256": "fa7974a0d342bfe63c38664ba9f8ec1a4aab8ea25f099bdc56870e33588c4d9d",
+  "sourceMembers": [
+    {
+      "id": "cave_base",
+      "archivePath": "Models/OBJ format/cliff_cave_rock.obj",
+      "extractedPath": "resource_packs/geology/basalt-cliff-core/source/cliff_cave_rock.obj",
+      "sha256": "bf2de05738fb994229efc770b359d9d4c6adc3eefe18cdf3a3731fe5eb988c76"
+    },
+    {
+      "id": "side_shoulder",
+      "archivePath": "Models/OBJ format/cliff_half_rock.obj",
+      "extractedPath": "resource_packs/geology/basalt-cliff-core/source/cliff_half_rock.obj",
+      "sha256": "8560933bc245dd2c8c476a773e672673e9c1bbc31a11a4e291baf5bcf67b25fd"
+    },
+    {
+      "id": "raised_cap",
+      "archivePath": "Models/OBJ format/cliff_top_rock.obj",
+      "extractedPath": "resource_packs/geology/basalt-cliff-core/source/cliff_top_rock.obj",
+      "sha256": "dadb4021118e5c5c146b022a2b772961e3fa4adbf8d985d2ff01fff7d09bceee"
+    }
+  ],
+  "output": {
+    "meshPath": "resource_packs/geology/basalt-cliff-core/artifacts/meshes/basalt_cliff_core.obj",
+    "meshSha256": "c5cbe9b383c9b804aecd17b774a1fa530ce067d70d77a5260c401a106933a570",
+    "materialPath": "resource_packs/geology/basalt-cliff-core/artifacts/materials/basalt_cliff_core.mtl",
+    "materialSha256": "761d0fb463bdd3c67dae8fdc50e45acfda095b8f12bcd7295ee71d8d1df8c096"
+  },
+  "boundsMeters": {
+    "maxY": 1.47,
+    "minZ": -0.625,
+    "maxX": 1.255,
+    "maxZ": 1.0350000000000001,
+    "minX": -1.1005607966083866,
+    "minY": 0.0
+  },
+  "generatedGeometry": {
+    "vertexCount": 102,
+    "uvCount": 257,
+    "normalCount": 29
+  },
+  "validation": {
+    "objFaceIndexRewrite": "passed",
+    "engineImport": "pending",
+    "collision": "pending",
+    "renderReview": "pending"
+  }
+}
