@@ -17,7 +17,7 @@ func reference_point(pixel: Vector2, height: float) -> Vector3:
 func reference_quay() -> void:
 	# Visible perimeter traced from the approved 1536x1024 reference. Segments
 	# behind roofs/cliffs are explicitly inferred, not claimed as measured.
-	var trace := PackedVector2Array([Vector2(92,437),Vector2(112,345),Vector2(220,270),Vector2(350,195),Vector2(499,119),Vector2(553,127),Vector2(624,187),Vector2(655,228),Vector2(709,253),Vector2(749,217),Vector2(820,91),Vector2(1100,-45),Vector2(1540,240),Vector2(1580,850),Vector2(1430,843),Vector2(1310,808),Vector2(1220,795),Vector2(1140,736),Vector2(1070,710),Vector2(1048,674),Vector2(979,653),Vector2(948,620),Vector2(918,593),Vector2(876,561),Vector2(805,526),Vector2(742,544),Vector2(702,580),Vector2(669,617),Vector2(638,638),Vector2(610,641),Vector2(593,629),Vector2(571,652),Vector2(532,677),Vector2(487,686),Vector2(454,706),Vector2(417,706),Vector2(346,680),Vector2(322,647),Vector2(276,612),Vector2(220,582),Vector2(174,552),Vector2(143,533),Vector2(114,490)])
+	var trace := PackedVector2Array([Vector2(92,437),Vector2(112,345),Vector2(220,270),Vector2(350,195),Vector2(499,119),Vector2(553,127),Vector2(624,187),Vector2(655,228),Vector2(709,253),Vector2(749,317),Vector2(855,285),Vector2(984,305),Vector2(1070,253),Vector2(1190,264),Vector2(1280,331),Vector2(1380,388),Vector2(1650,600),Vector2(1580,850),Vector2(1430,843),Vector2(1310,808),Vector2(1220,795),Vector2(1140,736),Vector2(1070,710),Vector2(1048,674),Vector2(979,653),Vector2(948,620),Vector2(918,593),Vector2(876,561),Vector2(805,526),Vector2(742,544),Vector2(702,580),Vector2(669,617),Vector2(638,638),Vector2(610,641),Vector2(593,629),Vector2(571,652),Vector2(532,677),Vector2(487,686),Vector2(454,706),Vector2(417,706),Vector2(346,680),Vector2(322,647),Vector2(276,612),Vector2(220,582),Vector2(174,552),Vector2(143,533),Vector2(114,490)])
 	var outline := PackedVector2Array()
 	var minimum := Vector2(INF,INF)
 	var maximum := Vector2(-INF,-INF)
@@ -651,7 +651,7 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 	RenderingServer.force_draw(false)
 	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-alternate.png")) == OK)
 	var file := FileAccess.open(output_dir.path_join("build-report.json"),FileAccess.WRITE)
-	file.store_string(JSON.stringify({"generator":"tools/build-river-port.gd + tools/river-port-kit.gd","engine":Engine.get_version_info().string,"renderer":RenderingServer.get_current_rendering_method(),"materialSources":kit.material_sources,"seed":5012026,"geometryPieces":kit.counts.pieces,"renderedObjects":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),"renderedPrimitives":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),"drawCalls":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),"status":"authored environment study; not reference-matched or runtime-admitted","actors":"neutral unrigged scale pawns; not production characters","exportNote":"Native .scn preserves procedural water and world triplanar materials; GLB is a geometry interchange proof and does not preserve those renderer-specific materials.","sceneSha256":FileAccess.get_sha256(output_dir.path_join("river-port-scene.glb"))},"\t")+"\n")
+	file.store_string(JSON.stringify({"generator":"tools/build-river-port.gd + tools/river-port-kit.gd","engine":Engine.get_version_info().string,"renderer":RenderingServer.get_current_rendering_method(),"materialSources":kit.material_sources,"seed":5012026,"geometryPieces":kit.counts.pieces,"meshInstances":collect_meshes(kit.root).size(),"referenceImageSha256":FileAccess.get_sha256(repo.path_join("docs/visual-reference/painted-miniature-river-port-approved.png")),"referenceDimensions":[1536,1024],"groundMethod":"Manual visible perimeter and dock-corner pixel traces intersected with the camera ground plane; hidden perimeter inferred. Not a perceptual similarity score.","renderedObjects":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),"renderedPrimitives":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),"drawCalls":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),"status":"authored environment study; not reference-matched or runtime-admitted","actors":"three 15-bone rigid-piece study rigs; not skinned or production character sculpts","exportNote":"Native .scn preserves procedural water and world triplanar materials; GLB is a geometry interchange proof and does not preserve those renderer-specific materials.","sceneSha256":FileAccess.get_sha256(output_dir.path_join("river-port-scene.glb"))},"\t")+"\n")
 	file.close()
 	print("Built river port: %d authored pieces" % kit.counts.pieces)
 	quit()
@@ -668,11 +668,17 @@ func inspect_saved_scene() -> void:
 	var loaded := packed.instantiate()
 	root.add_child(loaded)
 	var meshes := collect_meshes(loaded)
-	assert(meshes.size() > 4000,"Expected complete constructed scene")
+	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(output_dir.path_join("build-report.json")))
+	assert(meshes.size() == int(report.meshInstances),"Native mesh count must match generated scene")
+	var skeletons := loaded.find_children("*","Skeleton3D",true,false)
+	assert(skeletons.size() == 3)
+	for skeleton in skeletons:
+		assert(skeleton.get_bone_count() == 15)
+		assert(skeleton.get_bone_global_pose(skeleton.find_bone("Head")).origin.y > 1.5)
 	for mesh in meshes:
 		assert(mesh.transform.is_finite() and mesh.mesh != null)
 		assert(mesh.mesh.get_aabb().size.length() > 0)
-	for frame in 8:
+	for frame in 32:
 		await process_frame
 	RenderingServer.force_draw(false)
 	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-roundtrip.png")) == OK)
@@ -680,7 +686,7 @@ func inspect_saved_scene() -> void:
 	assert(camera != null)
 	camera.position = Vector3(30,25,-35)
 	camera.look_at(Vector3(2,1.3,0.5))
-	for frame in 5:
+	for frame in 24:
 		await process_frame
 	RenderingServer.force_draw(false)
 	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-rear.png")) == OK)

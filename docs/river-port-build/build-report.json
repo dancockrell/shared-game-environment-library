@@ -1,10 +1,11 @@
 {
-	"actors": "neutral unrigged scale pawns; not production characters",
-	"drawCalls": 1634,
+	"actors": "three 15-bone rigid-piece study rigs; not skinned or production character sculpts",
+	"drawCalls": 5692,
 	"engine": "4.7.2-stable (official)",
 	"exportNote": "Native .scn preserves procedural water and world triplanar materials; GLB is a geometry interchange proof and does not preserve those renderer-specific materials.",
 	"generator": "tools/build-river-port.gd + tools/river-port-kit.gd",
-	"geometryPieces": 4737,
+	"geometryPieces": 21879,
+	"groundMethod": "Manual visible perimeter and dock-corner pixel traces intersected with the camera ground plane; hidden perimeter inferred. Not a perceptual similarity score.",
 	"materialSources": [
 		{
 			"license": "CC0-1.0",
@@ -49,10 +50,16 @@
 			"sourcePath": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_nor_gl_1k.jpg"
 		}
 	],
-	"renderedObjects": 9482,
-	"renderedPrimitives": 496744,
+	"meshInstances": 21880,
+	"referenceDimensions": [
+		1536,
+		1024
+	],
+	"referenceImageSha256": "613d715148ee9b9f3a00396eef8656ecb1781e62ca1aac4a28547187b112b33e",
+	"renderedObjects": 42792,
+	"renderedPrimitives": 2731932,
 	"renderer": "forward_plus",
-	"sceneSha256": "84b5f0738ee1220e0fa9b16ddc6089563f1bc0227ba91526ed8e389b1b547270",
+	"sceneSha256": "a770290b9ebb49327c6083b12f04ef97cff70fbb75c7685877e394580db7f747",
 	"seed": 5012026,
 	"status": "authored environment study; not reference-matched or runtime-admitted"
 }
