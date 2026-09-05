@@ -33,3 +33,11 @@ Quarantine prevents a plausible asset from becoming invisible technical, licensi
 ## No bulk approval
 
 Collection pages and marketplace searches are leads, not approval. Review each downloaded archive and admitted source path independently.
+
+## Contributing generated character references
+
+Use the same resource-pack catalog, not an independent approval ledger. The consuming project's character manifest owns identity and user selections; a shared reference pack is a reproducible export with a source-manifest hash. Its availability in the library is not runtime approval.
+
+For the current artwork, run `node tools/import-character-references.mjs /absolute/path/to/character-art-manifest.json`, then `./tools/build-resource-pack-ledger.ps1` and `./tools/validate-resource-packs.ps1`. Run the importer again with `--check` to verify the exported bytes, prompts and metadata without writes. The importer refuses changed or missing retained variants. It currently accepts the recorded style-only generation workflow; a new combination workflow must explicitly represent every parent before import support is extended.
+
+Search the library for suitable models, props, materials and references first. Keep a game's adaptations linked to exact shared asset IDs and hashes. Contribute useful new art and modified or combined outputs back with their transformations recorded, preserving the inputs. Keep game lore, character statistics and party selection in the game project. Reference import and final public publication remain separate decisions.

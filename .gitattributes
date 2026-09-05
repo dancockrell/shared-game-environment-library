@@ -14,3 +14,7 @@
 # Exact upstream license captures preserve publisher formatting; do not flag their
 # embedded CR/trailing whitespace as authored source whitespace.
 licenses/upstream/** -whitespace
+
+# Prompt source snapshots and deterministic reference metadata retain exact bytes.
+resource_packs/character-support/illustrated-adult-adventurers/prompts/*.md -text -whitespace
+resource_packs/character-support/illustrated-adult-adventurers/pack.json text eol=lf

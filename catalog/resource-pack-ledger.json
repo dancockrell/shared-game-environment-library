@@ -1,9 +1,161 @@
 {
   "ledgerVersion": 1,
   "policy": "Search this ledger by literal pack type, scene role, source lineage, or tags before selecting a physical asset. Individual outputs remain non-runtime until their engine eligibility changes.",
-  "resourcePackCount": 5,
-  "assetCount": 18,
+  "resourcePackCount": 6,
+  "assetCount": 29,
   "entries": [
+    {
+      "packId": "character-support.illustrated-adult-adventurers.v1",
+      "displayName": "Illustrated Adult Adventurer References",
+      "packType": "character-support",
+      "authoringStatus": "reference_only",
+      "engineEligibility": "reference_only",
+      "sourceLineage": {
+        "kind": "generated_reference_export",
+        "sourceProject": "Pirate Island",
+        "sourceManifest": "character-art-manifest.json",
+        "sourceManifestSha256": "76ef12c3c945fd5831154ef3270e8c0b96cf2f2ebf368e55f400020f2acc8429",
+        "sourceThreadId": "01a06ab0-f752-73f1-865e-72e98827992e",
+        "upstreamLicenseSpdx": "NOASSERTION",
+        "sourceMembers": [
+          "exec-1451b91a-3cbb-4ce0-9080-f1ced6c792f7.png",
+          "exec-46525764-8cef-42fd-818a-ab72bde0d765.png",
+          "exec-7d5cc1c3-74b6-4512-8e4b-3c346a4919fa.png",
+          "exec-1ab16a9e-fa8c-4433-8a6f-3944aef62b74.png",
+          "exec-53a93e55-c3ac-4829-a72e-d468d065bc60.png",
+          "exec-57cb7b92-d639-4136-a4e2-95d7909f9e04.png",
+          "exec-429a0831-cfbe-40e4-932f-4125d8cbcd73.png",
+          "exec-1f5e0ded-001a-41ef-9230-b8458291b367.png",
+          "exec-34952806-eb44-4882-83df-2e17047226b6.png",
+          "exec-9147d1be-9977-4e67-a645-c12bc310fca4.png",
+          "exec-cc23e274-a98f-4279-8ec3-986db50ad9a3.png"
+        ],
+        "updatePolicy": "Regenerate from project manifest. Project remains owner of identity and approval; shared pack is a derived reference export."
+      },
+      "searchTags": [
+        "character-support",
+        "adult",
+        "illustration",
+        "period-clothing",
+        "pirate",
+        "fox",
+        "generated-reference",
+        "not-runtime"
+      ],
+      "sceneRoles": [
+        "character_visual_reference",
+        "costume_reference",
+        "modeling_reference"
+      ],
+      "outputs": [
+        {
+          "assetId": "character-reference.aoi-ten-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/aoi-ten-v1.png",
+          "format": "PNG",
+          "sha256": "98707e2d985f2d8c166ae369ec957213306d0804e8d17c454108d2361872264b",
+          "bytes": 2918435,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.hotaru-jin-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/hotaru-jin-v1.png",
+          "format": "PNG",
+          "sha256": "c8ffe5d4dd629db8b6f64e3a8f050ec0daea76c58695f7270abed9fb31e3fa37",
+          "bytes": 2581091,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.inez-rake-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/inez-rake-v1.png",
+          "format": "PNG",
+          "sha256": "db0af85e604d9cb287b1daa5028bae6c8183021755854d932fd441553914b767",
+          "bytes": 2505478,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.mara-quell-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/mara-quell-v1.png",
+          "format": "PNG",
+          "sha256": "b05b87493e096400a5d284febef9fac2857d86e5baf30d60aebff61d7191d5e8",
+          "bytes": 2547669,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.mercy-vane-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/mercy-vane-v1.png",
+          "format": "PNG",
+          "sha256": "90cf511109966c45e11d09d5c2c20333dbd4f45e0ac0ca3f1d5d91948b9b4a79",
+          "bytes": 2445500,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.natsume-rei-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/natsume-rei-v1.png",
+          "format": "PNG",
+          "sha256": "f64bca7aaf1c4afad8129fa8b5bf80d0ae850dd1c0054dffed29937753ffb27c",
+          "bytes": 2612210,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.pippa-cinder-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/pippa-cinder-v1.png",
+          "format": "PNG",
+          "sha256": "61a9b2b1ff89d9347503a76526d91896579f7b2a6a013a986e7d266adb6c1142",
+          "bytes": 2628140,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.shiori-kaga-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/shiori-kaga-v1.png",
+          "format": "PNG",
+          "sha256": "8fda71e7f601f3c53073cb7cf11a0f9ed9fcd28e9007c1c498d5ade373c4b4f4",
+          "bytes": 2529318,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.tamsin-key-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/tamsin-key-v1.png",
+          "format": "PNG",
+          "sha256": "c95d650d838df9c8b2a483122447e2d65ac7eb18edc98268ad4fdef78c495a23",
+          "bytes": 2891857,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "character-reference.tomoe-kiri-v1",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/artifacts/references/tomoe-kiri-v1.png",
+          "format": "PNG",
+          "sha256": "8e310aebb7d1ae5ba70478c3166185c2b55aee6659604791d699e9121549ac52",
+          "bytes": 2805869,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        },
+        {
+          "assetId": "reference.3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "relativePath": "resource_packs/character-support/illustrated-adult-adventurers/inputs/3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497.png",
+          "format": "PNG",
+          "sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "bytes": 2382551,
+          "literalSelectionState": "project_agent_inspected_concept_candidates",
+          "engineEligibility": "reference_only"
+        }
+      ],
+      "review": {
+        "literalSemantics": "project_agent_inspected_concept_candidates",
+        "technical": "png_dimensions_and_hashes_verified_not_engine_reviewed",
+        "visual": "user_selection_pending_for_ten_concepts",
+        "rights": "terms_evidence_pending",
+        "runtime": "not_admitted"
+      }
+    },
     {
       "packId": "fortifications.castle-core.v1",
       "displayName": "Castle Fortification Core",

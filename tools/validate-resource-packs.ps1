@@ -26,6 +26,10 @@ foreach ($packFile in $packFiles) {
     Assert-PackCondition ($pack.authoringStatus -in @('source_origin', 'derivative', 'reference_only')) "$($packFile.FullName): unsupported authoringStatus '$($pack.authoringStatus)'."
     Assert-PackCondition ($pack.searchTags.Count -ge 3) "$($packFile.FullName): requires at least three search tags."
 
+    if ($pack.authoringStatus -eq 'reference_only') {
+        Assert-PackCondition ($pack.engineEligibility -eq 'reference_only') "$($packFile.FullName): reference-only pack cannot become runtime eligible."
+    }
+
     if ($pack.authoringStatus -eq 'derivative') {
         Assert-PackCondition ($pack.sourceLineage.kind -eq 'CC0_derived') "$($packFile.FullName): a derivative must declare CC0_derived lineage."
         Assert-PackCondition ($pack.sourceLineage.sourceMembers.Count -gt 0) "$($packFile.FullName): derivative sourceMembers are missing."
@@ -35,6 +39,36 @@ foreach ($packFile in $packFiles) {
     foreach ($output in $pack.outputs) {
         $assetPath = Join-Path $packDirectory $output.path
         Assert-PackCondition (Test-Path -LiteralPath $assetPath) "$($packFile.FullName): output '$($output.assetId)' is missing at '$($output.path)'."
+        if ((Test-Path -LiteralPath $assetPath) -and $output.sha256) {
+            Assert-PackCondition (((Get-FileHash -Algorithm SHA256 -LiteralPath $assetPath).Hash.ToLowerInvariant()) -eq $output.sha256.ToLowerInvariant()) "${assetPath}: SHA-256 does not match manifest."
+        }
+        if ($pack.sourceLineage.kind -eq 'generated_reference_export') {
+            Assert-PackCondition ($output.engineEligibility -eq 'reference_only') "${assetPath}: generated reference cannot become runtime eligible."
+            Assert-PackCondition ($output.licenseSpdx -eq 'NOASSERTION') "${assetPath}: generated reference export does not establish a CC0 license."
+            Assert-PackCondition ($null -ne $output.generation.creationId) "${assetPath}: generation creation ID is required."
+            if ($output.role -eq 'generated_character_concept') {
+                $promptPath = Join-Path $packDirectory $output.generation.promptPath
+                Assert-PackCondition (Test-Path -LiteralPath $promptPath) "${assetPath}: prompt missing."
+                if (Test-Path -LiteralPath $promptPath) {
+                    Assert-PackCondition (((Get-FileHash -Algorithm SHA256 -LiteralPath $promptPath).Hash.ToLowerInvariant()) -eq $output.generation.promptSha256) "${assetPath}: prompt hash mismatch."
+                }
+                Assert-PackCondition ($output.lineage.parents.Count -gt 0) "${assetPath}: input lineage missing."
+                foreach ($parent in $output.lineage.parents) {
+                    $matches = @($pack.outputs | Where-Object { $_.assetId -eq $parent.assetId -and $_.sha256 -eq $parent.sha256 })
+                    Assert-PackCondition ($matches.Count -eq 1) "${assetPath}: parent ID/hash does not resolve uniquely."
+                }
+            }
+            if (Test-Path -LiteralPath $assetPath) {
+                $png = [System.IO.File]::ReadAllBytes($assetPath)
+                $signature = if ($png.Length -ge 24) { [Convert]::ToHexString($png[0..7]) } else { '' }
+                Assert-PackCondition ($signature -eq '89504E470D0A1A0A') "${assetPath}: invalid PNG header."
+                if ($signature -eq '89504E470D0A1A0A') {
+                    $width = [System.Net.IPAddress]::NetworkToHostOrder([BitConverter]::ToInt32($png, 16))
+                    $height = [System.Net.IPAddress]::NetworkToHostOrder([BitConverter]::ToInt32($png, 20))
+                    Assert-PackCondition ($width -eq $output.width -and $height -eq $output.height) "${assetPath}: PNG dimensions differ from metadata."
+                }
+            }
+        }
         if ([System.IO.Path]::GetExtension($assetPath).ToLowerInvariant() -eq '.obj' -and (Test-Path -LiteralPath $assetPath)) {
             $lines = Get-Content -LiteralPath $assetPath
             $vertices = @($lines | Where-Object { $_ -match '^v\s' }).Count

@@ -12,7 +12,7 @@
 | --- | --- | --- | --- |
 | `approved_cc0` | Yes | Yes, after project-level review | Complete CC0 ledger entry and captured license evidence |
 | `candidates_needing_review` | Optional, preferably archive only | No | Source URL, reason for review, status |
-| `generated_reference_only` | No final source asset by default | No | Tool, creation ID, terms, prompt/input provenance, review state |
+| `generated_reference_only` | Reference binaries may be included on explicit owner request; never assumed final runtime assets | No | Tool, creation ID, terms status, prompt/input provenance, review state |
 | `paid_reference_only` | No vendor source files unless redistribution is explicitly granted | No | Vendor URL, purchaser/licensee, permitted projects, prohibited redistribution notes |
 
 ## Required proof for approval
@@ -38,6 +38,8 @@ CC0 raw assets may be transformed for each game. Each project retains its own tr
 ## Generated and paid sources
 
 Generated outputs are not assumed CC0. They remain reference-only until their applicable tool terms, input provenance, and project admission are recorded. Paid store assets are recorded as references with their license constraints; they are not uploaded to this shared repository merely because one contributor purchased them.
+
+The owner explicitly requested shared generated art, combinations and alterations on 5 September 2026. Store such contributions as `reference_only` resource packs in the existing catalog. Preserve the original bytes and list each input's stable ID, hash and relationship (style, identity, composition, geometry, material or other actual use). Record the exact prompt where available, creation ID, tool/model when reported, transformations, dimensions and separate visual/rights/runtime review states. Missing historical details stay unknown. A combination records every parent; an alteration records what changed. This request does not silently dedicate generated images to CC0 or authorize publishing unapproved work.
 
 ## License conflicts
 
