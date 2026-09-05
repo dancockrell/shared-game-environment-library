@@ -89,6 +89,20 @@ func clip_polygon(poly: PackedVector2Array, normal: Vector2, limit: float) -> Pa
 			result.append(a.lerp(b,da/(da-db)))
 	return result
 
+func bridge_section(x0: float, x1: float, lower0: float, lower1: float, upper0: float, upper1: float, z0: float, width: float, key: String, parent: Node3D) -> void:
+	assert(x1 > x0 and width > 0 and upper0 > lower0 and upper1 > lower1)
+	# Extrude the actual sloping section sideways; rotating a centered box only
+	# approximates these joints and leaves a staircase silhouette underneath.
+	var outline := PackedVector2Array([Vector2(x0,-upper0),Vector2(x1,-upper1),Vector2(x1,-lower1),Vector2(x0,-lower0)])
+	var node := kit.piece(kit.solid_polygon(outline,width,0.006),Vector3(0,0,z0),Vector3.ONE,key,parent)
+	node.rotation.x = PI/2
+
+func bridge_deck(t: float) -> float:
+	return lerpf(0.8,0.3,t)+1.05*sin(t*PI)
+
+func bridge_soffit(t: float) -> float:
+	return -0.45+1.3*sin(t*PI)
+
 func bridge() -> void:
 	var rear := reference_point(Vector2(855,551),0.8)
 	var front := reference_point(Vector2(723,744),0.3)
@@ -97,16 +111,28 @@ func bridge() -> void:
 	var length := direction.length()
 	var g := kit.node_group("StoneArchBridge",Vector3((rear.x+front.x)/2,0,(rear.z+front.z)/2),-atan2(direction.z,direction.x))
 	for i in 28:
-		var t := (i+0.5)/28.0
-		var x := (t-0.5)*length
-		var rise := lerpf(0.8,0.3,t)+1.05*sin(t*PI)
-		for z in [-1.0,-0.5,0.0,0.5,1.0]:
-			kit.block(Vector3(x,rise,float(z)),Vector3(length/28+0.025,0.22,0.48),kit.shade("stone"),g)
-		for z in [-1.37,1.37]:
+		var t0 := i/28.0
+		var t1 := (i+1)/28.0
+		var x0 := (t0-0.5)*length
+		var x1 := (t1-0.5)*length
+		var top0 := bridge_deck(t0)
+		var top1 := bridge_deck(t1)
+		var bottom0 := bridge_soffit(t0)
+		var bottom1 := bridge_soffit(t1)
+		# Closed load-bearing barrel, not two disconnected side ribbons.
+		bridge_section(x0,x1,bottom0,bottom1,top0-0.14,top1-0.14,-1.5,3.0,"mortar",g)
+		for lane in 5:
+			bridge_section(x0+0.006,x1-0.006,top0-0.15,top1-0.15,top0,top1,-1.25+lane*0.5,0.48,kit.shade("stone"),g)
+		for z in [-1.56,1.20]:
+			# Individual arch stones face the water, with filled spandrels above.
+			var arch0 := minf(bottom0+0.28,top0-0.18)
+			var arch1 := minf(bottom1+0.28,top1-0.18)
+			bridge_section(x0+0.008,x1-0.008,bottom0,bottom1,arch0,arch1,float(z),0.36,kit.shade("stone"),g)
+			bridge_section(x0+0.008,x1-0.008,arch0+0.008,arch1+0.008,top0,top1,float(z),0.36,kit.shade("stone"),g)
 			for row in 2:
-				kit.block(Vector3(x,rise+0.12+row*0.25,float(z)),Vector3(length/28-0.01,0.24,0.32),kit.shade("stone"),g)
-			kit.block(Vector3(x,rise+0.55,float(z)),Vector3(length/28+0.025,0.13,0.43),kit.shade("stone"),g)
-			kit.block(Vector3(x,rise-0.25,float(z)),Vector3(length/28+0.02,0.34,0.38),kit.shade("stone"),g)
+				bridge_section(x0+0.008,x1-0.008,top0+row*0.25,top1+row*0.25,top0+row*0.25+0.24,top1+row*0.25+0.24,float(z),0.36,kit.shade("stone"),g)
+			bridge_section(x0+0.004,x1-0.004,top0+0.5,top1+0.5,top0+0.63,top1+0.63,float(z)-0.04,0.44,kit.shade("stone"),g)
+	assert(is_equal_approx(bridge_deck(0),rear.y) and is_equal_approx(bridge_deck(1),front.y))
 	for end in [-1,1]:
 		for z in [-1.37,1.37]:
 			kit.wall(0.5,0.95,0.55,Vector3(end*(length/2-0.12),-0.15,float(z)),g)

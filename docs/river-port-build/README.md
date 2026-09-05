@@ -54,6 +54,10 @@ Current authored-piece, mesh-instance, rendered-primitive, and draw-call counts 
 
 ## Visual review and next work
 
+### Continuous bridge construction pass
+
+The bridge now uses fitted extruded sections rather than horizontal boxes sampled at each segment midpoint. Its deck follows the same measured landing centers; its underside has a continuous closed arch barrel, with individual facing stones, filled masonry above the arch, and fitted parapets/coping. The geometry builder rejects inverted section heights and checks the two declared deck endpoint heights. These are construction checks, not reference-similarity or walkability certification. The dock retains its separately traced footprint and sits 0.15 units below the front deck endpoint; the exact full-width landing fit still needs an independent check. This pass does not claim to reproduce the reference's stepped parapet profile or irregular stone carving.
+
 Front, alternate, saved-scene roundtrip, and rear captures were inspected. Initial reversed surface winding and unwanted smooth-normal artifacts were corrected before this checkpoint. Complete roof/back geometry survives the alternate views.
 
 The result remains below the approved illustration. Exact architectural profiles, roof junctions, carved ornaments, richly stocked shop contents, individual character sculpting, and fine weathering are not reproduced. Vegetation and beach transitions remain too procedural, and the inferred rear ground should not be mistaken for evidence of the reference's unseen layout. Those are unresolved quality gaps, **not** a proposed simpler art direction. Preserve the approved richness while improving these aspects. Rear walls are structurally present but need designed facade detail before unrestricted camera presentation is considered finished. No numerical visual-similarity score or claim of exact recreation is made.
