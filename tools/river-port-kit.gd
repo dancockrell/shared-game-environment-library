@@ -6,6 +6,7 @@ var root := Node3D.new()
 var materials: Dictionary = {}
 var meshes: Dictionary = {}
 var counts := {"pieces":0,"triangles":0}
+var material_sources: Array = []
 
 func _init() -> void:
 	rng.seed = 5012026
@@ -47,12 +48,55 @@ func setup_palette() -> void:
 		var v := float(i) / 11.0
 		material("stone%d" % i,Color("70695c").lerp(Color("8c8270"),v))
 		material("wood%d" % i,Color("493122").lerp(Color("8c6745"),v))
-		material("roof%d" % i,Color("593b30").lerp(Color("9c6250"),v))
-		material("slate%d" % i,Color("303d46").lerp(Color("566575"),v))
+		material("roof%d" % i,Color("624036").lerp(Color("825042"),v))
+		material("slate%d" % i,Color("35414b").lerp(Color("4a5867"),v))
 		material("leaf%d" % i,Color("35472a").lerp(Color("71824a"),v))
 
 func shade(prefix: String) -> String:
 	return prefix + str(rng.randi_range(0,11))
+
+func apply_surface_sources(repo: String) -> void:
+	# Use the catalog's licensed inputs rather than substituting an invented
+	# texture dependency. Desaturate albedo toward a controlled painted palette.
+	var ledger: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(repo.path_join("catalog/approved-material-ledger.json")))
+	for entry in ledger.entries:
+		if entry.sourceId not in ["rock-boulder-dry-1k","medieval-wood-1k","fabric-pattern-05-1k"]:
+			continue
+		var color_texture: ImageTexture
+		var normal_texture: ImageTexture
+		for source in entry.files:
+			if source.role not in ["albedo","normal_gl"]:
+				continue
+			var path: String = repo.path_join(source.path)
+			assert(FileAccess.get_sha256(path) == source.sha256)
+			var image := Image.load_from_file(path)
+			assert(image != null)
+			if source.role == "albedo":
+				image.resize(512,512,Image.INTERPOLATE_LANCZOS)
+				for y in image.get_height():
+					for x in image.get_width():
+						var value := image.get_pixel(x,y).get_luminance()
+						var painted := 0.56+value*0.44
+						image.set_pixel(x,y,Color(painted,painted,painted))
+				image.generate_mipmaps()
+				color_texture = ImageTexture.create_from_image(image)
+			else:
+				image.generate_mipmaps()
+				normal_texture = ImageTexture.create_from_image(image)
+			material_sources.append({"sourceId":entry.sourceId,"sourcePath":source.path,"sha256":source.sha256,"license":"CC0-1.0","role":source.role})
+		for key in materials:
+			var use: bool = (entry.sourceId == "rock-boulder-dry-1k" and (key.begins_with("stone") or key.begins_with("roof") or key.begins_with("slate") or key == "plaster")) or (entry.sourceId == "medieval-wood-1k" and (key.begins_with("wood") or key.begins_with("oak"))) or (entry.sourceId == "fabric-pattern-05-1k" and key in ["cloth","redcloth"])
+			if not use:
+				continue
+			var m: StandardMaterial3D = materials[key]
+			m.albedo_texture = color_texture
+			m.normal_enabled = true
+			m.normal_texture = normal_texture
+			m.normal_scale = 0.35
+			m.uv1_triplanar = true
+			m.uv1_world_triplanar = true
+			m.uv1_scale = Vector3.ONE*1.4
+			m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 
 func piece(mesh: Mesh, pos: Vector3, scale_value: Vector3, key: String, parent: Node3D = root) -> MeshInstance3D:
 	var node := MeshInstance3D.new()
@@ -223,6 +267,10 @@ func house(name_value: String, position: Vector3, width: float, depth: float, he
 			block(Vector3(0,-0.09+step*0.08,depth/2+0.85-step*0.2),Vector3(1.7-step*0.06,0.18,0.4),shade("stone"),g)
 		for x in [-width*0.32,width*0.32]:
 			window_at(Vector3(x,height*0.64,depth/2+0.18),g)
+		for i in 11:
+			var a := PI*i/10
+			var voussoir := block(Vector3(cos(a)*0.8,2.13+sin(a)*0.8,depth/2+0.24),Vector3(0.23,0.38,0.27),shade("stone"),g)
+			voussoir.rotation.z = a-PI/2
 		roof(width,depth,height,roof_rise,roof_color,g)
 		# Gable infill built from stacked closed beams, no missing triangle faces.
 		for z in [-depth/2,depth/2]:
@@ -277,3 +325,6 @@ func tree(pos: Vector3, height: float) -> void:
 		for k in 5:
 			var leaf_pos := end+Vector3(rng.randf_range(-0.45,0.45),rng.randf_range(-0.15,0.55),rng.randf_range(-0.45,0.45))
 			piece(meshes.leaves,leaf_pos,Vector3(0.6,0.32,0.6),shade("leaf"),g)
+			for leaf_index in 6:
+				var leaf_a := TAU*leaf_index/6
+				piece(meshes.leaves,leaf_pos+Vector3(cos(leaf_a)*0.5,0.15,sin(leaf_a)*0.5),Vector3(0.21,0.065,0.14),shade("leaf"),g)

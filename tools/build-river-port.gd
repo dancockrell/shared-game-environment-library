@@ -95,7 +95,25 @@ func source_model(filename: String, pos: Vector3, scale_value: float, rotation_y
 	node.position = pos
 	node.scale = Vector3.ONE*scale_value
 	node.rotation.y = rotation_y
+	for mesh in collect_meshes(node):
+		if filename == "boat-row-small.glb":
+			mesh.material_override = kit.mat("wood6")
+		else:
+			for surface in mesh.mesh.get_surface_count():
+				var original := mesh.mesh.surface_get_material(surface) as StandardMaterial3D
+				if original != null:
+					var adjusted := original.duplicate() as StandardMaterial3D
+					adjusted.albedo_color *= Color(0.55,0.58,0.62)
+					mesh.set_surface_override_material(surface,adjusted)
 	kit.root.add_child(node)
+
+func collect_meshes(node: Node) -> Array[MeshInstance3D]:
+	var result: Array[MeshInstance3D] = []
+	if node is MeshInstance3D:
+		result.append(node)
+	for child in node.get_children():
+		result.append_array(collect_meshes(child))
+	return result
 
 func node_marker(pos: Vector3) -> void:
 	kit.cylinder(pos+Vector3(0,0.075,0),0.21,0.14,"gold",kit.root,32)
@@ -133,23 +151,36 @@ func pawn(pos: Vector3, cloth: String) -> void:
 
 func build() -> void:
 	var args := OS.get_cmdline_user_args()
-	assert(args.size() == 1,"Expected absolute repository path")
+	assert(args.size() >= 1,"Expected absolute repository path; optional --inspect")
 	repo = args[0]
 	output_dir = repo.path_join("docs/river-port-build")
 	DirAccess.make_dir_recursive_absolute(output_dir)
 	root.size = Vector2i(1800,1200)
 	root.msaa_3d = Viewport.MSAA_4X
+	if args.size() == 2 and args[1] == "--inspect":
+		await inspect_saved_scene()
+		return
 	root.add_child(kit.root)
 	kit.setup_palette()
+	kit.apply_surface_sources(repo)
 	# Water shader is static spatial material; no animation or time dependency.
 	var shader := Shader.new()
-	shader.code = "shader_type spatial; varying vec3 world_position; void vertex(){world_position=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;} void fragment(){float n=sin(world_position.x*1.8+sin(world_position.z*1.2))*sin(world_position.z*2.7+cos(world_position.x)); ALBEDO=vec3(0.09,0.16,0.17)+vec3(0.007,0.012,0.013)*n; ROUGHNESS=0.4; METALLIC=0.05;}"
+	shader.code = "shader_type spatial; varying vec3 world_position; void vertex(){world_position=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;} void fragment(){float n=sin(world_position.x*1.8+sin(world_position.z*1.2))*sin(world_position.z*2.7+cos(world_position.x)); ALBEDO=vec3(0.015,0.035,0.04)+vec3(0.002,0.003,0.003)*n; ROUGHNESS=0.4; METALLIC=0.05;}"
 	var water_mat := ShaderMaterial.new()
 	water_mat.shader = shader
 	var water = kit.block(Vector3(3,-0.48,1),Vector3(90,0.18,90),"water")
 	water.material_override = water_mat
 	pavers(Vector3(-2.5,0.65,-1),17,14)
 	pavers(Vector3(14,0.65,0.0),8,12)
+	# A submerged shelf and irregular beach soften the square construction base.
+	for side in [-1,1]:
+		for i in 22:
+			var x := -10.5+i*0.77
+			var z := 6.5 if side == 1 else -8.2
+			kit.rock(Vector3(x,-0.68,z),Vector3(1.5,0.4+kit.rng.randf()*0.16,1.2))
+	for i in 17:
+		var x := -10.6+i*0.43
+		kit.block(Vector3(x,-0.35,6.6+0.35*sin(i)),Vector3(0.7,0.25,1.3),"sand")
 	# Sand and rocks below waterline at the outskirts, and reeds along the bank.
 	for i in 75:
 		var side := -1 if i%2 == 0 else 1
@@ -175,12 +206,29 @@ func build() -> void:
 	kit.block(Vector3(-1.65,6.55,-1.1),Vector3(0.85,0.2,0.85),"stone7",inn)
 	kit.beam(Vector3(-2.8,3.1,2.5),Vector3(-3.7,3.1,2.5),0.12,"iron",inn)
 	kit.cylinder(Vector3(-3.6,2.65,2.5),0.35,0.09,"gold",inn,32).rotation.x = PI/2
+	var dormer := kit.node_group("InnDormer",Vector3(1.65,4.7,0.15))
+	dormer.reparent(inn,false)
+	dormer.rotation.y = PI/2
+	kit.block(Vector3(0,0.65,0),Vector3(1.3,1.3,1.05),"plaster",dormer)
+	kit.window_at(Vector3(0,0.65,0.56),dormer,0.72)
+	kit.roof(1.3,1.2,1.3,0.75,"roof",dormer)
 	var shop = kit.house("CutawayShop",Vector3(-7.3,0.75,-1.9),4.2,4.4,2.9,1.7,"slate",true)
 	kit.shelving(shop,Vector3(0,0.3,-1.85))
 	kit.block(Vector3(0,0.9,0.45),Vector3(2.8,1.1,0.7),"oak",shop)
 	kit.block(Vector3(0,1.5,0.45),Vector3(3.0,0.12,0.85),"oak_light",shop)
 	for i in 8:
 		kit.cylinder(Vector3(-1.15+i*0.3,1.63,0.45),0.1,0.15,kit.shade("roof"),shop)
+	# Richer exterior trim and merchant frontage; pieces remain individually editable.
+	for x in [-2.18,2.18]:
+		for y in [0.4,1.2,2.0,2.8]:
+			kit.block(Vector3(x,y,2.2),Vector3(0.52,0.28,0.52),kit.shade("stone"),shop)
+	for pos in [Vector3(-2.7,0.84,-0.65),Vector3(-4.9,0.84,-0.5)]:
+		kit.cylinder(pos+Vector3(0,0.7,0),0.5,0.1,"oak_light",kit.root,24)
+		kit.cylinder(pos+Vector3(0,0.35,0),0.12,0.7,"oak",kit.root)
+		for a in [0,PI*0.67,PI*1.33]:
+			var seat: Vector3 = pos+Vector3(cos(a)*0.72,0.4,sin(a)*0.72)
+			kit.cylinder(seat,0.22,0.12,"oak_light",kit.root)
+			kit.cylinder(seat-Vector3(0,0.2,0),0.065,0.4,"oak",kit.root)
 	# Rear canopy as an explicit cutaway variant, full inn/guild remain closed.
 	var canopy := kit.node_group("ShopRearRoof",Vector3(-7.3,3.65,-3.5))
 	kit.roof(4.2,1.2,0,1.3,"slate",canopy)
@@ -221,6 +269,12 @@ func build() -> void:
 	env.ambient_light_color = Color("a9b6bd")
 	env.ambient_light_energy = 0.42
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	if RenderingServer.get_current_rendering_method() != "gl_compatibility":
+		env.ssao_enabled = true
+		env.ssao_radius = 1.3
+		env.ssao_intensity = 1.6
+		env.glow_enabled = true
+		env.glow_intensity = 0.35
 	kit.root.add_child(environment)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-48,-38,0)
@@ -243,11 +297,31 @@ func build() -> void:
 		await process_frame
 	RenderingServer.force_draw(false)
 	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-main.png")) == OK)
+	assign_owners(kit.root,kit.root)
+	var packed := PackedScene.new()
+	assert(packed.pack(kit.root) == OK)
+	assert(ResourceSaver.save(packed,output_dir.path_join("river-port-native.scn")) == OK)
 	# Save complete model geometry for independent import and alternate cameras.
+	# Interchange export is deliberately geometry-only. The native scene is
+	# the visual artifact: it retains triplanar textures and custom water.
+	# Clearing texture references here avoids embedding identical source maps
+	# once per palette material in an otherwise misleading GLB.
+	var retained_textures: Dictionary = {}
+	for key in kit.materials:
+		var material: StandardMaterial3D = kit.materials[key]
+		retained_textures[key] = [material.albedo_texture,material.normal_texture,material.normal_enabled]
+		material.albedo_texture = null
+		material.normal_texture = null
+		material.normal_enabled = false
 	var doc := GLTFDocument.new()
 	var state := GLTFState.new()
 	assert(doc.append_from_scene(kit.root,state) == OK)
 	assert(doc.write_to_filesystem(state,output_dir.path_join("river-port-scene.glb")) == OK)
+	for key in retained_textures:
+		var material: StandardMaterial3D = kit.materials[key]
+		material.albedo_texture = retained_textures[key][0]
+		material.normal_texture = retained_textures[key][1]
+		material.normal_enabled = retained_textures[key][2]
 	camera.position = Vector3(-29,26,33)
 	camera.look_at(Vector3(2,1.3,0.5))
 	for frame in 5:
@@ -255,7 +329,46 @@ func build() -> void:
 	RenderingServer.force_draw(false)
 	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-alternate.png")) == OK)
 	var file := FileAccess.open(output_dir.path_join("build-report.json"),FileAccess.WRITE)
-	file.store_string(JSON.stringify({"generator":"tools/build-river-port.gd + tools/river-port-kit.gd","engine":Engine.get_version_info().string,"seed":5012026,"geometryPieces":kit.counts.pieces,"renderedObjects":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),"renderedPrimitives":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),"drawCalls":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),"status":"authored environment study; not reference-matched or runtime-admitted","actors":"neutral unrigged scale pawns; not production characters","sceneSha256":FileAccess.get_sha256(output_dir.path_join("river-port-scene.glb"))},"\t")+"\n")
+	file.store_string(JSON.stringify({"generator":"tools/build-river-port.gd + tools/river-port-kit.gd","engine":Engine.get_version_info().string,"renderer":RenderingServer.get_current_rendering_method(),"materialSources":kit.material_sources,"seed":5012026,"geometryPieces":kit.counts.pieces,"renderedObjects":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),"renderedPrimitives":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),"drawCalls":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),"status":"authored environment study; not reference-matched or runtime-admitted","actors":"neutral unrigged scale pawns; not production characters","exportNote":"Native .scn preserves procedural water and world triplanar materials; GLB is a geometry interchange proof and does not preserve those renderer-specific materials.","sceneSha256":FileAccess.get_sha256(output_dir.path_join("river-port-scene.glb"))},"\t")+"\n")
 	file.close()
 	print("Built river port: %d authored pieces" % kit.counts.pieces)
+	quit()
+
+func assign_owners(node: Node, owner_node: Node) -> void:
+	for child in node.get_children():
+		child.owner = owner_node
+		assign_owners(child,owner_node)
+
+func inspect_saved_scene() -> void:
+	kit.root.free()
+	var packed := load(output_dir.path_join("river-port-native.scn")) as PackedScene
+	assert(packed != null,"Native scene must reload independently")
+	var loaded := packed.instantiate()
+	root.add_child(loaded)
+	var meshes := collect_meshes(loaded)
+	assert(meshes.size() > 4000,"Expected complete constructed scene")
+	for mesh in meshes:
+		assert(mesh.transform.is_finite() and mesh.mesh != null)
+		assert(mesh.mesh.get_aabb().size.length() > 0)
+	for frame in 8:
+		await process_frame
+	RenderingServer.force_draw(false)
+	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-roundtrip.png")) == OK)
+	var camera := root.get_camera_3d()
+	assert(camera != null)
+	camera.position = Vector3(30,25,-35)
+	camera.look_at(Vector3(2,1.3,0.5))
+	for frame in 5:
+		await process_frame
+	RenderingServer.force_draw(false)
+	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-rear.png")) == OK)
+	var document := GLTFDocument.new()
+	var state := GLTFState.new()
+	assert(document.append_from_file(output_dir.path_join("river-port-scene.glb"),state) == OK)
+	var imported := document.generate_scene(state)
+	assert(imported != null)
+	var imported_meshes := collect_meshes(imported)
+	assert(imported_meshes.size() == meshes.size(),"GLB must retain every mesh instance")
+	imported.free()
+	print("PASS: native roundtrip and GLB import; %d mesh instances; front and rear captured" % meshes.size())
 	quit()

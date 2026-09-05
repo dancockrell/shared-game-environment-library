@@ -1,0 +1,58 @@
+{
+	"actors": "neutral unrigged scale pawns; not production characters",
+	"drawCalls": 1634,
+	"engine": "4.7.2-stable (official)",
+	"exportNote": "Native .scn preserves procedural water and world triplanar materials; GLB is a geometry interchange proof and does not preserve those renderer-specific materials.",
+	"generator": "tools/build-river-port.gd + tools/river-port-kit.gd",
+	"geometryPieces": 4737,
+	"materialSources": [
+		{
+			"license": "CC0-1.0",
+			"role": "albedo",
+			"sha256": "20f653a42fb24f42aa40641663070d578678da49af18cc1049dbdd4ed8679f3c",
+			"sourceId": "rock-boulder-dry-1k",
+			"sourcePath": "assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/rock_boulder_dry_diff_1k.jpg"
+		},
+		{
+			"license": "CC0-1.0",
+			"role": "normal_gl",
+			"sha256": "5915fea28a97357c78a04fb31c2516f1f7ed1b3a9cef4ae25aa93e4655e6c595",
+			"sourceId": "rock-boulder-dry-1k",
+			"sourcePath": "assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/rock_boulder_dry_nor_gl_1k.jpg"
+		},
+		{
+			"license": "CC0-1.0",
+			"role": "albedo",
+			"sha256": "b9ece89a45044945ce4d1402672cfd605f1f074b313cb3cc12b7b2ea66fad7fe",
+			"sourceId": "fabric-pattern-05-1k",
+			"sourcePath": "assets/approved_cc0/PolyHaven/fabric-pattern-05-1k/source_files/fabric_pattern_05_col_01_1k.jpg"
+		},
+		{
+			"license": "CC0-1.0",
+			"role": "normal_gl",
+			"sha256": "caa5a948c768c7173b1d8647aa2618d39b4ec5ba4575820e02fb500dac54596d",
+			"sourceId": "fabric-pattern-05-1k",
+			"sourcePath": "assets/approved_cc0/PolyHaven/fabric-pattern-05-1k/source_files/fabric_pattern_05_nor_gl_1k.jpg"
+		},
+		{
+			"license": "CC0-1.0",
+			"role": "albedo",
+			"sha256": "66a36635dc3f2db696dbb6939b1d4f86c0b666c898c1b55c6b5d6d9f1896b43e",
+			"sourceId": "medieval-wood-1k",
+			"sourcePath": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_diff_1k.jpg"
+		},
+		{
+			"license": "CC0-1.0",
+			"role": "normal_gl",
+			"sha256": "90b0ce551282d55830497397edad9b0c3ea690728483de45b7df13eb0850df01",
+			"sourceId": "medieval-wood-1k",
+			"sourcePath": "assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/medieval_wood_nor_gl_1k.jpg"
+		}
+	],
+	"renderedObjects": 9482,
+	"renderedPrimitives": 496744,
+	"renderer": "forward_plus",
+	"sceneSha256": "84b5f0738ee1220e0fa9b16ddc6089563f1bc0227ba91526ed8e389b1b547270",
+	"seed": 5012026,
+	"status": "authored environment study; not reference-matched or runtime-admitted"
+}
