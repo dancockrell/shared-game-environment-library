@@ -43,10 +43,10 @@ func setup_palette() -> void:
 	material("moss",Color("4b5732"))
 	material("flower",Color("a38cbd"))
 	material("skin",Color("af8d69"))
-	var glow := material("lamp",Color("f2bf6c"),0.6)
+	var glow := material("lamp",Color("d9a052"),0.6)
 	glow.emission_enabled = true
 	glow.emission = Color("e6a14c")
-	glow.emission_energy_multiplier = 1.5
+	glow.emission_energy_multiplier = 0.65
 	for i in 12:
 		var v := float(i) / 11.0
 		material("stone%d" % i,Color("70695c").lerp(Color("8c8270"),v))
@@ -75,11 +75,11 @@ func apply_surface_sources(repo: String) -> void:
 			var image := Image.load_from_file(path)
 			assert(image != null)
 			if source.role == "albedo":
-				image.resize(512,512,Image.INTERPOLATE_LANCZOS)
+				# Retain full source resolution; no early quality reduction.
 				for y in image.get_height():
 					for x in image.get_width():
 						var value := image.get_pixel(x,y).get_luminance()
-						var painted := 0.28+value*0.72
+						var painted := 0.13+value*0.87
 						image.set_pixel(x,y,Color(painted,painted,painted))
 				image.generate_mipmaps()
 				color_texture = ImageTexture.create_from_image(image)
@@ -154,7 +154,7 @@ func solid_polygon(points: PackedVector2Array, height: float, bevel: float = 0.0
 func block(pos: Vector3, size: Vector3, key: String, parent: Node3D = root) -> MeshInstance3D:
 	# Unit bevel shape shares resources. Side bevel remains small on thin parts.
 	if not meshes.has("block"):
-		meshes.block = solid_polygon(PackedVector2Array([Vector2(-0.5,-0.5),Vector2(0.5,-0.5),Vector2(0.5,0.5),Vector2(-0.5,0.5)]),1,0.045)
+		meshes.block = solid_polygon(PackedVector2Array([Vector2(-0.5,-0.5),Vector2(0.5,-0.5),Vector2(0.5,0.5),Vector2(-0.5,0.5)]),1,0.018)
 	return piece(meshes.block,pos-Vector3(0,size.y/2,0),size,key,parent)
 
 func cylinder(pos: Vector3, radius: float, height: float, key: String, parent: Node3D = root, sides: int = 12) -> MeshInstance3D:
@@ -167,6 +167,16 @@ func cylinder(pos: Vector3, radius: float, height: float, key: String, parent: N
 		m.radial_segments = sides
 		meshes[cache] = m
 	return piece(meshes[cache],pos,Vector3(radius,height,radius),key,parent)
+
+func ellipsoid(pos: Vector3, size: Vector3, key: String, parent: Node3D) -> MeshInstance3D:
+	if not meshes.has("sculpt_form"):
+		var shape := SphereMesh.new()
+		shape.radius = 1
+		shape.height = 2
+		shape.radial_segments = 24
+		shape.rings = 12
+		meshes.sculpt_form = shape
+	return piece(meshes.sculpt_form,pos,size,key,parent)
 
 func beam(a: Vector3, b: Vector3, width: float, key: String, parent: Node3D = root) -> Node3D:
 	var node := block(Vector3.ZERO,Vector3(width,a.distance_to(b),width),key,parent)
@@ -214,12 +224,12 @@ func roof(width: float, depth: float, eaves: float, rise: float, prefix: String,
 	for side in [-1,1]:
 		var deck := block(Vector3(side*half/2,eaves+rise/2,0),Vector3(slope,0.16,depth+0.5),"oak",parent)
 		deck.rotate_z(-side*angle)
-		var rows := int(slope/0.32)+1
-		var cols := int((depth+0.5)/0.39)+1
+		var rows := int(slope/0.25)+1
+		var cols := int((depth+0.5)/0.29)+1
 		for row in rows:
 			var t := (row+0.5)/float(rows)
 			for col in cols:
-				var z := -depth/2-0.22+(col+0.5)*(depth+0.44)/cols
+				var z := -depth/2-0.22+(col+0.5+0.42*(row%2))*(depth+0.44)/cols
 				var tile := block(Vector3(side*half*(1-t),eaves+rise*t+0.14+rng.randf_range(-0.02,0.02),z+rng.randf_range(-0.02,0.02)),Vector3(slope/rows+0.10,0.105,(depth+0.44)/cols-0.018),shade(prefix),parent)
 				tile.rotate_z(-side*angle)
 	for col in int(depth/0.35)+2:
@@ -229,12 +239,17 @@ func roof(width: float, depth: float, eaves: float, rise: float, prefix: String,
 		beam(Vector3(0,eaves+rise,z),Vector3(half,eaves,z),0.16,"oak_light",parent)
 
 func window_at(pos: Vector3, parent: Node3D, width: float = 0.8) -> void:
-	block(pos,Vector3(width,1.15,0.12),"oak",parent)
-	block(pos+Vector3(0,0,0.075),Vector3(width-0.17,0.96,0.025),"lamp",parent)
+	# Deep dark reveal, thin joinery, eight individual panes, sill and lintel.
+	block(pos-Vector3(0,0,0.02),Vector3(width+0.17,1.35,0.18),"oak",parent)
+	for side in [-1,1]:
+		for row in 4:
+			block(pos+Vector3(side*width*0.225,-0.43+row*0.285,0.1),Vector3(width*0.39,0.245,0.025),"lamp",parent)
 	for x in [-width/2,0,width/2]:
-		block(pos+Vector3(x,0,0.12),Vector3(0.07,1.22,0.06),"oak",parent)
-	for y in [-0.55,0,0.55]:
-		block(pos+Vector3(0,y,0.12),Vector3(width+0.14,0.07,0.06),"oak",parent)
+		block(pos+Vector3(x,0,0.15),Vector3(0.04,1.25,0.05),"oak_light",parent)
+	for y in [-0.58,-0.29,0,0.29,0.58]:
+		block(pos+Vector3(0,y,0.15),Vector3(width+0.08,0.035,0.05),"oak_light",parent)
+	block(pos+Vector3(0,-0.7,0.17),Vector3(width+0.3,0.11,0.35),"stone8",parent)
+	block(pos+Vector3(0,0.7,0.1),Vector3(width+0.3,0.12,0.22),"oak",parent)
 
 func lantern(pos: Vector3, parent: Node3D) -> void:
 	block(pos,Vector3(0.23,0.36,0.23),"lamp",parent)
@@ -254,8 +269,12 @@ func house(name_value: String, position: Vector3, width: float, depth: float, he
 	var g := node_group(name_value,position)
 	block(Vector3(0,0.12,0),Vector3(width+0.6,0.24,depth+0.6),"mortar",g)
 	wall(width, height,0.35,Vector3(0,0,-depth/2),g)
-	wall(depth,height,0.35,Vector3(-width/2,0,0),g,true)
-	wall(depth,height,0.35,Vector3(width/2,0,0),g,true)
+	for side in [-1,1]:
+		if cutaway:
+			wall(depth*0.48,height,0.35,Vector3(side*width/2,0,-depth*0.26),g,true)
+			wall(depth*0.52,0.85,0.35,Vector3(side*width/2,0,depth*0.24),g,true)
+		else:
+			wall(depth,height,0.35,Vector3(side*width/2,0,0),g,true)
 	if cutaway:
 		wall(width,0.7,0.35,Vector3(0,0,depth/2),g)
 	else:
@@ -302,13 +321,29 @@ func shelving(parent: Node3D, pos: Vector3) -> void:
 			cylinder(pos+Vector3(-0.86+i*0.34,y+0.2,0),0.09,rng.randf_range(0.2,0.32),shade("roof"),parent)
 
 func rock(pos: Vector3, size: Vector3, parent: Node3D = root) -> void:
-	if not meshes.has("rock"):
-		var points := PackedVector2Array()
-		for i in 7:
-			var a := TAU*i/7
-			points.append(Vector2(cos(a),sin(a))*rng.randf_range(0.4,0.55))
-		meshes.rock = solid_polygon(points,1,0.18)
-	var n := piece(meshes.rock,pos,size,shade("stone"),parent)
+	var variant := rng.randi_range(0,5)
+	var key := "rock%d" % variant
+	if not meshes.has(key):
+		var sphere := SphereMesh.new()
+		sphere.radius = 0.6
+		sphere.height = 1.2
+		sphere.radial_segments = 11
+		sphere.rings = 7
+		var arrays := sphere.get_mesh_arrays()
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		st.set_smooth_group(-1)
+		for index in indices:
+			var p := vertices[index]
+			var perturb := 1.0+0.17*sin(p.x*9+variant)*cos(p.z*7+variant)+0.1*sin(p.y*13+variant)
+			p *= perturb
+			p.y = maxf(p.y,-0.36)+0.36
+			st.add_vertex(p)
+		st.generate_normals()
+		meshes[key] = st.commit()
+	var n := piece(meshes[key],pos,size,shade("stone"),parent)
 	n.rotation.y = rng.randf()*TAU
 
 func tree(pos: Vector3, height: float) -> void:

@@ -9,8 +9,10 @@ var repo: String
 func _init() -> void:
 	call_deferred("build")
 
-func pavers(center: Vector3, width: float, depth: float) -> void:
+func pavers(center: Vector3, width: float, depth: float, outline_override: PackedVector2Array = PackedVector2Array()) -> void:
 	var outline := PackedVector2Array([Vector2(-width/2+0.7,-depth/2),Vector2(width/2-0.9,-depth/2),Vector2(width/2,-depth/2+1),Vector2(width/2,depth/2-0.9),Vector2(width/2-0.85,depth/2),Vector2(-width/2+1,depth/2),Vector2(-width/2,depth/2-1.1),Vector2(-width/2,-depth/2+0.8)])
+	if not outline_override.is_empty():
+		outline = outline_override
 	kit.piece(kit.solid_polygon(outline,1.2,0.1),center-Vector3(0,1.2,0),Vector3.ONE,"mortar")
 	var cols := int(width/0.53)
 	var rows := int(depth/0.51)
@@ -19,7 +21,7 @@ func pavers(center: Vector3, width: float, depth: float) -> void:
 	var seeds: Array[Vector2] = []
 	for z in rows:
 		for x in cols:
-			seeds.append(Vector2(-width/2+(x+0.5)*w+kit.rng.randf_range(-w*0.25,w*0.25),-depth/2+(z+0.5)*d+kit.rng.randf_range(-d*0.25,d*0.25)))
+			seeds.append(Vector2(-width/2+(x+0.5)*w+kit.rng.randf_range(-w*0.43,w*0.43),-depth/2+(z+0.5)*d+kit.rng.randf_range(-d*0.43,d*0.43)))
 	for seed_pos in seeds:
 		var poly := outline.duplicate()
 		for neighbor in seeds:
@@ -58,7 +60,7 @@ func clip_polygon(poly: PackedVector2Array, normal: Vector2, limit: float) -> Pa
 
 func bridge() -> void:
 	# Reference bridge runs from the plaza toward the foreground dock, not sideways.
-	var g = kit.node_group("StoneArchBridge",Vector3(2.6,0.25,7.5),PI/2)
+	var g = kit.node_group("StoneArchBridge",Vector3(5.3,0.25,6.0),PI/2)
 	var half_span := 3.0
 	for i in 25:
 		var x := -half_span+(i+0.5)*half_span*2/25
@@ -81,7 +83,8 @@ func bridge() -> void:
 			stone.rotation.z = atan2(1.5*cos(a),-2.72*sin(a))
 
 func dock() -> void:
-	var g = kit.node_group("TimberDock",Vector3(2.6,0.0,13.35))
+	var g = kit.node_group("TimberDock",Vector3(4.35,0.0,13.1),-0.225)
+	g.scale = Vector3(1.15,1.0,1.3)
 	for i in 35:
 		var z := -3.1+i*0.19
 		var plank := kit.block(Vector3(0,0.15+kit.rng.randf_range(-0.02,0.02),z),Vector3(3.2+kit.rng.randf_range(-0.08,0.08),0.16,0.175),kit.shade("wood"),g)
@@ -107,6 +110,47 @@ func dock() -> void:
 	kit.beam(Vector3(-1.3,2.8,-2.7),Vector3(-1.3,3.6,-3.7),0.10,"oak",g)
 	kit.beam(Vector3(-1.3,3.6,-4.0),Vector3(-1.3,1.3,-4.0),0.035,"sand",g)
 
+func rowboat(pos: Vector3) -> void:
+	var g := kit.node_group("Reference_Clinker_Rowboat",pos,-0.225)
+	# Closed thin plank strips follow a pointed curved hull, not a solid block.
+	for side in [-1,1]:
+		for row in 6:
+			for segment in 24:
+				var corners: Array[Vector3] = []
+				for q in [Vector2(row,segment),Vector2(row+1,segment),Vector2(row+1,segment+1),Vector2(row,segment+1)]:
+					var v: float = q.x/6.0
+					var t: float = q.y/24.0
+					var z := (t-0.5)*4.3
+					var width := pow(sin(PI*(0.02+t*0.96)),0.8)*(0.18+0.59*v)
+					corners.append(Vector3(side*width,-0.18+v*0.65+0.24*pow(abs(z/2.15),4),z))
+				var st := SurfaceTool.new()
+				st.begin(Mesh.PRIMITIVE_TRIANGLES)
+				st.set_smooth_group(-1)
+				var vertices := corners.duplicate()
+				for p in corners:
+					vertices.append(p+Vector3(-side*0.045,0.018,0))
+				for face in [[0,1,2,3],[7,6,5,4],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]:
+					for index in ([0,2,1,0,3,2] if side == 1 else [0,1,2,0,2,3]):
+						st.add_vertex(vertices[face[index]])
+				st.generate_normals()
+				kit.piece(st.commit(),Vector3.ZERO,Vector3.ONE,kit.shade("wood"),g)
+				if row == 5:
+					kit.beam(corners[1]+Vector3(0,0.025,0),corners[2]+Vector3(0,0.025,0),0.075,"oak_light",g)
+		for rib in 9:
+			var z := -1.65+rib*0.41
+			var width := pow(sin(PI*(0.02+(z/4.3+0.5)*0.96)),0.8)
+			for row in 5:
+				var v0 := row/5.0
+				var v1 := (row+1)/5.0
+				kit.beam(Vector3(side*width*(0.18+0.54*v0),-0.13+v0*0.65,z),Vector3(side*width*(0.18+0.54*v1),-0.13+v1*0.65,z),0.065,"oak_light",g)
+	for z in [-0.95,0.0,0.95]:
+		kit.block(Vector3(0,0.27,z),Vector3(1.18,0.07,0.27),"wood7",g)
+	for x in [-0.1,0.0,0.1]:
+		kit.block(Vector3(x,-0.11,0),Vector3(0.095,0.05,3.0),"wood4",g)
+	kit.beam(Vector3(-0.7,0.36,-1.5),Vector3(0.9,0.42,1.8),0.045,"oak_light",g)
+	var blade := kit.block(Vector3(0.85,0.4,1.7),Vector3(0.15,0.025,0.6),"wood6",g)
+	blade.rotation.y = 0.45
+
 func source_model(filename: String, pos: Vector3, scale_value: float, rotation_y: float = 0) -> void:
 	var source := repo.path_join("resource_packs/terrain/tabletop-foundation/artifacts/models/").path_join(filename)
 	var doc := GLTFDocument.new()
@@ -117,6 +161,7 @@ func source_model(filename: String, pos: Vector3, scale_value: float, rotation_y
 	node.scale = Vector3.ONE*scale_value
 	node.rotation.y = rotation_y
 	for mesh in collect_meshes(node):
+		mesh.material_override = kit.mat("wood4")
 		if filename == "boat-row-small.glb":
 			mesh.material_override = kit.mat("wood6")
 		else:
@@ -145,30 +190,92 @@ func path_connection(a: Vector3,b: Vector3) -> void:
 	kit.beam(a+Vector3(0,0.04,0),b+Vector3(0,0.04,0),0.045,"gold")
 
 func pawn(pos: Vector3, cloth: String) -> void:
-	# Explicit neutral scale pawn, not a finished or rigged character asset.
-	var g = kit.node_group("NeutralScalePawn_NotFinalActor",pos)
-	kit.cylinder(Vector3(0,0.04,0),0.42,0.08,"iron",g,32)
-	kit.cylinder(Vector3(0,0.09,0),0.37,0.025,"gold",g,32)
-	for x in [-0.12,0.12]:
-		kit.block(Vector3(x,0.21,0.08),Vector3(0.16,0.24,0.32),"oak",g)
-		kit.beam(Vector3(x,0.25,0),Vector3(x,0.86,0),0.16,"iron",g)
-	var torso := CylinderMesh.new()
-	torso.top_radius = 0.27
-	torso.bottom_radius = 0.22
-	torso.height = 0.55
-	torso.radial_segments = 12
-	kit.piece(torso,Vector3(0,1.08,0),Vector3.ONE,"iron",g)
-	var cloak := CylinderMesh.new()
-	cloak.top_radius = 0.19
-	cloak.bottom_radius = 0.38
-	cloak.height = 0.95
-	cloak.radial_segments = 12
-	kit.piece(cloak,Vector3(0,0.93,-0.09),Vector3(1,1,0.75),cloth,g)
-	kit.cylinder(Vector3(0,1.52,0),0.18,0.34,"iron",g,16)
-	kit.block(Vector3(0,1.55,0.172),Vector3(0.25,0.05,0.035),"oak",g)
-	for x in [-0.3,0.3]:
-		kit.beam(Vector3(x,1.28,0),Vector3(x*1.4,0.88,0.12),0.13,"iron",g)
-	kit.beam(Vector3(0.48,0.68,0.15),Vector3(0.48,1.65,0.15),0.055,"gold",g)
+	# Authored rigid-piece study rig. Not a final sculpt or skinned cloth asset.
+	var g := kit.node_group("Rigged_Figure_Study",pos)
+	g.rotation.y = -0.2
+	kit.cylinder(Vector3(0,0.055,0),0.5,0.11,"iron",g,48)
+	kit.ring(Vector3(0,0.115,0),0.43,0.018,"oak_light",g)
+	var skeleton := Skeleton3D.new()
+	skeleton.name = "StudySkeleton"
+	g.add_child(skeleton)
+	var definition := [
+		["Hips",-1,Vector3(0,0.9,0)],["Chest",0,Vector3(0,0.42,0)],
+		["Head",1,Vector3(0,0.38,0)],
+		["UpperArmL",1,Vector3(-0.27,0,0)],["ForearmL",3,Vector3(-0.08,-0.26,0.04)],["HandL",4,Vector3(0,-0.23,0.07)],
+		["UpperArmR",1,Vector3(0.27,0,0)],["ForearmR",6,Vector3(0.13,-0.23,0.06)],["HandR",7,Vector3(0.02,-0.22,0.06)],
+		["ThighL",0,Vector3(-0.13,-0.08,0)],["ShinL",9,Vector3(-0.03,-0.34,0.04)],["FootL",10,Vector3(0,-0.28,0.07)],
+		["ThighR",0,Vector3(0.13,-0.08,0)],["ShinR",12,Vector3(0.04,-0.34,-0.02)],["FootR",13,Vector3(0,-0.28,0.07)]
+	]
+	var parts: Dictionary = {}
+	for row in definition:
+		var index := skeleton.get_bone_count()
+		skeleton.add_bone(row[0])
+		skeleton.set_bone_parent(index,row[1])
+		skeleton.set_bone_rest(index,Transform3D(Basis.IDENTITY,row[2]))
+		skeleton.set_bone_pose_position(index,row[2])
+		var attachment := BoneAttachment3D.new()
+		attachment.name = row[0]+"Mount"
+		attachment.bone_name = row[0]
+		skeleton.add_child(attachment)
+		parts[row[0]] = attachment
+	var armored := cloth == "cloth"
+	var body_mat := "iron" if armored else "wood3"
+	kit.ellipsoid(Vector3(0,-0.12,0),Vector3(0.25,0.29,0.15),body_mat,parts.Chest)
+	kit.ellipsoid(Vector3(0,0.03,0),Vector3(0.15,0.2,0.14),"skin",parts.Head)
+	kit.ellipsoid(Vector3(0,0.04,0.14),Vector3(0.033,0.055,0.048),"skin",parts.Head)
+	for side in [-1,1]:
+		kit.ellipsoid(Vector3(side*0.06,0.085,0.127),Vector3(0.019,0.012,0.01),"iron",parts.Head)
+		var label := "L" if side == -1 else "R"
+		kit.ellipsoid(Vector3(0,-0.1,0),Vector3(0.12,0.17,0.12),body_mat,parts["UpperArm"+label])
+		kit.ellipsoid(Vector3(0,-0.1,0),Vector3(0.085,0.15,0.09),body_mat,parts["Forearm"+label])
+		kit.ellipsoid(Vector3(0,-0.025,0.025),Vector3(0.065,0.09,0.065),"skin",parts["Hand"+label])
+		kit.ellipsoid(Vector3(0,-0.14,0),Vector3(0.11,0.2,0.12),body_mat,parts["Thigh"+label])
+		kit.ellipsoid(Vector3(0,-0.11,0),Vector3(0.09,0.16,0.1),body_mat,parts["Shin"+label])
+		kit.ellipsoid(Vector3(0,-0.015,0.065),Vector3(0.105,0.085,0.19),"oak",parts["Foot"+label])
+		kit.ellipsoid(Vector3(0,0.015,0.01),Vector3(0.17,0.11,0.19),body_mat,parts["UpperArm"+label])
+		kit.ring(Vector3(0,-0.13,0),0.10,0.015,"gold",parts["Forearm"+label])
+	kit.cylinder(Vector3(0,0.01,0),0.24,0.075,"oak",parts.Hips,32).scale.z = 0.68
+	kit.block(Vector3(0,0.01,0.175),Vector3(0.09,0.075,0.025),"gold",parts.Hips)
+	if armored:
+		kit.ellipsoid(Vector3(0,0.1,-0.005),Vector3(0.17,0.18,0.16),"iron",parts.Head)
+		kit.block(Vector3(0,0.09,0.152),Vector3(0.26,0.035,0.04),"oak",parts.Head)
+		kit.beam(Vector3(0,0.08,0.18),Vector3(0,-0.08,0.15),0.035,"gold",parts.Head)
+		for side in [-1,1]:
+			kit.beam(Vector3(side*0.18,0.08,0.1),Vector3(side*0.1,-0.25,0.16),0.035,"gold",parts.Chest)
+		# Blue surcoat panels leave articulated legs visible.
+		for side in [-1,1]:
+			kit.block(Vector3(side*0.13,-0.25,0.13),Vector3(0.2,0.5,0.055),"cloth",parts.Hips)
+		kit.beam(Vector3(0,0.03,0.03),Vector3(0,-0.72,0.13),0.05,"stone9",parts.HandR)
+		kit.beam(Vector3(-0.12,0,0.03),Vector3(0.12,0,0.03),0.045,"gold",parts.HandR)
+		kit.block(Vector3(0,-0.05,0.09),Vector3(0.38,0.6,0.1),"cloth",parts.HandL)
+		for x in [-0.19,0.19]:
+			kit.beam(Vector3(x,0.25,0.15),Vector3(x,-0.35,0.15),0.025,"gold",parts.HandL)
+		kit.beam(Vector3(0,0.18,0.16),Vector3(0,-0.24,0.16),0.025,"gold",parts.HandL)
+	else:
+		# Fine radial pleats form a robe, rather than the former plain cylinder.
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for row in 12:
+			for col in 64:
+				var points: Array[Vector3] = []
+				for uv in [Vector2(row,col),Vector2(row+1,col),Vector2(row+1,col+1),Vector2(row,col+1)]:
+					var t: float = uv.x/12.0
+					var angle: float = uv.y*TAU/64.0
+					var radius: float = 0.21+0.16*t+0.026*sin(angle*12)*t
+					points.append(Vector3(cos(angle)*radius,-t*0.7,sin(angle)*radius*0.8))
+				for index in [0,1,2,0,2,3]:
+					st.add_vertex(points[index])
+		st.generate_normals()
+		kit.piece(st.commit(),Vector3.ZERO,Vector3.ONE,"moss",parts.Hips)
+		for side in [-1,1]:
+			kit.beam(Vector3(side*0.13,0.1,0.14),Vector3(side*0.1,-0.3,0.18),0.025,"gold",parts.Chest)
+		kit.ellipsoid(Vector3(0,0.14,-0.045),Vector3(0.17,0.19,0.12),"stone9",parts.Head)
+		kit.ellipsoid(Vector3(0,-0.08,0.08),Vector3(0.09,0.16,0.08),"stone9",parts.Head)
+		kit.beam(Vector3(0,-0.7,0.06),Vector3(0,1.0,0.06),0.045,"oak_light",parts.HandR)
+		kit.ring(Vector3(0,1.03,0.06),0.12,0.025,"gold",parts.HandR,true)
+		kit.ellipsoid(Vector3(0,1.03,0.06),Vector3.ONE*0.055,"gold",parts.HandR)
+	# Rest-pose attachments are the rig contract; no animation is authored.
+	skeleton.force_update_all_bone_transforms()
 
 func dormer(parent: Node3D, pos: Vector3, facing: float, prefix: String) -> void:
 	var g := Node3D.new()
@@ -190,11 +297,12 @@ func chimney(parent: Node3D, pos: Vector3, height: float, width: float = 0.75) -
 	kit.block(pos+Vector3(0,height-0.07,0),Vector3(width*0.65,0.03,width*0.65),"iron",parent)
 
 func construct_inn() -> void:
-	var inn := kit.house("Reference_L_Shaped_Inn",Vector3(1.5,1.05,-6.9),6.0,5.8,5.3,3.35,"roof")
+	var inn := kit.house("Reference_L_Shaped_Inn",Vector3(1.5,1.05,-7.7),4.6,5.8,5.3,3.35,"roof")
 	# Intersecting wing produces the reference's compound roof silhouette.
-	var wing := kit.house("Inn_Right_Entrance_Wing",Vector3(5.5,1.05,-5.7),3.6,6.5,4.9,2.5,"roof")
+	var wing := kit.house("Inn_Right_Entrance_Wing",Vector3(3.9,1.05,-6.6),4.4,6.5,4.9,2.5,"roof")
+	wing.rotation.y = PI/2
 	for g in [inn,wing]:
-		var width: float = 6.0 if g == inn else 3.6
+		var width: float = 4.6 if g == inn else 4.4
 		var depth: float = 5.8 if g == inn else 6.5
 		for z in [-depth/2-0.22,depth/2+0.22]:
 			kit.block(Vector3(0,3.05,z),Vector3(width+0.45,1.95,0.12),"plaster",g)
@@ -222,6 +330,9 @@ func construct_inn() -> void:
 	chimney(wing,Vector3(1.2,4.4,-2.6),2.5)
 	dormer(inn,Vector3(1.65,6.0,0.4),PI/2,"roof")
 	dormer(wing,Vector3(1.0,5.3,0.65),PI/2,"roof")
+	kit.window_at(Vector3(0,6.3,3.16),inn,0.9)
+	for side in [-1,1]:
+		kit.beam(Vector3(side*2.7,5.4,3.15),Vector3(side*1.0,7.2,3.15),0.15,"oak",inn)
 	# Curved blue fabric awning, thin gold ribs rather than a striped flat slab.
 	for col in 16:
 		for row in 8:
@@ -248,7 +359,8 @@ func construct_inn() -> void:
 			kit.cylinder(seat-Vector3(0,0.15,0),0.05,0.3,"oak",kit.root)
 
 func construct_shop() -> void:
-	var shop := kit.house("Reference_Cutaway_Apothecary",Vector3(-7.0,1.1,-0.7),6.2,5.4,3.4,2.0,"slate",true)
+	var shop := kit.house("Reference_Cutaway_Apothecary",Vector3(-7.45,1.1,3.3),6.2,5.4,3.4,2.0,"slate",true)
+	shop.scale = Vector3(1.15,1.1,1.15)
 	kit.shelving(shop,Vector3(-1.5,0.3,-2.28))
 	kit.shelving(shop,Vector3(0.85,0.3,-2.28))
 	# Side wall shelf is turned into the open interior, not facing the camera.
@@ -266,9 +378,9 @@ func construct_shop() -> void:
 	# The reference roof is a substantial rear roof, not a small lean-to.
 	var canopy := Node3D.new()
 	shop.add_child(canopy)
-	canopy.position = Vector3(0,3.4,-1.45)
+	canopy.position = Vector3(0,3.65,-1.9)
 	canopy.rotation.y = PI/2
-	kit.roof(3.1,6.5,0,1.75,"slate",canopy)
+	kit.roof(2.3,6.5,0,1.6,"slate",canopy)
 	dormer(shop,Vector3(1.35,3.55,-0.6),0,"slate")
 	chimney(shop,Vector3(-2.9,0.3,1.0),5.2,0.8)
 	for z in [-2.7,0,2.7]:
@@ -276,14 +388,16 @@ func construct_shop() -> void:
 	for x in [-3.1,3.1]:
 		kit.block(Vector3(x,0.85,2.7),Vector3(0.6,0.18,0.65),"stone9",shop)
 	kit.banner(Vector3(-0.9,1.25,2.94),2.3,0.95,shop)
-	kit.beam(Vector3(-3.2,3.4,1.8),Vector3(3.2,3.4,1.8),0.17,"oak",shop)
+	# Cutaway deliberately omits the front upper wall and overhead beam.
 	kit.stairs(Vector3(2.8,-0.3,2.9),1.25,0.6,1.1,shop,false)
 	kit.lantern(Vector3(2.5,2.0,2.9),shop)
 	for i in 6:
 		kit.shrub(Vector3(-9.7+i*1.0,0.9,2.45),0.35)
 
 func construct_guild() -> void:
-	var guild := kit.house("Reference_Ornate_Guild",Vector3(11.2,1.4,0.4),5.5,7.0,5.5,4.1,"slate")
+	var guild := kit.house("Reference_Ornate_Guild",Vector3(14.8,1.4,-2.5),5.5,7.0,5.5,4.1,"slate")
+	guild.scale = Vector3(0.92,1.05,0.92)
+	guild.rotation.y = 0.32
 	# Layered stone pediment surrounds the roof edge and carries gold finials.
 	for z in [-3.75,3.75]:
 		for inset in [0.0,0.18,0.34]:
@@ -327,6 +441,8 @@ func build() -> void:
 	DirAccess.make_dir_recursive_absolute(output_dir)
 	root.size = Vector2i(1800,1200)
 	root.msaa_3d = Viewport.MSAA_4X
+	root.use_taa = true
+	RenderingServer.directional_shadow_atlas_set_size(8192,true)
 	if args.size() == 2 and args[1] == "--inspect":
 		await inspect_saved_scene()
 		return
@@ -341,7 +457,7 @@ float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
 float water(vec2 p){return noise(p)*0.5+noise(p*2.1)*0.25+noise(p*4.3)*0.125+noise(p*8.1)*0.065;}
 void vertex(){world_position=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;}
-void fragment(){vec2 p=world_position.xz*vec2(1.1,2.7);float n=water(p);ALBEDO=mix(vec3(0.025,0.058,0.062),vec3(0.11,0.17,0.17),n);ROUGHNESS=0.78;SPECULAR=0.18;METALLIC=0.0;}
+void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=mix(vec3(0.008,0.022,0.027),vec3(0.032,0.065,0.075),n);ROUGHNESS=0.9;SPECULAR=0.0;METALLIC=0.0;}
 """
 	var water_mat := ShaderMaterial.new()
 	water_mat.shader = shader
@@ -349,17 +465,18 @@ void fragment(){vec2 p=world_position.xz*vec2(1.1,2.7);float n=water(p);ALBEDO=m
 	water.material_override = water_mat
 	# Layout reconstructed from the approved image: broad plaza, left cutaway,
 	# compound inn at rear, tall guild right, bridge and dock toward the viewer.
-	pavers(Vector3(-0.5,0.8,-2.8),24.0,15.0)
-	pavers(Vector3(10.8,0.8,4.5),8.0,7.5)
+	var plaza_outline := PackedVector2Array([Vector2(-13,-7),Vector2(-10,-8),Vector2(-5,-7.5),Vector2(1,-7),Vector2(10,-7.5),Vector2(14,-4),Vector2(14,5),Vector2(10,7),Vector2(7.5,7.3),Vector2(5.2,7.8),Vector2(3.2,9.0),Vector2(0.2,9.1),Vector2(-1,8.2),Vector2(-3,8.8),Vector2(-6,7.5),Vector2(-10,7.8),Vector2(-13,5.5)])
+	pavers(Vector3(-2.5,0.8,-3.5),28.0,19.0,plaza_outline)
+	pavers(Vector3(12.4,0.8,4.5),8.0,7.5)
 	construct_inn()
 	construct_shop()
 	construct_guild()
 	bridge()
 	dock()
-	source_model("boat-row-small.glb",Vector3(5.0,-0.25,14.1),0.95,0.1)
-	source_model("crate.glb",Vector3(3.7,0.23,10.8),0.28)
+	rowboat(Vector3(7.1,-0.14,15.1))
+	source_model("crate.glb",Vector3(6.4,0.23,9.5),0.28)
 	# Irregular sand shelves with varied outlines, not square beach blocks.
-	for bank in [Vector3(-10.8,-0.62,5.0),Vector3(11.8,-0.62,9.0),Vector3(-12.4,-0.62,-2.0)]:
+	for bank in [Vector3(-10.8,-0.43,5.0),Vector3(14.8,-0.43,9.0),Vector3(-12.4,-0.43,-2.0)]:
 		var outline := PackedVector2Array()
 		for i in 32:
 			var a := TAU*i/32
@@ -376,7 +493,7 @@ void fragment(){vec2 p=world_position.xz*vec2(1.1,2.7);float n=water(p);ALBEDO=m
 	# Stacked rocky bank at the shop side, low boulders behind the inn.
 	for i in 90:
 		var z := kit.rng.randf_range(-10,3.5)
-		var x := kit.rng.randf_range(-14.0,-11.7)
+		var x := kit.rng.randf_range(-17.2,-14.5)
 		kit.rock(Vector3(x,kit.rng.randf_range(-0.4,1.6),z),Vector3(kit.rng.randf_range(0.8,2.1),kit.rng.randf_range(0.6,1.7),kit.rng.randf_range(0.9,1.6)))
 	for i in 35:
 		kit.rock(Vector3(kit.rng.randf_range(-9,13),-0.1,kit.rng.randf_range(-12,-10)),Vector3(1.2,0.8,1.0)*kit.rng.randf_range(0.7,1.5))
@@ -406,7 +523,7 @@ void fragment(){vec2 p=world_position.xz*vec2(1.1,2.7);float n=water(p);ALBEDO=m
 	env.background_color = Color("293b3d")
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color("a9b6bd")
-	env.ambient_light_energy = 0.42
+	env.ambient_light_energy = 0.28
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	if RenderingServer.get_current_rendering_method() != "gl_compatibility":
 		env.ssao_enabled = true
@@ -417,8 +534,8 @@ void fragment(){vec2 p=world_position.xz*vec2(1.1,2.7);float n=water(p);ALBEDO=m
 	kit.root.add_child(environment)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-48,-38,0)
-	sun.light_color = Color("ffdea8")
-	sun.light_energy = 1.1
+	sun.light_color = Color("fff0d5")
+	sun.light_energy = 1.25
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 90
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
@@ -432,7 +549,7 @@ void fragment(){vec2 p=world_position.xz*vec2(1.1,2.7);float n=water(p);ALBEDO=m
 	camera.position = Vector3(29,33,46)
 	camera.look_at(Vector3(1.0,1.7,2.0))
 	camera.current = true
-	for frame in 8:
+	for frame in 32:
 		await process_frame
 	RenderingServer.force_draw(false)
 	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-main.png")) == OK)
@@ -463,7 +580,7 @@ void fragment(){vec2 p=world_position.xz*vec2(1.1,2.7);float n=water(p);ALBEDO=m
 		material.normal_enabled = retained_textures[key][2]
 	camera.position = Vector3(-29,26,33)
 	camera.look_at(Vector3(2,1.3,0.5))
-	for frame in 5:
+	for frame in 24:
 		await process_frame
 	RenderingServer.force_draw(false)
 	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-alternate.png")) == OK)
