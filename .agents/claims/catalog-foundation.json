@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "task_id": "catalog-foundation",
+  "agent": "codex",
+  "summary": "Extend existing shared model intake with complete GLB dependencies, terrain candidates, engine review and production strategy",
+  "status": "completed",
+  "claimed_at": "2026-09-05T14:00:00Z",
+  "updated_at": "2026-09-05T14:06:00Z",
+  "paths": [
+    "tools/build-curated-member-packs.ps1",
+    "tools/validate-resource-packs.ps1",
+    "tools/review-model-packs.gd",
+    "catalog/curated-member-pack-manifest.json",
+    "catalog/resource-pack-ledger.json",
+    "resource_packs/",
+    "contracts/TABLETOP_ASSET_CONTRACT.md",
+    "docs/MODEL_PRODUCTION.md",
+    "README.md",
+    "tools/project.godot",
+    ".gitignore",
+    "docs/model-review/"
+  ],
+  "symbols": [],
+  "coordination": {
+    "depends_on": [],
+    "conflicts_with": [],
+    "notes": "Canonical shared-game-environment-library, not the older Project 42 catalog."
+  },
+  "completion": {
+    "commit": "a21818d",
+    "checks": [
+      "8 resource packs validated: passed",
+      "15 GLBs exported and reimported in Godot 4.7.2 OpenGL: passed",
+      "Exported footprint, bottom-center and ground-contact assertions: passed",
+      "15 GLBs byte-identical on rebuild: passed",
+      "Missing texture sabotage: rejected as expected; restored and validation passed",
+      "Contact sheet visually reviewed: passed as base geometry; palette and final consumer admission pending",
+      "Git diff whitespace and commit secret scanning: passed",
+      "Godot 4.3 and dense-world performance: not_run"
+    ]
+  }
+}

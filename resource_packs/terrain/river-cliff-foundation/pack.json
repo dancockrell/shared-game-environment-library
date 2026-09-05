@@ -1,56 +1,58 @@
 {
-  "packId": "sci-fi.modular-corridor-core.v1",
-  "displayName": "Modular Corridor Core",
-  "packType": "sci-fi",
+  "packId": "terrain.river-cliff-foundation.v1",
+  "displayName": "River and Cliff Foundation",
+  "packType": "terrain",
   "authoringStatus": "source_origin",
   "engineEligibility": "source_ready_not_engine_reviewed",
   "style": {
     "renderLanguage": [
       "stylized_3d",
-      "low_poly",
-      "paintable_base"
+      "low_poly"
     ],
     "physicalSubject": [
-      "corridor",
-      "junction",
-      "room",
-      "door"
+      "cliff",
+      "slope",
+      "waterfall",
+      "lily",
+      "bridge",
+      "cave"
     ],
     "sceneRoles": [
-      "station",
-      "ship_interior",
-      "research_base",
-      "sci_fi_dungeon"
+      "river",
+      "wetland",
+      "cave_approach",
+      "upland"
     ],
     "paletteIntent": [
-      "neutral_panels",
-      "project_emissive_accent"
+      "source_palette"
     ],
     "forbiddenClaims": [
-      "named_vessel",
-      "project_specific_faction_marking"
+      "named_place",
+      "inferred_exits",
+      "volcano_from_palette_alone"
     ]
   },
   "sourceLineage": {
     "kind": "CC0_member_extraction",
-    "upstreamSourceId": "kenney-modular-space-kit",
-    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-modular-space-kit/source_archive/kenney_modular-space-kit_1.0.zip",
+    "upstreamSourceId": "kenney-nature-kit",
+    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
     "upstreamLicenseSpdx": "CC0-1.0",
     "sourceMembers": [
-      "Models/GLB format/corridor.glb",
-      "Models/GLB format/corridor-corner.glb",
-      "Models/GLB format/corridor-intersection.glb",
-      "Models/GLB format/room-small.glb",
-      "Models/GLB format/gate-door.glb"
+      "Models/GLTF format/cliff_block_rock.glb",
+      "Models/GLTF format/cliff_blockSlope_rock.glb",
+      "Models/GLTF format/cliff_waterfall_rock.glb",
+      "Models/GLTF format/lily_large.glb",
+      "Models/GLTF format/bridge_woodNarrow.glb",
+      "Models/GLTF format/cliff_blockCave_rock.glb"
     ]
   },
   "outputs": [
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.corridor.mesh.v1",
-      "path": "artifacts/models/corridor.glb",
+      "assetId": "terrain.river-cliff-foundation.v1.cliff_block_rock.mesh.v1",
+      "path": "artifacts/models/cliff_block_rock.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/corridor.glb",
-      "sha256": "6805b35312a2d51a7966459fc016e27ca788decc776ed40f584922e89f485f8b",
+      "sourceMember": "Models/GLTF format/cliff_block_rock.glb",
+      "sha256": "2f31de8502288d6adcdae4d5605cfe65d4bcd4369dd0decd116c2615b9d3d01f",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -64,11 +66,11 @@
       "statusHook": "none"
     },
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.corridor-corner.mesh.v1",
-      "path": "artifacts/models/corridor-corner.glb",
+      "assetId": "terrain.river-cliff-foundation.v1.cliff_blockSlope_rock.mesh.v1",
+      "path": "artifacts/models/cliff_blockSlope_rock.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/corridor-corner.glb",
-      "sha256": "e0cb429b03abc641d6e5c5c2df039a0ef9c50a9a56a58c0542c3cbaeada49019",
+      "sourceMember": "Models/GLTF format/cliff_blockSlope_rock.glb",
+      "sha256": "82fe2e0477c7ce2c5994435f44074022cb2a36f56ff40bd34598cbfc87286885",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -82,11 +84,11 @@
       "statusHook": "none"
     },
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.corridor-intersection.mesh.v1",
-      "path": "artifacts/models/corridor-intersection.glb",
+      "assetId": "terrain.river-cliff-foundation.v1.cliff_waterfall_rock.mesh.v1",
+      "path": "artifacts/models/cliff_waterfall_rock.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/corridor-intersection.glb",
-      "sha256": "128fef49b225e9394c52755128a1dc195b8c3776f58239daf0ec24ed512ba3d3",
+      "sourceMember": "Models/GLTF format/cliff_waterfall_rock.glb",
+      "sha256": "08063b24498cae385c204e9038a72f0dd438fdfa29ecf106a0df5e656b7edff6",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -100,11 +102,11 @@
       "statusHook": "none"
     },
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.room-small.mesh.v1",
-      "path": "artifacts/models/room-small.glb",
+      "assetId": "terrain.river-cliff-foundation.v1.lily_large.mesh.v1",
+      "path": "artifacts/models/lily_large.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/room-small.glb",
-      "sha256": "b77a7d211401bda96f611ff2b0a10c8aff1a41cccb9d46add21f86a4feb029a7",
+      "sourceMember": "Models/GLTF format/lily_large.glb",
+      "sha256": "c8f7080df0ae3166e9d33f523b66360c2ac7556dff36cc9c8ee78b6a676c7db2",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -118,11 +120,29 @@
       "statusHook": "none"
     },
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.gate-door.mesh.v1",
-      "path": "artifacts/models/gate-door.glb",
+      "assetId": "terrain.river-cliff-foundation.v1.bridge_woodNarrow.mesh.v1",
+      "path": "artifacts/models/bridge_woodNarrow.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/gate-door.glb",
-      "sha256": "53e943314ba317a20bf0021d9cd474809779d25124f677f082cf28bad653812a",
+      "sourceMember": "Models/GLTF format/bridge_woodNarrow.glb",
+      "sha256": "df46d1ba2ae557f3c69850c4faf03bcd16786fff305bce772f5b260e50def351",
+      "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
+      "forwardAxis": "pending_engine_review",
+      "scaleMeters": "pending_engine_review",
+      "materialSlots": [
+        "pending_engine_review"
+      ],
+      "collisionPolicy": "pending_authored_static_collision",
+      "lodPolicy": "pending",
+      "thumbnailPolicy": "pending_fixed_three_quarter_view",
+      "selectionHook": "static_prop",
+      "statusHook": "none"
+    },
+    {
+      "assetId": "terrain.river-cliff-foundation.v1.cliff_blockCave_rock.mesh.v1",
+      "path": "artifacts/models/cliff_blockCave_rock.glb",
+      "format": "GLB",
+      "sourceMember": "Models/GLTF format/cliff_blockCave_rock.glb",
+      "sha256": "2c373a596840a4f3bffa1aba7a93d7da9d2aa1dded54f7a9966e4e4b3fce7d43",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -136,13 +156,7 @@
       "statusHook": "none"
     }
   ],
-  "dependencies": [
-    {
-      "path": "artifacts/models/Textures/colormap.png",
-      "sourceMember": "Models/GLB format/Textures/colormap.png",
-      "sha256": "5aa7d186416e85310d99308c8e5510ededda181f3354ba9f4887cd56273f2b1e"
-    }
-  ],
+  "dependencies": [],
   "review": {
     "legal": "approved_cc0_source_lineage",
     "literalSemantics": "approved_literal_member_selection",
@@ -152,11 +166,11 @@
     "createdAt": "2026-09-03"
   },
   "searchTags": [
-    "sci-fi",
-    "corridor",
-    "modular",
-    "station",
-    "interior",
+    "terrain",
+    "riverine",
+    "wetland",
+    "cliff",
+    "cave",
     "cc0_source"
   ]
 }

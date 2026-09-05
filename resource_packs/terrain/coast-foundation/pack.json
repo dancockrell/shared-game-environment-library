@@ -1,56 +1,54 @@
 {
-  "packId": "sci-fi.modular-corridor-core.v1",
-  "displayName": "Modular Corridor Core",
-  "packType": "sci-fi",
+  "packId": "terrain.coast-foundation.v1",
+  "displayName": "Coast Foundation",
+  "packType": "terrain",
   "authoringStatus": "source_origin",
   "engineEligibility": "source_ready_not_engine_reviewed",
   "style": {
     "renderLanguage": [
       "stylized_3d",
-      "low_poly",
-      "paintable_base"
+      "low_poly"
     ],
     "physicalSubject": [
-      "corridor",
-      "junction",
-      "room",
-      "door"
+      "sand",
+      "grass",
+      "dock",
+      "shore_rocks",
+      "palm"
     ],
     "sceneRoles": [
-      "station",
-      "ship_interior",
-      "research_base",
-      "sci_fi_dungeon"
+      "coast",
+      "river_port",
+      "beach"
     ],
     "paletteIntent": [
-      "neutral_panels",
-      "project_emissive_accent"
+      "source_palette"
     ],
     "forbiddenClaims": [
-      "named_vessel",
-      "project_specific_faction_marking"
+      "named_place",
+      "navigation_authority"
     ]
   },
   "sourceLineage": {
     "kind": "CC0_member_extraction",
-    "upstreamSourceId": "kenney-modular-space-kit",
-    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-modular-space-kit/source_archive/kenney_modular-space-kit_1.0.zip",
+    "upstreamSourceId": "kenney-pirate-kit",
+    "upstreamArchive": "assets/approved_cc0/Kenney/kenney-pirate-kit/source_archive/kenney_pirate-kit.zip",
     "upstreamLicenseSpdx": "CC0-1.0",
     "sourceMembers": [
-      "Models/GLB format/corridor.glb",
-      "Models/GLB format/corridor-corner.glb",
-      "Models/GLB format/corridor-intersection.glb",
-      "Models/GLB format/room-small.glb",
-      "Models/GLB format/gate-door.glb"
+      "Models/GLB format/patch-sand.glb",
+      "Models/GLB format/patch-grass.glb",
+      "Models/GLB format/structure-platform-dock.glb",
+      "Models/GLB format/rocks-sand-a.glb",
+      "Models/GLB format/palm-straight.glb"
     ]
   },
   "outputs": [
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.corridor.mesh.v1",
-      "path": "artifacts/models/corridor.glb",
+      "assetId": "terrain.coast-foundation.v1.patch-sand.mesh.v1",
+      "path": "artifacts/models/patch-sand.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/corridor.glb",
-      "sha256": "6805b35312a2d51a7966459fc016e27ca788decc776ed40f584922e89f485f8b",
+      "sourceMember": "Models/GLB format/patch-sand.glb",
+      "sha256": "9c7331c40897f293d2fec4035d534581ccb9b4e105e4cbce5cfd3abd0bb15f90",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -64,11 +62,11 @@
       "statusHook": "none"
     },
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.corridor-corner.mesh.v1",
-      "path": "artifacts/models/corridor-corner.glb",
+      "assetId": "terrain.coast-foundation.v1.patch-grass.mesh.v1",
+      "path": "artifacts/models/patch-grass.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/corridor-corner.glb",
-      "sha256": "e0cb429b03abc641d6e5c5c2df039a0ef9c50a9a56a58c0542c3cbaeada49019",
+      "sourceMember": "Models/GLB format/patch-grass.glb",
+      "sha256": "0c928d062fc8094bf2be7fe319b7831fbb3d798567b93d5b24d04739ab3c370d",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -82,11 +80,11 @@
       "statusHook": "none"
     },
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.corridor-intersection.mesh.v1",
-      "path": "artifacts/models/corridor-intersection.glb",
+      "assetId": "terrain.coast-foundation.v1.structure-platform-dock.mesh.v1",
+      "path": "artifacts/models/structure-platform-dock.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/corridor-intersection.glb",
-      "sha256": "128fef49b225e9394c52755128a1dc195b8c3776f58239daf0ec24ed512ba3d3",
+      "sourceMember": "Models/GLB format/structure-platform-dock.glb",
+      "sha256": "bf64343d37b5570cb78cf0918e3eeb98f96f9b2c69b3f16d103c61ebc8f063f7",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -100,11 +98,11 @@
       "statusHook": "none"
     },
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.room-small.mesh.v1",
-      "path": "artifacts/models/room-small.glb",
+      "assetId": "terrain.coast-foundation.v1.rocks-sand-a.mesh.v1",
+      "path": "artifacts/models/rocks-sand-a.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/room-small.glb",
-      "sha256": "b77a7d211401bda96f611ff2b0a10c8aff1a41cccb9d46add21f86a4feb029a7",
+      "sourceMember": "Models/GLB format/rocks-sand-a.glb",
+      "sha256": "bde0570946080d6f2dafd63a34be640d5c3713abd4559d6a9d689ce63f74113f",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -118,11 +116,11 @@
       "statusHook": "none"
     },
     {
-      "assetId": "sci-fi.modular-corridor-core.v1.gate-door.mesh.v1",
-      "path": "artifacts/models/gate-door.glb",
+      "assetId": "terrain.coast-foundation.v1.palm-straight.mesh.v1",
+      "path": "artifacts/models/palm-straight.glb",
       "format": "GLB",
-      "sourceMember": "Models/GLB format/gate-door.glb",
-      "sha256": "53e943314ba317a20bf0021d9cd474809779d25124f677f082cf28bad653812a",
+      "sourceMember": "Models/GLB format/palm-straight.glb",
+      "sha256": "a4101242b8c825280dfb6152900285aacc091203ce7bf9c743579599f1496520",
       "originPolicy": "upstream_member_origin_pending_engine_pivot_review",
       "forwardAxis": "pending_engine_review",
       "scaleMeters": "pending_engine_review",
@@ -140,7 +138,7 @@
     {
       "path": "artifacts/models/Textures/colormap.png",
       "sourceMember": "Models/GLB format/Textures/colormap.png",
-      "sha256": "5aa7d186416e85310d99308c8e5510ededda181f3354ba9f4887cd56273f2b1e"
+      "sha256": "451e1d7a53b8e76f4b2ee58742e241509fee5f82cf2cee6e3f7aca86ba718abe"
     }
   ],
   "review": {
@@ -152,11 +150,11 @@
     "createdAt": "2026-09-03"
   },
   "searchTags": [
-    "sci-fi",
-    "corridor",
-    "modular",
-    "station",
-    "interior",
+    "terrain",
+    "coast",
+    "riverine",
+    "beach",
+    "dock",
     "cc0_source"
   ]
 }

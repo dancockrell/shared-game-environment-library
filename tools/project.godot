@@ -1,0 +1,6 @@
+; Standalone catalog review only; no game runtime or consumer dependency.
+config_version=5
+[application]
+config/name="Shared model review"
+[rendering]
+renderer/rendering_method="gl_compatibility"

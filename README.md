@@ -16,6 +16,9 @@ It deliberately does not contain project lore, character identities, proprietary
 
 ## Use the right layer
 
+See [model production](docs/MODEL_PRODUCTION.md) for the cross-game build order,
+DR Companion handoff review, provisional budgets, and reproducible model review.
+
 `assets/approved_cc0/` preserves original vetted inputs. It is not a runtime folder.
 
 `resource_packs/` holds small packs selected by literal use. A pack can be source-origin or derivative, yet still be waiting for a consuming engine to review scale, pivots, materials, collision, LODs, and visual fit.

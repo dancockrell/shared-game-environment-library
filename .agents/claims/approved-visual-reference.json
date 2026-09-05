@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "task_id": "approved-visual-reference",
+  "agent": "codex",
+  "summary": "Preserve the exact user-approved painted miniature reference and revise visual production criteria",
+  "status": "completed",
+  "claimed_at": "2026-09-05T14:20:00Z",
+  "updated_at": "2026-09-05T14:31:00Z",
+  "paths": [
+    "docs/visual-reference/",
+    "docs/MODEL_PRODUCTION.md",
+    "contracts/TABLETOP_ASSET_CONTRACT.md"
+  ],
+  "symbols": [],
+  "coordination": {
+    "depends_on": [],
+    "conflicts_with": [],
+    "notes": "Explicit user approval of the generated concept. Reference only, no runtime or CC0 admission."
+  },
+  "completion": {
+    "commit": "f3c2b35",
+    "checks": [
+      "Original and preserved reference SHA-256 and size: passed",
+      "Provenance JSON parsed: passed",
+      "Git diff --check and secret scan: passed",
+      "Exact user approval and unapproved suggestions distinguished in production contract: passed"
+    ]
+  }
+}
