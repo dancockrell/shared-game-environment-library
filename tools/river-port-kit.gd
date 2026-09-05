@@ -40,6 +40,9 @@ func setup_palette() -> void:
 	material("water",Color("254c52"),0.2,0.25)
 	material("foam",Color("78928a"),0.75)
 	material("redcloth",Color("693b32"))
+	material("moss",Color("4b5732"))
+	material("flower",Color("a38cbd"))
+	material("skin",Color("af8d69"))
 	var glow := material("lamp",Color("f2bf6c"),0.6)
 	glow.emission_enabled = true
 	glow.emission = Color("e6a14c")
@@ -76,7 +79,7 @@ func apply_surface_sources(repo: String) -> void:
 				for y in image.get_height():
 					for x in image.get_width():
 						var value := image.get_pixel(x,y).get_luminance()
-						var painted := 0.56+value*0.44
+						var painted := 0.28+value*0.72
 						image.set_pixel(x,y,Color(painted,painted,painted))
 				image.generate_mipmaps()
 				color_texture = ImageTexture.create_from_image(image)
@@ -92,7 +95,7 @@ func apply_surface_sources(repo: String) -> void:
 			m.albedo_texture = color_texture
 			m.normal_enabled = true
 			m.normal_texture = normal_texture
-			m.normal_scale = 0.35
+			m.normal_scale = 0.8
 			m.uv1_triplanar = true
 			m.uv1_world_triplanar = true
 			m.uv1_scale = Vector3.ONE*1.4
@@ -217,7 +220,7 @@ func roof(width: float, depth: float, eaves: float, rise: float, prefix: String,
 			var t := (row+0.5)/float(rows)
 			for col in cols:
 				var z := -depth/2-0.22+(col+0.5)*(depth+0.44)/cols
-				var tile := block(Vector3(side*half*(1-t),eaves+rise*t+0.14,z),Vector3(slope/rows+0.075,0.085,(depth+0.44)/cols-0.015),shade(prefix),parent)
+				var tile := block(Vector3(side*half*(1-t),eaves+rise*t+0.14+rng.randf_range(-0.02,0.02),z+rng.randf_range(-0.02,0.02)),Vector3(slope/rows+0.10,0.105,(depth+0.44)/cols-0.018),shade(prefix),parent)
 				tile.rotate_z(-side*angle)
 	for col in int(depth/0.35)+2:
 		cylinder(Vector3(0,eaves+rise+0.16,-depth/2+col*0.35),0.12,0.37,prefix+"6",parent).rotation.x = PI/2
@@ -310,21 +313,82 @@ func rock(pos: Vector3, size: Vector3, parent: Node3D = root) -> void:
 
 func tree(pos: Vector3, height: float) -> void:
 	var g := node_group("OakTree",pos)
-	beam(Vector3.ZERO,Vector3(0.15,height*0.72,0),0.3,"oak",g)
+	beam(Vector3.ZERO,Vector3(0.15,height*0.62,0),0.36,"oak",g)
 	if not meshes.has("leaves"):
 		var s := SphereMesh.new()
 		s.height = 2
 		s.radius = 1
-		s.radial_segments = 9
-		s.rings = 5
+		s.radial_segments = 8
+		s.rings = 4
 		meshes.leaves = s
-	for b in 9:
-		var a := b*TAU/9
-		var end := Vector3(cos(a)*height*0.28,height*rng.randf_range(0.55,0.88),sin(a)*height*0.28)
-		beam(Vector3(0,height*0.4,0),end,0.13,"oak",g)
-		for k in 5:
-			var leaf_pos := end+Vector3(rng.randf_range(-0.45,0.45),rng.randf_range(-0.15,0.55),rng.randf_range(-0.45,0.45))
-			piece(meshes.leaves,leaf_pos,Vector3(0.6,0.32,0.6),shade("leaf"),g)
-			for leaf_index in 6:
-				var leaf_a := TAU*leaf_index/6
-				piece(meshes.leaves,leaf_pos+Vector3(cos(leaf_a)*0.5,0.15,sin(leaf_a)*0.5),Vector3(0.21,0.065,0.14),shade("leaf"),g)
+	for b in 15:
+		var a := b*2.399
+		var end := Vector3(cos(a)*height*rng.randf_range(0.12,0.32),height*rng.randf_range(0.45,0.9),sin(a)*height*rng.randf_range(0.12,0.32))
+		beam(Vector3(0,height*0.35,0),end,0.13,"oak",g)
+		for k in 4:
+			var tip := end+Vector3(rng.randf_range(-0.65,0.65),rng.randf_range(0.1,0.7),rng.randf_range(-0.65,0.65))
+			beam(end,tip,0.045,"oak_light",g)
+			for leaf_index in 25:
+				var offset := Vector3(rng.randf_range(-0.6,0.6),rng.randf_range(-0.3,0.5),rng.randf_range(-0.6,0.6))
+				var leaf := piece(meshes.leaves,tip+offset,Vector3(0.14,0.035,0.09)*rng.randf_range(0.7,1.3),shade("leaf"),g)
+				leaf.rotation = Vector3(rng.randf_range(-0.8,0.8),rng.randf()*TAU,rng.randf_range(-0.8,0.8))
+
+func ring(pos: Vector3, radius: float, thickness: float, key: String, parent: Node3D, vertical: bool = false) -> void:
+	var torus := TorusMesh.new()
+	torus.inner_radius = radius-thickness
+	torus.outer_radius = radius+thickness
+	torus.rings = 32
+	torus.ring_segments = 8
+	var item := piece(torus,pos,Vector3.ONE,key,parent)
+	if vertical:
+		item.rotation.x = PI/2
+
+func spire(pos: Vector3, parent: Node3D, scale_value: float = 1.0) -> void:
+	block(pos,Vector3(0.4,0.14,0.4)*scale_value,"gold",parent)
+	cylinder(pos+Vector3(0,0.16,0)*scale_value,0.11*scale_value,0.2*scale_value,"gold",parent)
+	var cone := CylinderMesh.new()
+	cone.top_radius = 0.005
+	cone.bottom_radius = 0.13
+	cone.height = 0.65
+	cone.radial_segments = 12
+	piece(cone,pos+Vector3(0,0.5,0)*scale_value,Vector3.ONE*scale_value,"gold",parent)
+
+func stairs(pos: Vector3, width: float, height: float, depth: float, parent: Node3D, rails: bool = true) -> void:
+	var steps := maxi(3,int(height/0.16))
+	for i in steps:
+		var y := height*(i+1)/steps
+		var z := depth*(1.0-(i+0.5)/float(steps))
+		block(pos+Vector3(0,y/2,z),Vector3(width,y,depth/steps+0.015),shade("stone"),parent)
+	if rails:
+		for x in [-width/2-0.12,width/2+0.12]:
+			beam(pos+Vector3(x,0.5,depth),pos+Vector3(x,height+0.5,0),0.22,"stone7",parent)
+			for z in [0.0,depth]:
+				wall(0.35,0.65,0.4,pos+Vector3(x,height if z == 0 else 0,z),parent)
+
+func banner(pos: Vector3, width: float, height: float, parent: Node3D) -> void:
+	beam(pos+Vector3(-width*0.65,0,0),pos+Vector3(width*0.65,0,0),0.07,"gold",parent)
+	for row in 15:
+		var t := (row+0.5)/15.0
+		var z := 0.06*sin(t*PI*2.0)
+		block(pos+Vector3(0,-height*t,z),Vector3(width,height/15+0.01,0.03),"cloth",parent)
+		for side in [-1,1]:
+			block(pos+Vector3(side*(width/2-0.06),-height*t,z+0.025),Vector3(0.025,height/15+0.01,0.025),"gold",parent)
+	ring(pos+Vector3(0,-height*0.35,0.1),width*0.23,0.015,"gold",parent,true)
+	beam(pos+Vector3(0,-height*0.18,0.1),pos+Vector3(0,-height*0.75,0.1),0.025,"gold",parent)
+	for side in [-1,1]:
+		beam(pos+Vector3(0,-height*0.4,0.1),pos+Vector3(side*width*0.25,-height*0.23,0.1),0.025,"gold",parent)
+
+func shrub(pos: Vector3, radius: float, parent: Node3D = root, flowers: bool = false) -> void:
+	# Small separated leaves preserve the reference's fine silhouette.
+	if not meshes.has("leaves"):
+		var s := SphereMesh.new()
+		s.radius = 1
+		s.height = 2
+		s.radial_segments = 8
+		s.rings = 4
+		meshes.leaves = s
+	for i in 90:
+		var a := rng.randf()*TAU
+		var r := radius*sqrt(rng.randf())
+		var p := pos+Vector3(cos(a)*r,rng.randf_range(0.05,0.55)*radius,sin(a)*r)
+		piece(meshes.leaves,p,Vector3(0.10,0.045,0.065),"flower" if flowers and i%7 == 0 else shade("leaf"),parent)
