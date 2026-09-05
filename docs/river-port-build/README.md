@@ -12,6 +12,8 @@ These are actual Godot captures of constructed 3D geometry, not generated concep
 - `river-port-native.scn`: native editable hierarchy with embedded geometry, triplanar surfaces, lights, camera, and static water shader.
 - `river-port-scene.glb`: geometry interchange proof. Renderer-specific water and triplanar surfaces are **not** preserved. Use the native scene for visual evaluation.
 - `build-report.json`: material input hashes, renderer, seed, and measured submission counts.
+- `geometry-bounds.json`: four building footprint/occupied bounds, named entrance positions, roof direction, fitting inputs/residuals, and quay/bridge/dock envelopes.
+- `geometry-audit.html`: side-by-side reference and actual render with identical projected model edges. Open locally in a browser; no external service is required. Its embedded-browser visual check was blocked by local-URL policy, so interactive presentation is not marked verified.
 
 ## Preserved direction
 
@@ -27,7 +29,23 @@ The builder now converts manually traced source pixels from the 1536 by 1024 ref
 
 These measurements are manual approximations of visible boundaries, not automatic image segmentation or a claim of exact matching. Rear contours occluded by roofs/cliffs are inferred at foundation level, not traced around roof silhouettes. No reference pixels are pasted into the render. Elevated markers, figure bases, table positions, vegetation anchors, and the rowboat position also use source-pixel anchors where visible. The layout is only a reconstruction study, never authoritative game topology.
 
-Building corrections include a narrower main inn volume and perpendicular right wing, a larger cutaway shop with its front side walls lowered, and a rotated guild with a taller stone pediment, finials, banners, and larger entrance. Thin eight-pane joinery, reduced bevels, finer roof layers, and full-resolution input material maps address part of the chunky form language. Roof planes now rotate about their actual centers, and tile offsets are measured along the roof normal so thinner tiles do not disappear inside the deck.
+The earlier whole-house rotation of the inn wing is superseded: it put the entrance on the wrong side. Roof direction now has an independent coordinate frame; the wing's front door remains on its declared plaza-facing wall. Main and wing placement now derive from measured front-wall endpoints and an inferred depth anchor, constrained to orthogonal footprints. Shop and guild have recorded bounds but are NOT yet fitted by this procedure. Thin eight-pane joinery, reduced bevels, finer roof layers, and full-resolution input material maps address only part of the chunky form language. Roof planes rotate about their actual centers, and tile offsets are measured along the roof normal.
+
+## Bounded reconstruction contract — 2026-09-06
+
+Each house records width, depth, wall height, roof rise, roof direction, cutaway status and door dimensions. Local +Z is the front/entrance side. `EntranceSocket` is on that face at the floor-top elevation; roof rotation must never rotate that socket. The inn stairs derive from the socket and end at plaza height 0.88. Their foundations span the transformed footprints down to bed datum -0.45. This is a constructed support volume, not an independently placed decorative slab; its stone detail remains unfinished.
+
+`fit_building` intersects front-corner reference pixels with the declared base plane, derives the wall's X direction, constructs its perpendicular depth direction, and projects an inferred rear anchor onto that direction. It does not shear the building to force three inconsistent points to agree. The audit records the resulting rear-anchor residual. Near-zero error at the first two anchors is expected by construction and MUST NOT be reported as independent visual accuracy.
+
+Current inn anchors, in approved 1536x1024 source pixels:
+
+- Main: front-left (803,286), front-right (928,340), inferred rear-right (1070,214).
+- Entrance wing: front-left (995,309), front-right (1153,365), inferred rear-right (1235,280).
+- Both use base height 1.15 and vertical scale 0.85. These heights and hidden depths remain reconstruction assumptions, not measurements recovered uniquely from the illustration.
+
+The first constrained fit leaves approximately 41 and 23 source pixels of rear-anchor disagreement respectively. It fixes the entrance-side error but does not establish exact roof proportions or building placement. The HTML audit draws model footprint, wall-top, ridge and door edges over both images so those errors can be inspected directly. The cutaway shop's special canopy is not represented by the generic ridge outline. Occupied bounds include descendant mesh extents; they are not collision shapes. Quay bounds describe the base at 0.8 (paving reaches 0.88); bridge bounds describe landing width rather than its curved profile; dock bounds exclude piles, ropes and crane.
+
+Independent native reload checks four building footprints against the exported report, the three surface-record count, and both fitted buildings' entrance/stair alignment, independent roof direction, and foundation bed contact. These checks do not establish manifold geometry, obstacle clearance, full-width bridge/dock contact, or complete reference similarity. No asset is runtime-admitted by this pass.
 
 This is a neutral catalog study, not a DragonRealms map or client implementation. Gold connections here are composition fixtures, not authoritative exits. Client integration must derive rooms, connection types, movement, and state from the actual MUD graph; visual distance never creates an exit.
 

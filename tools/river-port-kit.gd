@@ -270,8 +270,13 @@ func lantern(pos: Vector3, parent: Node3D) -> void:
 	lamp.omni_range = 3.5
 	parent.add_child(lamp)
 
-func house(name_value: String, position: Vector3, width: float, depth: float, height: float, roof_rise: float, roof_color: String, cutaway: bool = false, gable_key: String = "plaster", wall_windows: bool = true, door_width: float = 1.3, door_height: float = 2.2) -> Node3D:
+func house(name_value: String, position: Vector3, width: float, depth: float, height: float, roof_rise: float, roof_color: String, cutaway: bool = false, gable_key: String = "plaster", wall_windows: bool = true, door_width: float = 1.3, door_height: float = 2.2, roof_crosswise: bool = false, default_steps: bool = true) -> Node3D:
 	var g := node_group(name_value,position)
+	g.set_meta("building_bounds",{"width":width,"depth":depth,"wallHeight":height,"roofRise":roof_rise,"roofCrosswise":roof_crosswise,"cutaway":cutaway,"doorWidth":door_width,"doorHeight":door_height})
+	var entrance := Node3D.new()
+	entrance.name = "EntranceSocket"
+	entrance.position = Vector3(0,0.315,depth/2+0.24)
+	g.add_child(entrance)
 	block(Vector3(0,0.12,0),Vector3(width+0.6,0.24,depth+0.6),"mortar",g)
 	wall(width, height,0.35,Vector3(0,0,-depth/2),g)
 	for side in [-1,1]:
@@ -295,8 +300,9 @@ func house(name_value: String, position: Vector3, width: float, depth: float, he
 			for x in [-door_width*0.35,door_width*0.35]:
 				cylinder(Vector3(x,y,depth/2+0.2),0.02,0.025,"gold",g).rotation.x = PI/2
 		cylinder(Vector3(door_width*0.25,door_height/2,depth/2+0.19),0.04,0.08,"gold",g).rotation.x = PI/2
-		for step in 3:
-			block(Vector3(0,-0.09+step*0.08,depth/2+0.85-step*0.2),Vector3(1.7-step*0.06,0.18,0.4),shade("stone"),g)
+		if default_steps:
+			for step in 3:
+				block(Vector3(0,-0.09+step*0.08,depth/2+0.85-step*0.2),Vector3(1.7-step*0.06,0.18,0.4),shade("stone"),g)
 		if wall_windows:
 			for x in [-width*0.32,width*0.32]:
 				window_at(Vector3(x,height*0.64,depth/2+0.18),g)
@@ -304,13 +310,20 @@ func house(name_value: String, position: Vector3, width: float, depth: float, he
 			var a := PI*i/10
 			var voussoir := block(Vector3(cos(a)*door_width*0.61,door_height-0.07+sin(a)*door_width*0.61,depth/2+0.24),Vector3(0.23,0.30,0.27),shade("stone"),g)
 			voussoir.rotation.z = a-PI/2
-		roof(width,depth,height,roof_rise,roof_color,g)
+		# Roof orientation is independent of the wall/door coordinate frame.
+		var roof_frame := Node3D.new()
+		roof_frame.name = "RoofFrame"
+		g.add_child(roof_frame)
+		roof_frame.rotation.y = PI/2 if roof_crosswise else 0.0
+		var roof_width := depth if roof_crosswise else width
+		var roof_depth := width if roof_crosswise else depth
+		roof(roof_width,roof_depth,height,roof_rise,roof_color,roof_frame)
 		# Gable infill built from stacked closed beams, no missing triangle faces.
-		for z in [-depth/2,depth/2]:
+		for z in [-roof_depth/2,roof_depth/2]:
 			for row in int(roof_rise/0.15):
 				var y := (row+0.5)*0.15
-				block(Vector3(0,height+y,z),Vector3(width*(1-y/roof_rise),0.16,0.2),gable_key,g)
-			beam(Vector3(0,height,z+0.14),Vector3(0,height+roof_rise,z+0.14),0.16,"oak" if gable_key == "plaster" else gable_key,g)
+				block(Vector3(0,height+y,z),Vector3(roof_width*(1-y/roof_rise),0.16,0.2),gable_key,roof_frame)
+			beam(Vector3(0,height,z+0.14),Vector3(0,height+roof_rise,z+0.14),0.16,"oak" if gable_key == "plaster" else gable_key,roof_frame)
 	for x in [-width/2,width/2]:
 		for z in [-depth/2,depth/2]:
 			block(Vector3(x,height/2,z),Vector3(0.22,height+0.2,0.24),"oak",g)

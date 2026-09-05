@@ -6,6 +6,128 @@ var kit := Kit.new()
 var output_dir: String
 var repo: String
 var camera: Camera3D
+var measured_buildings: Array[Dictionary] = []
+var bounded_surfaces: Array[Dictionary] = []
+
+func record_surface(id: String, points: Array[Vector3], description: String) -> void:
+	var coordinates: Array = []
+	for p in points:
+		coordinates.append([p.x,p.y,p.z])
+	bounded_surfaces.append({"id":id,"worldBoundary":coordinates,"description":description})
+
+func screen_point(p: Vector3) -> Vector2:
+	return camera.unproject_position(p)*Vector2(1536,1024)/Vector2(root.size)
+
+func svg_line(points: Array[Vector3], color: String, close: bool = false) -> String:
+	var coordinates := ""
+	var sequence := points.duplicate()
+	if close:
+		sequence.append(points[0])
+	for p in sequence:
+		var pixel := screen_point(p)
+		coordinates += "%0.2f,%0.2f " % [pixel.x,pixel.y]
+	return '<polyline points="%s" fill="none" stroke="%s" stroke-width="2"/>' % [coordinates,color]
+
+func write_geometry_audit() -> void:
+	var records: Array[Dictionary] = []
+	var lines := ""
+	for surface in bounded_surfaces:
+		var points: Array[Vector3] = []
+		for p in surface.worldBoundary:
+			points.append(Vector3(p[0],p[1],p[2]))
+		lines += svg_line(points,"#b7bfff",true)
+	for g in kit.root.get_children():
+		if not g.has_meta("building_bounds"):
+			continue
+		var spec: Dictionary = g.get_meta("building_bounds")
+		var footprint: Array[Vector3] = []
+		var eaves: Array[Vector3] = []
+		var coordinates: Array = []
+		for corner in [Vector2(-1,1),Vector2(1,1),Vector2(1,-1),Vector2(-1,-1)]:
+			var local := Vector3(corner.x*float(spec.width)/2,0,corner.y*float(spec.depth)/2)
+			var point: Vector3 = g.to_global(local)
+			footprint.append(point)
+			eaves.append(g.to_global(local+Vector3.UP*float(spec.wallHeight)))
+			coordinates.append([point.x,point.y,point.z])
+		lines += svg_line(footprint,"#ff65c9",true)+svg_line(eaves,"#ffd451",true)
+		for index in 4:
+			lines += svg_line([footprint[index],eaves[index]],"#ffd451")
+		if not spec.cutaway:
+			var ridge: Array[Vector3] = []
+			for side in [-1,1]:
+				var local := Vector3(side*float(spec.width)/2,float(spec.wallHeight)+float(spec.roofRise),0) if spec.roofCrosswise else Vector3(0,float(spec.wallHeight)+float(spec.roofRise),side*float(spec.depth)/2)
+				ridge.append(g.to_global(local))
+			lines += svg_line(ridge,"#ff9e42")
+		var socket := g.get_node("EntranceSocket") as Node3D
+		var doorway: Array[Vector3] = []
+		for corner in [Vector2(-0.5,0),Vector2(0.5,0),Vector2(0.5,1),Vector2(-0.5,1)]:
+			doorway.append(g.to_global(socket.position+Vector3(corner.x*float(spec.doorWidth),corner.y*(float(spec.doorHeight)-0.315),0)))
+		if not spec.cutaway:
+			lines += svg_line(doorway,"#72ff80",true)
+		var occupied := AABB()
+		var first := true
+		for mesh in collect_meshes(g):
+			var bounds: AABB = mesh.global_transform*mesh.mesh.get_aabb()
+			occupied = bounds if first else occupied.merge(bounds)
+			first = false
+		var record := {"name":str(g.name),"localDimensions":spec,"worldFootprintFrontLeftFirst":coordinates,"occupiedWorldAabb":{"min":[occupied.position.x,occupied.position.y,occupied.position.z],"size":[occupied.size.x,occupied.size.y,occupied.size.z]},"referenceFitted":g.has_meta("reference_fit"),"entranceWorld":[socket.global_position.x,socket.global_position.y,socket.global_position.z]}
+		for measurement in measured_buildings:
+			if measurement.node != g:
+				continue
+			var errors: Array = []
+			var targets: Array = []
+			for index in 3:
+				var target: Vector2 = measurement.targets[index]
+				var projected := screen_point(footprint[index])
+				errors.append(projected.distance_to(target))
+				targets.append([target.x,target.y])
+				lines += '<circle cx="%f" cy="%f" r="5" fill="none" stroke="#64ecff" stroke-width="2"/>' % [target.x,target.y]
+			record["referencePixels"] = targets
+			record["anchorConfidence"] = measurement.confidence
+			record["projectedAnchorErrorsPixels"] = errors
+			record["errorMeaning"] = "First two points are fitting inputs, not independent accuracy evidence. Third measures orthogonal footprint disagreement with an inferred depth anchor."
+		records.append(record)
+	var report := FileAccess.open(output_dir.path_join("geometry-bounds.json"),FileAccess.WRITE)
+	report.store_string(JSON.stringify({"buildings":records,"surfaces":bounded_surfaces,"status":"Partial reference fitting: inn volumes only. Other building bounds are recorded but not accepted as matched."},"\t")+"\n")
+	report.close()
+	var page := '<!doctype html><html lang="en"><meta charset="utf-8"><title>River port geometric audit</title><style>body{background:#17191c;color:#eee;font:16px system-ui;margin:24px}svg{width:100%;height:auto}section{display:grid;grid-template-columns:1fr 1fr;gap:12px}button{padding:8px}p{max-width:1000px}</style><h1>Geometric reconstruction audit</h1><p>Magenta: wall footprints. Yellow: wall/eave bounds. Green: door face. Cyan circles: manual fitting anchors. These are projected model bounds, not a claim of reference agreement. Shop and guild are measured but not yet fitted. Hidden footprint depth is inferred.</p><button onclick="document.querySelectorAll(\'.bounds\').forEach(e=>e.style.display=e.style.display===\'none\'?\'\':\'none\')">Show / hide bounds</button><section>'
+	for source in ["../visual-reference/painted-miniature-river-port-approved.png","river-port-main.png"]:
+		page += '<div><h2>%s</h2><svg viewBox="0 0 1536 1024"><image href="%s" width="1536" height="1024"/><g class="bounds">%s</g></svg></div>' % ["Approved reference" if source.begins_with("..") else "Actual engine render",source,lines]
+	page += '</section><p>Compare the same model edges on both images. Endpoint agreement obtained by fitting is not an independent test. Inspect door orientation, roof junctions, ground support and stair contact separately.</p></html>'
+	var html := FileAccess.open(output_dir.path_join("geometry-audit.html"),FileAccess.WRITE)
+	html.store_string(page)
+	html.close()
+
+func fit_building(g: Node3D, front_left: Vector2, front_right: Vector2, rear_right: Vector2, base_height: float, vertical_scale: float) -> void:
+	# Two observed facade corners determine the front wall; the third point
+	# estimates depth only. Orthogonality is enforced, not a sheared facade.
+	var spec: Dictionary = g.get_meta("building_bounds")
+	var left := reference_point(front_left,base_height)
+	var right := reference_point(front_right,base_height)
+	var rear := reference_point(rear_right,base_height)
+	var x_axis := (right-left).normalized()
+	var outward := Vector3(-x_axis.z,0,x_axis.x)
+	var depth := (right-rear).dot(outward)
+	assert(depth > 0.5,"Rear bound must be behind the declared entrance face")
+	g.transform = Transform3D(Basis(x_axis,Vector3.UP,outward),(left+right)/2-outward*depth/2)
+	g.scale = Vector3(left.distance_to(right)/float(spec.width),vertical_scale,depth/float(spec.depth))
+	g.set_meta("reference_fit",true)
+	measured_buildings.append({"node":g,"targets":[front_left,front_right,rear_right],"confidence":["manual visible facade corner","manual visible facade corner","inferred depth anchor"]})
+	# Foundation is bounded by the actual transformed building, not an
+	# independently placed decoration. It reaches the common riverbed datum.
+	var foundation_height := (base_height+0.45)/vertical_scale
+	var support := kit.block(Vector3(0,-foundation_height/2,0),Vector3(float(spec.width)+0.24,foundation_height,float(spec.depth)+0.24),"stone5",g)
+	support.name = "FoundationSupport"
+	var socket := g.get_node("EntranceSocket") as Node3D
+	var stairs := kit.node_group(str(g.name)+"_Entrance",socket.global_position)
+	stairs.basis = Basis(x_axis,Vector3.UP,outward)
+	var rise := socket.global_position.y-0.88
+	assert(rise > 0)
+	kit.stairs(Vector3(0,-rise,0),1.75,rise,1.45,stairs)
+	kit.block(Vector3(0,-0.06,-0.12),Vector3(1.75,0.12,0.26),"stone7",stairs)
+	stairs.set_meta("entrance_owner",str(g.name))
+	stairs.set_meta("bottom_height",0.88)
+	assert(stairs.global_position.distance_to(socket.global_position) < 0.0001)
 
 func reference_point(pixel: Vector2, height: float) -> Vector3:
 	# Source pixels are geometric measurements, not a projected image texture.
@@ -49,6 +171,10 @@ func reference_quay() -> void:
 		area += outline[i].cross(outline[(i+1)%outline.size()])
 	if area < 0:
 		outline.reverse()
+	var boundary: Array[Vector3] = []
+	for p in outline:
+		boundary.append(Vector3(p.x+center.x,0.8,p.y+center.y))
+	record_surface("quay",boundary,"Base support boundary; paving rises 0.08 above this datum. Hidden rear perimeter inferred.")
 	pavers(Vector3(center.x,0.8,center.y),maximum.x-minimum.x,maximum.y-minimum.y,outline)
 
 func _init() -> void:
@@ -124,6 +250,7 @@ func bridge() -> void:
 	direction.y = 0
 	var length := direction.length()
 	var g := kit.node_group("StoneArchBridge",Vector3((rear.x+front.x)/2,0,(rear.z+front.z)/2),-atan2(direction.z,direction.x))
+	record_surface("bridge-deck-landings",[g.to_global(Vector3(-length/2,0.8,-1.25)),g.to_global(Vector3(-length/2,0.8,1.25)),g.to_global(Vector3(length/2,0.3,1.25)),g.to_global(Vector3(length/2,0.3,-1.25))],"Landing envelope only, not the curved deck profile. Parapets extend beyond this walking width.")
 	for i in 28:
 		var t0 := i/28.0
 		var t1 := (i+1)/28.0
@@ -158,6 +285,7 @@ func dock() -> void:
 	var back_right := reference_point(Vector2(853,773),0.15)
 	var front_left := reference_point(Vector2(419,898),0.15)
 	var front_right := reference_point(Vector2(537,973),0.15)
+	record_surface("dock-deck",[back_left,back_right,front_right,front_left],"Four traced corners at deck height 0.15; piles, ropes and crane extend outside the deck.")
 	var g := kit.node_group("TimberDock",Vector3.ZERO)
 	for strip in 19:
 		var u0 := (strip+0.045)/19.0
@@ -387,22 +515,29 @@ func chimney(parent: Node3D, pos: Vector3, height: float, width: float = 0.75) -
 	kit.block(pos+Vector3(0,height-0.07,0),Vector3(width*0.65,0.03,width*0.65),"iron",parent)
 
 func construct_inn() -> void:
-	var inn := kit.house("Reference_L_Shaped_Inn",Vector3(1.5,1.05,-7.7),4.6,5.8,5.3,3.35,"roof")
-	# Intersecting wing produces the reference's compound roof silhouette.
-	var wing := kit.house("Inn_Right_Entrance_Wing",Vector3(3.9,1.05,-8.0),4.4,6.5,4.9,2.5,"roof")
-	wing.rotation.y = PI/2
-	# Match the reference's lower building mass above its higher rear landing.
-	for building in [inn,wing]:
-		building.position += Vector3(-1.35,0,-2.12)
-		building.scale.y = 0.85
+	var inn := kit.house("Reference_L_Shaped_Inn",Vector3.ZERO,4.6,5.8,5.3,3.35,"roof",false,"plaster",true,1.3,2.2,false,false)
+	var wing := kit.house("Inn_Right_Entrance_Wing",Vector3.ZERO,4.4,6.5,4.9,2.5,"roof",false,"plaster",false,1.5,2.5,true,false)
 	for g in [inn,wing]:
 		var width: float = 4.6 if g == inn else 4.4
 		var depth: float = 5.8 if g == inn else 6.5
 		for z in [-depth/2-0.22,depth/2+0.22]:
-			kit.block(Vector3(0,3.05,z),Vector3(width+0.45,1.95,0.12),"plaster",g)
+			# The stone entrance face is not a generic upper-window facade.
+			# Do not lay full-width plaster or timbers across its arch opening.
+			if g == wing and z > 0:
+				continue
+			if z > 0:
+				for side in [-1,1]:
+					kit.block(Vector3(side*(width/4+0.5),3.05,z),Vector3(width/2-0.55,1.95,0.12),"plaster",g)
+				kit.block(Vector3(0,3.6,z),Vector3(2.0,0.85,0.12),"plaster",g)
+			else:
+				kit.block(Vector3(0,3.05,z),Vector3(width+0.45,1.95,0.12),"plaster",g)
 			for y in [2.1,2.4,4.05,4.85]:
+				if z > 0 and y < 3:
+					continue
 				kit.block(Vector3(0,y,z+0.08),Vector3(width+0.5,0.16,0.16),"oak",g)
 			for x in [-width/2,-width/4,0,width/4,width/2]:
+				if z > 0 and x == 0:
+					continue
 				kit.block(Vector3(x,3.55,z+0.1),Vector3(0.18,2.8,0.18),"oak",g)
 			for x in [-width*0.29,width*0.29]:
 				kit.window_at(Vector3(x,3.25,z+0.15),g,0.9)
@@ -436,7 +571,6 @@ func construct_inn() -> void:
 			var t0 := row/7.0
 			var t1 := (row+1)/7.0
 			kit.beam(Vector3(-2.55+col*0.22,2.43-0.42*sin(t0*PI/2),3.02+t0*1.25),Vector3(-2.55+col*0.22,2.43-0.42*sin(t1*PI/2),3.02+t1*1.25),0.012,"gold",inn)
-	kit.stairs(Vector3(0,-0.5,3.35),2.25,0.8,1.6,wing)
 	kit.beam(Vector3(-3.05,4.1,3),Vector3(-4.2,4.1,3),0.14,"oak",inn)
 	kit.beam(Vector3(-3.05,3.5,3),Vector3(-4.15,4.1,3),0.1,"oak",inn)
 	kit.ring(Vector3(-4,3.4,3),0.58,0.055,"gold",inn,true)
@@ -444,6 +578,8 @@ func construct_inn() -> void:
 	for i in 8:
 		var a := TAU*i/8
 		kit.beam(Vector3(-4,3.4,3),Vector3(-4+cos(a)*0.4,3.4+sin(a)*0.4,3),0.04,"gold",inn)
+	fit_building(inn,Vector2(803,286),Vector2(928,340),Vector2(1070,214),1.15,0.85)
+	fit_building(wing,Vector2(995,309),Vector2(1153,365),Vector2(1235,280),1.15,0.85)
 	for pos in [reference_point(Vector2(813,309),1.65)-Vector3(0,0.7,0),reference_point(Vector2(854,329),1.65)-Vector3(0,0.7,0)]:
 		kit.cylinder(pos+Vector3(0,0.7,0),0.47,0.1,"oak_light",kit.root,32)
 		kit.cylinder(pos+Vector3(0,0.35,0),0.11,0.7,"oak",kit.root)
@@ -659,6 +795,7 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 		await process_frame
 	RenderingServer.force_draw(false)
 	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-main.png")) == OK)
+	write_geometry_audit()
 	assign_owners(kit.root,kit.root)
 	var packed := PackedScene.new()
 	assert(packed.pack(kit.root) == OK)
@@ -710,6 +847,29 @@ func inspect_saved_scene() -> void:
 	var meshes := collect_meshes(loaded)
 	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(output_dir.path_join("build-report.json")))
 	assert(meshes.size() == int(report.meshInstances),"Native mesh count must match generated scene")
+	var geometry: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(output_dir.path_join("geometry-bounds.json")))
+	assert(geometry.buildings.size() == 4 and geometry.surfaces.size() == 3)
+	for record in geometry.buildings:
+		var building := loaded.get_node(NodePath(record.name)) as Node3D
+		assert(building != null and building.has_meta("building_bounds"))
+		var spec: Dictionary = building.get_meta("building_bounds")
+		var corners := [Vector2(-1,1),Vector2(1,1),Vector2(1,-1),Vector2(-1,-1)]
+		for index in 4:
+			var c: Vector2 = corners[index]
+			var actual := building.to_global(Vector3(c.x*float(spec.width)/2,0,c.y*float(spec.depth)/2))
+			var expected: Array = record.worldFootprintFrontLeftFirst[index]
+			assert(actual.distance_to(Vector3(expected[0],expected[1],expected[2])) < 0.001,"Saved footprint must retain reported bounds")
+		if record.referenceFitted:
+			var socket := building.get_node("EntranceSocket") as Node3D
+			var stairs := loaded.get_node(NodePath(record.name+"_Entrance")) as Node3D
+			assert(stairs.global_position.distance_to(socket.global_position) < 0.001,"Landing must meet the named door socket")
+			assert(stairs.global_basis.z.normalized().dot(building.global_basis.z.normalized()) > 0.999,"Stairs must leave through the front wall, not a roof-dependent side")
+			var roof := building.get_node("RoofFrame") as Node3D
+			assert(is_equal_approx(roof.rotation.y,PI/2 if spec.roofCrosswise else 0.0))
+			var support := building.get_node("FoundationSupport") as MeshInstance3D
+			var bounds: AABB = support.global_transform*support.mesh.get_aabb()
+			assert(absf(bounds.position.y+0.45) < 0.001,"Footing must reach the bed datum")
+	print("PASS: four persisted building bounds; three surface envelopes; two entrance/roof/foundation contracts")
 	var skeletons := loaded.find_children("*","Skeleton3D",true,false)
 	assert(skeletons.size() == 3)
 	for skeleton in skeletons:
