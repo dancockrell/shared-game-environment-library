@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "task_id": "publish-generated-references",
+  "agent": "codex-root",
+  "summary": "Apply the owner's test-integrate-push instruction and publish the existing shared artwork contribution without forks.",
+  "status": "blocked",
+  "claimed_at": "2026-09-05T14:23:47Z",
+  "updated_at": "2026-09-05T14:23:47Z",
+  "paths": ["tools/import-character-references.mjs", "resource_packs/character-support/illustrated-adult-adventurers/pack.json", "docs/ASSET_INTAKE.md", "docs/ASSET_LICENSE_POLICY.md"],
+  "symbols": [],
+  "coordination": {"depends_on": ["generated-character-reference-intake"], "conflicts_with": [], "notes": "Owner explicitly supersedes prior publication approval gate. Remote main still d5fcc4c; unrelated PR 1 belongs to existing catalog work. No new branch or PR created. Direct Git fetch and push fail to connect to github.com:443. GitHub connector works for Git objects but cannot upload Git LFS objects; do not publish broken pointer-only artwork."},
+  "completion": {"commit": null, "checks": ["All 6 existing resource packs validate.", "Reference tests pass the valid fixture and 5 negative fixtures.", "Deterministic reference export check passes.", "Git LFS fsck passes locally.", "Direct git fetch and git push origin main both fail to connect to github.com:443.", "Additional network permission request returned no grant.", "Resume condition: working authenticated Git and LFS network transport from this checkout. Do not claim publication or publish pointer-only art."]}
+}
