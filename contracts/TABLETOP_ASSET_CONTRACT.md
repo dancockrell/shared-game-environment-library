@@ -63,3 +63,10 @@ Every asset manifest declares: `assetId`, `assetKind`, `domain`, `scaleMeters`, 
 ## Visual standard
 
 The shared library supplies readable, modifiable physical structure. It should support painted-resin, illustrated, or hand-painted scene direction without imposing photorealism. Literal correctness and a neutral fallback are preferred to a beautiful but wrong semantic asset.
+
+For the painted tabletop fantasy family, the controlling approved visual target
+and acceptance criteria are in [Shared model production](../docs/MODEL_PRODUCTION.md#approved-visual-reference---controlling-art-target).
+Use its exact approved reference when assessing finish. The low-poly source
+catalog and technical foundation renders do not establish final art quality.
+Other physical/style families can remain discoverable without being presented
+as matching this target.

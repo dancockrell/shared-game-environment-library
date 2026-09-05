@@ -7,6 +7,72 @@ for new shared work. Do not move or delete its assets until references and
 provenance have been reconciled. Stable IDs, archive hashes and source-member
 paths are the migration keys; directory similarity is not identity.
 
+## Approved visual reference - controlling art target
+
+![Approved painted miniature river-port reference](visual-reference/painted-miniature-river-port-approved.png)
+
+On 5 September 2026, Dan approved this exact image: "yes. this is the
+reference. this is what I want exactly." Preserve the image without edits.
+Its provenance is in the adjacent JSON sidecar. This image controls the
+painted tabletop fantasy art direction wherever earlier shorthand such as
+"flat color", "chunky low-poly", or "simple block-built" would lower the
+visible finish. Source packs and the foundation contact sheet are ingredients
+and technical proofs; they are not approved substitutes for this finish.
+
+The approval includes the image as shown. The assistant's preceding proposals
+to simplify masonry/roof detail, brighten actors, or flatten the gold markers
+were not separately approved and must not be applied by assumption.
+
+### Features that must survive into the build
+
+- Elevated fixed isometric presentation with a coherent, continuous place,
+  clear approaches, and visible tabletop character pieces on discreet bases.
+- Substantial stonework, layered roof tiles, dark structural timber, useful
+  bevels, readable trim and ornamental metal. Keep the richness visible in
+  this reference; avoid reducing the result to plain colored blocks.
+- Warm stone and timber, slate and restrained terracotta roofs, muted teal
+  water, natural greens, blue cloth and restrained gold accents. The cyan
+  ground/peach rock source palette fails this target.
+- Painterly material variation and believable light response: wood grain,
+  stone joints, roof variation, restrained wear, contact shadows, warm lights
+  in interiors, and softly shaded water with readable shallow shore details.
+- Distinct rooflines and entrances; a cutaway shop with shelving and counter;
+  believable relationship between buildings, paved public space and bridge.
+- Timber quay/dock construction, mooring details, rowboat, stone banks,
+  sandy transitions, rocks and grouped reeds. Water and land meet deliberately.
+- Adult adventurer proportions, visible species and equipment identity,
+  restrained heroic emphasis, and static poses that already communicate role.
+- The gold node/connection treatment shown is part of the approved visual
+  reference. Its runtime placement follows actual graph data; a decorative
+  mark in this concept image never creates an exit or physical barrier.
+
+The image approves visual language and finish, not a named canonical town or
+a replacement graph. Translate its style across the established fantasy
+families without asserting that every culture uses this western architecture.
+Preserve the common finish while changing construction, forms and identity
+from each game's evidence. Static now and rig-ready actors remain the scope.
+
+### Acceptance and implementation consequences
+
+For each assembled scene, capture the actual engine output at comparable
+framing and place it beside this reference. Review silhouette, surface finish,
+palette, lighting, material separation, density, actor readability, cutaway
+readability and shoreline quality. Record pass/revise per dimension. Structural
+checks, source licenses and low polygon counts cannot substitute for visual
+acceptance. Unfinished geometry remains explicitly labeled as base art.
+
+The budgets below predate this approval and remain provisional engineering
+targets. First try shared materials, modular reuse, baked detail, spatial
+culling and appropriate distant representations while preserving the approved
+appearance at the reference framing. If a budget conflicts with the image,
+measure and report the conflict; do not silently lower quality or claim both
+targets passed. The reference does not by itself prove performance feasibility.
+
+Next visual milestone: build an engine scene with a stone quay, timber dock,
+bridge approach, roofed facade, cutaway shop and properly scaled actor pieces,
+then assess it directly against this image. Favor a convincing connected
+scene over a larger collection of isolated pieces that misses this standard.
+
 ## Review of the incoming DR Companion handoff
 
 The supplied `3dcontenthandoffforchatgpt.md` correctly prioritizes geometry,
