@@ -35,6 +35,9 @@ foreach ($packFile in $packFiles) {
     foreach ($output in $pack.outputs) {
         $assetPath = Join-Path $packDirectory $output.path
         Assert-PackCondition (Test-Path -LiteralPath $assetPath) "$($packFile.FullName): output '$($output.assetId)' is missing at '$($output.path)'."
+        if ($output.sha256 -and (Test-Path -LiteralPath $assetPath)) {
+            Assert-PackCondition ((Get-FileHash -Algorithm SHA256 -LiteralPath $assetPath).Hash.ToLower() -eq $output.sha256) "${assetPath}: output hash mismatch."
+        }
         if ([System.IO.Path]::GetExtension($assetPath).ToLowerInvariant() -eq '.obj' -and (Test-Path -LiteralPath $assetPath)) {
             $lines = Get-Content -LiteralPath $assetPath
             $vertices = @($lines | Where-Object { $_ -match '^v\s' }).Count
@@ -65,8 +68,27 @@ foreach ($packFile in $packFiles) {
                 Assert-PackCondition ($declaredLength -eq $stream.Length) "${assetPath}: declared GLB length $declaredLength does not match file length $($stream.Length)."
                 Assert-PackCondition ($chunkType -eq 0x4E4F534A) "${assetPath}: first GLB chunk is not JSON."
                 Assert-PackCondition (($chunkLength + 20) -le $stream.Length) "${assetPath}: first GLB chunk length exceeds file size."
+                if (($chunkLength + 20) -le $stream.Length) {
+                    $gltf = [Text.Encoding]::UTF8.GetString($reader.ReadBytes($chunkLength)) | ConvertFrom-Json
+                    foreach ($resource in @($gltf.images) + @($gltf.buffers)) {
+                        if (-not $resource.uri -or $resource.uri.StartsWith('data:')) { continue }
+                        $uri = [Uri]::UnescapeDataString($resource.uri)
+                        if ($uri -match '(^[/\\]|:|(^|[/\\])\.\.([/\\]|$))') { $failures.Add("${assetPath}: unsafe dependency URI."); continue }
+                        $dependencyPath = Join-Path ([IO.Path]::GetDirectoryName($assetPath)) $uri
+                        Assert-PackCondition (Test-Path -LiteralPath $dependencyPath) "${assetPath}: missing external dependency '$uri'."
+                        $relativeDependency = [IO.Path]::GetRelativePath($packDirectory, $dependencyPath).Replace('\', '/')
+                        Assert-PackCondition (@($pack.dependencies | Where-Object path -EQ $relativeDependency).Count -eq 1) "${assetPath}: dependency '$uri' has no unique provenance record."
+                    }
+                }
             }
             finally { $stream.Dispose() }
+        }
+    }
+    foreach ($dependency in $pack.dependencies) {
+        $dependencyPath = Join-Path $packDirectory $dependency.path
+        Assert-PackCondition (Test-Path -LiteralPath $dependencyPath) "${dependencyPath}: dependency missing."
+        if (Test-Path -LiteralPath $dependencyPath) {
+            Assert-PackCondition ((Get-FileHash -Algorithm SHA256 -LiteralPath $dependencyPath).Hash.ToLower() -eq $dependency.sha256) "${dependencyPath}: dependency hash mismatch."
         }
     }
 }

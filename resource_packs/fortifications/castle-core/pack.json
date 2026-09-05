@@ -118,6 +118,13 @@
       "statusHook": "none"
     }
   ],
+  "dependencies": [
+    {
+      "path": "artifacts/models/Textures/colormap.png",
+      "sourceMember": "Models/GLB format/Textures/colormap.png",
+      "sha256": "66fd49be148f32e88f6c8cace67120250d1943a7856601158ad0ff24651db0b0"
+    }
+  ],
   "review": {
     "legal": "approved_cc0_source_lineage",
     "literalSemantics": "approved_literal_member_selection",

@@ -9,9 +9,46 @@
       "packType": "roads",
       "upstreamSourceId": "kenney-city-kit-roads",
       "upstreamArchive": "assets/approved_cc0/Kenney/kenney-city-kit-roads/source_archive/kenney_city-kit-roads.zip",
-      "style": { "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"], "physicalSubject": ["street", "sidewalk", "intersection", "road"], "sceneRoles": ["modern_city", "suburb", "industrial_approach"], "paletteIntent": ["neutral_asphalt", "optional_project_decals"], "forbiddenClaims": ["named_city", "project_specific_traffic_system"] },
-      "searchTags": ["roads", "street", "city", "suburban", "modern", "cc0_source"],
-      "members": ["Models/GLB format/road-straight.glb", "Models/GLB format/road-bend.glb", "Models/GLB format/road-crossing.glb", "Models/GLB format/road-end.glb"]
+      "style": {
+        "renderLanguage": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "physicalSubject": [
+          "street",
+          "sidewalk",
+          "intersection",
+          "road"
+        ],
+        "sceneRoles": [
+          "modern_city",
+          "suburb",
+          "industrial_approach"
+        ],
+        "paletteIntent": [
+          "neutral_asphalt",
+          "optional_project_decals"
+        ],
+        "forbiddenClaims": [
+          "named_city",
+          "project_specific_traffic_system"
+        ]
+      },
+      "searchTags": [
+        "roads",
+        "street",
+        "city",
+        "suburban",
+        "modern",
+        "cc0_source"
+      ],
+      "members": [
+        "Models/GLB format/road-straight.glb",
+        "Models/GLB format/road-bend.glb",
+        "Models/GLB format/road-crossing.glb",
+        "Models/GLB format/road-end.glb"
+      ]
     },
     {
       "packPath": "resource_packs/maritime/pirate-prop-core",
@@ -20,9 +57,48 @@
       "packType": "maritime",
       "upstreamSourceId": "kenney-pirate-kit",
       "upstreamArchive": "assets/approved_cc0/Kenney/kenney-pirate-kit/source_archive/kenney_pirate-kit.zip",
-      "style": { "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"], "physicalSubject": ["barrel", "crate", "rowboat", "cannon"], "sceneRoles": ["dock_dressing", "ship_dressing", "coastal_outpost"], "paletteIntent": ["weathered_wood", "iron", "optional_faction_color"], "forbiddenClaims": ["named_ship", "project_specific_symbol"] },
-      "searchTags": ["maritime", "pirate", "dock", "boat", "barrel", "cannon", "cc0_source"],
-      "members": ["Models/GLB format/barrel.glb", "Models/GLB format/crate.glb", "Models/GLB format/boat-row-small.glb", "Models/GLB format/cannon.glb"]
+      "style": {
+        "renderLanguage": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "physicalSubject": [
+          "barrel",
+          "crate",
+          "rowboat",
+          "cannon"
+        ],
+        "sceneRoles": [
+          "dock_dressing",
+          "ship_dressing",
+          "coastal_outpost"
+        ],
+        "paletteIntent": [
+          "weathered_wood",
+          "iron",
+          "optional_faction_color"
+        ],
+        "forbiddenClaims": [
+          "named_ship",
+          "project_specific_symbol"
+        ]
+      },
+      "searchTags": [
+        "maritime",
+        "pirate",
+        "dock",
+        "boat",
+        "barrel",
+        "cannon",
+        "cc0_source"
+      ],
+      "members": [
+        "Models/GLB format/barrel.glb",
+        "Models/GLB format/crate.glb",
+        "Models/GLB format/boat-row-small.glb",
+        "Models/GLB format/cannon.glb"
+      ]
     },
     {
       "packPath": "resource_packs/fortifications/castle-core",
@@ -31,9 +107,49 @@
       "packType": "fortifications",
       "upstreamSourceId": "kenney-castle-kit",
       "upstreamArchive": "assets/approved_cc0/Kenney/kenney-castle-kit/source_archive/kenney_castle-kit.zip",
-      "style": { "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"], "physicalSubject": ["wall", "tower", "gate", "stone_stairs"], "sceneRoles": ["fort", "ruin", "town_defense", "stronghold"], "paletteIntent": ["stone", "weathered_metal", "optional_banner_color"], "forbiddenClaims": ["named_fort", "culture_specific_claim"] },
-      "searchTags": ["fortification", "castle", "wall", "tower", "gate", "fantasy", "cc0_source"],
-      "members": ["Models/GLB format/wall.glb", "Models/GLB format/tower-base.glb", "Models/GLB format/gate.glb", "Models/GLB format/stairs-stone.glb"]
+      "style": {
+        "renderLanguage": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "physicalSubject": [
+          "wall",
+          "tower",
+          "gate",
+          "stone_stairs"
+        ],
+        "sceneRoles": [
+          "fort",
+          "ruin",
+          "town_defense",
+          "stronghold"
+        ],
+        "paletteIntent": [
+          "stone",
+          "weathered_metal",
+          "optional_banner_color"
+        ],
+        "forbiddenClaims": [
+          "named_fort",
+          "culture_specific_claim"
+        ]
+      },
+      "searchTags": [
+        "fortification",
+        "castle",
+        "wall",
+        "tower",
+        "gate",
+        "fantasy",
+        "cc0_source"
+      ],
+      "members": [
+        "Models/GLB format/wall.glb",
+        "Models/GLB format/tower-base.glb",
+        "Models/GLB format/gate.glb",
+        "Models/GLB format/stairs-stone.glb"
+      ]
     },
     {
       "packPath": "resource_packs/sci-fi/modular-corridor-core",
@@ -42,9 +158,148 @@
       "packType": "sci-fi",
       "upstreamSourceId": "kenney-modular-space-kit",
       "upstreamArchive": "assets/approved_cc0/Kenney/kenney-modular-space-kit/source_archive/kenney_modular-space-kit_1.0.zip",
-      "style": { "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"], "physicalSubject": ["corridor", "junction", "room", "door"], "sceneRoles": ["station", "ship_interior", "research_base", "sci_fi_dungeon"], "paletteIntent": ["neutral_panels", "project_emissive_accent"], "forbiddenClaims": ["named_vessel", "project_specific_faction_marking"] },
-      "searchTags": ["sci-fi", "corridor", "modular", "station", "interior", "cc0_source"],
-      "members": ["Models/GLB format/corridor.glb", "Models/GLB format/corridor-corner.glb", "Models/GLB format/corridor-intersection.glb", "Models/GLB format/room-small.glb", "Models/GLB format/gate-door.glb"]
+      "style": {
+        "renderLanguage": [
+          "stylized_3d",
+          "low_poly",
+          "paintable_base"
+        ],
+        "physicalSubject": [
+          "corridor",
+          "junction",
+          "room",
+          "door"
+        ],
+        "sceneRoles": [
+          "station",
+          "ship_interior",
+          "research_base",
+          "sci_fi_dungeon"
+        ],
+        "paletteIntent": [
+          "neutral_panels",
+          "project_emissive_accent"
+        ],
+        "forbiddenClaims": [
+          "named_vessel",
+          "project_specific_faction_marking"
+        ]
+      },
+      "searchTags": [
+        "sci-fi",
+        "corridor",
+        "modular",
+        "station",
+        "interior",
+        "cc0_source"
+      ],
+      "members": [
+        "Models/GLB format/corridor.glb",
+        "Models/GLB format/corridor-corner.glb",
+        "Models/GLB format/corridor-intersection.glb",
+        "Models/GLB format/room-small.glb",
+        "Models/GLB format/gate-door.glb"
+      ]
+    },
+    {
+      "packPath": "resource_packs/terrain/coast-foundation",
+      "packId": "terrain.coast-foundation.v1",
+      "displayName": "Coast Foundation",
+      "packType": "terrain",
+      "upstreamSourceId": "kenney-pirate-kit",
+      "upstreamArchive": "assets/approved_cc0/Kenney/kenney-pirate-kit/source_archive/kenney_pirate-kit.zip",
+      "style": {
+        "renderLanguage": [
+          "stylized_3d",
+          "low_poly"
+        ],
+        "physicalSubject": [
+          "sand",
+          "grass",
+          "dock",
+          "shore_rocks",
+          "palm"
+        ],
+        "sceneRoles": [
+          "coast",
+          "river_port",
+          "beach"
+        ],
+        "paletteIntent": [
+          "source_palette"
+        ],
+        "forbiddenClaims": [
+          "named_place",
+          "navigation_authority"
+        ]
+      },
+      "searchTags": [
+        "terrain",
+        "coast",
+        "riverine",
+        "beach",
+        "dock",
+        "cc0_source"
+      ],
+      "members": [
+        "Models/GLB format/patch-sand.glb",
+        "Models/GLB format/patch-grass.glb",
+        "Models/GLB format/structure-platform-dock.glb",
+        "Models/GLB format/rocks-sand-a.glb",
+        "Models/GLB format/palm-straight.glb"
+      ]
+    },
+    {
+      "packPath": "resource_packs/terrain/river-cliff-foundation",
+      "packId": "terrain.river-cliff-foundation.v1",
+      "displayName": "River and Cliff Foundation",
+      "packType": "terrain",
+      "upstreamSourceId": "kenney-nature-kit",
+      "upstreamArchive": "assets/approved_cc0/Kenney/kenney-nature-kit/source_archive/kenney_nature-kit.zip",
+      "style": {
+        "renderLanguage": [
+          "stylized_3d",
+          "low_poly"
+        ],
+        "physicalSubject": [
+          "cliff",
+          "slope",
+          "waterfall",
+          "lily",
+          "bridge",
+          "cave"
+        ],
+        "sceneRoles": [
+          "river",
+          "wetland",
+          "cave_approach",
+          "upland"
+        ],
+        "paletteIntent": [
+          "source_palette"
+        ],
+        "forbiddenClaims": [
+          "named_place",
+          "inferred_exits",
+          "volcano_from_palette_alone"
+        ]
+      },
+      "searchTags": [
+        "terrain",
+        "riverine",
+        "wetland",
+        "cliff",
+        "cave",
+        "cc0_source"
+      ],
+      "members": [
+        "Models/GLTF format/cliff_block_rock.glb",
+        "Models/GLTF format/cliff_blockSlope_rock.glb",
+        "Models/GLTF format/cliff_waterfall_rock.glb",
+        "Models/GLTF format/lily_large.glb",
+        "Models/GLTF format/bridge_woodNarrow.glb",
+        "Models/GLTF format/cliff_blockCave_rock.glb"
+      ]
     }
   ]
 }
