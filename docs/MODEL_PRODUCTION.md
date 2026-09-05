@@ -9,6 +9,14 @@ paths are the migration keys; directory similarity is not identity.
 
 ## Approved visual reference - controlling art target
 
+Latest direction: Dan rejected the simplified comparison. Preserve surface
+richness, shadow complexity and prominent gold node dots. Do not simplify
+unless measured polygon/performance problems justify a decision with Dan.
+Camera movement may become richer: author complete geometry and retain rear,
+side and underside surfaces. Fixed isometric remains the reference framing,
+not permission to make view-dependent shells. The flat/subtle path treatment
+is rejected; review prominent nodes and legible connections against the original.
+
 ![Approved painted miniature river-port reference](visual-reference/painted-miniature-river-port-approved.png)
 
 On 5 September 2026, Dan approved this exact image: "yes. this is the
