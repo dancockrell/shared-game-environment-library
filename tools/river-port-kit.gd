@@ -222,16 +222,21 @@ func roof(width: float, depth: float, eaves: float, rise: float, prefix: String,
 	var slope := sqrt(half*half+rise*rise)
 	var angle := atan2(rise,half)
 	for side in [-1,1]:
-		var deck := block(Vector3(side*half/2,eaves+rise/2,0),Vector3(slope,0.16,depth+0.5),"oak",parent)
+		var deck_center := Vector3(side*half/2,eaves+rise/2,0)
+		var deck := block(deck_center,Vector3(slope,0.16,depth+0.5),"oak",parent)
 		deck.rotate_z(-side*angle)
+		deck.position = deck_center-deck.basis*Vector3(0,0.5,0)
 		var rows := int(slope/0.25)+1
 		var cols := int((depth+0.5)/0.29)+1
 		for row in rows:
 			var t := (row+0.5)/float(rows)
 			for col in cols:
 				var z := -depth/2-0.22+(col+0.5+0.42*(row%2))*(depth+0.44)/cols
-				var tile := block(Vector3(side*half*(1-t),eaves+rise*t+0.14+rng.randf_range(-0.02,0.02),z+rng.randf_range(-0.02,0.02)),Vector3(slope/rows+0.10,0.105,(depth+0.44)/cols-0.018),shade(prefix),parent)
-				tile.rotate_z(-side*angle)
+				var normal := Vector3(side*sin(angle),cos(angle),0)
+				var tile_center := Vector3(side*half*(1-t),eaves+rise*t,z+rng.randf_range(-0.01,0.01))+normal*(0.125+rng.randf_range(-0.003,0.003))
+				var tile := block(tile_center,Vector3(slope/rows+0.07,0.048,(depth+0.44)/cols-0.009),shade(prefix),parent)
+				tile.rotate_z(-side*(angle+0.045))
+				tile.position = tile_center-tile.basis*Vector3(0,0.5,0)
 	for col in int(depth/0.35)+2:
 		cylinder(Vector3(0,eaves+rise+0.16,-depth/2+col*0.35),0.12,0.37,prefix+"6",parent).rotation.x = PI/2
 	for z in [-depth/2-0.3,depth/2+0.3]:
@@ -265,7 +270,7 @@ func lantern(pos: Vector3, parent: Node3D) -> void:
 	lamp.omni_range = 3.5
 	parent.add_child(lamp)
 
-func house(name_value: String, position: Vector3, width: float, depth: float, height: float, roof_rise: float, roof_color: String, cutaway: bool = false) -> Node3D:
+func house(name_value: String, position: Vector3, width: float, depth: float, height: float, roof_rise: float, roof_color: String, cutaway: bool = false, gable_key: String = "plaster", wall_windows: bool = true, door_width: float = 1.3, door_height: float = 2.2) -> Node3D:
 	var g := node_group(name_value,position)
 	block(Vector3(0,0.12,0),Vector3(width+0.6,0.24,depth+0.6),"mortar",g)
 	wall(width, height,0.35,Vector3(0,0,-depth/2),g)
@@ -278,28 +283,34 @@ func house(name_value: String, position: Vector3, width: float, depth: float, he
 	if cutaway:
 		wall(width,0.7,0.35,Vector3(0,0,depth/2),g)
 	else:
-		wall((width-1.3)/2,height,0.35,Vector3(-(width+1.3)/4,0,depth/2),g)
-		wall((width-1.3)/2,height,0.35,Vector3((width+1.3)/4,0,depth/2),g)
-		wall(1.3,height-2.35,0.35,Vector3(0,2.35,depth/2),g)
-		block(Vector3(0,1.15,depth/2+0.03),Vector3(1.15,2.2,0.12),"oak",g)
-		for x in [-0.48,-0.24,0,0.24,0.48]:
-			block(Vector3(x,1.15,depth/2+0.13),Vector3(0.19,2.1,0.045),shade("wood"),g)
-		cylinder(Vector3(0.33,1.15,depth/2+0.19),0.06,0.08,"gold",g).rotation.x = PI/2
+		wall((width-door_width)/2,height,0.35,Vector3(-(width+door_width)/4,0,depth/2),g)
+		wall((width-door_width)/2,height,0.35,Vector3((width+door_width)/4,0,depth/2),g)
+		wall(door_width,height-door_height-0.15,0.35,Vector3(0,door_height+0.15,depth/2),g)
+		block(Vector3(0,door_height/2,depth/2+0.03),Vector3(door_width-0.15,door_height,0.12),"oak",g)
+		for i in 8:
+			var x := (i-3.5)*(door_width-0.16)/8
+			block(Vector3(x,door_height/2,depth/2+0.13),Vector3((door_width-0.16)/8-0.012,door_height-0.08,0.045),shade("wood"),g)
+		for y in [door_height*0.25,door_height*0.75]:
+			block(Vector3(0,y,depth/2+0.17),Vector3(door_width*0.83,0.055,0.035),"iron",g)
+			for x in [-door_width*0.35,door_width*0.35]:
+				cylinder(Vector3(x,y,depth/2+0.2),0.02,0.025,"gold",g).rotation.x = PI/2
+		cylinder(Vector3(door_width*0.25,door_height/2,depth/2+0.19),0.04,0.08,"gold",g).rotation.x = PI/2
 		for step in 3:
 			block(Vector3(0,-0.09+step*0.08,depth/2+0.85-step*0.2),Vector3(1.7-step*0.06,0.18,0.4),shade("stone"),g)
-		for x in [-width*0.32,width*0.32]:
-			window_at(Vector3(x,height*0.64,depth/2+0.18),g)
+		if wall_windows:
+			for x in [-width*0.32,width*0.32]:
+				window_at(Vector3(x,height*0.64,depth/2+0.18),g)
 		for i in 11:
 			var a := PI*i/10
-			var voussoir := block(Vector3(cos(a)*0.8,2.13+sin(a)*0.8,depth/2+0.24),Vector3(0.23,0.38,0.27),shade("stone"),g)
+			var voussoir := block(Vector3(cos(a)*door_width*0.61,door_height-0.07+sin(a)*door_width*0.61,depth/2+0.24),Vector3(0.23,0.30,0.27),shade("stone"),g)
 			voussoir.rotation.z = a-PI/2
 		roof(width,depth,height,roof_rise,roof_color,g)
 		# Gable infill built from stacked closed beams, no missing triangle faces.
 		for z in [-depth/2,depth/2]:
 			for row in int(roof_rise/0.15):
 				var y := (row+0.5)*0.15
-				block(Vector3(0,height+y,z),Vector3(width*(1-y/roof_rise),0.16,0.2),"plaster",g)
-			beam(Vector3(0,height,z+0.14),Vector3(0,height+roof_rise,z+0.14),0.16,"oak",g)
+				block(Vector3(0,height+y,z),Vector3(width*(1-y/roof_rise),0.16,0.2),gable_key,g)
+			beam(Vector3(0,height,z+0.14),Vector3(0,height+roof_rise,z+0.14),0.16,"oak" if gable_key == "plaster" else gable_key,g)
 	for x in [-width/2,width/2]:
 		for z in [-depth/2,depth/2]:
 			block(Vector3(x,height/2,z),Vector3(0.22,height+0.2,0.24),"oak",g)
@@ -320,7 +331,7 @@ func shelving(parent: Node3D, pos: Vector3) -> void:
 		for i in 6:
 			cylinder(pos+Vector3(-0.86+i*0.34,y+0.2,0),0.09,rng.randf_range(0.2,0.32),shade("roof"),parent)
 
-func rock(pos: Vector3, size: Vector3, parent: Node3D = root) -> void:
+func rock(pos: Vector3, size: Vector3, parent: Node3D = root) -> MeshInstance3D:
 	var variant := rng.randi_range(0,5)
 	var key := "rock%d" % variant
 	if not meshes.has(key):
@@ -345,6 +356,7 @@ func rock(pos: Vector3, size: Vector3, parent: Node3D = root) -> void:
 		meshes[key] = st.commit()
 	var n := piece(meshes[key],pos,size,shade("stone"),parent)
 	n.rotation.y = rng.randf()*TAU
+	return n
 
 func tree(pos: Vector3, height: float) -> void:
 	var g := node_group("OakTree",pos)

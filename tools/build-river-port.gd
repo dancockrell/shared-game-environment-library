@@ -5,6 +5,37 @@ const Kit = preload("res://river-port-kit.gd")
 var kit := Kit.new()
 var output_dir: String
 var repo: String
+var camera: Camera3D
+
+func reference_point(pixel: Vector2, height: float) -> Vector3:
+	# Source pixels are geometric measurements, not a projected image texture.
+	var screen := pixel*Vector2(root.size)/Vector2(1536,1024)
+	var origin := camera.project_ray_origin(screen)
+	var direction := camera.project_ray_normal(screen)
+	return origin+direction*((height-origin.y)/direction.y)
+
+func reference_quay() -> void:
+	# Visible perimeter traced from the approved 1536x1024 reference. Segments
+	# behind roofs/cliffs are explicitly inferred, not claimed as measured.
+	var trace := PackedVector2Array([Vector2(92,437),Vector2(112,345),Vector2(220,270),Vector2(350,195),Vector2(499,119),Vector2(553,127),Vector2(624,187),Vector2(655,228),Vector2(709,253),Vector2(749,217),Vector2(820,91),Vector2(1100,-45),Vector2(1540,240),Vector2(1580,850),Vector2(1430,843),Vector2(1310,808),Vector2(1220,795),Vector2(1140,736),Vector2(1070,710),Vector2(1048,674),Vector2(979,653),Vector2(948,620),Vector2(918,593),Vector2(876,561),Vector2(805,526),Vector2(742,544),Vector2(702,580),Vector2(669,617),Vector2(638,638),Vector2(610,641),Vector2(593,629),Vector2(571,652),Vector2(532,677),Vector2(487,686),Vector2(454,706),Vector2(417,706),Vector2(346,680),Vector2(322,647),Vector2(276,612),Vector2(220,582),Vector2(174,552),Vector2(143,533),Vector2(114,490)])
+	var outline := PackedVector2Array()
+	var minimum := Vector2(INF,INF)
+	var maximum := Vector2(-INF,-INF)
+	for pixel in trace:
+		var point := reference_point(pixel,0.8)
+		var point2 := Vector2(point.x,point.z)
+		outline.append(point2)
+		minimum = minimum.min(point2)
+		maximum = maximum.max(point2)
+	var center := (minimum+maximum)/2
+	for i in outline.size():
+		outline[i] -= center
+	var area := 0.0
+	for i in outline.size():
+		area += outline[i].cross(outline[(i+1)%outline.size()])
+	if area < 0:
+		outline.reverse()
+	pavers(Vector3(center.x,0.8,center.y),maximum.x-minimum.x,maximum.y-minimum.y,outline)
 
 func _init() -> void:
 	call_deferred("build")
@@ -59,56 +90,75 @@ func clip_polygon(poly: PackedVector2Array, normal: Vector2, limit: float) -> Pa
 	return result
 
 func bridge() -> void:
-	# Reference bridge runs from the plaza toward the foreground dock, not sideways.
-	var g = kit.node_group("StoneArchBridge",Vector3(5.3,0.25,6.0),PI/2)
-	var half_span := 3.0
-	for i in 25:
-		var x := -half_span+(i+0.5)*half_span*2/25
-		var rise := 1.35*(1-pow(x/half_span,2)) + 0.27*(x/half_span+1)
-		for z in [-0.96,-0.48,0.0,0.48,0.96]:
-			var slab := kit.block(Vector3(x,rise,float(z)),Vector3(0.265,0.3,0.46),kit.shade("stone"),g)
-			slab.rotation.z = atan(-2*1.35*x/(half_span*half_span)+0.09)
-		for z in [-1.35,1.35]:
+	var rear := reference_point(Vector2(855,551),0.8)
+	var front := reference_point(Vector2(723,744),0.3)
+	var direction := front-rear
+	direction.y = 0
+	var length := direction.length()
+	var g := kit.node_group("StoneArchBridge",Vector3((rear.x+front.x)/2,0,(rear.z+front.z)/2),-atan2(direction.z,direction.x))
+	for i in 28:
+		var t := (i+0.5)/28.0
+		var x := (t-0.5)*length
+		var rise := lerpf(0.8,0.3,t)+1.05*sin(t*PI)
+		for z in [-1.0,-0.5,0.0,0.5,1.0]:
+			kit.block(Vector3(x,rise,float(z)),Vector3(length/28+0.025,0.22,0.48),kit.shade("stone"),g)
+		for z in [-1.37,1.37]:
 			for row in 2:
-				kit.block(Vector3(x,rise+0.13+row*0.25,float(z)),Vector3(0.265,0.24,0.3),kit.shade("stone"),g)
-			kit.block(Vector3(x,rise+0.56,float(z)),Vector3(0.28,0.14,0.45),kit.shade("stone"),g)
-	for side in [-1,1]:
-		for z in [-1.35,1.35]:
-			kit.wall(0.55,1.15,0.6,Vector3(side*2.8,-0.55,float(z)),g)
-	# Radial voussoirs and masonry haunches under the bridge establish an arch.
-	for z in [-1.2,1.2]:
-		for i in 25:
-			var a := PI*(i+0.5)/25
-			var stone := kit.block(Vector3(cos(a)*2.72,-0.15+sin(a)*1.5,float(z)),Vector3(0.35,0.38,0.34),kit.shade("stone"),g)
-			stone.rotation.z = atan2(1.5*cos(a),-2.72*sin(a))
+				kit.block(Vector3(x,rise+0.12+row*0.25,float(z)),Vector3(length/28-0.01,0.24,0.32),kit.shade("stone"),g)
+			kit.block(Vector3(x,rise+0.55,float(z)),Vector3(length/28+0.025,0.13,0.43),kit.shade("stone"),g)
+			kit.block(Vector3(x,rise-0.25,float(z)),Vector3(length/28+0.02,0.34,0.38),kit.shade("stone"),g)
+	for end in [-1,1]:
+		for z in [-1.37,1.37]:
+			kit.wall(0.5,0.95,0.55,Vector3(end*(length/2-0.12),-0.15,float(z)),g)
 
 func dock() -> void:
-	var g = kit.node_group("TimberDock",Vector3(4.35,0.0,13.1),-0.225)
-	g.scale = Vector3(1.15,1.0,1.3)
-	for i in 35:
-		var z := -3.1+i*0.19
-		var plank := kit.block(Vector3(0,0.15+kit.rng.randf_range(-0.02,0.02),z),Vector3(3.2+kit.rng.randf_range(-0.08,0.08),0.16,0.175),kit.shade("wood"),g)
-		plank.rotation.y = kit.rng.randf_range(-0.008,0.008)
-		for x in [-1.35,1.35]:
-			kit.cylinder(Vector3(x,0.245,z),0.025,0.008,"iron",g)
-	for x in [-1.45,1.45]:
-		kit.block(Vector3(x,-0.02,0),Vector3(0.23,0.3,6.5),"oak",g)
-		for z in [-3.1,0,3.1]:
-			kit.cylinder(Vector3(x,-0.1,z),0.16,2.2,"oak",g)
-			kit.cylinder(Vector3(x,1.02,z),0.20,0.12,"oak_light",g)
-			for y in [0.58,0.64,0.7]:
-				kit.cylinder(Vector3(x,y,z),0.172,0.035,"sand",g)
+	# Four traced corners intentionally form a tapered quay landing; the dock
+	# has its own axis and is not an extension of the bridge's centerline.
+	var back_left := reference_point(Vector2(675,717),0.15)
+	var back_right := reference_point(Vector2(853,773),0.15)
+	var front_left := reference_point(Vector2(419,898),0.15)
+	var front_right := reference_point(Vector2(537,973),0.15)
+	var g := kit.node_group("TimberDock",Vector3.ZERO)
+	for strip in 19:
+		var u0 := (strip+0.045)/19.0
+		var u1 := (strip+0.955)/19.0
+		for section in 3:
+			var t0 := section/3.0+0.003
+			var t1 := (section+1)/3.0-0.003
+			var a := back_left.lerp(back_right,u0).lerp(front_left.lerp(front_right,u0),t0)
+			var b := back_left.lerp(back_right,u1).lerp(front_left.lerp(front_right,u1),t0)
+			var c := back_left.lerp(back_right,u1).lerp(front_left.lerp(front_right,u1),t1)
+			var d := back_left.lerp(back_right,u0).lerp(front_left.lerp(front_right,u0),t1)
+			var outline := PackedVector2Array([Vector2(a.x,a.z),Vector2(b.x,b.z),Vector2(c.x,c.z),Vector2(d.x,d.z)])
+			var area := 0.0
+			for i in 4:
+				area += outline[i].cross(outline[(i+1)%4])
+			if area < 0:
+				outline.reverse()
+			kit.piece(kit.solid_polygon(outline,0.13,0.01),Vector3(0,0.02,0),Vector3.ONE,kit.shade("wood"),g)
+			for p in [a,b,c,d]:
+				kit.cylinder(p+Vector3(0,0.008,0),0.018,0.012,"iron",g)
+	for edge in [[back_left,front_left],[back_right,front_right]]:
+		var start: Vector3 = edge[0]
+		var finish: Vector3 = edge[1]
+		kit.beam(start-Vector3(0,0.12,0),finish-Vector3(0,0.12,0),0.22,"oak",g)
+		for t in [0.0,0.5,1.0]:
+			var p := start.lerp(finish,t)
+			kit.cylinder(p-Vector3(0,0.3,0),0.16,1.8,"oak",g,20)
+			kit.cylinder(p+Vector3(0,0.63,0),0.195,0.10,"oak_light",g,24)
+			for y in [0.30,0.34,0.38,0.42]:
+				kit.ring(p+Vector3(0,y,0),0.17,0.018,"sand",g)
 		for segment in 2:
-			for j in 8:
-				var z0 := -3.1+segment*3.1+j*3.1/8
-				var z1 := z0+3.1/8
-				var t0 := j/8.0
-				var t1 := (j+1)/8.0
-				kit.beam(Vector3(x,0.72-0.3*sin(t0*PI),z0),Vector3(x,0.72-0.3*sin(t1*PI),z1),0.035,"sand",g)
-	kit.beam(Vector3(-1.3,0.3,-2.7),Vector3(-1.3,3.6,-2.7),0.14,"oak",g)
-	kit.beam(Vector3(-1.3,3.6,-2.7),Vector3(-1.3,3.6,-4.1),0.14,"oak",g)
-	kit.beam(Vector3(-1.3,2.8,-2.7),Vector3(-1.3,3.6,-3.7),0.10,"oak",g)
-	kit.beam(Vector3(-1.3,3.6,-4.0),Vector3(-1.3,1.3,-4.0),0.035,"sand",g)
+			for i in 12:
+				var t0 := (segment+i/12.0)/2
+				var t1 := (segment+(i+1)/12.0)/2
+				kit.beam(start.lerp(finish,t0)+Vector3(0,0.42-0.2*sin(i*PI/12),0),start.lerp(finish,t1)+Vector3(0,0.42-0.2*sin((i+1)*PI/12),0),0.026,"sand",g)
+	var post := back_left.lerp(front_left,0.08)
+	var arm := (front_right-front_left).normalized()*-1.0
+	kit.beam(post,post+Vector3(0,2.65,0),0.14,"oak",g)
+	kit.beam(post+Vector3(0,2.65,0),post+Vector3(0,2.65,0)+arm,0.13,"oak",g)
+	kit.beam(post+Vector3(0,2.0,0),post+Vector3(0,2.65,0)+arm*0.8,0.10,"oak",g)
+	kit.beam(post+Vector3(0,2.65,0)+arm,post+Vector3(0,0.65,0)+arm,0.03,"sand",g)
 
 func rowboat(pos: Vector3) -> void:
 	var g := kit.node_group("Reference_Clinker_Rowboat",pos,-0.225)
@@ -299,8 +349,12 @@ func chimney(parent: Node3D, pos: Vector3, height: float, width: float = 0.75) -
 func construct_inn() -> void:
 	var inn := kit.house("Reference_L_Shaped_Inn",Vector3(1.5,1.05,-7.7),4.6,5.8,5.3,3.35,"roof")
 	# Intersecting wing produces the reference's compound roof silhouette.
-	var wing := kit.house("Inn_Right_Entrance_Wing",Vector3(3.9,1.05,-6.6),4.4,6.5,4.9,2.5,"roof")
+	var wing := kit.house("Inn_Right_Entrance_Wing",Vector3(3.9,1.05,-8.0),4.4,6.5,4.9,2.5,"roof")
 	wing.rotation.y = PI/2
+	# Match the reference's lower building mass above its higher rear landing.
+	for building in [inn,wing]:
+		building.position += Vector3(-1.35,0,-2.12)
+		building.scale.y = 0.85
 	for g in [inn,wing]:
 		var width: float = 4.6 if g == inn else 4.4
 		var depth: float = 5.8 if g == inn else 6.5
@@ -350,7 +404,7 @@ func construct_inn() -> void:
 	for i in 8:
 		var a := TAU*i/8
 		kit.beam(Vector3(-4,3.4,3),Vector3(-4+cos(a)*0.4,3.4+sin(a)*0.4,3),0.04,"gold",inn)
-	for pos in [Vector3(-0.7,0.96,-1.9),Vector3(-2.25,0.96,-2.4)]:
+	for pos in [reference_point(Vector2(813,309),1.65)-Vector3(0,0.7,0),reference_point(Vector2(854,329),1.65)-Vector3(0,0.7,0)]:
 		kit.cylinder(pos+Vector3(0,0.7,0),0.47,0.1,"oak_light",kit.root,32)
 		kit.cylinder(pos+Vector3(0,0.35,0),0.11,0.7,"oak",kit.root)
 		for a in [0.0,2.1,4.2]:
@@ -395,7 +449,7 @@ func construct_shop() -> void:
 		kit.shrub(Vector3(-9.7+i*1.0,0.9,2.45),0.35)
 
 func construct_guild() -> void:
-	var guild := kit.house("Reference_Ornate_Guild",Vector3(14.8,1.4,-2.5),5.5,7.0,5.5,4.1,"slate")
+	var guild := kit.house("Reference_Ornate_Guild",Vector3(14.8,1.4,-2.5),5.5,7.0,5.5,4.1,"slate",false,"stone6",false,1.7,2.7)
 	guild.scale = Vector3(0.92,1.05,0.92)
 	guild.rotation.y = 0.32
 	# Layered stone pediment surrounds the roof edge and carries gold finials.
@@ -447,6 +501,13 @@ func build() -> void:
 		await inspect_saved_scene()
 		return
 	root.add_child(kit.root)
+	camera = Camera3D.new()
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.size = 23.0
+	kit.root.add_child(camera)
+	camera.position = Vector3(29,33,46)
+	camera.look_at(Vector3(1.0,1.7,2.0))
+	camera.current = true
 	kit.setup_palette()
 	kit.apply_surface_sources(repo)
 	# Water shader is static spatial material; no animation or time dependency.
@@ -465,18 +526,16 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 	water.material_override = water_mat
 	# Layout reconstructed from the approved image: broad plaza, left cutaway,
 	# compound inn at rear, tall guild right, bridge and dock toward the viewer.
-	var plaza_outline := PackedVector2Array([Vector2(-13,-7),Vector2(-10,-8),Vector2(-5,-7.5),Vector2(1,-7),Vector2(10,-7.5),Vector2(14,-4),Vector2(14,5),Vector2(10,7),Vector2(7.5,7.3),Vector2(5.2,7.8),Vector2(3.2,9.0),Vector2(0.2,9.1),Vector2(-1,8.2),Vector2(-3,8.8),Vector2(-6,7.5),Vector2(-10,7.8),Vector2(-13,5.5)])
-	pavers(Vector3(-2.5,0.8,-3.5),28.0,19.0,plaza_outline)
-	pavers(Vector3(12.4,0.8,4.5),8.0,7.5)
+	reference_quay()
 	construct_inn()
 	construct_shop()
 	construct_guild()
 	bridge()
 	dock()
-	rowboat(Vector3(7.1,-0.14,15.1))
-	source_model("crate.glb",Vector3(6.4,0.23,9.5),0.28)
+	rowboat(reference_point(Vector2(724,903),-0.14))
+	source_model("crate.glb",reference_point(Vector2(807,761),0.23),0.28)
 	# Irregular sand shelves with varied outlines, not square beach blocks.
-	for bank in [Vector3(-10.8,-0.43,5.0),Vector3(14.8,-0.43,9.0),Vector3(-12.4,-0.43,-2.0)]:
+	for bank in [reference_point(Vector2(271,648),-0.43),reference_point(Vector2(1220,886),-0.43),reference_point(Vector2(82,577),-0.43)]:
 		var outline := PackedVector2Array()
 		for i in 32:
 			var a := TAU*i/32
@@ -497,7 +556,7 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 		kit.rock(Vector3(x,kit.rng.randf_range(-0.4,1.6),z),Vector3(kit.rng.randf_range(0.8,2.1),kit.rng.randf_range(0.6,1.7),kit.rng.randf_range(0.9,1.6)))
 	for i in 35:
 		kit.rock(Vector3(kit.rng.randf_range(-9,13),-0.1,kit.rng.randf_range(-12,-10)),Vector3(1.2,0.8,1.0)*kit.rng.randf_range(0.7,1.5))
-	for pos in [Vector3(-12,1.3,-5),Vector3(-10.5,1.3,-8.3),Vector3(8.7,0.8,-9.2)]:
+	for pos in [reference_point(Vector2(175,361),1.3),reference_point(Vector2(323,306),1.3),reference_point(Vector2(1302,310),0.8)]:
 		kit.tree(pos,5.8)
 	for i in 38:
 		kit.shrub(Vector3(kit.rng.randf_range(-13,-11.5),0.9,kit.rng.randf_range(-9,1)),kit.rng.randf_range(0.35,0.7))
@@ -506,16 +565,18 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 	# Moss lives at joins and edges, not as a uniform green tint.
 	for i in 230:
 		var pos := Vector3(kit.rng.randf_range(-11,13),0.88,kit.rng.randf_range(-8,6))
-		kit.rock(pos,Vector3(kit.rng.randf_range(0.07,0.21),0.012,kit.rng.randf_range(0.08,0.3)))
+		kit.rock(pos,Vector3(kit.rng.randf_range(0.07,0.21),0.012,kit.rng.randf_range(0.08,0.3))).material_override = kit.mat("moss")
 	# Reference gold points form a branching, partly elevated network.
-	var nodes: Array[Vector3] = [Vector3(-8,0.93,-9),Vector3(-6,0.93,-5),Vector3(-3,0.93,0),Vector3(-1,0.93,0),Vector3(-1,2.0,0),Vector3(2.2,2.0,-0.9),Vector3(2.2,0.93,-0.9),Vector3(4.6,0.93,0.9),Vector3(4.6,2.15,0.9),Vector3(7.5,2.15,2.1),Vector3(7.5,0.93,2.1),Vector3(10.0,0.93,6.8),Vector3(13.5,0.93,7.7),Vector3(-4,0.93,3.4),Vector3(-1.8,0.93,4.4)]
+	var nodes: Array[Vector3] = []
+	for marker in [Vector3(535,138,0.93),Vector3(617,211,0.93),Vector3(640,410,0.93),Vector3(752,497,0.93),Vector3(751,430,2.65),Vector3(926,401,2.5),Vector3(928,462,0.93),Vector3(974,570,0.93),Vector3(960,474,3.3),Vector3(1112,446,2.0),Vector3(1112,505,0.93),Vector3(1048,652,0.93),Vector3(1224,785,0.93),Vector3(558,577,0.93),Vector3(609,600,0.93)]:
+		nodes.append(reference_point(Vector2(marker.x,marker.y),marker.z))
 	for p in nodes:
 		node_marker(p)
 	for edge in [Vector2i(0,1),Vector2i(1,2),Vector2i(2,3),Vector2i(3,4),Vector2i(4,5),Vector2i(5,6),Vector2i(6,7),Vector2i(7,8),Vector2i(8,9),Vector2i(9,10),Vector2i(10,11),Vector2i(11,12),Vector2i(2,13),Vector2i(13,14)]:
 		path_connection(nodes[edge.x],nodes[edge.y])
-	pawn(Vector3(-3.0,0.92,1.1),"cloth")
-	pawn(Vector3(0.2,0.92,-0.8),"moss")
-	pawn(Vector3(5.7,0.92,1.65),"moss")
+	pawn(reference_point(Vector2(678,523),0.92),"cloth")
+	pawn(reference_point(Vector2(819,482),0.92),"moss")
+	pawn(reference_point(Vector2(1019,553),0.92),"moss")
 	var environment := WorldEnvironment.new()
 	environment.environment = Environment.new()
 	var env := environment.environment
@@ -542,13 +603,18 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 	sun.shadow_bias = 0.12
 	sun.shadow_normal_bias = 1.5
 	kit.root.add_child(sun)
-	var camera := Camera3D.new()
-	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-	camera.size = 23.0
-	kit.root.add_child(camera)
-	camera.position = Vector3(29,33,46)
-	camera.look_at(Vector3(1.0,1.7,2.0))
-	camera.current = true
+	# Ground-only proof uses the same geometry and camera, with buildings hidden.
+	var hidden_buildings: Array[Node3D] = []
+	for child in kit.root.get_children():
+		if child is Node3D and (str(child.name).begins_with("Reference_") or str(child.name).begins_with("Inn_Right")) and not str(child.name).contains("Rowboat"):
+			hidden_buildings.append(child)
+			child.visible = false
+	for frame in 32:
+		await process_frame
+	RenderingServer.force_draw(false)
+	assert(root.get_texture().get_image().save_png(output_dir.path_join("river-port-ground.png")) == OK)
+	for child in hidden_buildings:
+		child.visible = true
 	for frame in 32:
 		await process_frame
 	RenderingServer.force_draw(false)
