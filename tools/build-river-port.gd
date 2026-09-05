@@ -17,7 +17,21 @@ func reference_point(pixel: Vector2, height: float) -> Vector3:
 func reference_quay() -> void:
 	# Visible perimeter traced from the approved 1536x1024 reference. Segments
 	# behind roofs/cliffs are explicitly inferred, not claimed as measured.
-	var trace := PackedVector2Array([Vector2(92,437),Vector2(112,345),Vector2(220,270),Vector2(350,195),Vector2(499,119),Vector2(553,127),Vector2(624,187),Vector2(655,228),Vector2(709,253),Vector2(749,317),Vector2(855,285),Vector2(984,305),Vector2(1070,253),Vector2(1190,264),Vector2(1320,282),Vector2(1380,388),Vector2(1650,600),Vector2(1580,850),Vector2(1430,843),Vector2(1310,808),Vector2(1220,795),Vector2(1140,736),Vector2(1070,710),Vector2(1048,674),Vector2(979,653),Vector2(948,620),Vector2(918,593),Vector2(876,561),Vector2(805,526),Vector2(742,544),Vector2(702,580),Vector2(669,617),Vector2(638,638),Vector2(610,641),Vector2(593,629),Vector2(571,652),Vector2(532,677),Vector2(487,686),Vector2(454,706),Vector2(417,706),Vector2(346,680),Vector2(322,647),Vector2(276,612),Vector2(220,582),Vector2(174,552),Vector2(143,533),Vector2(114,490)])
+	var trace := PackedVector2Array([
+		Vector2(139,441),Vector2(142,397),Vector2(179,357),Vector2(220,270),
+		Vector2(350,195),Vector2(499,119),Vector2(553,127),Vector2(624,187),
+		Vector2(655,228),Vector2(709,253),Vector2(749,317),Vector2(855,285),
+		Vector2(984,305),Vector2(1070,253),Vector2(1190,264),Vector2(1320,282),
+		Vector2(1380,388),Vector2(1650,600),Vector2(1580,850),Vector2(1430,843),
+		Vector2(1310,808),Vector2(1220,795),Vector2(1140,736),Vector2(1070,710),
+		Vector2(1048,674),Vector2(979,653),Vector2(948,620),Vector2(918,593),
+		Vector2(876,561),Vector2(805,526),Vector2(742,544),Vector2(702,580),
+		Vector2(669,617),Vector2(638,638),Vector2(610,641),Vector2(593,629),
+		Vector2(571,652),Vector2(532,677),Vector2(487,686),Vector2(454,706),
+		Vector2(417,706),Vector2(346,680),Vector2(322,647),Vector2(344,602),
+		# Shop foundation turns inward here; there is no broad paved apron.
+		Vector2(370,577),Vector2(319,547),Vector2(271,525),Vector2(225,496),Vector2(177,471)
+	])
 	var outline := PackedVector2Array()
 	var minimum := Vector2(INF,INF)
 	var maximum := Vector2(-INF,-INF)
