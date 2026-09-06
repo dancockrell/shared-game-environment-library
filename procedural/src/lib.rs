@@ -1562,6 +1562,93 @@ mod tests {
         assert_eq!(s.estimated_geometry_bytes, 0);
     }
     #[test]
+    fn pastry_lattice_has_clear_alternating_crossings_in_emitted_triangles() {
+        let r: Recipe = serde_json::from_str(include_str!("../examples/patisserie.json")).unwrap();
+        let s = compile(&r).unwrap();
+        let strips: Vec<_> = s
+            .instances
+            .iter()
+            .filter(|i| s.meshes[i.mesh].name.starts_with("pie.lattice_"))
+            .collect();
+        assert_eq!(strips.len(), 10);
+        // Clip actual emitted triangle polygons to the crossing's X/Z footprint.
+        // A strict separating horizontal plane proves these two strip surfaces
+        // cannot intersect there; centre-line ordering alone would not suffice.
+        let envelope = |instance: &Instance, lo: V3, hi: V3| {
+            let m = &s.meshes[instance.mesh];
+            let mut min_y = f64::INFINITY;
+            let mut max_y = f64::NEG_INFINITY;
+            for triangle in m.indices.as_chunks::<3>().0 {
+                let mut polygon: Vec<[f64; 3]> = triangle
+                    .iter()
+                    .map(|index| {
+                        let p = m.positions[*index as usize];
+                        std::array::from_fn(|axis| {
+                            instance.position[axis] as f64
+                                + (0..3)
+                                    .map(|c| instance.basis[c][axis] as f64 * p[c] as f64)
+                                    .sum::<f64>()
+                        })
+                    })
+                    .collect();
+                for (axis, edge, sign) in [
+                    (0, lo[0], 1.),
+                    (0, hi[0], -1.),
+                    (2, lo[2], 1.),
+                    (2, hi[2], -1.),
+                ] {
+                    if polygon.is_empty() {
+                        break;
+                    }
+                    let mut clipped = Vec::new();
+                    for j in 0..polygon.len() {
+                        let a = polygon[j];
+                        let b = polygon[(j + 1) % polygon.len()];
+                        let da = (a[axis] - edge as f64) * sign;
+                        let db = (b[axis] - edge as f64) * sign;
+                        if da >= 0. {
+                            clipped.push(a);
+                        }
+                        if (da >= 0.) != (db >= 0.) {
+                            let t = da / (da - db);
+                            clipped.push(std::array::from_fn(|k| a[k] + t * (b[k] - a[k])));
+                        }
+                    }
+                    polygon = clipped;
+                }
+                for p in polygon {
+                    min_y = min_y.min(p[1]);
+                    max_y = max_y.max(p[1]);
+                }
+            }
+            assert!(min_y.is_finite() && max_y.is_finite());
+            (min_y, max_y)
+        };
+        let mut crossings = 0;
+        for a in &strips[..5] {
+            for b in &strips[5..] {
+                let lo = std::array::from_fn(|axis| a.bounds.min[axis].max(b.bounds.min[axis]));
+                let hi = std::array::from_fn(|axis| a.bounds.max[axis].min(b.bounds.max[axis]));
+                assert!(lo[0] < hi[0] && lo[2] < hi[2]);
+                let (amin, amax) = envelope(a, lo, hi);
+                let (bmin, bmax) = envelope(b, lo, hi);
+                let row = (a.position[2] / 0.04).round() as i32;
+                let column = ((b.position[0] - 0.2) / 0.04).round() as i32;
+                let clearance = if (row + column).rem_euclid(2) == 0 {
+                    amin - bmax
+                } else {
+                    bmin - amax
+                };
+                assert!(
+                    clearance > 0.0001,
+                    "crossing {row}/{column}: clearance {clearance}"
+                );
+                crossings += 1;
+            }
+        }
+        assert_eq!(crossings, 25);
+    }
+    #[test]
     fn angular_repeats_share_geometry_and_preserve_local_transforms() {
         let mut r = recipe();
         r.root = Assembly::Transform {

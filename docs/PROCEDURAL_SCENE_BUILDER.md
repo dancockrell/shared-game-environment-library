@@ -1078,10 +1078,10 @@ actual GPU memory measurements remain outstanding.
 `procedural/examples/patisserie.json` is the first editable paired study following
 the user's positive teapot response. The material direction is warm sponge and
 cream, dark berry filling and teal serving ceramics. All geometry is generated
-from the existing spline lathe and rounded stock operators. Eleven shared mesh
+from the existing spline lathe and framed sweep operators. Fourteen shared mesh
 definitions compose 42 instances: two cake sponge layers, filling, rounded icing,
 cream dollops and berries around the rim, plus a separate open-crust berry pie
-with ten rounded pastry strips. Both dishes share the same plate definition.
+with ten swept pastry ribbons. Both dishes share the same plate definition.
 
 To author circular decoration without manually listing every instance, the
 **existing** `repeat` now accepts optional `yaw_step` (radians per copy, default
@@ -1104,12 +1104,35 @@ this does not certify their assembled intersections. The generated definitions
 contain 90,404 triangles before instance reuse and the compiler estimates
 3,302,264 resident geometry/texture bytes, not measured engine RAM or VRAM.
 
-Outstanding: actual rendered inspection, native saved-output review, true
-over/under lattice weaving, fluted crust, richer piping, cake crumb detail and
-controlled natural variation. The current crossed strips and rotational dollops
-are explicitly construction studies, not finished pastry. No artistic gate is
-passed from CPU checks. The live teapot review remains untouched; no additional
-Godot process was launched during this study.
+The original flat-strip lattice is now **superseded by alternating swept ribbons**.
+Six reusable definitions cover three lengths and two over/under phases; ten
+instances span five rows in each direction. Cubic centre lines have horizontal
+tangents at crossings and smooth elevation changes between them. Their authored
+upward section frame and `[0.4, 1]` section scales make an elliptical pastry ribbon
+6.4 mm thick and 16 mm wide, rather than circular tubing. The current centre-line
+heights alternate between 50 and 60 mm. Ends descend to the crust at 52 mm. These
+are fully editable sweep controls, not baked model imports or a second mesher.
+
+The new crossing test clips the **actual transformed triangle polygons** of both
+ribbons to each overlapping X/Z footprint and computes their vertical envelopes.
+All 25 crossings must have the correct alternating over/under ordering and more
+than 0.1 mm separating clearance. This is stronger than checking centre lines;
+it establishes separation at these fixture crossings, not general self-collision
+freedom for arbitrary user-edited sweeps or joins with the filling/crust.
+
+Woven-lattice receipt:
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/report.json`.
+50 Rust tests, strict clippy, deterministic output and the CPU fixture workflow
+passed. All 14 mesh definitions passed the closed-position-graph audit. The
+current fixture has 109,472 definition triangles, 42 instances and a compiler
+geometry/texture estimate of 3,859,080 bytes; these supersede the preceding
+flat-strip counts, not the distinction between estimates and engine measurement.
+
+Outstanding: actual rendered inspection, native saved-output review, fluted
+crust, richer piping, cake crumb detail and controlled natural variation. The
+ribbons and rotational dollops remain construction studies, not finished pastry.
+No artistic gate is passed from CPU checks. The live teapot review remains
+untouched; no additional Godot process was launched during this study.
 
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
 groups/repetition; exact rectangular aperture subdivision; strict geometry and
