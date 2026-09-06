@@ -8,12 +8,14 @@ Original authoring file is never modified. Pilot export, not engine parity.
 import hashlib
 import json
 import math
-import struct
 import sys
 from pathlib import Path
 
 import bpy
 from mathutils import Vector
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import glb_geometry
 
 
 def world_bounds(obj):
@@ -41,6 +43,10 @@ def main():
     source_recipe = scene["scene_forge_recipe_json"]
     source_vertices = [tuple(v.co) for v in mesh.vertices]
     source_triangles = len(mesh.polygons)
+    # Blender Z-up -> glTF Y-up. Preserve directed triangle corners, allowing
+    # exporter vertex splitting but not winding changes or changed surfaces.
+    expected_triangles = [[(mesh.vertices[i].co.x, mesh.vertices[i].co.z, -mesh.vertices[i].co.y)
+                           for i in polygon.vertices] for polygon in mesh.polygons]
     source_bounds = world_bounds(obj)
     # Keep original UV sampling explicit before selecting a new non-overlapping
     # export layout; otherwise albedo would silently change under a new unwrap.
@@ -137,9 +143,8 @@ def main():
                               export_extras=True, export_texcoords=True, export_normals=True,
                               export_tangents=True, export_cameras=False, export_lights=False)
     raw = glb.read_bytes()
-    magic, version, length, json_length, kind = struct.unpack_from("<5I", raw)
-    assert (magic, version, length, kind) == (0x46546C67, 2, len(raw), 0x4E4F534A)
-    document = json.loads(raw[20:20 + json_length])
+    document, binary = glb_geometry.read(raw)
+    geometry_receipt = glb_geometry.compare(document, binary, expected_triangles)
     assert len(document["meshes"]) == 1
     exported = document["materials"][0]
     assert "baseColorTexture" in exported["pbrMetallicRoughness"]
@@ -199,6 +204,7 @@ def main():
                "glb_sha256": hashlib.sha256(raw).hexdigest(), "mesh": mesh_name,
                "texture_size": 512, "triangles": source_triangles, "bytes": len(raw),
                "world_bounds": restored_bounds,
+               "geometry_audit": geometry_receipt,
                "device": "CPU", "threads": 2, "native_reimport": "passed",
                "limitations": ["single shared-mesh pilot", "subsurface and independent coat IOR omitted", "engine parity not tested",
                                "UV packing not formally overlap-certified"]}

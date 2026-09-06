@@ -1045,7 +1045,8 @@ blender --background --factory-startup --threads 2 --python-exit-code 1 --python
 Every successful run inspects GLB structure/embedded textures/metadata, then
 reimports the actual GLB with Blender, checks triangle count and world bounds
 within one micrometre, and renders that imported asset. This is not a Godot or
-Unity parity test, nor exhaustive per-triangle geometry verification.
+Unity parity test. The initial bounds/count-only gate is now strengthened by
+the independent binary audit described below.
 
 Evidence under the existing review root
 `procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/`:
@@ -1070,6 +1071,35 @@ Rust is unchanged; its full suite was not rerun for this Python-only checkpoint.
 Whole-scene batched export, automatic texture-resolution/LOD budgets, engine
 import checks, and higher-quality pastry/fruit construction remain unfinished.
 No Godot process replacement, paid generation, remote push or Actions run.
+
+#### Independent portable geometry audit
+
+`procedural/blender/glb_geometry.py` is the single GLB decoding/audit owner used
+by the bake exporter. It bounds files to 64 MiB and accessors to one million
+entries, reads embedded binary buffer views (including interleaved positions),
+and rejects unsupported sparse/normalized/compressed geometry, truncated
+chunks, out-of-view reads, invalid indices and non-finite coordinates.
+It is deliberately not a general-purpose glTF importer.
+
+Before export, the baker records source triangle corners in glTF local axes.
+After export, the audit decodes the actual indexed positions and compares
+oriented triangle multisets on a one-micrometre coordinate grid. Cyclic corner
+rotations and vertex splitting/reordering are allowed; reversed winding,
+changed surfaces, missing triangles and duplicate triangles are not.
+This comparison is quantized, not exact floating-point identity, and does not
+certify normal/tangent/UV attributes, node matrices individually, manifoldness
+or self-intersection. The independent native reload/bounds/render gate remains.
+
+Seven audit tests passed, including an adversarial same-bounds/same-count but
+different triangle, reversed facing, duplicate counts, interleaved positions,
+non-finite data, bad indices, truncated data and external buffers. Seven
+existing material-profile tests also passed. Syntax checks passed.
+Actual `baked-crust-audited-001` export under the same review root passed all
+19,392 source triangles plus native import and actual visual inspection.
+Sampled process RAM peak 585,330,688 bytes; wall time 14.14 seconds, hidden
+BelowNormal CPU/two threads under the existing 3 GiB/150-second launch guard.
+The render remains unapproved food art; this checkpoint changes export
+assurance, not artistic quality. No Godot restart, remote Actions or paid work.
 
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.

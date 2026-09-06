@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Extend Blender authoring path with bounded texture baking and portable single-mesh GLB export; preserve source metadata and independently reimport exported assets",
+  "summary": "Strengthen portable Blender export with independent binary triangle-position, winding and multiplicity checks before expanding assembly baking",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",
