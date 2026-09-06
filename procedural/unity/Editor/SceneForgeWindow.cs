@@ -91,14 +91,16 @@ namespace SharedEnvironment.SceneForge {
                     var pixels=source.paint_texture;
                     var texture=new Texture2D(pixels.width,pixels.height,TextureFormat.RGBA32,true,false){name=source.name+" painted underlayer",wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear};
                     byte[] rgba=Array.ConvertAll(pixels.rgba,value=>checked((byte)value));
-                    texture.LoadRawTextureData(rgba);texture.Apply(true,false);
+                    // Albedo supplies level zero only; raw texture upload requires all mips.
+                    texture.SetPixelData(rgba,0);texture.Apply(true,false);
                     material.color=Color.white;
                     material.mainTexture=texture;
                     if(material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap",texture);
                     if(pixels.normal_rgba!=null) {
                         var normal=new Texture2D(pixels.width,pixels.height,TextureFormat.RGBA32,true,true){name=source.name+" surface normals",wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear};
                         normal.LoadRawTextureData(Array.ConvertAll(pixels.normal_rgba,value=>checked((byte)value)));
-                        normal.Apply(true,false);
+                        // Complete compiler-generated normal mip chain; never re-filter it.
+                        normal.Apply(false,false);
                         mesh.RecalculateTangents();
                         material.SetTexture("_BumpMap",normal);
                         material.SetFloat("_BumpScale",1f);

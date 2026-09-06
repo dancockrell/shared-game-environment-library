@@ -46,8 +46,9 @@ static func build(data: Dictionary) -> Node3D:
 			material.albedo_color = Color.WHITE
 			material.set_meta("scene_forge_paint", finish.get("paint", {}))
 			if texture_data.has("normal_rgba"):
-				var normal_image := Image.create_from_data(int(texture_data.width), int(texture_data.height), false, Image.FORMAT_RGBA8, PackedByteArray(texture_data.normal_rgba))
-				assert(normal_image.generate_mipmaps(true) == OK)
+				# Compiler supplies the complete normalized mip chain for both engines.
+				var normal_image := Image.create_from_data(int(texture_data.width), int(texture_data.height), true, Image.FORMAT_RGBA8, PackedByteArray(texture_data.normal_rgba))
+				assert(normal_image != null and not normal_image.is_empty())
 				material.normal_enabled = true
 				material.normal_texture = ImageTexture.create_from_image(normal_image)
 				mesh.regen_normal_maps()

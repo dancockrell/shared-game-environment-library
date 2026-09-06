@@ -71,7 +71,7 @@ pub struct Texture {
     pub width: u32,
     pub height: u32,
     pub rgba: Vec<u8>,
-    /// Linear RGB tangent-space +Y normals, alpha 255; no sRGB conversion.
+    /// Linear +Y tangent normals, alpha 255; full mip chain, largest to 1x1.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub normal_rgba: Option<Vec<u8>>,
 }
@@ -200,7 +200,7 @@ pub fn build(base: [f32; 4], paint: &Paint) -> crate::Result<Texture> {
             }
         }
         if g.relief_texels > 0. {
-            normal_rgba = Some(normals_from_height(&heights, size));
+            normal_rgba = Some(normal_mip_chain(normals_from_height(&heights, size), size));
         }
     }
     Ok(Texture {
@@ -229,6 +229,42 @@ fn normals_from_height(heights: &[f32], size: u32) -> Vec<u8> {
         }
     }
     normals
+}
+/// Box-filter decoded vectors, then normalize before each RGBA8 encoding.
+/// Input dimensions are validated power-of-two square paint sizes.
+fn normal_mip_chain(mut pixels: Vec<u8>, size: u32) -> Vec<u8> {
+    let mut width = size as usize;
+    let mut offset = 0;
+    while width > 1 {
+        let next_width = width / 2;
+        let next_offset = pixels.len();
+        for y in 0..next_width {
+            for x in 0..next_width {
+                let mut sum = [0_f64; 3];
+                for dy in 0..2 {
+                    for dx in 0..2 {
+                        let i = offset + ((2 * y + dy) * width + 2 * x + dx) * 4;
+                        for c in 0..3 {
+                            sum[c] += pixels[i + c] as f64 / 255. * 2. - 1.;
+                        }
+                    }
+                }
+                let length = sum.iter().map(|v| v * v).sum::<f64>().sqrt();
+                let unit = if length > 1e-12 {
+                    sum.map(|v| v / length)
+                } else {
+                    [0., 0., 1.]
+                };
+                for v in unit {
+                    pixels.push(((v * 0.5 + 0.5) * 255.).round() as u8);
+                }
+                pixels.push(255);
+            }
+        }
+        offset = next_offset;
+        width = next_width;
+    }
+    pixels
 }
 fn draw_stroke(
     pixels: &mut [u8],
@@ -311,6 +347,30 @@ fn draw_stroke(
 mod tests {
     use super::*;
     #[test]
+    fn normal_mips_preserve_base_and_average_vectors_not_colors() {
+        // Opposite X slopes with positive Z must converge toward a flat normal.
+        let base = vec![
+            218, 128, 218, 255, 37, 128, 218, 255, 218, 128, 218, 255, 37, 128, 218, 255,
+        ];
+        let chain = normal_mip_chain(base.clone(), 2);
+        assert_eq!(&chain[..16], &base);
+        assert_eq!(&chain[16..], &[128, 128, 255, 255]);
+        for size in [64, 128, 256, 512] {
+            let base = [128, 128, 255, 255].repeat((size * size) as usize);
+            let chain = normal_mip_chain(base.clone(), size);
+            let expected = (0..=size.ilog2())
+                .map(|level| ((size >> level).pow(2) * 4) as usize)
+                .sum::<usize>();
+            assert_eq!(chain.len(), expected);
+            assert_eq!(&chain[..base.len()], &base);
+            assert!(chain
+                .as_chunks::<4>()
+                .0
+                .iter()
+                .all(|p| *p == [128, 128, 255, 255]));
+        }
+    }
+    #[test]
     fn relief_has_normalized_direction_and_explicit_cost() {
         let flat = normals_from_height(&[0.; 16], 4);
         assert!(flat
@@ -330,7 +390,7 @@ mod tests {
         let mut p: Paint = serde_json::from_str(r#"{"color":[0,0,0],"strength":0,"seed":19,"granulation":{"cells":[12,7],"strength":0.5,"color":[0.1,0.1,0.1],"relief_texels":2}}"#).unwrap();
         let textured = build([1.; 4], &p).unwrap();
         let data = textured.normal_rgba.as_ref().unwrap();
-        assert_eq!(data.len(), 64 * 64 * 4);
+        assert_eq!(data.len(), 21844);
         for pixel in data.as_chunks::<4>().0 {
             let n: Vec<_> = pixel[..3]
                 .iter()

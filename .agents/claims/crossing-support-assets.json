@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Extend shared painted granulation with bounded tangent-space surface normals, adapter tangent generation and validation; prepare native review without replacing the live viewer until approved",
+  "summary": "Unify normal mip filtering in the Rust material generator so both engine adapters upload identical normalized levels; leave pending native viewer replacement untouched",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",
