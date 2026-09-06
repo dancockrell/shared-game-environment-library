@@ -43,7 +43,7 @@ Additional release check: [DiffAvatar](https://github.com/facebookresearch/DiffA
 4. Establish feasible placement and seam exclusions, then test contact during pose changes. Use explicit Godot Y-up to solver-coordinate conversion and back. Evaluate closures, armholes and belt/accessory contact, not just torso vertices. Do not claim Newton's implementation is mathematically identical to every OGC equation: inspect margins, truncation thresholds and contact filters in the pinned source.
 5. Fit the existing approved character, not a generic mannequin as the finished deliverable. Compare silhouette, face, hair, cut and materials at the reference camera; inspect the back and movement separately. A paper benchmark, collision count or attractive reference displayed in a viewport is not generated character art.
 
-Our current raw fitting body and four-panel fixture provide a repeatable failure case. `tools/build-period-bodice.gd` is a review command, not selectable wardrobe production. Its successful process exit means the study was built and measured, not admitted:
+The earlier raw fitting body and four-panel fixture provide a recorded failure case. The rejected handwritten `tools/period-bodice.gd` fitting route and its `tools/build-period-bodice.gd` review command are now retired; both remain recoverable from Git at `1de34a0`, and rejected local artifacts remain intact. The single current wearable-fitting entry point is `tools/fit-period-pattern.py`, using measured GarmentCode panels and pinned Newton. The historical command's successful exit meant only that the study was built and measured:
 
 | Rejected local study | Maximum absolute relative edge-length error | Worst sampled signed separation | Negative vertex/centroid samples |
 |---|---:|---:|---:|
@@ -53,6 +53,30 @@ Our current raw fitting body and four-panel fixture provide a repeatable failure
 The metric key is historically named `maxRelativeEdgeStretch`; it includes compression error as well as extension. These are sparse near-surface samples, not a proof of all triangle intersections or penetration depth inside a closed solid. Both studies fail visually and numerically; neither is promoted.
 
 #### Executed upstream baseline and reproducibility
+
+**Measured-panel sewing checkpoint:** `tools/fit-period-pattern.py` now executes Newton `SolverVBD` on the actual body-anchored four-panel pattern. FEM rest elements are constructed from flat metric coordinates before applying separate 3D placement. Graph coloring includes seam, triangle and bending neighbours; self-contact excludes only incident primitives at intended sewn topology, including transitive seam corners. Original vertices, faces, seam identities, source hashes and solver settings remain in `fit.json`.
+
+The initial unanchored run collapsed into a band around the waist despite small seam gaps. The next shoulder-supported trial moved its supports only once per frame and produced severe local distortion. The current implementation ramps support motion/velocity and seam lengths every **substep** for 900 substeps (1.5 seconds), then settles under gravity. This produces a recognizable square-neck bodice in inspected CPU front/three-quarter/back diagnostics. Eight shoulder endpoint particles remain temporarily pinned to measured body surface targets; support release, body motion and garment skinning are **not** validated.
+
+| Local fitted study | Maximum seam gap | Mean seam gap | Maximum absolute relative edge strain | Minimum sampled body separation |
+|---|---:|---:|---:|---:|
+| `20260906T124050554Z-vbd`, unanchored, rejected collapsed silhouette | 9.865 mm | 1.318 mm | 0.511 | +0.987 mm |
+| `20260906T124536858Z-vbd`, frame-level support motion, rejected distortion | 46.249 mm | 2.454 mm | 14.341 | −83.329 mm |
+| `20260906T125009688Z-vbd`, substep support motion | 7.895 mm | 0.304 mm | 0.764 | −0.494 mm |
+| `20260906T125221553Z-vbd`, repeat substep run | 7.928 mm | 0.344 mm | 0.814 | −0.971 mm |
+
+The last two runs each contain 3,063 cloth vertices and 5,486 triangles. Libigl signed-distance review sampled 8,549 vertices/triangle centroids; neither had a sample deeper than 1 mm. This is **not continuous intersection certification**, nor proof of self-intersection absence. Local edge strain, wrinkles, residual gaps and shallow penetration remain defects. Identical settings produced different cloth positions: repeat maximum displacement **32.312 mm**, mean **5.859 mm**. Do not call the simulation deterministic or the garment approved. Fabric constants are uncalibrated study values; the basic cut still needs the target's narrow straps, pointed hem and structured construction.
+
+The two corrected 300-frame runs took 15.48 and 15.00 seconds including monitoring, with sampled process-tree peaks of 493.96 and 468.21 MiB and whole-device GPU peaks of 3,199 and 2,929 MiB. Those are shared-machine samples, not isolated VRAM or an 8 GB-device certification. The benchmark runner now also checks sampled process-tree RAM against 2 GiB and whole-device GPU use against 8,192 MiB, terminating only its owned process tree if exceeded. This is a sampled stop guard, **not a hard allocation cap**; the new pressure-stop path has not been fault-injected.
+
+Run one fitting job at a time through the existing bounded runner, then review with the isolated CPU environment:
+
+```powershell
+./tools/benchmark-character-physics.ps1 -Python $newtonPython -PatternMesh $panelMesh -FittingBody $bodyJson -Frames 300 -TimeoutSeconds 60
+& $cpuPython tools/fit-period-pattern.py --panels $panelMesh --body $bodyJson --review-only $fitJson --output $newReviewDirectory
+```
+
+The review exports `sewing-review.png`, numerical `review.json`, and **`sewing-review.glb` for the existing workshop's Open source GLB command**. The GLB contains the complete untextured fitting body and actual simulated cloth in the same source frame, preserving every triangle and vertex (subject to standard float32 GLB precision), separate seam vertices and flat metric UVs. Neutral matte materials and vertex normals support inspection; no position smoothing, seam welding, body hiding or per-part recentering disguises the fit. It is explicitly a static unapproved study, not a rigged character, wardrobe preset or final texture treatment. Engine-specific import must be verified independently; a CPU GLB roundtrip is not that verification.
 
 **Pattern construction checkpoint:** `tools/build-period-pattern.py` now calls the unchanged pinned GarmentCode `FittedShirt` constructor with sleeveless square-neck settings. It verifies 160 source/script/YAML/DLL/license files against the SHA-256-pinned author archive before importing. It outputs the original curved-panel/seam representation, numeric input snapshot, design, non-overlapping cut review and hash receipt. The author constructor returns subcomponents in set order; the wrapper sorts panel containers and the outer stitch list for repeatability, preserving every directed edge and individual stitch endpoint order. No upstream implementation is patched.
 
@@ -332,7 +356,7 @@ User correction, 2026-09-06: clothing production must use a genuine generator, o
 
 Latest user direction, 2026-09-06: build our own shared creature/character construction system, integrating with both Godot and Unity. Reuse established methods and suitable libraries, but do not adopt another editor as the product or duplicate construction in each engine. Target roughly 8 GB VRAM, non-generative construction, genuine garment patterns and replacement high-quality textures. No paid generation or purchases without explicit approval.
 
-[GarmentCode](https://github.com/maria-korosteleva/GarmentCode) is now an executed, pinned offline pattern-construction dependency behind `tools/build-period-pattern.py`, not a replacement for our shared character editor or engine architecture. See the construction/meshing checkpoints above for exact executed scope. Its MIT code license does not cover every dependency or dataset/body asset. The author's separate full draping pipeline has not been installed or validated here; Newton has only passed the unchanged hanging-cloth benchmark, not full garment fitting. Preserve these boundaries when packaging or reporting progress.
+[GarmentCode](https://github.com/maria-korosteleva/GarmentCode) is now an executed, pinned offline pattern-construction dependency behind `tools/build-period-pattern.py`, not a replacement for our shared character editor or engine architecture. See the construction/meshing/sewing checkpoints above for exact executed scope. Its MIT code license does not cover every dependency or dataset/body asset. The author's separate full draping pipeline has not been installed or validated here. Newton now executes measured-panel sewing studies, but those retain fit defects and are not approved garments. Preserve these boundaries when packaging or reporting progress.
 
 Admission trial: produce a reference-led period shirt with actual front/back panels, sleeves, armholes, neckline and seams; fit it to both existing licensed bodies; inspect drape, closures and intersections; export a mesh with usable UVs into the existing skinning/wardrobe pipeline. Default modern garment samples do not pass that trial. Use offline cloth simulation rather than requiring every game NPC to simulate tailoring. Author faction-specific patterns and high-quality materials after proving this path. Extend or implement missing construction functions only from demonstrated gaps; do not start a duplicate character editor or wardrobe runtime.
 

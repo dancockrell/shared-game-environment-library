@@ -5,24 +5,107 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 
 sys.dont_write_bytecode = True
 loader = importlib.util.spec_from_file_location("period_pattern", Path(__file__).with_name("build-period-pattern.py"))
 builder = importlib.util.module_from_spec(loader)
 loader.loader.exec_module(builder)
+fit_loader = importlib.util.spec_from_file_location("period_fit", Path(__file__).with_name("fit-period-pattern.py"))
+fitter = importlib.util.module_from_spec(fit_loader)
+fit_loader.loader.exec_module(fitter)
 REVIEW = Path(sys.argv.pop(1))
 BODY_PATH = SOURCE_MESH = None
+FIT_PATH = None
 if "--fitting-body" in sys.argv:
     pos = sys.argv.index("--fitting-body")
     BODY_PATH = Path(sys.argv[pos + 1])
     SOURCE_MESH = Path(sys.argv[pos + 2])
     del sys.argv[pos:pos + 3]
+if "--fit-result" in sys.argv:
+    pos = sys.argv.index("--fit-result")
+    FIT_PATH = Path(sys.argv[pos+1])
+    del sys.argv[pos:pos+2]
 SPEC = json.loads((REVIEW / "FittedShirt_specification.json").read_text())
 MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    @unittest.skipUnless(FIT_PATH and BODY_PATH,"No actual sewing result requested")
+    def test_portable_review_preserves_actual_geometry_and_materials(self):
+        import numpy as np
+        import trimesh
+        result = json.loads(FIT_PATH.read_text())
+        data,body,offsets,rest,placed,faces,pairs = fitter.read_inputs(SimpleNamespace(panels=REVIEW/"panel-mesh.json",body=BODY_PATH))
+        provenance = {"status":"unapproved-static-fitting-study-not-a-rigged-character",
+                      "simulationSha256":builder.digest(FIT_PATH),"units":"metres","upAxis":"Y"}
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)/"study.glb"
+            fitter.export_review_glb(path,body,np.asarray(result["vertices"]),faces,rest,provenance)
+            loaded = trimesh.load_scene(path,process=False)
+            self.assertEqual(loaded.metadata,provenance)
+            self.assertEqual(set(loaded.geometry),{"Fitting_body_untextured","Sewn_bodice_unapproved"})
+            for name,vertices,triangles in (("Fitting_body_untextured",body["vertices"],body["triangles"]),
+                                            ("Sewn_bodice_unapproved",result["vertices"],faces)):
+                mesh = loaded.geometry[name]
+                np.testing.assert_allclose(mesh.vertices,vertices,atol=6e-8,rtol=0)
+                np.testing.assert_array_equal(mesh.faces,triangles)
+                self.assertTrue(np.isfinite(mesh.vertex_normals).all())
+                self.assertEqual(mesh.visual.material.metallicFactor,0)
+                self.assertAlmostEqual(mesh.visual.material.roughnessFactor,.85)
+                np.testing.assert_array_equal(loaded.graph.get(name)[0],np.eye(4))
+            cloth = loaded.geometry["Sewn_bodice_unapproved"]
+            np.testing.assert_allclose(cloth.visual.uv,rest[:,:2],atol=6e-8,rtol=0)
+            self.assertTrue(cloth.visual.material.doubleSided)
+            first = path.read_bytes()
+            fitter.export_review_glb(path,body,np.asarray(result["vertices"]),faces,rest,provenance)
+            self.assertEqual(path.read_bytes(),first)
+
+    @unittest.skipUnless(FIT_PATH and BODY_PATH,"No actual sewing result requested")
+    def test_actual_sewing_result_and_support_motion(self):
+        import numpy as np
+        result = json.loads(FIT_PATH.read_text())
+        data,body,offsets,rest,placed,faces,pairs = fitter.read_inputs(SimpleNamespace(panels=REVIEW/"panel-mesh.json",body=BODY_PATH))
+        points = np.asarray(result["vertices"])
+        self.assertEqual(result["sourcePanelsSha256"],builder.digest(REVIEW/"panel-mesh.json"))
+        self.assertEqual(result["sourceBodySha256"],builder.digest(BODY_PATH))
+        self.assertEqual(result["toolSha256"],builder.digest(fitter.__file__))
+        self.assertEqual(points.shape,placed.shape)
+        self.assertTrue(np.isfinite(points).all())
+        np.testing.assert_array_equal(result["triangles"],faces)
+        self.assertGreater(np.max(np.linalg.norm(points-placed,axis=1)),.1)
+        self.assertTrue(result["selfContactEnabled"])
+        for index,support in result["temporaryShoulderSupports"].items():
+            np.testing.assert_allclose(points[int(index)],support["targetXYZ"],atol=2e-7,rtol=0)
+        gaps = np.linalg.norm(points[pairs[:,0]]-points[pairs[:,1]],axis=1)
+        self.assertAlmostEqual(float(gaps.max()),result["history"][-1]["maxSeamGapMetres"],places=7)
+        self.assertLess(gaps.mean(),.001)  # Demonstrated seam closure, not art/fit approval.
+
+    def test_seam_contact_filters_follow_joined_topology(self):
+        vertex, edge = fitter.seam_filters([[0,1,2],[3,4,5],[6,7,8]],
+            [[-1,-1,0,1],[-1,-1,3,4],[-1,-1,6,7]], [(0,3),(3,6)],9)
+        self.assertEqual(vertex[0],{1,2})
+        self.assertEqual(vertex[3],{0,2})
+        self.assertEqual(edge[0],{1,2})
+        self.assertNotIn(1,vertex)  # Do not exempt unrelated cloth vertices.
+
+    @unittest.skipUnless(BODY_PATH and "sourceBodySha256" in MESH,"Needs body-anchored panels")
+    def test_fitting_input_and_surface_supports(self):
+        import numpy as np
+        args = SimpleNamespace(panels=REVIEW/"panel-mesh.json",body=BODY_PATH)
+        data,body,offsets,rest,placed,faces,pairs = fitter.read_inputs(args)
+        self.assertEqual(len(placed),sum(len(p["restXY"]) for p in MESH["panels"].values()))
+        self.assertEqual(len(faces),sum(len(p["triangles"]) for p in MESH["panels"].values()))
+        self.assertTrue(np.all(rest[:,2]==0))
+        self.assertTrue(np.all(pairs[:,0]!=pairs[:,1]))
+        supports = fitter.shoulder_supports(data,body,offsets,placed)
+        self.assertEqual(len(supports),8)
+        for support in supports.values():
+            vertex = np.asarray(body["vertices"][support["bodyVertex"]])
+            self.assertAlmostEqual(np.linalg.norm(np.asarray(support["targetXYZ"])-vertex),.003,places=9)
+            self.assertGreater(vertex[1],.45)
+
     def test_placement_matches_author_transform_and_body_origin(self):
         import numpy as np
         from scipy.spatial.transform import Rotation

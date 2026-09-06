@@ -5,7 +5,7 @@
   "summary": "Build shared character construction; reject failed bodice fitting, read complete contact papers and current garment methods, inspect author code and benchmark pinned Newton before replacing the construction solver",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T12:33:35Z",
+  "updated_at": "2026-09-06T13:10:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -34,6 +34,7 @@
     "tools/build-period-bodice.gd",
     "tools/benchmark-character-physics.ps1",
     "tools/build-period-pattern.py",
+    "tools/fit-period-pattern.py",
     "tools/test-period-pattern.py",
     "tools/measure-character-body.py",
     "tools/test-character-measurements.py",
@@ -52,6 +53,10 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Measured-panel Newton sewing replaces the rejected handwritten bodice route; legacy two scripts retired with history and failed artifacts retained. Actual source-space FEM rest, seam-contact exclusions, complete graph coloring and per-substep dressing supports exercised; recognizable bodice but residual strain, seams and penetration remain unapproved",
+      "20260906T130209559Z-vbd: 300 frames, 15.31 seconds, peak sampled process tree 468.87 MiB and whole GPU 2920 MiB; no new Godot process or paid tool. Worst seam gap 8.069 mm, mean 0.354 mm; CPU diagnostic inspected; 2 of 8549 distance samples penetrate deeper than 1 mm, minimum -1.487 mm",
+      "18 actual pattern/body/fit/GLB tests passed: portable review reload preserves geometry, transforms, metric UVs, materials and provenance; repeated GLB bytes identical for fixed simulation input. Simulation itself is not deterministic; earlier identical-settings repeats differed up to 32.312 mm",
+      "Static diagnostic GLB now exports through existing fitter for existing workshop importer; not skinned wardrobe or engine-verified art. Active user desktop left undisturbed; live preview not replaced. Pressure-stop guard implemented but not fault-injected",
       "Measured bodice-input checkpoint: actual female libigl surface arm distance, neck-via-nape route, local wrist section and authored armscye measured; 20 CPU measurement tests passed; wrist/body paths visually inspected; same YAML and geometry on two runs, approximately 1.1 seconds each",
       "Measured source-body inputs executed through pinned GarmentCode at 1 cm: 3063 vertices, 5486 triangles and 220 seam pairs; source-frame placement and original rest geometry verified; 14 actual pattern/body tests passed; cut and body-placement images inspected; all ten output hashes repeat; approximately 2.3 seconds CPU, no engine/GPU launch or paid tool",
       "Current measurement approximations and original body/tool/landmark hashes retained in YAML and pattern receipt; construction-only, unsewn panels; complete fitting, final period cut, male calibration and full generator quality still unfinished",
