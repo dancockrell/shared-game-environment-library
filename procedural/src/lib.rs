@@ -60,6 +60,10 @@ pub enum Shape {
     Lathe {
         profile: Vec<[f32; 2]>,
         segments: u32,
+        #[serde(default)]
+        smooth: bool,
+        #[serde(default = "default_crease_angle")]
+        crease_angle: f32,
     },
     Extrude {
         polygon: Vec<[f32; 2]>,
@@ -89,6 +93,9 @@ pub enum Assembly {
 }
 fn one() -> f32 {
     1.0
+}
+fn default_crease_angle() -> f32 {
+    45.
 }
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -285,7 +292,15 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                 quad(&mut m, v[a], v[b], v[c], v[e])?;
             }
         }
-        Shape::Lathe { profile, segments } => {
+        Shape::Lathe {
+            profile,
+            segments,
+            smooth,
+            crease_angle,
+        } => {
+            if !crease_angle.is_finite() || !(0. ..=180.).contains(crease_angle) {
+                return Err("Lathe crease_angle must be finite degrees in 0..180".into());
+            }
             if !(3..=512).contains(segments) || !(2..=512).contains(&profile.len()) {
                 return Err("Lathe subdivisions out of bounds".into());
             }
@@ -302,16 +317,96 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
             if profile.windows(2).any(|p| p[1][1] < p[0][1]) {
                 return Err("Lathe profile must ascend in height".into());
             }
-            for pair in profile.windows(2) {
+            let lengths: Vec<f64> = profile
+                .windows(2)
+                .map(|pair| {
+                    (pair[1][0] as f64 - pair[0][0] as f64)
+                        .hypot(pair[1][1] as f64 - pair[0][1] as f64)
+                })
+                .collect();
+            let total: f64 = lengths.iter().sum();
+            let mut distance = 0.;
+            for (pair_index, (pair, length)) in profile.windows(2).zip(lengths).enumerate() {
+                if length == 0. {
+                    continue;
+                }
+                let dr = pair[1][0] as f64 - pair[0][0] as f64;
+                let dy = pair[1][1] as f64 - pair[0][1] as f64;
+                let segment_normal = [dy / length, -dr / length];
+                let blend = |neighbor: Option<&[[f32; 2]]>| {
+                    let Some(edge) = neighbor else {
+                        return segment_normal;
+                    };
+                    let dr = edge[1][0] as f64 - edge[0][0] as f64;
+                    let dy = edge[1][1] as f64 - edge[0][1] as f64;
+                    let length = dr.hypot(dy);
+                    if length == 0. || *crease_angle == 0. {
+                        return segment_normal;
+                    }
+                    let other = [dy / length, -dr / length];
+                    let dot = segment_normal[0] * other[0] + segment_normal[1] * other[1];
+                    if dot < (*crease_angle as f64).to_radians().cos() {
+                        return segment_normal;
+                    }
+                    let sum = [segment_normal[0] + other[0], segment_normal[1] + other[1]];
+                    let length = sum[0].hypot(sum[1]);
+                    if length < 1e-12 {
+                        return segment_normal;
+                    }
+                    sum.map(|x| x / length)
+                };
+                let start_normal = blend(if pair_index > 0 {
+                    Some(&profile[pair_index - 1..=pair_index])
+                } else {
+                    None
+                });
+                let end_normal = blend(profile.get(pair_index + 1..pair_index + 3));
                 for i in 0..*segments {
-                    let angle = |j: u32| std::f32::consts::TAU * (j as f32) / (*segments as f32);
+                    // Reuse angle zero at the closing seam instead of rounded sin(TAU).
+                    let angle = |j: u32| {
+                        std::f32::consts::TAU * ((j % segments) as f32) / (*segments as f32)
+                    };
                     let point = |p: [f32; 2], a: f32| [p[0] * a.cos(), p[1], p[0] * a.sin()];
                     let a = point(pair[0], angle(i));
                     let b = point(pair[1], angle(i));
                     let c = point(pair[1], angle(i + 1));
                     let e = point(pair[0], angle(i + 1));
-                    quad(&mut m, a, b, c, e)?;
+                    let corners = [a, b, c, e];
+                    let u0 = i as f32 / *segments as f32;
+                    let u1 = (i + 1) as f32 / *segments as f32;
+                    let v0 = (distance / total) as f32;
+                    let v1 = ((distance + length) / total) as f32;
+                    let uv = [[u0, v0], [u0, v1], [u1, v1], [u1, v0]];
+                    let normal = |j: u32, meridian: [f64; 2]| {
+                        let theta = angle(j);
+                        [
+                            meridian[0] as f32 * theta.cos(),
+                            meridian[1] as f32,
+                            meridian[0] as f32 * theta.sin(),
+                        ]
+                    };
+                    let normals = [
+                        normal(i, start_normal),
+                        normal(i, end_normal),
+                        normal(i + 1, end_normal),
+                        normal(i + 1, start_normal),
+                    ];
+                    for face in [[0, 1, 2], [0, 2, 3]] {
+                        let start = m.positions.len();
+                        triangle(&mut m, corners[face[0]], corners[face[1]], corners[face[2]])?;
+                        // Pole half-quads have one exact zero-area triangle.
+                        if m.positions.len() == start {
+                            continue;
+                        }
+                        for (offset, corner) in face.iter().enumerate() {
+                            m.uvs[start + offset] = uv[*corner];
+                            if *smooth {
+                                m.normals[start + offset] = normals[*corner];
+                            }
+                        }
+                    }
                 }
+                distance += length;
             }
         }
         Shape::Extrude { polygon, height } => {
@@ -686,6 +781,8 @@ mod tests {
             Shape::Lathe {
                 profile: vec![[0., 0.], [1., 0.], [1., 2.], [0., 2.]],
                 segments: 32,
+                smooth: false,
+                crease_angle: default_crease_angle(),
             },
             Shape::Extrude {
                 polygon: vec![[0., 0.], [2., 0.], [1., 1.]],
@@ -703,6 +800,87 @@ mod tests {
                 .iter()
                 .all(|n| (n.iter().map(|v| v * v).sum::<f32>() - 1.).abs() < 1e-4));
         }
+    }
+    #[test]
+    fn smooth_lathe_preserves_caps_seams_and_uvs() {
+        let make = |smooth| {
+            mesh(
+                "cylinder",
+                &Definition {
+                    shape: Shape::Lathe {
+                        profile: vec![[0., 0.], [1., 0.], [1., 2.], [0., 2.]],
+                        segments: 12,
+                        smooth,
+                        crease_angle: default_crease_angle(),
+                    },
+                    color: [1.; 4],
+                    material: MaterialSettings::default(),
+                },
+                1000,
+            )
+            .unwrap()
+        };
+        let smooth = make(true);
+        let faceted = make(false);
+        assert_eq!(smooth.positions, faceted.positions);
+        assert_eq!(smooth.positions.len(), 144);
+        let mut seam_uvs = vec![];
+        for ((p, n), uv) in smooth
+            .positions
+            .iter()
+            .zip(&smooth.normals)
+            .zip(&smooth.uvs)
+        {
+            assert!((n.iter().map(|x| x * x).sum::<f32>() - 1.).abs() < 1e-5);
+            assert!(uv.iter().all(|x| (0. ..=1.).contains(x)));
+            if n[1] == 0. {
+                assert!((n[0] - p[0]).abs() < 1e-6 && (n[2] - p[2]).abs() < 1e-6);
+                if p == &[1., 0., 0.] {
+                    seam_uvs.push(uv[0]);
+                }
+            } else {
+                assert_eq!(n[1], if p[1] == 0. { -1. } else { 1. });
+            }
+        }
+        assert!(seam_uvs.contains(&0.) && seam_uvs.contains(&1.));
+        assert_ne!(smooth.normals, faceted.normals);
+    }
+    #[test]
+    fn lathe_crease_angle_blends_gentle_profile_changes() {
+        for crease_angle in [0., 45.] {
+            let m = mesh(
+                "crease",
+                &Definition {
+                    shape: Shape::Lathe {
+                        profile: vec![[1., 0.], [1., 1.], [1.2, 2.]],
+                        segments: 12,
+                        smooth: true,
+                        crease_angle,
+                    },
+                    color: [1.; 4],
+                    material: MaterialSettings::default(),
+                },
+                1000,
+            )
+            .unwrap();
+            let normals: Vec<_> = m
+                .positions
+                .iter()
+                .zip(&m.normals)
+                .filter(|(p, _)| **p == [1., 1., 0.])
+                .map(|(_, n)| *n)
+                .collect();
+            assert!(normals.len() >= 2);
+            assert_eq!(normals.iter().all(|n| *n == normals[0]), crease_angle > 0.);
+        }
+        let mut recipe = recipe();
+        recipe.definitions.get_mut("block").unwrap().shape = Shape::Lathe {
+            profile: vec![[1., 0.], [1., 1.]],
+            segments: 12,
+            smooth: true,
+            crease_angle: f32::NAN,
+        };
+        assert!(compile(&recipe).unwrap_err().contains("crease_angle"));
     }
     #[test]
     fn native_abi_roundtrip() {

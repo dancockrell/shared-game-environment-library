@@ -45,6 +45,39 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Profile shading and texture coordinates
+
+Lathe recipes accept optional `"smooth":true` (default false). Analytic normals
+smooth the circumference, with profile-normal blending controlled by
+`"crease_angle":45` (default degrees, valid range 0..180). Gentle profile changes
+blend; changes exceeding the threshold remain sharp. Zero retains every profile
+crease while smoothing radially. This supports turned stock, finials, columns
+and vessel-like forms without requiring dense radial tessellation just to hide
+lighting facets. A first render revealed horizontal banding with radial-only
+smoothing; the crease-angle control was added in response. It does not smooth a coarse silhouette or interpolate a curved
+profile: authors still control profile samples and radial segment count.
+
+The closing ring now reuses angle zero exactly, eliminating the tiny geometric
+gap caused by floating-point `sin(TAU)`. Lathe UVs now wrap once around the
+circumference and use normalized profile arc length vertically, replacing the
+old repeated triangle-local mapping. Coincident seam positions intentionally
+carry U=0 and U=1. This changes regenerated lathe UVs even with smooth disabled;
+existing flat-color recipes are unaffected visually by that UV correction.
+
+`procedural/examples/lathe-shading.json` compares flat/smooth shading at 16 and
+48 radial segments with the same profile. It is a closed geometry diagnostic,
+not a hollow usable pottery asset or finished scene. Tests check unchanged
+geometry between shading modes, unit/radial normals, sharp caps, seam UVs and
+valid coordinate ranges. The same engine-neutral output and Godot normal
+roundtrip checks are used; no second mesher or custom engine shader is added.
+
+![16-segment flat and smooth, then 48-segment flat and smooth, actual Godot render](verification/scene-forge-lathe-shading.png)
+
+The second actual render confirms the gentle-profile banding is removed by
+normal blending. The low-segment silhouette is still polygonal on close inspection;
+shading is not geometry subdivision. This is rejected as a final-art presentation
+and retained as operator verification only.
+
 ### Portable material response
 
 Mesh definitions may now include `"material":{"roughness":0.2,"metallic":1}`.
