@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Verify Godot package data in a fresh process before loading the source GLB, reusing the existing exact snapshot checks",
+  "summary": "Research material realism and organic construction methods; revise canonical engine priorities with evidence, implementation boundaries and controlled acceptance tests",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-06T13:02:24Z",
+  "updated_at": "2026-09-06T22:41:00Z",
   "paths": [
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",

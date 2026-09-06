@@ -623,6 +623,137 @@ established by the small fixture.
 
 ## Licensing and research
 
+### Realism research update, 7 September 2026
+
+**Current decision:** improve construction and material response, not resolution
+alone. The cake/pie remains rejected for final art. Package persistence is useful
+infrastructure, not evidence that the generator makes convincing objects.
+Preserve the painterly fantasy direction: believable thickness, deformation,
+contact and light response underneath deliberate stylization.
+
+This is a researched implementation plan, not newly implemented capability.
+Extend the existing Rust compiler, porous extractor, material profiles and
+Blender baker; do not create another generator or renderer alongside them.
+
+#### Reading and technology screen
+
+1. **Procedural Bread Making (2015).** The earlier inaccessible-paper status
+   below is superseded for this paper only: the [institutional full text](https://ri.conicet.gov.ar/bitstream/handle/11336/15202/CONICET_Digital_Nro.18585.pdf?isAllowed=y&sequence=1)
+   is now accessible. Read sections 3.1-3.2 and the baking/crust excerpts.
+   Its bubble populations vary with radius; boundary distance protects crust,
+   and subsequent deformation avoids retaining perfectly spherical voids.
+   **Our adaptation:** preserve an uncut host boundary, create a crust exclusion
+   region, deform the internal cavity field, and only then intersect the cut.
+   A cut face must not acquire a newly baked crust. Full thermal simulation is
+   not the first implementation. The separate 2016 porous-materials paper is
+   still a located source, not a completed methods reading.
+
+2. **Procedural Multiscale Geometry Modeling using Implicit Functions (2025).**
+   Expanded the [previous reading](https://arxiv.org/html/2504.09553v1) to
+   sections 3.2-3.4, 4-6 and limitations. Clustering, anisotropy and spatial
+   variation offer more than our current spherical coupon. The paper identifies
+   triangle extraction and local editing as challenges; its OptiX/RTX 4090
+   results do not establish our budgets. **Our adaptation:** bounded field
+   operations and baked surface detail, not a new runtime volume renderer.
+   Any domain warp invalidates the old neighborhood proof unless the displacement
+   and feature reach are included in that bound. Do not label a warped implicit
+   field an exact signed distance function.
+
+3. **OpenPBR: Novel Features and Implementation Details (2025).** Read the
+   [coat section, equations 70-89 and implementation discussion](https://arxiv.org/html/2512.23696v1).
+   Coating requires base/coat interface treatment, absorption, internal-reflection
+   darkening and roughening; another shiny lobe alone is inadequate. The model
+   explicitly does not cover liquid penetrating a porous base. **Our adaptation:**
+   distinguish surface-film coverage from absorbed wetness. Extend our material
+   contract and test the actual Blender response before applying compensation;
+   do not double-darken a renderer that already accounts for the effect.
+
+4. **Adobe OpenPBR BSDF implementation.** Inspected the official
+   [repository](https://github.com/adobe/openpbr-bsdf) and its
+   [Apache-2.0 license](https://github.com/adobe/openpbr-bsdf/blob/main/LICENSE).
+   It is a concrete reference implementation to study/test rather than inventing
+   all shading terms. No code downloaded, pinned, compiled or integrated here.
+   Adoption must pin a revision and audit included notices/dependencies. This
+   is not a ready-made Godot/Unity plugin or proof of exporter feature parity.
+
+5. **Regularized Kelvinlets (SIGGRAPH 2017).** Read the
+   [author abstract](https://graphics.stanford.edu/~djames/publication/kelvinlets/):
+   localized elastic grab, scale, twist and pinch fields can supply controlled
+   organic deformation. The linked Pixar PDF redirects; full equations remain
+   unread. **Candidate, not implementation-ready:** obtain/read the full paper
+   before coding a purported Kelvinlet. Intended uses include fruit dimples,
+   compressed pastry and uneven handmade vessels; not character-workflow ownership.
+
+6. **Blender displacement/instancing technology.** The official
+   [Blender 5.0 Cycles notes](https://developer.blender.org/docs/release_notes/5.0/cycles/)
+   describe object-space adaptive subdivision for shared instanced geometry.
+   This is a useful candidate, but our installed 4.5.9 does not gain it by
+   documentation lookup. No upgrade performed. Keep explicit mesh/texture caps;
+   camera-dependent subdivision must not silently multiply shared geometry.
+
+#### Next experiments, in implementation order
+
+| Test | Missing capability | Required evidence |
+| --- | --- | --- |
+| Cut cake wedge | Crust boundary distinct from cut boundary; uneven connected crumb cavities | Exterior stays intact; cut exposes real pores; low-angle shadows and silhouette survive neutral lighting |
+| Fruit in filling | Fruit is embedded in a continuous supporting filling, not buttons arranged on a plate | Side section shows contact and depth; macro-shape survives a clay-material view |
+| Wet/dry material pair | Film coverage, interior color and dry substrate treated separately | Same geometry/camera/lights; clear highlights remain distinct from fruit color; no unearned metallic response |
+| Pressed pastry strip | Smooth bounded compression and restrained asymmetry | Contact is seated; thickness stays positive; no flipped triangles or broken seams |
+| Small reusable prop family | Geometric variation without resource explosion | Source edits propagate; bounded unique variants; export/reload preserves fields and actual meshes |
+
+#### Proposed operator contract and algorithm
+
+These names describe responsibilities, not a new schema already accepted by
+the compiler. Add fields only alongside a real caller, validation and tests.
+Keep metre units, stable IDs/seeds, operator order, undeformed bounds and support
+anchors. Return region labels (crust, cut crumb, fruit, gel, film), not anonymous
+triangles whose material assignment must later be guessed.
+
+```text
+compile_food(recipe, budgets):
+    validate finite dimensions, seeds, region IDs and resource ceilings
+    host = existing_parametric_shape(recipe.outer_shape)
+    boundary = preserve_original_host_surface(host)  # before slicing
+    cavities = existing_porous_field(recipe.pore_controls)
+    reject candidate cavities violating authored crust clearance(boundary)
+    apply validated bounded deformation to host and cavities consistently
+    solid = host minus cavities
+    if cut is authored:
+        solid = intersect(solid, cut_halfspace)
+        mark newly exposed surface as cut_interior, never crust
+    mesh = existing_extractor(solid, bounded_sampling_plan)
+    audit closure, orientation, tiny components, thickness and triangle budget
+    on failure: emit diagnostic; do not silently fill cavities or admit asset
+    assign material regions from construction provenance
+    bake fine detail through existing profile/budget/export pipeline
+    reload exported asset and compare geometry, regions and source parameters
+    render fixed front, grazing-angle and cut views under fixed light rigs
+    retain candidate until visual comparison passes; technical pass is separate
+```
+
+The current box-only field cannot accept arbitrary hosts or robust region-aware
+cuts yet. Implement those extensions in place, with analytic primitive fixtures
+before food complexity. For deformed fields, compare local queries to exhaustive
+small-domain evaluation; test maximal reach, negative coordinates, seam samples
+and minimum allowed feature size. Thickness checks must be independent of just
+closed topology: a closed mesh can still contain unusably thin walls.
+
+#### Cost and truthfulness gates
+
+- Split silhouette-scale geometry from fine normal/roughness detail according
+  to the authored closest view. Do not mesh every pore throughout every room.
+- Preserve current extraction caps initially. Stream/bound work by component;
+  stop before allocations exceed the budget, not after a render exhausts memory.
+- Full transport effects such as subsurface scattering cannot be encoded faithfully
+  into a fixed base-color texture. Record export losses and compare native
+  engine appearance; a matching texture hash cannot certify material parity.
+- Controlled comparisons lock exposure, camera, light size and backdrop. Review
+  both clay geometry and finished materials to isolate causes. Do not tune light
+  merely to hide defects. Keep prior failed renders out of admitted asset pools.
+- No new engine processes, paid services, dependencies, runtime shader changes
+  or GitHub Actions were needed for this research checkpoint. No measured 8 GB
+  VRAM claim or new visual quality pass is made.
+
 ### Porous food: evidence and next implementation boundary, 6 September 2026
 
 Read sections 3.1–3.2 and the results/discussion excerpt of
