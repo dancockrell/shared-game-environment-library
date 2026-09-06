@@ -30,3 +30,5 @@ The catalogs provide the blind-machine-readable view:
 The [illustrated adult adventurer reference pack](resource_packs/character-support/illustrated-adult-adventurers/pack.json) contributes ten generated concepts and their shared style input. These PNGs can guide illustration and modeling; they are not 3D models, rigs, CC0 sources or engine-approved assets. Exact prompts are beside the pack. Search existing library packs before making new assets, then contribute reusable results with their complete ancestry.
 
 See [the intake procedure](docs/ASSET_INTAKE.md), [the license policy](docs/ASSET_LICENSE_POLICY.md), [the tabletop asset contract](contracts/TABLETOP_ASSET_CONTRACT.md), and [the starter source catalog](catalog/source-catalog.json).
+
+Read the [cross-project production strategy](docs/CROSS_PROJECT_ASSET_STRATEGY.md) before generating or purchasing assets. It records the zero-budget Olympus policy, verified Magnific browser route, body/rig reuse requirements, and existing model-source package so agents do not duplicate paid work.
