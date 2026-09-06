@@ -1369,6 +1369,31 @@ Existing preview processes 30828 and 612 remained responsive after diagnostics.
 Godot rendered appearance/package persistence, UI interaction, Unity and 8 GB
 VRAM certification remain pending. No paid generation, push or Actions run.
 
+#### Embedded-only Godot portable preflight
+
+The portable adapter now validates the bytes before invoking GLTFDocument.
+It requires a v2 GLB with exact file/chunk lengths, one JSON chunk (at most
+24 MiB), one embedded binary chunk, one buffer with consistent declared size,
+and no `uri` key anywhere in the parsed JSON. Recursive checking rejects nesting
+beyond 64. Declared extension lists are limited to the material/texture
+extensions emitted by this exporter. Native parsing consumes the same validated
+buffer with an empty base path; it no longer reopens the input file afterward.
+This avoids a file-replacement race and refuses external buffer/image references.
+
+This is a conservative format preflight, NOT a complete glTF validator, decoder
+sandbox, decompressed-image memory limit or arbitrary third-party asset safety
+certificate. The existing file-size bound does not bound decoder allocations.
+The intended input remains our reviewed embedded Scene Forge output; even
+otherwise harmless URI metadata is rejected by this narrow contract.
+
+Headless `test_portable.gd` now checks valid input, malformed/truncated GLB,
+wrong format version and an injected external-buffer URI before running the
+92-placement/source-hash test. It also compiles the editor plugin script without
+opening the editor. `godot-preflight-final.log` in the preceding review directory
+reports the metadata pass and exit 0 with empty stderr. No graphical scene,
+saved-package, GUI interaction or Unity validation claim. Existing preview
+processes were not replaced; no paid generation, push or Actions run.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

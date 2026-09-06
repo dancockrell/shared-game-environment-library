@@ -1,8 +1,38 @@
 extends SceneTree
+const Importer = preload("res://addons/scene_forge/import_scene.gd")
+func _preflight_tests(path: String) -> bool:
+	var bytes := FileAccess.get_file_as_bytes(path)
+	if not Importer.portable_preflight(bytes).is_empty():
+		return false
+	var broken := bytes.duplicate()
+	broken.encode_u32(4, 1)
+	if Importer.portable_preflight(broken).is_empty():
+		return false
+	var old_size := bytes.decode_u32(12)
+	var data: Dictionary = JSON.parse_string(bytes.slice(20, 20 + old_size).get_string_from_utf8())
+	data.buffers[0]["uri"] = "must-not-be-opened.bin"
+	var json := JSON.stringify(data).to_utf8_buffer()
+	while json.size() % 4 != 0:
+		json.append(32)
+	var external := bytes.slice(0, 20)
+	external.append_array(json)
+	external.append_array(bytes.slice(20 + old_size))
+	external.encode_u32(8, external.size())
+	external.encode_u32(12, json.size())
+	return not Importer.portable_preflight(external).is_empty() and not Importer.portable_preflight(bytes.slice(0, bytes.size() - 1)).is_empty()
 ## Headless metadata/scene-tree diagnostic; not a rendering or mesh-buffer test.
 func _initialize() -> void:
+	var editor_script = load("res://addons/scene_forge/plugin.gd")
+	if editor_script == null or not editor_script.can_instantiate():
+		push_error("Editor plugin script failed to compile")
+		quit(1)
+		return
 	var args := OS.get_cmdline_user_args()
 	if args.size() != 1:
+		quit(1)
+		return
+	if not _preflight_tests(args[0]):
+		push_error("Portable preflight regression")
 		quit(1)
 		return
 	var scene: Node3D = preload("res://addons/scene_forge/import_scene.gd").build_portable(args[0])

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Integrate portable baked GLBs into the existing Godot adapter, preserve source/budget metadata and validate the headless scene-tree path without replacing live previews",
+  "summary": "Preflight embedded GLB bytes before Godot import, reject external references and malformed envelopes, and verify plugin script compilation headlessly",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

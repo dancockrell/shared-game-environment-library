@@ -2,15 +2,66 @@
 extends RefCounted
 ## Sole Godot adapter for the engine-neutral mesh format. Meshes are shared via MultiMesh.
 ## Portable baked assets retain shared Mesh resources through Godot's glTF importer.
+static func _has_external_uri(value: Variant, depth: int = 0) -> bool:
+	if depth > 64:
+		return true
+	if value is Dictionary:
+		if value.has("uri"):
+			return true
+		for child in value.values():
+			if _has_external_uri(child, depth + 1):
+				return true
+	elif value is Array:
+		for child in value:
+			if _has_external_uri(child, depth + 1):
+				return true
+	return false
+
+static func portable_preflight(bytes: PackedByteArray) -> String:
+	if bytes.size() < 28 or bytes.size() > 64 * 1024 * 1024:
+		return "Portable file outside size budget"
+	if bytes.decode_u32(0) != 0x46546c67 or bytes.decode_u32(4) != 2 or bytes.decode_u32(8) != bytes.size():
+		return "Invalid GLB header"
+	var json_size := bytes.decode_u32(12)
+	if bytes.decode_u32(16) != 0x4e4f534a or json_size % 4 != 0 or json_size > 24 * 1024 * 1024 or 28 + json_size > bytes.size():
+		return "Invalid GLB JSON chunk"
+	var bin_start := 20 + json_size
+	var bin_size := bytes.decode_u32(bin_start)
+	if bytes.decode_u32(bin_start + 4) != 0x004e4942 or bin_size % 4 != 0 or bin_start + 8 + bin_size != bytes.size():
+		return "Expected one embedded binary chunk"
+	var data = JSON.parse_string(bytes.slice(20, bin_start).get_string_from_utf8())
+	if not data is Dictionary or _has_external_uri(data):
+		return "External URI or unsupported JSON nesting"
+	var buffers = data.get("buffers", [])
+	if not buffers is Array or buffers.size() != 1 or not buffers[0] is Dictionary:
+		return "Expected one embedded buffer"
+	var declared = buffers[0].get("byteLength", -1)
+	if not (declared is float or declared is int) or not is_finite(float(declared)) or declared < 0 or declared != floor(float(declared)) or bin_size - declared < 0 or bin_size - declared > 3:
+		return "Invalid embedded buffer length"
+	for field in ["extensionsUsed", "extensionsRequired"]:
+		var extensions = data.get(field, [])
+		if not extensions is Array:
+			return "Invalid extension list"
+		for extension in extensions:
+			if extension not in ["KHR_materials_clearcoat", "KHR_materials_ior", "KHR_materials_specular", "KHR_texture_transform"]:
+				return "Unsupported portable extension"
+	return ""
+
 static func build_portable(path: String) -> Node3D:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null or file.get_length() > 64 * 1024 * 1024:
 		push_error("Portable asset missing or exceeds 64 MiB")
 		return null
+	var bytes := file.get_buffer(file.get_length())
 	file.close()
+	var preflight := portable_preflight(bytes)
+	if not preflight.is_empty():
+		push_error(preflight)
+		return null
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()
-	if document.append_from_file(path, state) != OK:
+	# Parse the exact validated bytes, avoiding a file replacement race.
+	if document.append_from_buffer(bytes, "", state) != OK:
 		push_error("Godot could not parse portable glTF")
 		return null
 	var imported_names: Array[String] = []
