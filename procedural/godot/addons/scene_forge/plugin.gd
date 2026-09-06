@@ -8,6 +8,7 @@ var status: Label
 var worker: Thread
 var export_dialog: EditorFileDialog
 var export_source: String
+var portable_dialog: EditorFileDialog
 func _enter_tree() -> void:
 	dock = VBoxContainer.new()
 	dock.name = "Scene Forge"
@@ -19,6 +20,16 @@ func _enter_tree() -> void:
 	button.text = "Compile recipe into scene"
 	button.pressed.connect(func(): dialog.popup_centered_ratio())
 	dock.add_child(button)
+	portable_dialog = EditorFileDialog.new()
+	portable_dialog.access = EditorFileDialog.ACCESS_FILESYSTEM
+	portable_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+	portable_dialog.add_filter("*.glb", "Scene Forge baked asset")
+	portable_dialog.file_selected.connect(_import_portable)
+	dock.add_child(portable_dialog)
+	var portable_button := Button.new()
+	portable_button.text = "Import baked GLB (review asset)…"
+	portable_button.pressed.connect(func(): portable_dialog.popup_centered_ratio())
+	dock.add_child(portable_button)
 	var export_button := Button.new()
 	export_button.text = "Export selected source recipe…"
 	export_button.tooltip_text = "Original construction recipe; manual engine edits are not captured."
@@ -97,18 +108,31 @@ func _process(_delta: float) -> void:
 		status.text = "Open a scene before importing"
 		return
 	var built: Node3D = Importer.build(data)
-	var undo := get_undo_redo()
-	undo.create_action("Import procedural scene")
-	undo.add_do_method(parent, "add_child", built)
-	undo.add_do_method(self, "_own", built, parent)
-	undo.add_do_reference(built)
-	undo.add_undo_method(parent, "remove_child", built)
-	undo.commit_action()
+	_attach(built, parent)
 	status.text = "Imported " + str(data.instances.size()) + " instances"
 func _own(node: Node, scene: Node) -> void:
 	node.owner = scene
 	for child in node.get_children():
 		_own(child, scene)
+func _import_portable(path: String) -> void:
+	var parent := EditorInterface.get_edited_scene_root()
+	if parent == null:
+		status.text = "Open a scene before importing"
+		return
+	var built: Node3D = Importer.build_portable(path)
+	if built == null:
+		status.text = "Baked asset rejected; inspect the import error"
+		return
+	_attach(built, parent)
+	status.text = "Imported review asset; verify appearance before admission"
+func _attach(built: Node3D, parent: Node) -> void:
+	var undo := get_undo_redo()
+	undo.create_action("Import Scene Forge asset")
+	undo.add_do_method(parent, "add_child", built)
+	undo.add_do_method(self, "_own", built, parent)
+	undo.add_do_reference(built)
+	undo.add_undo_method(parent, "remove_child", built)
+	undo.commit_action()
 func _exit_tree() -> void:
 	if worker != null:
 		worker.wait_to_finish()

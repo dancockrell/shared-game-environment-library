@@ -1338,6 +1338,37 @@ recipes, and fluted definitions reject the unsupported bound. CPU receipt
 60 Rust tests; all 24 Python tests also pass. No Godot restart, paid generation,
 push or Actions run.
 
+#### Godot portable metadata integration
+
+The existing Godot adapter now has `build_portable(path)` alongside compiled
+JSON construction. It delegates GLB parsing to GLTFDocument, copies only
+Scene Forge metadata fields, promotes source/manifest onto its returned root,
+and rejects missing/ambiguous source records. The editor plugin exposes an
+explicit review-asset GLB import button using the shared undoable attachment
+path and existing source-export interaction. Editor interaction itself has not
+been exercised; importing arbitrary untrusted GLB dependencies is not certified
+as sandboxed. The file-size gate is 64 MiB, not a total decode-memory bound.
+
+Native Godot 4.7.2 diagnostics exposed invalidated mesh-node mappings after
+generation. Cache engine-assigned names before generation; use its node lookup
+when valid and otherwise require exactly one matching assigned name. Never
+infer identity from position or mesh proximity. A generic generated root is
+wrapped when needed. Missing mappings fail rather than dropping metadata.
+The failed diagnostics are retained in the preceding CPU review directory;
+one failed mapping experiment exited with leaked dummy-renderer resources,
+which did not persist after its process exited. The final diagnostic exits
+cleanly with no stderr findings.
+
+`godot/test_portable.gd` is a headless scene-tree/source diagnostic, NOT a
+rendering, GPU mesh-buffer, saved PackedScene or appearance certification.
+On `baked-full-001/asset.glb`, final `godot-map-cached.log` reports
+`SCENE_FORGE_PORTABLE_METADATA_PASS instances=92 graphics=not_run` with exit 0.
+It checks unique source IDs across all 92 mesh placements and recipe SHA-256.
+Tests run in short hidden headless processes; no preview replacement occurred.
+Existing preview processes 30828 and 612 remained responsive after diagnostics.
+Godot rendered appearance/package persistence, UI interaction, Unity and 8 GB
+VRAM certification remain pending. No paid generation, push or Actions run.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

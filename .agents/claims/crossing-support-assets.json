@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Validate reduced radial geometry through full cake-and-pie portable export and lock opt-in compatibility/fluting rejection in regression tests",
+  "summary": "Integrate portable baked GLBs into the existing Godot adapter, preserve source/budget metadata and validate the headless scene-tree path without replacing live previews",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

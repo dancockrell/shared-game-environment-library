@@ -1,6 +1,69 @@
 @tool
 extends RefCounted
 ## Sole Godot adapter for the engine-neutral mesh format. Meshes are shared via MultiMesh.
+## Portable baked assets retain shared Mesh resources through Godot's glTF importer.
+static func build_portable(path: String) -> Node3D:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null or file.get_length() > 64 * 1024 * 1024:
+		push_error("Portable asset missing or exceeds 64 MiB")
+		return null
+	file.close()
+	var document := GLTFDocument.new()
+	var state := GLTFState.new()
+	if document.append_from_file(path, state) != OK:
+		push_error("Godot could not parse portable glTF")
+		return null
+	var imported_names: Array[String] = []
+	for source_node in state.get_nodes():
+		imported_names.append(source_node.resource_name)
+	var generated: Node = document.generate_scene(state)
+	if generated == null:
+		push_error("Godot generated no portable scene")
+		return null
+	var root: Node3D
+	if generated is Node3D:
+		root = generated
+	else:
+		root = Node3D.new()
+		root.name = "SceneForgePortable"
+		root.add_child(generated)
+	var records: Array = state.json.get("nodes", [])
+	var scene_nodes := root.find_children("*", "", true, false)
+	scene_nodes.append(root)
+	var manifest_count := 0
+	for index in records.size():
+		var extras: Dictionary = records[index].get("extras", {})
+		var node: Node = state.get_scene_node(index)
+		# Godot's ImporterMesh conversion can invalidate get_scene_node entries.
+		# Resolve only exact unique engine-assigned names; ambiguous names fail.
+		if node == null:
+			var expected_name: String = imported_names[index]
+			var matches: Array = scene_nodes.filter(func(candidate: Node): return str(candidate.name) == expected_name)
+			if matches.size() == 1:
+				node = matches[0]
+		if node == null:
+			push_error("Cannot uniquely resolve portable node " + str(index))
+			root.free()
+			return null
+		for key in ["scene_forge_recipe_json", "scene_forge_asset_manifest", "scene_forge_export_id", "scene_forge_source_mesh", "scene_forge_source"]:
+			if extras.has(key):
+				node.set_meta(key, extras[key])
+		if extras.has("scene_forge_asset_manifest"):
+			var raw := str(extras.scene_forge_asset_manifest)
+			var manifest = JSON.parse_string(raw) if raw.to_utf8_buffer().size() <= 65536 else null
+			if not manifest is Dictionary or manifest.get("version") != 1 or manifest.get("admission") != "review-candidate":
+				push_error("Invalid portable manifest")
+				root.free()
+				return null
+			manifest_count += 1
+			root.set_meta("scene_forge_asset_manifest", raw)
+			root.set_meta("scene_forge_recipe_json", str(extras.get("scene_forge_recipe_json", "")))
+	if manifest_count != 1 or str(root.get_meta("scene_forge_recipe_json", "")).is_empty():
+		push_error("Portable source missing: records=" + str(records.size()) + " manifests=" + str(manifest_count))
+		root.free()
+		return null
+	return root
+
 static func build(data: Dictionary) -> Node3D:
 	assert(data.get("version") in [1, 2, 1.0, 2.0] and data.get("coordinate_system") == "right-handed-y-up-ccw-metres", "Unsupported scene format")
 	var root := Node3D.new()
