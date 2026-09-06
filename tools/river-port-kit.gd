@@ -376,7 +376,9 @@ func catalog_specs() -> Array:
 		["hitching-post", "neutral_prop"], ["capstan", "neutral_prop"],
 		["dock-ladder", "neutral_prop"], ["hand-pump", "neutral_prop"],
 		["rain-barrel", "neutral_prop"], ["grindstone", "neutral_prop"],
-		["log-bench", "neutral_prop"], ["canvas-shelter", "architecture"]
+		["log-bench", "neutral_prop"], ["canvas-shelter", "architecture"],
+		["manicured-lawn", "terrain"], ["stump-seat", "neutral_prop"],
+		["plank-approach", "terrain"], ["display-rack", "neutral_prop"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -610,6 +612,55 @@ func catalog_model(id: String) -> Node3D:
 				ellipsoid(Vector3(x+(item%3-1)*0.2,1.14+(item/3)*0.015,(item/3-1)*0.21),Vector3(0.085,0.08,0.085) if id == "produce-stall" else Vector3(0.055,0.035,0.15),"roof8" if id == "produce-stall" else "stone10",g)
 		attachment(g,"vendor",Vector3(0,0,-1.25))
 		attachment(g,"customer",Vector3(0,0,1.2))
+	elif id == "manicured-lawn":
+		var turf := material("lawn_base",Color.WHITE)
+		var noise := FastNoiseLite.new()
+		noise.seed = 607
+		noise.frequency = 0.035
+		var texture := NoiseTexture2D.new()
+		texture.width = 512
+		texture.height = 512
+		texture.noise = noise
+		texture.seamless = true
+		var colors := Gradient.new()
+		colors.set_color(0,Color("405634"))
+		colors.set_color(1,Color("607348"))
+		texture.color_ramp = colors
+		turf.albedo_texture = texture
+		material("lawn_blade",Color("64784c"))
+		block(Vector3(0,0.10,0),Vector3(4,0.2,4),"soil",g)
+		block(Vector3(0,0.215,0),Vector3(4,0.035,4),"lawn_base",g)
+		for i in 750:
+			var p := Vector3(rng.randf_range(-1.97,1.97),0.23,rng.randf_range(-1.97,1.97))
+			beam(p,p+Vector3(0.018,rng.randf_range(0.012,0.035),0.008),0.006,"lawn_blade",g)
+		attachment(g,"surface",Vector3(0,0.24,0))
+	elif id == "stump-seat":
+		cylinder(Vector3(0,0.23,0),0.3,0.46,"oak",g,24)
+		cylinder(Vector3(0,0.46,0),0.285,0.025,"oak_light",g,32)
+		for radius in [0.07,0.13,0.2,0.26]:
+			ring(Vector3(0,0.475,0),radius,0.004,"wood3",g)
+		for i in 18:
+			var a := i*TAU/18
+			beam(Vector3(cos(a)*0.29,0.02,sin(a)*0.29),Vector3(cos(a)*0.30,0.43,sin(a)*0.30),0.025,shade("wood"),g)
+		attachment(g,"seat",Vector3(0,0.48,0))
+	elif id == "plank-approach":
+		for z in [-1.2,1.2]:
+			block(Vector3(0,0.055,z),Vector3(1.7,0.11,0.13),"oak",g)
+		for x in 7:
+			block(Vector3((x-3)*0.23,0.135,0),Vector3(0.215,0.08,3.2),shade("wood"),g)
+			for z in [-1.2,1.2]:
+				cylinder(Vector3((x-3)*0.23,0.179,z),0.015,0.009,"iron",g,8)
+		attachment(g,"start",Vector3(0,0.18,-1.6))
+		attachment(g,"end",Vector3(0,0.18,1.6))
+	elif id == "display-rack":
+		for x in [-1.0,1.0]:
+			beam(Vector3(x,0,-0.25),Vector3(x,2.1,-0.25),0.12,"oak_light",g)
+			block(Vector3(x,0.06,0),Vector3(0.22,0.12,0.85),"oak",g)
+		for y in [0.45,1.05,1.65]:
+			for z in 4:
+				block(Vector3(0,y,-0.2+z*0.14),Vector3(2.15,0.08,0.13),shade("wood"),g)
+		beam(Vector3(-1,0.2,-0.3),Vector3(1,1.95,-0.3),0.06,"oak",g)
+		attachment(g,"display",Vector3(0,1.13,0))
 	elif id == "barrel":
 		barrel(g,Vector3.ZERO)
 	elif id == "cargo-stack":

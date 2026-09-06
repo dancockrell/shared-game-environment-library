@@ -4621,6 +4621,218 @@
 			"statusHook": "consumer-owned",
 			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
 			"triangles": 1008
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.manicured-lawn",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-2.00000023841858,
+					0.0,
+					-2.00000023841858
+				],
+				"size": [
+					4.00000047683716,
+					0.266897410154343,
+					4.00000047683716
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "terrain",
+			"forwardAxis": "-Z",
+			"geometryGlb": "manicured-lawn.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"soil",
+				"lawn_base",
+				"lawn_blade"
+			],
+			"meshInstances": 752,
+			"nativeNode": "painted_manicured_lawn",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "3d365db0384dc30dc106ea1e2cfa53b47075ca4b6f3fd52fc9c2e3cef09febd1",
+			"sockets": {
+				"surface": [
+					0.0,
+					0.239999994635582,
+					0.0
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 21056
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.stump-seat",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-0.312496304512024,
+					0.0,
+					-0.307938694953918
+				],
+				"size": [
+					0.624992609024048,
+					0.479000002145767,
+					0.615877389907837
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "neutral_prop",
+			"forwardAxis": "-Z",
+			"geometryGlb": "stump-seat.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"oak",
+				"oak_light",
+				"wood3",
+				"wood2",
+				"wood6",
+				"wood4",
+				"wood10",
+				"wood7",
+				"wood9",
+				"wood1",
+				"wood5",
+				"wood0"
+			],
+			"meshInstances": 24,
+			"nativeNode": "painted_stump_seat",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "51cd14321e2e2a43a7544c74203e54b6732535e9e81211776308fbf7dc0344d7",
+			"sockets": {
+				"seat": [
+					0.0,
+					0.479999989271164,
+					0.0
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 3224
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.plank-approach",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-0.850000143051147,
+					0.0,
+					-1.60000014305115
+				],
+				"size": [
+					1.70000028610229,
+					0.18350000679493,
+					3.20000028610229
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "terrain",
+			"forwardAxis": "-Z",
+			"geometryGlb": "plank-approach.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"oak",
+				"wood8",
+				"iron",
+				"wood0",
+				"wood6",
+				"wood2",
+				"wood11"
+			],
+			"meshInstances": 23,
+			"nativeNode": "painted_plank_approach",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "8fead864d712294d9172186888d934ef1a6e601700c5ea19bb9cf93683bd220c",
+			"sockets": {
+				"end": [
+					-0.000000139876448201903,
+					0.180000007152557,
+					-1.60000002384186
+				],
+				"start": [
+					0.000000139876448201903,
+					0.180000007152557,
+					1.60000002384186
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 1596
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.display-rack",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.1100001335144,
+					0.0,
+					-0.425000101327896
+				],
+				"size": [
+					2.22000026702881,
+					2.09999990463257,
+					0.850000202655792
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "neutral_prop",
+			"forwardAxis": "-Z",
+			"geometryGlb": "display-rack.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"oak_light",
+				"oak",
+				"wood7",
+				"wood8",
+				"wood0",
+				"wood4",
+				"wood10",
+				"wood1",
+				"wood6"
+			],
+			"meshInstances": 17,
+			"nativeNode": "painted_display_rack",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "89b4240284a7fb362831ff54a8df56f7cae1bec5075f58854431f6d8b5c969ae",
+			"sockets": {
+				"display": [
+					-0.000000119209289550781,
+					1.12999999523163,
+					0.0
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 476
 		}
 	],
 	"engine": "4.7.2-stable (official)",
