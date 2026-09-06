@@ -1199,6 +1199,21 @@ is less glossy; perfectly smooth frosting, regular dollops and unfluted crust
 still limit its food quality. No production-art approval or native disk package
 reload is claimed for this revision.
 
+**Food-shape follow-up:** after the user rejected the matte pass as insufficiently
+convincing, a tapered helical sweep was rendered as cream and rejected: its open
+coil read as a corkscrew. It is not retained in the recipe. The next construction
+study uses seven shared lathe instances per rosette (central body plus six smaller
+lobes), a cream layer with a thin jam seam, and 36 shared curved sweep crimps on
+the pie rim. An excessively tight crimp was refused by the existing local
+curvature guard; its curve was widened before rendering, not admitted with the
+guard bypassed. Current local capture:
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pastry-shaped.png`.
+This capture was inspected in the same live process. Rosette intersection seams,
+uniform frosting, regular rim repetition and insufficient porous sponge detail
+remain visible. These are construction findings, not an assertion of convincing
+real food or production-art admission. The component rosettes are not Boolean
+unions and must not be described as seamless or watertight assemblies.
+
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
 groups/repetition; exact rectangular aperture subdivision; strict geometry and
 allocation limits; portable mesh/instance representation; native engine adapters;
