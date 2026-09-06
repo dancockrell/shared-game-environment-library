@@ -1242,6 +1242,37 @@ close-up parity and smaller-mip seam behavior are not certified. Food art is
 still unapproved. The game-art pipeline comparison kept allocation as the only
 visual variable. No paid generation, Godot restart, remote push or Actions run.
 
+#### Portable provenance and admission record
+
+The exported assembly root now also carries `scene_forge_asset_manifest`, a
+versioned JSON string containing SHA-256 of the input Blender file, canonical
+recipe string, saved reference-profile string and exporter/auditor/planner
+sources. It records Blender version, mesh/instance counts, the full texture
+allocation plan and known export losses. Local filesystem paths are omitted.
+The input and tool hashes are rechecked at completion to detect changes during
+the run. Hashes provide traceability, not signatures or publisher identity.
+
+Admission is explicitly `review-candidate`; engine validation is `not_run`.
+Asset license is not inferred from the GPL generator. Memory scope explicitly
+excludes geometry and engine overhead. The same record is preserved in the
+external receipt, but travels inside the GLB so consumers need not locate that
+receipt. It does not claim art approval, verified VRAM, external asset rights,
+or a successful engine import. No consumer-specific integration is claimed.
+
+The existing binary reader extracts exactly one record from a scene-root node,
+bounds its encoded size to 64 KiB and validates version, current admission state
+and the three source hash fields. Other fields are compared against the full
+expected manifest during our export; this reader is not a complete general
+schema validator for arbitrary third-party texture plans. Native Blender
+reimport must retain the exact manifest string on exactly one object.
+
+`baked-manifest-001` under the existing review root passed the full 61-instance,
+11-mesh export/reimport/geometry/material/texture checks in 12.10 seconds,
+sampled process RAM 640,790,528 bytes; hidden CPU/two threads with existing
+watchdog. The manifest adds 2,168 bytes to the previous GLB. Nine binary-audit
+tests (including root/duplicate/admission cases), five planner tests, ten profile
+tests and syntax checks pass. No Godot restart, paid generation, push or Actions.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

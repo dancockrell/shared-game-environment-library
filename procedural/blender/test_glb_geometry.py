@@ -74,6 +74,25 @@ class GeometryAuditTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 audit.compare(self.doc, self.binary, [self.triangle], index)
 
+    def test_manifest_root_and_provenance(self):
+        manifest = {"version": 1, "admission": "review-candidate", "engine_validation": "not_run",
+                    "source_blend_sha256": "a" * 64, "recipe_sha256": "b" * 64,
+                    "reference_profiles_sha256": "c" * 64}
+        doc = {"nodes": [{"extras": {"scene_forge_asset_manifest": json.dumps(manifest)}}],
+               "scenes": [{"nodes": [0]}], "scene": 0}
+        self.assertEqual(audit.asset_manifest(doc), manifest)
+        doc["scenes"][0]["nodes"] = []
+        with self.assertRaises(ValueError):
+            audit.asset_manifest(doc)
+        doc["scenes"][0]["nodes"] = [0]
+        manifest["admission"] = "approved"
+        doc["nodes"][0]["extras"]["scene_forge_asset_manifest"] = json.dumps(manifest)
+        with self.assertRaises(ValueError):
+            audit.asset_manifest(doc)
+        doc["nodes"].append(doc["nodes"][0])
+        with self.assertRaises(ValueError):
+            audit.asset_manifest(doc)
+
 
 if __name__ == "__main__":
     unittest.main()

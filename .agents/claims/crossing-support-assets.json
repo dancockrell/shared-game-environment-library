@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Allocate baked texture resolution by maximum placed surface area per shared mesh under a deterministic assembly memory budget",
+  "summary": "Embed portable provenance, texture allocation and explicit unapproved admission metadata in generated GLB assemblies; validate root placement and native persistence",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

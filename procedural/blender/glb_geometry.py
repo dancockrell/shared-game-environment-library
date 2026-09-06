@@ -11,6 +11,29 @@ import math
 import struct
 
 
+def asset_manifest(document):
+    """Read exactly one root admission record; never interpret it as instructions."""
+    found = [(i, n["extras"]["scene_forge_asset_manifest"]) for i, n in enumerate(document.get("nodes", []))
+             if "scene_forge_asset_manifest" in n.get("extras", {})]
+    if len(found) != 1:
+        raise ValueError("Expected exactly one asset manifest")
+    index, raw = found[0]
+    if not isinstance(raw, str) or len(raw.encode("utf8")) > 65536:
+        raise ValueError("Invalid or oversized asset manifest")
+    if index not in document["scenes"][document.get("scene", 0)].get("nodes", []):
+        raise ValueError("Asset manifest must belong to a scene root")
+    manifest = json.loads(raw)
+    if not isinstance(manifest, dict) or type(manifest.get("version")) is not int or manifest["version"] != 1:
+        raise ValueError("Unsupported asset manifest")
+    if manifest.get("admission") != "review-candidate" or manifest.get("engine_validation") != "not_run":
+        raise ValueError("Unsupported admission claim")
+    for field in ("source_blend_sha256", "recipe_sha256", "reference_profiles_sha256"):
+        digest = manifest.get(field)
+        if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+            raise ValueError("Invalid provenance hash")
+    return manifest
+
+
 def read(raw):
     if not 28 <= len(raw) <= 64 * 1024 * 1024:
         raise ValueError("GLB size outside export audit budget")

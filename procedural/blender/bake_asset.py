@@ -164,6 +164,20 @@ def main():
             area += (basis @ (b - a)).cross(basis @ (c - a)).length * 0.5
         areas[obj.data.name] = max(areas.get(obj.data.name, 0), area)
     texture_plan = texture_budget.plan(areas)
+    # Portable admission data is descriptive, not an assertion that an engine
+    # or art reviewer has approved this asset. Hashes intentionally omit paths.
+    tool_hashes = {name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                   for name in ("bake_asset.py", "texture_budget.py", "glb_geometry.py")}
+    manifest = {"version": 1, "admission": "review-candidate", "engine_validation": "not_run",
+                "source_blend_sha256": source_hash,
+                "recipe_sha256": hashlib.sha256(source_recipe.encode("utf8")).hexdigest(),
+                "reference_profiles_sha256": hashlib.sha256(scene["scene_forge_reference_profiles"].encode("utf8")).hexdigest(),
+                "tools_sha256": tool_hashes, "blender_version": bpy.app.version_string,
+                "instances": len(candidates), "unique_meshes": len(unique), "texture_plan": texture_plan,
+                "memory_scope": "texture RGBA8 mip estimate only; excludes geometry and engine overhead",
+                "export_losses": ["subsurface scattering", "independent coat IOR"],
+                "asset_license": "not inferred from generator license"}
+    manifest_json = json.dumps(manifest, sort_keys=True, separators=(",", ":"))
     snapshots = {}
     for index, obj in enumerate(candidates):
         obj["scene_forge_export_id"] = index
@@ -175,6 +189,7 @@ def main():
     root = bpy.data.objects.new("SceneForgeAssembly", None)
     scene.collection.objects.link(root)
     root["scene_forge_recipe_json"] = source_recipe
+    root["scene_forge_asset_manifest"] = manifest_json
     for obj in candidates:
         transform = obj.matrix_world.copy()
         obj.parent = root
@@ -193,6 +208,7 @@ def main():
                               export_tangents=True, export_cameras=False, export_lights=False)
     raw = glb.read_bytes()
     document, binary = glb_geometry.read(raw)
+    assert glb_geometry.asset_manifest(document) == manifest
     assert len(document["meshes"]) == len(unique)
     assert {m["name"] for m in document["meshes"]} == set(unique)
     mesh_nodes = [n for n in document["nodes"] if "mesh" in n]
@@ -226,6 +242,8 @@ def main():
     assert len({o.data.as_pointer() for o in imported}) == len(unique)
     assert {o["scene_forge_export_id"] for o in imported} == set(snapshots)
     assert any(o.get("scene_forge_recipe_json") == source_recipe for o in bpy.context.scene.objects)
+    assert [o.get("scene_forge_asset_manifest") for o in bpy.context.scene.objects
+            if o.get("scene_forge_asset_manifest") is not None] == [manifest_json]
     all_bounds = []
     for obj in imported:
         expected = snapshots[obj["scene_forge_export_id"]]
@@ -274,7 +292,10 @@ def main():
     scene.render.filepath = str(destination / "reimport.png")
     bpy.ops.render.render(write_still=True)
     assert source_hash == hashlib.sha256(source.read_bytes()).hexdigest()
+    assert all(hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() == digest
+               for name, digest in tool_hashes.items())
     receipt = {"source_sha256": source_hash,
+               "asset_manifest": manifest,
                "glb_sha256": hashlib.sha256(raw).hexdigest(), "selection": selection,
                "unique_meshes": len(unique), "instances": len(snapshots),
                "texture_plan": texture_plan,
