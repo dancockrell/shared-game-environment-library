@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "status": "authored-seed-landmarks-for-review-not-approved-anatomy",
+  "bodySha256": "ca897f2250ae2362dfea97472f5aeeebf9107d418dc88edc9e1efe2f1c3b1d23",
+  "units": "metres",
+  "upAxis": "Y",
+  "source": "Manually placed on the actual CC0-derived female source-rest body for construction review; not a named-character likeness",
+  "seeds": {
+    "nape": [0, 0.54, -0.04],
+    "neck_left": [0.05, 0.53, 0.025],
+    "neck_right": [-0.05, 0.53, 0.025],
+    "shoulder_left": [0.17, 0.48, 0.02],
+    "shoulder_right": [-0.17, 0.48, 0.02],
+    "bust_left": [0.085, 0.355, 0.18],
+    "bust_right": [-0.085, 0.355, 0.18],
+    "bust_side_left": [0.14, 0.355, 0.02],
+    "bust_side_right": [-0.14, 0.355, 0.02],
+    "waist_side_left": [0.11, 0.22, 0.005],
+    "waist_side_right": [-0.11, 0.22, 0.005],
+    "waist_back": [0, 0.22, -0.01],
+    "hip_side_left": [0.17, -0.045, 0.025],
+    "hip_side_right": [-0.17, -0.045, 0.025],
+    "bum_left": [0.08, -0.045, -0.075],
+    "bum_right": [-0.08, -0.045, -0.075],
+    "wrist_left": [0.405, 0.16, 0.12],
+    "crotch": [0, -0.13, 0.03]
+  }
+}

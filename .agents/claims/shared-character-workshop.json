@@ -5,7 +5,7 @@
   "summary": "Build shared character construction; reject failed bodice fitting, read complete contact papers and current garment methods, inspect author code and benchmark pinned Newton before replacing the construction solver",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T11:23:00Z",
+  "updated_at": "2026-09-06T12:22:09Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -52,6 +52,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Surface-landmark and front-profile checkpoint: 15 CPU tests passed; actual female body front/side paths inspected; corrected rejected waist/wrist seeds; selected-section projection preserves original vertex identity; front/back tape and curved bust lengths measured without closing chords",
+      "Actual body-landmarks-03 and -04 geometry/provenance and PNG outputs identical except elapsed time; approximately 0.65 s CPU-only; no new engine or GPU job; full measurement preset, sewn fit and final art remain unfinished",
       "Paper-grounded circumference study executed using Trimesh/SciPy: five analytic tests passed, actual female front/side landmark plot inspected and misplaced initial waist corrected; provisional bands recorded with every sampled tape and range-boundary warning; no full body preset or fitted costume claimed",
       "Male measurement study rejected as anatomical evidence: first hip seed crossed thighs; revised waist interior minimum found, chest/hip seeds still hit search boundaries; topology-specific author landmarks not copied onto our bodies; all work CPU-only, no engine launch",
       "Existing compiler exports complete body JSON for offline fitting: actual female 27732 and male 27300 triangles, metres/Y-up/CCW, original mesh and compiler hashes; both headless bounded exports completed without engine errors, no source-assembly rebuild or new visible window",
