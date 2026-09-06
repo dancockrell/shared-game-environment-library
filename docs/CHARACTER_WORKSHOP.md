@@ -28,6 +28,18 @@ Per-garment fabric parameters are now validated and copied into simulation prove
 
 Next admission experiment: benchmark the author retargeter against the same source garment on different body proportions, including sleeve routing, boundary preservation and triangle intersections. Do not spend this step generating another hand-tuned costume. A subsequent layered-outfit method needs its own implementation, license and resource checks; no layered-outfit result is claimed here.
 
+#### Author-retargeter Windows preflight — 7 September 2026
+
+Downloaded unchanged author source at commit `123e2440f46720b5f993c91d1705aff838aa55fb` into the external character-tool cache. Archive SHA-256: `ababbb7073f1d7149edfac5b11d464c553196d65ae914eddd8358e16bc36990f`. Source MIT license inspected; downloaded OpenVDB dependency actually carries Apache-2.0, despite the recipe's MIT comment. Neither example assets nor binaries are admitted to shipped content. The author's CI covers Linux/macOS, so Windows compatibility must be demonstrated, not assumed.
+
+Extended the existing `benchmark-character-physics.ps1` watchdog with `-RetargetSource <author-source> -CMake <cmake.exe> -Device cpu`, retaining the required CPU `-Python` path. This mode configures the author's C++ project; it does not execute a garment solver. CUDA, Pardiso and CHOLMOD are explicitly off for this feasibility check. It records executable, arguments, source CMake hash, package information and thread environment. Compiler output uses a unique short `~/.cache/cf/` directory; logs and receipts remain in the canonical research artifacts. This avoids demonstrated MSBuild MAX_PATH failure under the long shared checkout without changing system settings or source files.
+
+The watchdog now samples all observed descendants rather than only immediate Python/compiler children. It preserves the existing 2 GiB sampled process-tree limit, timeout, initial RAM-headroom check and owned-tree termination. `CMAKE_BUILD_PARALLEL_LEVEL=1` and `OMP_NUM_THREADS=1` are child-environment settings, not a guarantee that all third-party libraries obey one thread. A deliberate CMake child-sleep fixture timed out after 10.043 seconds (`20260906T225019903Z-vbd`); timeout was recorded and no CMake process remained. Sampling still cannot certify unsampled peaks or prevent every allocation spike.
+
+Actual preflight `20260906T224906961Z-vbd` passed Windows compiler detection, reached OpenVDB, and stopped because Boost >=1.80 iostreams was absent. It took 17.063 seconds with sampled process-tree peak 285.59 MiB; whole-device GPU sample peak 3339 MiB includes unrelated users of the GPU. This is a dependency failure, not a fitting result. Installed Visual Studio includes vcpkg, but its dependencies have not been provisioned yet. Next step is a bounded dependency installation/build, followed by the unchanged author example before integrating our own bodies.
+
+Input audit: the FoxGirl example references a missing optional skin-weight file; the actual loader explicitly falls back to distance-to-bone projection. Do not describe that benchmark as weighted-skeleton routing. The Goblin jumpsuit example also references an absent no-fit file; inspect its loader before choosing that fixture. Goblin Jacket's configured paths exist and make it a better first benchmark candidate. No benchmark garment has yet been produced by this implementation.
+
 This is not a finished character generator. Imports and regression tests are working; garment construction, general creature topology, production skinning and final art remain incomplete. The historical checkpoints below are evidence, not a competing current design.
 
 ### Exact character target — user clarification, 6 September 2026
