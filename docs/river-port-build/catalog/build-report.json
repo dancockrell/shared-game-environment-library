@@ -4833,6 +4833,685 @@
 			"statusHook": "consumer-owned",
 			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
 			"triangles": 476
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.unpainted-armorer-shop",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-3.36060428619385,
+					0.0,
+					-2.97000026702881
+				],
+				"size": [
+					6.7212085723877,
+					5.57999992370605,
+					5.94000053405762
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "unpainted-armorer-shop.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"mortar",
+				"wood7",
+				"oak",
+				"wood4",
+				"wood1",
+				"wood3",
+				"wood2",
+				"wood10",
+				"wood8",
+				"iron",
+				"oak_light",
+				"wood6",
+				"wood11",
+				"wood9",
+				"wood5",
+				"wood0"
+			],
+			"meshInstances": 1036,
+			"nativeNode": "painted_unpainted_armorer_shop",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "5bb5b9a33dc56cd0aeedc89c3767dcc77ad6ec784e807c01464eba0d99444bc2",
+			"sockets": {
+				"entrance": [
+					-0.000241334055317566,
+					0.415000021457672,
+					-3.25999999046326
+				],
+				"rear": [
+					-0.000240787660004571,
+					0.100000023841858,
+					2.99000000953674
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 33124
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.trellised-herbalist",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-3.11451101303101,
+					0.0,
+					-3.076096534729
+				],
+				"size": [
+					6.22902202606201,
+					6.17999982833862,
+					6.15219306945801
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "trellised-herbalist.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"mortar",
+				"stone4",
+				"stone0",
+				"stone6",
+				"stone5",
+				"stone1",
+				"stone11",
+				"stone2",
+				"stone10",
+				"stone9",
+				"stone3",
+				"stone7",
+				"stone8",
+				"oak",
+				"wood2",
+				"wood8",
+				"wood1",
+				"wood0",
+				"wood7",
+				"wood10",
+				"iron",
+				"gold",
+				"lamp",
+				"oak_light",
+				"slate11",
+				"slate9",
+				"slate8",
+				"slate6",
+				"slate5",
+				"slate10",
+				"slate0",
+				"slate1",
+				"slate2",
+				"slate7",
+				"slate3",
+				"slate4",
+				"plaster",
+				"wood5",
+				"wood3",
+				"wood6",
+				"wood11",
+				"wood4",
+				"wood9",
+				"leaf11",
+				"flower",
+				"leaf10",
+				"leaf2",
+				"leaf7",
+				"leaf1",
+				"leaf5",
+				"leaf8",
+				"leaf0",
+				"leaf9",
+				"leaf3",
+				"leaf4",
+				"leaf6"
+			],
+			"meshInstances": 1473,
+			"nativeNode": "painted_trellised_herbalist",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "d4981abc4155723cc2bcd3c6105c1bb135ab9c97b7ffb17e36317a70f686f54a",
+			"sockets": {
+				"entrance": [
+					-0.0000818320186226629,
+					0.415000021457672,
+					-3.15390372276306
+				],
+				"rear": [
+					-0.0000812856305856258,
+					0.100000023841858,
+					3.09609627723694
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 296384
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.low-brick-bathhouse",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-5.33907508850098,
+					0.0,
+					-2.97000026702881
+				],
+				"size": [
+					10.678150177002,
+					5.27999973297119,
+					5.94000053405762
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "low-brick-bathhouse.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"mortar",
+				"bath_brick",
+				"oak",
+				"wood10",
+				"wood8",
+				"wood4",
+				"wood6",
+				"wood0",
+				"wood1",
+				"iron",
+				"gold",
+				"lamp",
+				"oak_light",
+				"slate1",
+				"slate6",
+				"slate7",
+				"slate5",
+				"slate10",
+				"slate3",
+				"slate9",
+				"slate4",
+				"slate0",
+				"slate8",
+				"slate2",
+				"slate11",
+				"plaster",
+				"wood9",
+				"wood2",
+				"wood3",
+				"wood11",
+				"wood7",
+				"wood5",
+				"stone5",
+				"stone0",
+				"stone6",
+				"stone3",
+				"stone8",
+				"stone11",
+				"stone9"
+			],
+			"meshInstances": 1358,
+			"nativeNode": "painted_low_brick_bathhouse",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "f14e44a8d63442f41cff2a78c979927bdcc7c3e3f6e78e35024b9475f2f3d637",
+			"sockets": {
+				"entrance": [
+					-0.0000103064467111835,
+					0.415000021457672,
+					-3.25999999046326
+				],
+				"rear": [
+					-0.00000976005412667291,
+					0.100000023841858,
+					2.99000000953674
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 40460
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.old-stone-residence",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-2.78000020980835,
+					0.0,
+					-2.96425580978394
+				],
+				"size": [
+					5.5600004196167,
+					7.27999973297119,
+					5.92851161956787
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "old-stone-residence.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"mortar",
+				"stone1",
+				"stone2",
+				"stone0",
+				"stone5",
+				"stone7",
+				"stone10",
+				"stone9",
+				"stone11",
+				"stone8",
+				"stone6",
+				"stone3",
+				"stone4",
+				"oak",
+				"wood3",
+				"wood5",
+				"wood2",
+				"wood8",
+				"wood4",
+				"iron",
+				"gold",
+				"lamp",
+				"oak_light",
+				"slate10",
+				"slate1",
+				"slate3",
+				"slate4",
+				"slate0",
+				"slate11",
+				"slate8",
+				"slate5",
+				"slate9",
+				"slate2",
+				"slate6",
+				"slate7",
+				"plaster",
+				"wood0",
+				"wood7",
+				"wood9",
+				"wood6",
+				"wood10"
+			],
+			"meshInstances": 1061,
+			"nativeNode": "painted_old_stone_residence",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "c8e963d2290670b68952d8fda739601a936a67cbc38ac022935dafbd9ae360c1",
+			"sockets": {
+				"entrance": [
+					-0.0000000544477245512098,
+					0.414999902248383,
+					-3.25425553321838
+				],
+				"rear": [
+					0.000000491944661007437,
+					0.0999999046325684,
+					2.99574446678162
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 32028
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.cruck-cottage",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-2.78490543365479,
+					0.0,
+					-3.45500016212463
+				],
+				"size": [
+					5.56981086730957,
+					5.0874490737915,
+					6.91000032424927
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "cruck-cottage.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"mortar",
+				"stone5",
+				"stone4",
+				"stone3",
+				"stone0",
+				"stone6",
+				"stone1",
+				"stone9",
+				"stone10",
+				"stone11",
+				"stone2",
+				"stone7",
+				"stone8",
+				"oak",
+				"wood6",
+				"wood1",
+				"wood0",
+				"wood9",
+				"wood4",
+				"iron",
+				"gold",
+				"lamp",
+				"oak_light",
+				"thatch",
+				"plaster",
+				"wood7",
+				"wood2",
+				"wood8",
+				"wood11",
+				"wood5",
+				"wood10"
+			],
+			"meshInstances": 2383,
+			"nativeNode": "painted_cruck_cottage",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "cd58b25182fb23f27def4378015adff64334ca4982f4c5301ce56f1dddb7c5a2",
+			"sockets": {
+				"entrance": [
+					-0.000000336577670623228,
+					0.415000021457672,
+					-3.74499988555908
+				],
+				"rear": [
+					0.000000297237448876331,
+					0.100000023841858,
+					3.50500011444092
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 67304
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.barn-stable",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-3.85430669784546,
+					0.0,
+					-5.97000026702881
+				],
+				"size": [
+					7.70861339569092,
+					6.88000011444092,
+					11.9400005340576
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "barn-stable.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"mortar",
+				"wood7",
+				"oak",
+				"wood8",
+				"wood10",
+				"wood4",
+				"wood6",
+				"wood5",
+				"wood1",
+				"iron",
+				"gold",
+				"wood11",
+				"wood9",
+				"wood2",
+				"wood3",
+				"wood0",
+				"oak_light",
+				"lamp"
+			],
+			"meshInstances": 2192,
+			"nativeNode": "painted_barn_stable",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "51025cb6ad07e7a46d5ae0cb7c9e3917101559431277c702ac0500058025a694",
+			"sockets": {
+				"entrance": [
+					0.0000294856072287075,
+					0.414999902248383,
+					-6.26000022888184
+				],
+				"rear": [
+					0.0000305565336020663,
+					0.0999999046325684,
+					5.98999977111816
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 66752
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.plain-weaponsmith",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-3.36091756820679,
+					0.0,
+					-2.97000026702881
+				],
+				"size": [
+					6.72183513641357,
+					5.98000001907349,
+					5.94000053405762
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "plain-weaponsmith.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"mortar",
+				"stone11",
+				"stone5",
+				"stone7",
+				"stone8",
+				"stone10",
+				"stone6",
+				"stone3",
+				"stone4",
+				"stone9",
+				"stone1",
+				"stone2",
+				"stone0",
+				"oak",
+				"wood3",
+				"wood9",
+				"wood11",
+				"wood0",
+				"wood6",
+				"wood7",
+				"iron",
+				"gold",
+				"lamp",
+				"oak_light",
+				"slate10",
+				"slate7",
+				"slate11",
+				"slate0",
+				"slate9",
+				"slate1",
+				"slate6",
+				"slate5",
+				"slate8",
+				"slate3",
+				"slate4",
+				"slate2",
+				"plaster",
+				"wood10",
+				"wood4",
+				"wood8",
+				"wood5",
+				"wood1"
+			],
+			"meshInstances": 1013,
+			"nativeNode": "painted_plain_weaponsmith",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "e31a7b71ea22b6c8cbdcd6494bfce1b85e38be5522c95bedac240159334587b3",
+			"sockets": {
+				"entrance": [
+					0.00000972071393334772,
+					0.415000021457672,
+					-3.25999999046326
+				],
+				"rear": [
+					0.0000102671065178583,
+					0.100000023841858,
+					2.99000000953674
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 30800
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.mud-court",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-2.00036144256592,
+					0.0,
+					-2.01778697967529
+				],
+				"size": [
+					4.00072288513184,
+					0.226999998092651,
+					4.03557395935059
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "terrain",
+			"forwardAxis": "-Z",
+			"geometryGlb": "mud-court.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"wet_mud",
+				"soil",
+				"mud_water"
+			],
+			"meshInstances": 144,
+			"nativeNode": "painted_mud_court",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "1b1ebeed4458ba49e06c464f5f23fc1369a7134c484aec6c199fe43ca9c13a2c",
+			"sockets": {
+				"surface": [
+					0.000361204147338867,
+					0.219999998807907,
+					0.0177865028381348
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 89260
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.tattered-shelter",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.7096700668335,
+					0.0,
+					-1.74871778488159
+				],
+				"size": [
+					3.41934013366699,
+					3.10995960235596,
+					3.49743556976318
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "tattered-shelter.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"oak",
+				"redcloth"
+			],
+			"meshInstances": 34,
+			"nativeNode": "painted_tattered_shelter",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "9b92839b709970b3b98f799c22af39b05860f513a23537940016d3573620d024",
+			"sockets": {
+				"sheltered": [
+					0.0,
+					0.0,
+					-0.000000119209289550781
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 952
 		}
 	],
 	"engine": "4.7.2-stable (official)",

@@ -216,6 +216,28 @@ func wall(length: float, height: float, thickness: float, position: Vector3, par
 			block(position+local,size,shade("stone"),parent)
 
 func roof(width: float, depth: float, eaves: float, rise: float, prefix: String, parent: Node3D) -> void:
+	if prefix == "thatch":
+		# Thick continuous straw bedding with overlapping bundles on both slopes.
+		# Keep the same roof bounds/owner; no shingle roof hidden beneath the straw.
+		material("thatch",Color("88764f"))
+		var half_span := width/2+0.25
+		var angle := atan2(rise,half_span)
+		var slope := Vector2(half_span,rise).length()
+		for side in [-1,1]:
+			var center := Vector3(side*half_span/2,eaves+rise/2,0)
+			var bedding := block(center,Vector3(slope,0.24,depth+0.5),"thatch",parent)
+			bedding.rotation.z = -side*angle
+			bedding.position = center-bedding.basis*Vector3(0,0.12,0)
+			var columns := int((depth+0.5)/0.075)
+			for col in columns:
+				var z := -(depth+0.5)/2+(col+0.5)*(depth+0.5)/columns
+				for row in 12:
+					var a := row/12.0
+					var b := minf(1.0,(row+1.35)/12.0)
+					var start := Vector3(side*half_span*a,eaves+rise*(1-a)+0.16,z)
+					var end := Vector3(side*half_span*b,eaves+rise*(1-b)+0.13,z)
+					beam(start,end,0.075,"thatch",parent)
+		return
 	# Individually modeled overlapping tiles on BOTH slopes, with a closed roof
 	# deck and gable ends. Rotated views retain all actual geometry.
 	var half := width/2+0.25
@@ -378,7 +400,12 @@ func catalog_specs() -> Array:
 		["rain-barrel", "neutral_prop"], ["grindstone", "neutral_prop"],
 		["log-bench", "neutral_prop"], ["canvas-shelter", "architecture"],
 		["manicured-lawn", "terrain"], ["stump-seat", "neutral_prop"],
-		["plank-approach", "terrain"], ["display-rack", "neutral_prop"]
+		["plank-approach", "terrain"], ["display-rack", "neutral_prop"],
+		["unpainted-armorer-shop", "architecture"], ["trellised-herbalist", "architecture"],
+		["low-brick-bathhouse", "architecture"], ["old-stone-residence", "architecture"],
+		["cruck-cottage", "architecture"], ["barn-stable", "architecture"],
+		["plain-weaponsmith", "architecture"], ["mud-court", "terrain"],
+		["tattered-shelter", "architecture"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -445,7 +472,76 @@ func sloped_block(parent: Node3D, width: float, depth: float, high: float, low: 
 func catalog_model(id: String) -> Node3D:
 	rng.seed = 5012026+id.hash() # Independent of build order and unrelated recipes.
 	var g := node_group(id,Vector3.ZERO)
-	if id in ["bakery","smithy","warehouse","townhouse","meeting-hall","stable","tollhouse","boathouse","granary","bell-hall","fishmonger","chandlery","stone-cottage","guard-barracks"]:
+	if id in ["unpainted-armorer-shop","trellised-herbalist","low-brick-bathhouse","old-stone-residence","cruck-cottage","barn-stable","plain-weaponsmith"]:
+		# Complete exteriors. Shared archetypes, not named-game identity:
+		# consumer recipes retain the description and interpretation boundary.
+		var sizes := {"unpainted-armorer-shop":Vector3(6,3,5), "trellised-herbalist":Vector3(5.5,3.6,5),
+			"low-brick-bathhouse":Vector3(10,2.7,5), "old-stone-residence":Vector3(4.8,4.7,5),
+			"cruck-cottage":Vector3(4.8,2.6,6), "barn-stable":Vector3(7,4.3,11),
+			"plain-weaponsmith":Vector3(6,3.4,5)}
+		var d: Vector3 = sizes[id]
+		var timber: bool = id in ["unpainted-armorer-shop","barn-stable"]
+		var shell := house("CompleteExterior",Vector3.ZERO,d.x,d.z,d.y,2.2,
+			"thatch" if id == "cruck-cottage" else ("wood" if timber else "slate"),false,
+			"oak_light" if timber else "plaster",id != "barn-stable",
+			3.2 if id == "barn-stable" else 1.3,3.4 if id == "barn-stable" else 2.2,
+			id == "old-stone-residence",false)
+		shell.reparent(g,false)
+		if timber:
+			if id == "barn-stable":
+				block(Vector3(0,1.7,d.z/2+0.22),Vector3(0.035,3.4,0.045),"iron",g)
+				for x in [-0.18,0.18]:
+					ring(Vector3(x,1.5,d.z/2+0.26),0.07,0.015,"iron",g,true)
+			for mesh in shell.find_children("*","MeshInstance3D",true,false):
+				if mesh.material_override.resource_name.begins_with("stone"):
+					mesh.material_override = mat("wood7")
+			# Explicit board courses on all four elevations, with a door opening.
+			for row in int(d.y/0.18):
+				var y := 0.1+row*0.18
+				block(Vector3(0,y,-d.z/2-0.2),Vector3(d.x,0.165,0.06),shade("wood"),g)
+				for side in [-1,1]:
+					block(Vector3(side*(d.x/2+0.2),y,0),Vector3(0.06,0.165,d.z),shade("wood"),g)
+				if y > (3.4 if id == "barn-stable" else 2.2):
+					block(Vector3(0,y,d.z/2+0.2),Vector3(d.x,0.165,0.06),shade("wood"),g)
+			if id == "unpainted-armorer-shop":
+				# No sign, heraldry, gold ornament or light gimmick.
+				for child in shell.find_children("*","OmniLight3D",true,false):
+					child.free()
+				for mesh in shell.find_children("*","MeshInstance3D",true,false):
+					if mesh.material_override.resource_name in ["gold","lamp"]:
+						mesh.material_override = mat("iron")
+				for x in [-2.1,2.1]:
+					beam(Vector3(x,1.8,d.z/2+0.2),Vector3(x,1.8,d.z/2+0.5),0.04,"iron",g)
+					var shield := cylinder(Vector3(x,1.38,d.z/2+0.47),0.38,0.07,"iron",g,32)
+					shield.rotation.x = PI/2
+					ring(Vector3(x,1.38,d.z/2+0.52),0.35,0.025,"oak",g,true)
+		elif id == "low-brick-bathhouse":
+			for mesh in shell.find_children("*","MeshInstance3D",true,false):
+				if mesh.material_override.resource_name.begins_with("stone"):
+					mesh.material_override = material("bath_brick",Color("794b38"))
+			for x in [-3.5,3.5]:
+				wall(0.8,2,0.8,Vector3(x,d.y,-0.8),g)
+		elif id == "trellised-herbalist":
+			for side in [-1,1]:
+				var cx: float = side*1.9
+				for i in 8:
+					beam(Vector3(cx-0.65+i*0.18,0.2,d.z/2+0.48),Vector3(cx-0.65+i*0.18,3.6,d.z/2+0.48),0.025,"oak_light",g)
+				for i in 16:
+					beam(Vector3(cx-0.7,0.3+i*0.21,d.z/2+0.49),Vector3(cx+0.7,0.3+i*0.21,d.z/2+0.49),0.025,"oak",g)
+				for i in 190:
+					var p := Vector3(cx+rng.randf_range(-0.76,0.76),rng.randf_range(0.1,3.8),d.z/2+rng.randf_range(0.5,0.68))
+					ellipsoid(p,Vector3(0.10,0.065,0.065),shade("leaf"),g)
+					if i%9 == 0:
+						ellipsoid(p+Vector3(0,0,0.06),Vector3(0.045,0.04,0.035),"flower",g)
+		elif id == "cruck-cottage":
+			material("thatch",Color("83704b"))
+			for z in [-d.z/2-0.24,d.z/2+0.24]:
+				for side in [-1,1]:
+					beam(Vector3(side*2.25,0.2,z),Vector3(side*1.6,2.7,z),0.22,"oak",g)
+					beam(Vector3(side*1.6,2.7,z),Vector3(0,4.8,z),0.22,"oak",g)
+		attachment(g,"entrance",Vector3(0,0.315,d.z/2+0.85))
+		attachment(g,"rear",Vector3(0,0,-d.z/2-0.4))
+	elif id in ["bakery","smithy","warehouse","townhouse","meeting-hall","stable","tollhouse","boathouse","granary","bell-hall","fishmonger","chandlery","stone-cottage","guard-barracks"]:
 		var dimensions: Dictionary = {"bakery":Vector3(5.2,3.3,4.6),"smithy":Vector3(6.0,3.4,5.0),"warehouse":Vector3(7.5,4.6,7.0),"townhouse":Vector3(4.1,6.1,5.1),"meeting-hall":Vector3(8.2,5.2,6.1),"stable":Vector3(8.2,3.2,4.4),"tollhouse":Vector3(3.6,3.1,3.8),"boathouse":Vector3(6.5,3.7,8.0),"granary":Vector3(6.8,5.5,5.8),"bell-hall":Vector3(5.1,4.4,7.3),"fishmonger":Vector3(6,3.6,5.4),"chandlery":Vector3(5.0,4.8,5.6),"stone-cottage":Vector3(4.8,3.1,5.0),"guard-barracks":Vector3(10.4,4.4,5.2)}
 		var d: Vector3 = dimensions[id]
 		var building := house("EnclosedShell",Vector3.ZERO,d.x,d.z,d.y,2.4 if id == "meeting-hall" else 1.9,"roof" if id in ["bakery","townhouse","tollhouse","stone-cottage"] else "slate",false,"stone8" if id == "stone-cottage" else "plaster",id != "boathouse",3.5 if id == "boathouse" else (2.2 if id in ["warehouse","stable"] else 1.3),2.5,id == "stone-cottage",false)
@@ -612,6 +708,16 @@ func catalog_model(id: String) -> Node3D:
 				ellipsoid(Vector3(x+(item%3-1)*0.2,1.14+(item/3)*0.015,(item/3-1)*0.21),Vector3(0.085,0.08,0.085) if id == "produce-stall" else Vector3(0.055,0.035,0.15),"roof8" if id == "produce-stall" else "stone10",g)
 		attachment(g,"vendor",Vector3(0,0,-1.25))
 		attachment(g,"customer",Vector3(0,0,1.2))
+	elif id == "mud-court":
+		material("wet_mud",Color("49372b"),0.45)
+		material("mud_water",Color("302e25"),0.16)
+		block(Vector3(0,0.1,0),Vector3(4,0.2,4),"wet_mud",g)
+		for i in 140:
+			var p := Vector3(rng.randf_range(-1.85,1.85),0.2,rng.randf_range(-1.85,1.85))
+			ellipsoid(p,Vector3(rng.randf_range(0.05,0.16),0.018,rng.randf_range(0.08,0.20)),"soil",g)
+		for p in [Vector3(-0.8,0.221,0.6),Vector3(1.1,0.221,-0.7),Vector3(0.2,0.221,1.2)]:
+			ellipsoid(p,Vector3(0.48,0.006,0.28),"mud_water",g)
+		attachment(g,"surface",Vector3(0,0.22,0))
 	elif id == "manicured-lawn":
 		var turf := material("lawn_base",Color.WHITE)
 		var noise := FastNoiseLite.new()
@@ -1096,7 +1202,7 @@ func catalog_model(id: String) -> Node3D:
 		var seat := cylinder(Vector3(0,0.39,0),0.22,2.3,"oak_light",g,20)
 		seat.rotation.z = PI/2
 		attachment(g,"seat",Vector3(0,0.61,0))
-	elif id == "canvas-shelter":
+	elif id in ["canvas-shelter","tattered-shelter"]:
 		for x in [-1.5,1.5]:
 			for z in [-1.5,1.5]:
 				beam(Vector3(x,0,z),Vector3(x,2.3,z),0.1,"oak",g)
@@ -1104,8 +1210,11 @@ func catalog_model(id: String) -> Node3D:
 			beam(Vector3(0,0,z),Vector3(0,3.1,z),0.1,"oak",g)
 		for side in [-1,1]:
 			for i in 15:
+				if id == "tattered-shelter" and i > 9 and i%3 == 0:
+					continue
 				var x: float = side*(i+0.5)*1.7/15
-				var panel := block(Vector3(x,3.1-absf(x)*0.5,0),Vector3(1.7/15+0.005,0.03,3.5),"cloth",g)
+				var length := 3.5-rng.randf_range(0.0,0.35) if id == "tattered-shelter" else 3.5
+				var panel := block(Vector3(x,3.1-absf(x)*0.5,0),Vector3(1.7/15+0.005,0.03,length),"redcloth" if id == "tattered-shelter" else "cloth",g)
 				panel.rotation.z = -side*atan(0.5)
 		attachment(g,"sheltered",Vector3.ZERO)
 	else:
