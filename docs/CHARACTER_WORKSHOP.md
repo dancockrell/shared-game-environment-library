@@ -2,7 +2,49 @@
 
 Reusable production instructions live in `.agents/skills/character-art-production/SKILL.md`. They preserve faction-specific art direction while using this shared implementation.
 
-## Outerwear construction checkpoint — 6 September 2026
+## Current methods and research decisions — 6 September 2026
+
+This is not a finished character generator. Imports and regression tests are working; garment construction, general creature topology, production skinning and final art remain incomplete. The historical checkpoints below are evidence, not a competing current design.
+
+| Area | Implemented method | Actual limit |
+|---|---|---|
+| Body and face | Licensed MakeHuman topology, twelve linked normalized blend shapes, deterministic bounded parameter sampling | A humanoid construction base, not a new species-topology generator; skeleton centers do not yet refit to body changes |
+| Existing source clothing | Authored barycentric fitting tables plus offsets/scale anchors; transfer the strongest four normalized bone influences | Useful for known source garments, not automatic tailoring or collision-free fit |
+| Rigging | Source skeleton hierarchy, 163 bones and linear blend skinning | Rest frames use global axes; bone-roll reconstruction, robust retargeting and non-humanoid auto-rigging are unfinished |
+| Rejected outerwear fixtures | Radial shell, nearest-body-vertex morph offsets, rigid upper-torso weighting | Not sewn garments, not cloth simulation; must not become the production construction method |
+| Surfaces | Original tiled warp/weft field, dyeable albedo, relief-derived normal maps, roughness, shared texture resources and reconstructed mipmaps | A woven-fabric study, not complete skin/hair/material authoring or validated physical fabric parameters |
+| Delivery | One selected-appearance builder, classified shape baking, hidden-resource removal, GLB/manifest and Godot packed scenes | Godot checked; Unity adapter execution and memory budget certification remain pending |
+
+### Recent papers: ideas to implement or benchmark, not claims of installed methods
+
+Research checked against author papers/project repositories on **2026-09-06**. This is a targeted current-method review, not an exhaustive survey. Preprint results are not independently reproduced here. No model weights, datasets or paid services were downloaded for this review.
+
+| Source | Useful idea for our builder | Decision / verification boundary |
+|---|---|---|
+| [PatternGSL, June 2026 preprint](https://arxiv.org/abs/2606.24564) | Explicit panel boundaries, seam parameters and stitch topology in a structured editable representation | Adopt this representation principle in our own pattern contract; do not require its learned image-to-pattern model |
+| [Garment Particles, May 2026 preprint](https://arxiv.org/abs/2605.26391) | Preserve correspondence between two-dimensional cloth and three-dimensional placement through editing | Keep fabric coordinates and panel identity through triangulation, sewing and draping; evaluate representation, not its generative network |
+| [GarmentX, April 2025 preprint](https://arxiv.org/abs/2504.20409) | Structured garment parameters compatible with GarmentCode rather than unconstrained mesh prediction | Build validated period-cut parameters with deterministic decoding; neural parameter prediction is optional and not adopted |
+| [Vertex Block Descent, SIGGRAPH 2024](https://graphics.cs.utah.edu/research/projects/vbd/) | Local vertex-block solves of the implicit simulation objective with parallelism | Benchmark against a small-step XPBD baseline for offline tailoring; no VBD implementation is present yet |
+| [Augmented VBD, SIGGRAPH 2025](https://graphics.cs.utah.edu/research/projects/avbd/) | Augmented constraints address difficult stiffness, mass-ratio and constraint cases | Candidate for stiff seams/attachments; requires actual seam and contact benchmarks, not a stability slogan |
+| [Variational r-Adaptive Cloth Simulation, August 2026 preprint](https://arxiv.org/abs/2608.17833) | Reallocate mesh vertices toward important deformation/contact regions under a vertex budget | Later optimization trial after a trustworthy fixed-mesh solver; changing vertex placement complicates UVs, skinning and reproducibility |
+| [UniRig, SIGGRAPH 2025, official implementation](https://github.com/VAST-AI-Research/UniRig) | Generate skeleton hierarchy and skin weights across multiple asset categories | Optional offline auto-rigging candidate, not the construction core. Repository states at least 8 GB for generation; this is not our measured fit alongside an engine. Training has substantially higher requirements. Code MIT inspected; checkpoint/data rights and Windows dependencies require separate checks |
+| [SkinTokens, official successor repository](https://github.com/VAST-AI-Research/SkinTokens) | Joint compact representation of skeleton and skinning in an autoregressive sequence | Current official instructions require at least 14 GB GPU memory for inference: exclude the unmodified implementation from the 8 GB baseline. No offloading/quantization fit or weights-license approval claimed |
+
+The conservative solver baseline is [Small Steps in Physics Simulation (2019)](https://matthias-research.github.io/pages/publications/smallsteps.pdf), using the earlier [XPBD formulation](https://mmacklin.com/xpbd.pdf). Older does not mean unsuitable: use many small steps as a tested baseline before implementing a newer, more complex solver. No solver should be selected solely by its paper's frame-rate table. Our comparison needs the same garment, body, timestep, material settings, contact model and error tolerance.
+
+Implementation order: explicit pattern panels/curves/stitches and metric UVs; fixed-mesh seam/stretch/bend solve with body and self-contact tests; bind fitted garments to refitted rigs; compare VBD/AVBD only against measured baseline defects; optimize resolution and memory. Normal maps supply small surface detail, never missing silhouette or cloth folds. Creature families need separate anatomy/skeleton contracts rather than a human with renamed bones. Keep neural rigging optional so the basic generator does not depend on a large model.
+
+### Executable iteration loop
+
+`tools/iterate-character-build.ps1 -GodotPath <absolute-godot-executable>` runs the existing owners rather than duplicating them: wardrobe/textile checks, clean source assembly build, both rendered body/face/wardrobe suites, and fresh packed/portable character loads. `-Iterations 2` repeats in isolated directories; `-NoRender` is mechanical-only and explicitly recorded. Each stage has a timeout; failures stop the run and preserve logs and a receipt. Generated output lives under `artifacts/character-iterations/<run-id>/`, outside the production candidate library.
+
+The receipt records tool hashes, Git revision, per-stage exit/assertion results, elapsed time, sampled process working set, engine errors and source build receipts. Working set is system RAM, **not VRAM or a guaranteed peak**. Visual approval is left pending; identical reruns are reproducibility checks, not automatic improvement. This is an executable local iteration runner, not a scheduled background service. A revision must state a defect/hypothesis, change one relevant method, rerun the matrix, inspect matching views and keep or reject the result. The art-pipeline skill's visual gate prevents a green mechanical run from admitting visibly broken clothing.
+
+Still missing from the runner: quantified garment/body penetration, self-intersections, seam residual, stretch/shear error, broad motion clearance, render similarity and measured VRAM. These are unmeasured, not zero. Add them when the real sewing/fit solver provides corresponding geometry and constraints. Do not label repeated importer tests as proof that tailoring works.
+
+Validated runner checkpoint: [20260906T092815725Z-91759fee receipt](../artifacts/character-iterations/20260906T092815725Z-91759fee/receipt.json) records 745 passed assertions over nine stages and 89.693 aggregate stage seconds. The largest sampled native-engine working set was 866.3 MiB of system RAM; VRAM remains unknown. The prior run sampled only Godot's console launcher and is invalid as an engine-memory estimate; the runner now resolves and monitors the native executable. A separate 10-second timeout trial stopped during compilation, returned failure and retained its diagnostics. Representative generated renders were inspected and still show the previously rejected garment geometry, not production-ready art.
+
+## Historical outerwear construction checkpoint — superseded production method
 
 The compiler now constructs short and long open-front cloak prototypes for both prepared bodies. The same wardrobe profile exposes a mutually exclusive Outerwear slot, a shared cloak dye and all eight linked fit targets. This is actual generated cloth geometry with UVs, normals and skinning, not a reference image. Both rendered workshop runs completed with zero assertion failures, including front/back captures and removing outerwear.
 

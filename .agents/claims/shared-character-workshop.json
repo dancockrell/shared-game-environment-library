@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Build our shared procedural creature/character system for Godot and Unity; start with verified portable rigged export and a hashed manifest",
+  "summary": "Build shared creature/character construction; current checkpoint adds a rendered iteration runner and September 2026 methods review with explicit implementation boundaries",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
   "updated_at": "2026-09-06T08:21:00Z",
@@ -25,6 +25,8 @@
     "tools/prepare-character-model.gd",
     "tools/character-textiles.gd",
     "tools/test-character-textiles.gd",
+    "tools/iterate-character-build.ps1",
+    "artifacts/character-iterations/",
     "assets/character-prototypes/makehuman/",
     "assets/character-sources/makehuman-system/",
     "assets/character-sources/makehuman-core/",
@@ -39,6 +41,10 @@
   "completion": {
     "commit": null,
     "checks": [
+      "2026-09-06 methods review: screened recent primary papers/project sources for PatternGSL, Garment Particles, GarmentX, VBD/AVBD, r-adaptive cloth, UniRig and SkinTokens; no weights downloaded or solver falsely claimed implemented",
+      "Corrected iteration run 20260906T092815725Z-91759fee passed 745 assertions across nine stages, 89.693 aggregate stage seconds; largest sampled native-engine working set 866.3 MiB, not VRAM",
+      "Initial memory sample identified console launcher instead of engine; runner now resolves the native Godot executable. Do not use first-run launcher numbers as engine memory",
+      "Timeout negative test 20260906T093021763Z-a1382c43 passed: build killed after configured timeout, failed receipt and logs retained",
       "Original textile generator: deterministic periodic albedo/normal/roughness maps, matte range, normal mipmaps, shared dye textures and source immutability checks passed",
       "Fixed observed weave moire: runtime GLTF imports lacked mipmaps; shared import preparation now rebuilds mip levels, renormalizes normal maps and reuses texture resources",
       "Both rebuilt body assemblies passed full rendered workshop suites; four fresh single-character SCN/portable-package rendered reloads passed, including texture mipmap retention; representative actual renders inspected",
