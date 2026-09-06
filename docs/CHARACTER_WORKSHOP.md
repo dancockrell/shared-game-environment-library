@@ -8,6 +8,8 @@ Keep Godot behind the scenes and headless. Do not open visible editor/review win
 
 The historical `iterate-character-build.ps1` starts separate engines for its stages and defaults to rendered reviews. Do not invoke that historical batch in this shared-session workflow until its lifecycle has been revised. Headless numerical checks do not count as visual inspection; keep art approval pending until a controlled, resource-budgeted offscreen render can be reviewed without disrupting the desktop. Existing rendered evidence remains historical evidence, not permission to reopen windows.
 
+The user's later explicit **"show it running now"** request authorized one interactive workshop runtime, not an editor or build batch. That preview was opened at 1100 × 780, OpenGL compatibility, 30 FPS and below-normal process priority. Its observed working set was 354 MB and total device memory was 2106 MiB; these are point samples, not enforced memory limits. Reuse that owned preview while it remains open; this narrow demonstration does not revoke the general headless-work rule.
+
 ## Current methods and research decisions — 6 September 2026
 
 This is not a finished character generator. Imports and regression tests are working; garment construction, general creature topology, production skinning and final art remain incomplete. The historical checkpoints below are evidence, not a competing current design.
@@ -51,6 +53,21 @@ Our current raw fitting body and four-panel fixture provide a repeatable failure
 The metric key is historically named `maxRelativeEdgeStretch`; it includes compression error as well as extension. These are sparse near-surface samples, not a proof of all triangle intersections or penetration depth inside a closed solid. Both studies fail visually and numerically; neither is promoted.
 
 #### Executed upstream baseline and reproducibility
+
+**Pattern construction checkpoint:** `tools/build-period-pattern.py` now calls the unchanged pinned GarmentCode `FittedShirt` constructor with sleeveless square-neck settings. It verifies 160 source/script/YAML/DLL/license files against the SHA-256-pinned author archive before importing. It outputs the original curved-panel/seam representation, numeric input snapshot, design, non-overlapping cut review and hash receipt. The author constructor returns subcomponents in set order; the wrapper sorts panel containers and the outer stitch list for repeatability, preserving every directed edge and individual stitch endpoint order. No upstream implementation is patched.
+
+Local `pattern-cut-03` and `pattern-cut-04` produced identical hashes for all eight output files: four panels, sixteen stitch pairs including eight darts, ten curved edges. Each run took about 1.2 seconds including verification/import on CPU. Six output/negative-input tests passed. The flat review was inspected; projected panel overlap and oversized labels were corrected through the author's existing flat SVG layout. This is an upstream **numeric sizing fixture, not measured Beatrix anatomy**, a finished historical cut, a draped mesh or a selectable garment. Narrow straps, the pointed front hem, boning/fastenings, body measurements and engine integration remain next work. Use the author's constrained-triangulation mesh path before fitting; do not route these curves through the rejected polygon approximations.
+
+Use a short dependency directory on Windows. The long historical research path reached 260 characters for an importable source file; Python could not see it although the archive contained it. Reinstalling dependencies without the cache in the short environment also resolved missing module files. The current isolated CPU environment is `%USERPROFILE%/.cache/pirate-character-builder/env` using bundled Python 3.12.14. Direct dependencies: `numpy==1.26.4 scipy==1.16.3 pyyaml==6.0.3 svgwrite==1.4.3 svgpathtools==1.7.2 matplotlib==3.10.8 CairoSVG==2.8.2 trimesh==4.11.3 cffi==1.17.1 pycparser==2.22 psutil==7.2.2`. This does not install the author's GUI, SMPL body assets or old Warp simulator. The unchanged source cache retains its MIT license.
+
+From the repository, with `python` resolving to that isolated environment and `$gcSource`/`$gcArchive` resolving to the pinned extracted source and downloaded archive:
+
+```powershell
+python tools/build-period-pattern.py --source $gcSource --archive $gcArchive --output artifacts/character-iterations/new-pattern-study --upstream-fixture
+python tools/test-period-pattern.py artifacts/character-iterations/new-pattern-study
+```
+
+Pass `--body <measurements.yaml>` instead of `--upstream-fixture` for caller-supplied centimetre/degree measurements. The receipt does not claim they were independently measured. The command refuses an existing output directory and loads no GPU or Godot. Preserve the full JSON: SVG alone loses stitching. Source archive: `https://github.com/maria-korosteleva/GarmentCode/archive/d449629979028123a5c4dc9e732a2ec19b7fce31.zip`; expected SHA-256 `73703c47b4659430375f0e43ca473013be899703fd3c1ccd16623d35994c79e4`.
 
 The isolated local research environment uses Newton commit `6d2ece7c314248960a249ebc46b0dafbb5a89232` (package `1.7.0.dev0`, Apache-2.0), Warp `1.17.0` and NumPy `2.4.3`. The initially resolved NumPy `2.5.2` installation lacked `numpy/linalg/_linalg.py` and failed import; pinning `2.4.3` restored import. This was an observed local package failure, not a claim about every installation of that version.
 

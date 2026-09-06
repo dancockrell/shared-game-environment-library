@@ -33,6 +33,8 @@
     "tools/period-bodice.gd",
     "tools/build-period-bodice.gd",
     "tools/benchmark-character-physics.ps1",
+    "tools/build-period-pattern.py",
+    "tools/test-period-pattern.py",
     "artifacts/character-iterations/",
     "assets/character-prototypes/makehuman/",
     "assets/character-sources/makehuman-system/",
@@ -48,6 +50,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "GarmentCode pinned source verified against archive: 160 files; unchanged constructor generated four curved/darted panels, 16 stitches and 8 dart closures; two CPU runs produced identical eight-output hashes; six structural/hash/negative-input tests passed; flat panel review inspected, not fitted or admitted costume",
+      "User requested live demonstration: one owned OpenGL runtime opened at 30 FPS and below-normal priority, not an editor; observed 354 MB RAM and 2106 MiB total GPU memory; preview left available, no other task process touched",
       "User shared-machine rule recorded: headless Godot, no editor window cycling, reuse owned session, check RAM/VRAM headroom and defer heavy runs; historical multi-launch rendered iteration batch is not permitted under current workflow. Live check found no Godot process; no other task process was modified.",
       "2026-09-06 paper-and-code checkpoint: read complete AVBD (12 pages) and OGC (21 pages), DressWild main methods through conclusion and Image2Garment methods/material-estimator/failure sections; inspect pinned GarmentCode bodice and Newton cloth/contact implementation; decisions recorded in canonical workshop guide",
       "Unchanged Newton 6d2ece7c official hanging cloth passed 300 frames on cuda:0; corrected benchmark receipt 20260906T111354095Z-vbd records 7.059 s wall time, sampled whole-GPU peak 2698 MiB and process-tree RAM 413.48 MiB; reductions independently verified, not isolated VRAM or 8 GB certification",
