@@ -712,9 +712,10 @@ func catalog_model(id: String) -> Node3D:
 		material("wet_mud",Color("49372b"),0.45)
 		material("mud_water",Color("302e25"),0.16)
 		block(Vector3(0,0.1,0),Vector3(4,0.2,4),"wet_mud",g)
-		for i in 140:
-			var p := Vector3(rng.randf_range(-1.85,1.85),0.2,rng.randf_range(-1.85,1.85))
-			ellipsoid(p,Vector3(rng.randf_range(0.05,0.16),0.018,rng.randf_range(0.08,0.20)),"soil",g)
+		for i in 90:
+			var p := Vector3(rng.randf_range(-1.8,1.8),0.193,rng.randf_range(-1.8,1.8))
+			var clod := rock(p,Vector3(rng.randf_range(0.08,0.25),0.025,rng.randf_range(0.1,0.28)),g)
+			clod.material_override = mat("wet_mud")
 		for p in [Vector3(-0.8,0.221,0.6),Vector3(1.1,0.221,-0.7),Vector3(0.2,0.221,1.2)]:
 			ellipsoid(p,Vector3(0.48,0.006,0.28),"mud_water",g)
 		attachment(g,"surface",Vector3(0,0.22,0))
