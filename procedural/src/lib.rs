@@ -1,6 +1,7 @@
 //! Engine-neutral geometry and composition. No network, engine or GPU dependency.
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+mod arch;
 mod room;
 mod rounded_box;
 pub use room::{Opening, Room, Wall};
@@ -41,6 +42,13 @@ impl Default for MaterialSettings {
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Shape {
+    Arch {
+        width: f32,
+        rise: f32,
+        thickness: f32,
+        depth: f32,
+        segments: u32,
+    },
     Room {
         room: Room,
     },
@@ -301,6 +309,23 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         bounds: Bounds::default(),
     };
     match &d.shape {
+        Shape::Arch {
+            width,
+            rise,
+            thickness,
+            depth,
+            segments,
+        } => {
+            arch::build(
+                &mut m,
+                *width,
+                *rise,
+                *thickness,
+                *depth,
+                *segments,
+                max_vertices,
+            )?;
+        }
         Shape::RoundedBox {
             size,
             radius,

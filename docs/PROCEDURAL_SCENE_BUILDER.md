@@ -45,6 +45,37 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Elliptical arch bands
+
+`{"kind":"arch","width":4,"rise":2,"thickness":0.35,"depth":0.8,"segments":32}`
+creates a closed structural band around a half-elliptical opening. Width is the
+inner spring-line span; rise is the inner apex above the y=0 spring line. Depth
+is centered on Z. Thickness adds to the ellipse's horizontal and vertical radii;
+it is **not a constant normal-distance offset** for noncircular ellipses. The
+outer envelope is width+2*thickness by rise+thickness by depth. Even subdivision
+counts 4..512 preserve an explicit apex sample. Tessellation approximates the
+inner curve with chords; dimensions do not certify arbitrary character clearance.
+
+The operator uses smooth analytic normals on inner and outer curved faces and
+sharp front, rear and foot caps. Vertex allocation is checked before construction:
+`24*segments+12`. Tests cover bounds, unit normals, outward winding, closed seams,
+unfilled central opening vertices, invalid dimensions/subdivisions and budget
+rejection. Extremely small unrepresentable bands fail rather than disappear.
+UVs are currently the shared triangle-local mapping; painted arch surfaces need
+a dedicated continuous mapping before texture admission.
+
+`procedural/examples/arches.json` composes circular, shallow and tall arch bands
+on shared rounded columns with measured spring-line placement. It is a reusable
+geometry/integration fixture, not masonry engineering, a game doorway binding,
+or final painterly art. No new MUD exit is inferred from an opening.
+
+![Circular, shallow and tall procedural arches in Godot](verification/scene-forge-arches.png)
+
+The actual render confirms open centers and distinct curved silhouettes. Column
+transitions and uniform finishes remain construction quality. The complete runner
+passed 33 stages across seven fixtures, including 25 Rust tests; this is not
+artistic admission of the arches or a generated environment.
+
 ### Repeatable technical and visual review run
 
 Run `procedural/check-scene-forge.ps1 -Godot <graphics-executable> -Cargo <cargo>`

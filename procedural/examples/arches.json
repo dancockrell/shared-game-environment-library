@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "definitions": {
+    "arch0": {
+      "shape": {
+        "kind": "arch",
+        "width": 4,
+        "rise": 2,
+        "thickness": 0.35,
+        "depth": 0.8,
+        "segments": 32
+      },
+      "color": [
+        0.6,
+        0.48,
+        0.32,
+        1
+      ]
+    },
+    "column": {
+      "shape": {
+        "kind": "rounded_box",
+        "size": [
+          0.35,
+          3,
+          0.8
+        ],
+        "radius": 0.045,
+        "segments": 3
+      },
+      "color": [
+        0.6,
+        0.48,
+        0.32,
+        1
+      ]
+    },
+    "arch1": {
+      "shape": {
+        "kind": "arch",
+        "width": 5,
+        "rise": 1.2,
+        "thickness": 0.35,
+        "depth": 0.8,
+        "segments": 32
+      },
+      "color": [
+        0.6,
+        0.48,
+        0.32,
+        1
+      ]
+    },
+    "arch2": {
+      "shape": {
+        "kind": "arch",
+        "width": 3,
+        "rise": 3,
+        "thickness": 0.35,
+        "depth": 0.8,
+        "segments": 32
+      },
+      "color": [
+        0.6,
+        0.48,
+        0.32,
+        1
+      ]
+    }
+  },
+  "root": {
+    "kind": "group",
+    "children": [
+      {
+        "kind": "transform",
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "child": {
+          "kind": "group",
+          "children": [
+            {
+              "kind": "part",
+              "mesh": "arch0",
+              "position": [
+                0,
+                3,
+                0
+              ]
+            },
+            {
+              "kind": "part",
+              "mesh": "column",
+              "position": [
+                -2.175,
+                1.5,
+                0
+              ]
+            },
+            {
+              "kind": "part",
+              "mesh": "column",
+              "position": [
+                2.175,
+                1.5,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "transform",
+        "position": [
+          10,
+          0,
+          0
+        ],
+        "child": {
+          "kind": "group",
+          "children": [
+            {
+              "kind": "part",
+              "mesh": "arch1",
+              "position": [
+                0,
+                3,
+                0
+              ]
+            },
+            {
+              "kind": "part",
+              "mesh": "column",
+              "position": [
+                -2.675,
+                1.5,
+                0
+              ]
+            },
+            {
+              "kind": "part",
+              "mesh": "column",
+              "position": [
+                2.675,
+                1.5,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "transform",
+        "position": [
+          20,
+          0,
+          0
+        ],
+        "child": {
+          "kind": "group",
+          "children": [
+            {
+              "kind": "part",
+              "mesh": "arch2",
+              "position": [
+                0,
+                3,
+                0
+              ]
+            },
+            {
+              "kind": "part",
+              "mesh": "column",
+              "position": [
+                -1.675,
+                1.5,
+                0
+              ]
+            },
+            {
+              "kind": "part",
+              "mesh": "column",
+              "position": [
+                1.675,
+                1.5,
+                0
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
