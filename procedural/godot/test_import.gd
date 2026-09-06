@@ -20,6 +20,30 @@ func _run() -> void:
 	assert(packed.pack(scene) == OK)
 	var copy: Node3D = packed.instantiate()
 	assert(copy.get_child_count() == scene.get_child_count())
+	root.add_child(copy)
+	for mesh_index in data.meshes.size():
+		var descriptors: Array = data.meshes[mesh_index].get("apertures", [])
+		var display: MultiMeshInstance3D = copy.get_child(mesh_index)
+		assert(display.get_meta("scene_forge_apertures") == descriptors)
+		if not descriptors.is_empty() and display.multimesh.instance_count > 1:
+			var importer = preload("res://addons/scene_forge/import_scene.gd")
+			var aperture: Dictionary = descriptors[0]
+			var first: Dictionary = importer.aperture_world(display, 0, 0)
+			var second: Dictionary = importer.aperture_world(display, 1, 0)
+			var delta := display.multimesh.get_instance_transform(1).origin - display.multimesh.get_instance_transform(0).origin
+			assert((second.position - first.position).is_equal_approx(delta))
+			assert(is_equal_approx(first.width, float(aperture.width)))
+			copy.rotation.y = PI / 2
+			copy.scale = Vector3.ONE * 2
+			copy.position = Vector3(3, 4, 5)
+			var moved: Dictionary = importer.aperture_world(display, 0, 0)
+			assert(moved.position.is_equal_approx(copy.transform * first.position))
+			assert(is_equal_approx(moved.width, first.width * 2))
+			assert(is_equal_approx(moved.height, first.height * 2))
+			assert(moved.outward_normal.is_equal_approx((copy.basis * first.outward_normal).normalized()))
+			assert(importer.aperture_world(display, -1, 0).is_empty())
+			assert(importer.aperture_world(display, 0, 999).is_empty())
+			copy.transform = Transform3D.IDENTITY
 	copy.free()
 	if OS.get_cmdline_user_args().size() > 1:
 		root.size = Vector2i(1280, 800)

@@ -46,5 +46,33 @@ static func build(data: Dictionary) -> Node3D:
 		var display := MultiMeshInstance3D.new()
 		display.name = spec.name
 		display.multimesh = multi
+		# Shared local-space descriptors, not thousands of extra marker nodes.
+		display.set_meta("scene_forge_apertures", spec.get("apertures", []))
 		root.add_child(display)
 	return root
+
+## Query on demand; the caller binds an aperture to authoritative game data.
+## Returned wall label stays in definition space; position/normal are world-space.
+static func aperture_world(display: MultiMeshInstance3D, instance_index: int, opening_index: int) -> Dictionary:
+	if instance_index < 0 or instance_index >= display.multimesh.instance_count:
+		return {}
+	for aperture in display.get_meta("scene_forge_apertures", []):
+		if int(aperture.opening_index) != opening_index:
+			continue
+		var transform := display.global_transform * display.multimesh.get_instance_transform(instance_index)
+		if is_zero_approx(transform.basis.determinant()):
+			return {}
+		var p: Array = aperture.position
+		var n: Array = aperture.outward_normal
+		var normal := Vector3(n[0], n[1], n[2])
+		var tangent := Vector3.UP.cross(normal)
+		# Dimension scaling remains correct when an editor scales the parent.
+		return {
+			"opening_index": opening_index,
+			"definition_wall": aperture.wall,
+			"position": transform * Vector3(p[0], p[1], p[2]),
+			"outward_normal": (transform.basis.inverse().transposed() * normal).normalized(),
+			"width": float(aperture.width) * (transform.basis * tangent).length(),
+			"height": float(aperture.height) * (transform.basis * Vector3.UP).length(),
+		}
+	return {}

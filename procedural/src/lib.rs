@@ -86,6 +86,7 @@ impl Default for Limits {
 #[derive(Clone, Debug, Serialize)]
 pub struct Mesh {
     pub name: String,
+    pub apertures: Vec<room::Aperture>,
     #[serde(serialize_with = "flat3")]
     pub positions: Vec<V3>,
     #[serde(serialize_with = "flat3")]
@@ -158,6 +159,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
     }
     let mut m = Mesh {
         name: name.into(),
+        apertures: vec![],
         positions: vec![],
         normals: vec![],
         uvs: vec![],
@@ -167,6 +169,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
     match &d.shape {
         Shape::Room { room } => {
             let boxes = room.boxes()?;
+            m.apertures = room.apertures();
             if boxes.len() * 36 > max_vertices {
                 return Err("Vertex budget exceeded before room allocation".into());
             }
@@ -616,6 +619,11 @@ mod tests {
         assert_eq!(s.instances[1].position, [10., 0., 0.]);
         let m = &s.meshes[0];
         assert_eq!(m.positions.len(), m.normals.len());
+        assert_eq!(m.apertures.len(), 3);
+        assert_eq!(m.apertures[0].opening_index, 0);
+        assert_eq!(m.apertures[0].position, [1.5, 0., 3.65]);
+        assert_eq!(m.apertures[0].outward_normal, [0., 0., 1.]);
+        assert_eq!(m.apertures[1].position, [4.15, 1., -1.]);
         assert!(m.indices.iter().all(|i| (*i as usize) < m.positions.len()));
         assert_eq!(compile_json(text).unwrap(), compile_json(text).unwrap());
         r.limits.max_vertices = m.positions.len() - 1;

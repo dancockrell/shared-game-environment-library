@@ -37,7 +37,43 @@ pub struct Room {
     pub openings: Vec<Opening>,
 }
 
+/// Geometric aperture only. No game command or destination is inferred.
+#[derive(Clone, Debug, Serialize)]
+pub struct Aperture {
+    pub opening_index: usize,
+    pub wall: Wall,
+    /// Bottom centre on the wall centre plane, not the interior wall face.
+    pub position: V3,
+    pub outward_normal: V3,
+    pub width: f32,
+    pub height: f32,
+}
+
 impl Room {
+    pub(crate) fn apertures(&self) -> Vec<Aperture> {
+        self.openings
+            .iter()
+            .enumerate()
+            .map(|(opening_index, o)| {
+                let x = (self.width + self.wall_thickness) / 2.;
+                let z = (self.depth + self.wall_thickness) / 2.;
+                let (position, outward_normal) = match o.wall {
+                    Wall::North => ([o.offset, o.sill, -z], [0., 0., -1.]),
+                    Wall::South => ([o.offset, o.sill, z], [0., 0., 1.]),
+                    Wall::East => ([x, o.sill, o.offset], [1., 0., 0.]),
+                    Wall::West => ([-x, o.sill, o.offset], [-1., 0., 0.]),
+                };
+                Aperture {
+                    opening_index,
+                    wall: o.wall,
+                    position,
+                    outward_normal,
+                    width: o.width,
+                    height: o.height,
+                }
+            })
+            .collect()
+    }
     pub(crate) fn boxes(&self) -> Result<Vec<(V3, V3)>> {
         let Self {
             width: w,

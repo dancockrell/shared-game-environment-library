@@ -162,7 +162,7 @@ Out-of-bounds cuts and invalid dimensions fail rather than being silently moved.
 Room geometry respects the existing vertex allocation budget. Repeated rooms
 reuse their definition mesh. The 17,000-instance test demonstrates reuse and
 budget enforcement only, not 17,000 distinct room designs, city rendering speed,
-or measured VRAM. Roofs, material differentiation, trim, socket export, collision,
+or measured VRAM. Roofs, material differentiation, trim, collision,
 MUD adapter integration and final art admission remain subsequent work.
 
 Validation for this operator: eleven Rust tests passed, including aperture-side
@@ -172,3 +172,29 @@ Clippy with warnings denied and the release build passed. The four-room fixture
 imported, packed/reinstantiated and rendered in Godot 4.7.2 through the existing
 adapter; its openings were visually inspected. These plain shells are construction
 fixtures, not admitted Crossing art. Unity was not executed for this change.
+
+### Aperture metadata and placement contract
+
+Each compiled mesh now carries `apertures`: input opening index, definition-space
+wall, bottom-centre position on the wall centre plane, outward normal, width and
+height. Non-room meshes carry an empty array. These descriptors are emitted only
+after room validation. They are geometric affordances, not traversal permission,
+MUD commands or graph destinations. Opening indices refer to the supplied recipe
+order; they are not persistent IDs across edits that reorder openings.
+
+The Godot adapter stores these descriptors once on each shared MultiMesh display.
+`aperture_world(display, instance_index, opening_index)` resolves a descriptor
+through both the instance transform and its scene-parent transform on demand.
+The returned position and normal are world-space; `definition_wall` deliberately
+retains the original label. Width and height include transform scaling; singular
+transforms and unknown indices return no result. No extra node is allocated per
+opening. Metadata survives PackedScene packing/reinstantiation. Rust coordinate
+checks and Godot translation, rotation, scale, missing-index and reload checks
+passed. Unity currently ignores these additive descriptors; equivalent Unity
+metadata consumption and engine execution are still outstanding.
+
+Crossing integration must bind actual exits to these descriptors explicitly.
+The uncommitted earlier JavaScript shell experiment is not the production
+authority: its neighbor-position fallback is insufficient evidence for a door's
+wall. Do not silently treat proximity as an exit anchor. That experiment still
+requires replacement when the shared compiler is connected to the MUD adapter.

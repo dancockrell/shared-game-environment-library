@@ -23,6 +23,7 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Aperture metadata: Rust tests and Godot shared metadata reload, translation, rotation, scale and invalid-index checks passed; Unity consumer pending",
       "Room operator: 11 Rust tests, clippy with warnings denied and release build passed",
       "Four-room Godot import, pack/reinstantiate and actual render inspection passed; 4 instances share 1 mesh",
       "17000-instance Rust reuse and allocation-budget test passed; not a rendering speed or VRAM measurement",
