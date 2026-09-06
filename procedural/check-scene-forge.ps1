@@ -1,6 +1,7 @@
 param(
     [string]$Godot,
     [string]$Cargo = 'cargo',
+    [string]$Node = 'node',
     [ValidateRange(10,600)][int]$TimeoutSeconds = 90,
     [ValidateRange(4,128)][int]$MinimumFreeRamGiB = 6,
     [ValidateRange(256,2048)][int]$MaximumProcessMiB = 1024
@@ -62,13 +63,14 @@ try {
             $report.source_hashes[$relative] = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash
         }
     }
-    foreach ($path in @('Cargo.toml','Cargo.lock','check-scene-forge.ps1','godot/test_import.gd','godot/pack_scene.gd')) {
+    foreach ($path in @('Cargo.toml','Cargo.lock','check-scene-forge.ps1','audit-solids.mjs','test-solid-audit.mjs','godot/test_import.gd','godot/pack_scene.gd')) {
         $report.source_hashes[$path] = (Get-FileHash -LiteralPath (Join-Path $forgeRoot $path) -Algorithm SHA256).Hash
     }
     Invoke-NativeCheck 'rust-tests' $Cargo @('test','--locked','-j','1','--manifest-path',$manifest,'--','--test-threads=1')
     Invoke-NativeCheck 'rust-format' $Cargo @('fmt','--manifest-path',$manifest,'--','--check')
     Invoke-NativeCheck 'rust-clippy' $Cargo @('clippy','--locked','-j','1','--manifest-path',$manifest,'--all-targets','--','-D','warnings')
     Invoke-NativeCheck 'rust-release' $Cargo @('build','--release','--locked','-j','1','--manifest-path',$manifest)
+    Invoke-NativeCheck 'solid-audit-tests' $Node @('--test',(Join-Path $forgeRoot 'test-solid-audit.mjs'))
     $compiler = Join-Path $forgeRoot 'target/release/scene-forge-cli.exe'
     $report.compiler_sha256 = (Get-FileHash -LiteralPath $compiler).Hash
     foreach ($recipe in Get-ChildItem -LiteralPath (Join-Path $forgeRoot 'examples') -Filter '*.json' -File | Sort-Object Name) {
@@ -78,6 +80,8 @@ try {
         Invoke-NativeCheck "$name-compile" $compiler @($recipe.FullName,$scenePath)
         Invoke-NativeCheck "$name-determinism" $compiler @($recipe.FullName,$repeatPath)
         if ((Get-FileHash $scenePath).Hash -ne (Get-FileHash $repeatPath).Hash) { throw "$name is not byte deterministic" }
+        # Diagnostic findings are retained, not silently treated as solid admission.
+        Invoke-NativeCheck "$name-connectivity" $Node @((Join-Path $forgeRoot 'audit-solids.mjs'),$scenePath)
         # Do not inflate entire scene arrays into PowerShell objects.
         $report.fixtures.Add(@{name=$name; output=$scenePath; sha256=(Get-FileHash $scenePath).Hash; file_bytes=(Get-Item $scenePath).Length; render=$null; package=$null; engine_checks='not_run'})
     }

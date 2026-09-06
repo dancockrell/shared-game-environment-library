@@ -45,6 +45,69 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Solid-input diagnostics before joining parts
+
+`procedural/audit-solids.mjs` reads a compiled scene without modifying it. It
+constructs a diagnostic graph from exactly equal numeric positions (signed zero
+is unified), independently of UV and shading splits. There is no tolerance weld.
+It reports collapsed triangles, boundary edges, more-than-two-face edge incidence,
+same-direction paired edges, connected components, and vertex links that are not
+one closed cycle. The last check detects two shells touching only at a point,
+which an edge-pairing test alone misses. A signed-volume estimate is reported
+only when these closed/oriented graph checks pass; it is not a volume guarantee.
+
+This graph is **not recovered authoritative topology** and is not a Boolean
+input repair. Coincident surfaces can intentionally have separate connectivity.
+Self-intersections, overlaps between parts, shell nesting and correct outward
+orientation of every component are not certified. `solid_validity` is always
+`not_certified`, and `self_intersections` is always `not_checked`. These diagnostics
+must not be interpreted as permission to Boolean arbitrary rendered scenes.
+
+The CPU runner now uses Node for five audit regressions and one read-only audit
+per fixture, under the same per-process timeout/RAM guards. Optional `-Node`
+selects its executable; the Rust generator itself remains Node-independent.
+Audit findings are retained in each `*-connectivity.log`; a successful runner
+means the diagnostics executed, not that every mesh is a valid solid.
+
+Receipt `procedural/generated/reviews/20260906-121846-a0ce66980da34535bd4e39e2a4588a47/report.json`:
+44 Rust tests, five audit tests, format, strict clippy, release, nine deterministic
+fixtures and nine connectivity audits passed (32 stages). Of 40 mesh definitions
+audited, 38 have closed oriented exact-position graphs. All seven teapot parts
+pass those checks independently, but this does not join their overlaps or open
+the body beneath the spout. The `rooms` shell reports 21 excess-incidence edges,
+19 failed closed vertex fans and six components; the transformed fixture's shell
+reports 20, 16 and three respectively. Those composite rendering shells must not
+be admitted as single clean solids. No geometry was repaired or changed.
+
+#### Solid-construction research and license screen, 6 September 2026
+
+- Read the author's [Manifold technical note](https://github.com/elalish/manifold/wiki/Manifold-Library),
+  including manifoldness, symbolic perturbation, overlaps, triangulation,
+  degeneracy removal and vertex properties. It distinguishes exact connectivity
+  from rounded positions and explains why property-split render vertices cannot
+  generally reconstruct original topology. Decision: retain rendering seams;
+  use the new audit diagnostically, and require explicit construction topology
+  plus intersection/property handling before accepting a solid join. This note
+  is an author technical write-up, not a peer-reviewed paper. No code was copied.
+- [Manifold-rust 0.13.1](https://docs.rs/crate/manifold-rust/latest) is a CPU Rust
+  candidate with Apache-2.0 licensing and cancellation support documented by its
+  author. It has not been benchmarked or admitted under the user's MIT-or-better
+  constraint; advertised correctness and performance are not our measurements.
+- [Boolmesh](https://github.com/komietty/boolmesh) currently declares MPL-2.0 and
+  requires manifold, nonoverlapping input. No dependency was added.
+- [Trueform's July 2026 paper abstract](https://arxiv.org/abs/2607.15905) discusses
+  exact topology surviving floating-point output; full-paper fetching failed,
+  so it is screened, not claimed fully read. Its current
+  [published package](https://pypi.org/project/trueform/) declares PolyForm
+  Noncommercial licensing. Do not adopt its implementation for this project.
+- Full-text fetches for *Interactive and Robust Mesh Booleans* also failed in
+  this pass. No implementation decision is attributed to unread methods.
+
+Next solid work must preserve the authored outer shell and bore separately:
+joining two hollow-looking pieces is not equivalent to subtracting a connected
+interior passage from a joined exterior. Boolean intersection triangulation,
+cut-surface shading/UVs and final rounded-output validation remain unimplemented.
+
 ### Recoverable construction recipes in engine imports
 
 Compiled scenes carry `recipe_json`: a single canonical serialized recipe,
