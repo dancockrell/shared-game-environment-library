@@ -1015,6 +1015,9 @@ func catalog_model(id: String) -> Node3D:
 	elif id == "hand-pump":
 		block(Vector3(0,0.08,0),Vector3(0.7,0.16,0.7),"stone8",g)
 		cylinder(Vector3(0,0.7,0),0.12,1.2,"iron",g,20)
+		cylinder(Vector3(0,1.4,0),0.07,0.25,"iron",g,16)
+		var pivot := cylinder(Vector3(0,1.5,0),0.08,0.22,"iron",g,16)
+		pivot.rotation.z = PI/2
 		var spout := cylinder(Vector3(0,1.08,0.25),0.065,0.5,"iron",g,16)
 		spout.rotation.x = PI/2
 		beam(Vector3(0,1.5,0),Vector3(0,1.65,-0.6),0.065,"iron",g)
@@ -1093,9 +1096,20 @@ func rock(pos: Vector3, size: Vector3, parent: Node3D = root) -> MeshInstance3D:
 	n.rotation.y = rng.randf()*TAU
 	return n
 
+func organic_branch(a: Vector3, b: Vector3, radius: float, parent: Node3D) -> void:
+	if not meshes.has("tapered_branch"):
+		var shape := CylinderMesh.new()
+		shape.bottom_radius = 1
+		shape.top_radius = 0.52
+		shape.height = 1
+		shape.radial_segments = 12
+		meshes.tapered_branch = shape
+	var branch := piece(meshes.tapered_branch,(a+b)/2,Vector3(radius,a.distance_to(b),radius),"oak",parent)
+	branch.quaternion = Quaternion(Vector3.UP,(b-a).normalized())
+
 func tree(pos: Vector3, height: float, parent: Node3D = root, form: String = "oak") -> void:
 	var g := node_group("WillowTree" if form == "willow" else "OakTree",pos,0,parent)
-	beam(Vector3.ZERO,Vector3(0.15,height*0.62,0),0.36,"oak",g)
+	organic_branch(Vector3.ZERO,Vector3(0.15,height*0.62,0),0.23,g)
 	if not meshes.has("leaves"):
 		var s := SphereMesh.new()
 		s.height = 2
@@ -1106,12 +1120,14 @@ func tree(pos: Vector3, height: float, parent: Node3D = root, form: String = "oa
 	for b in 15:
 		var a := b*2.399
 		var end := Vector3(cos(a)*height*rng.randf_range(0.12,0.32),height*rng.randf_range(0.45,0.9),sin(a)*height*rng.randf_range(0.12,0.32))
-		beam(Vector3(0,height*0.35,0),end,0.13,"oak",g)
+		organic_branch(Vector3(0,height*0.35,0),end,0.09,g)
+		if form == "willow":
+			shrub(end,0.7,g)
 		for k in 4:
 			var tip := end+Vector3(rng.randf_range(-0.65,0.65),rng.randf_range(0.1,0.7),rng.randf_range(-0.65,0.65))
 			if form == "willow":
 				tip = end+Vector3(cos(a)*0.6,-height*0.36,sin(a)*0.6)
-			beam(end,tip,0.045,"oak_light",g)
+			organic_branch(end,tip,0.028,g)
 			for leaf_index in 25:
 				var offset := Vector3(rng.randf_range(-0.6,0.6),rng.randf_range(-0.3,0.5),rng.randf_range(-0.6,0.6))
 				if form == "willow":

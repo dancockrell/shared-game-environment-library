@@ -949,6 +949,8 @@ func catalog_stage() -> Node3D:
 	sun.light_color = Color("fff0d5")
 	sun.light_energy = 1.25
 	sun.shadow_enabled = true
+	sun.shadow_normal_bias = 0.15
+	sun.shadow_bias = 0.03
 	stage.add_child(sun)
 	return stage
 
@@ -1162,7 +1164,7 @@ func assemble_catalog(recipe: Dictionary = {}, destination: String = "") -> void
 	assert(absf(cleat.position.y-deck_y) < 0.001)
 	saved_instance(source,records,"rope-coil",low_pier.position+Vector3(0.6,1.145,0),assembly)
 	saved_instance(source,records,"cargo-crane",Vector3(-3.4,0.22,-7.3),assembly)
-	for item in [["oak-tree",-14.0,11.2],["willow-tree",14.0,11.2],["cypress-tree",-4.5,11.7],["cypress-tree",4.5,11.7],["flower-planter",8.3,0.4],["flower-planter",11.7,0.4],["grindstone",-9.0,-0.7]]:
+	for item in recipe.get("landscape",[["oak-tree",-14.0,11.2],["willow-tree",14.0,11.2],["cypress-tree",-4.5,11.7],["cypress-tree",4.5,11.7],["flower-planter",8.3,0.4],["flower-planter",11.7,0.4],["grindstone",-9.0,-0.7]]):
 		var landscape := saved_instance(source,records,item[0],Vector3(item[1],0.22,item[2]),assembly)
 		if str(item[0]).ends_with("tree"):
 			for building in buildings:

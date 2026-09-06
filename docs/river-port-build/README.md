@@ -1,5 +1,11 @@
 # River-port construction study — 2026-09-05
 
+## Consumer-owned assembly recipes
+
+The existing `--assemble-catalog` path accepts an optional absolute recipe JSON and output directory after the flag. A recipe supplies `sceneName`, `scope`, `buildings` and `props`. Each placement is `[catalog-id-suffix, x, z]` in metres. Shared quay staging and dock connections remain common; this is not a general terrain editor. Omitting recipe arguments preserves the original layout.
+
+`--inspect-catalog <absolute-assembly-directory>` verifies a consumer scene against its saved catalog: source hash, bounds, sockets, GLB hashes and native reload. New recipes being authored in the kit do not invalidate a saved consumer catalog. Normal catalog-only inspection still checks the current recipe count. Consumer lore and topology stay outside this builder.
+
 ## Current direction — coherent authored scene (2026-09-06)
 
 The user has ended the exact-reference reconstruction objective. The illustration now supplies art direction, not a camera-calibration or pixel-matching acceptance target. Historical fitting notes and the overlay remain diagnostic history; do not spend further production passes minimizing reference pixel residuals. Preserve rich miniature detail and judge the actual scene for consistent scale, supported architecture, accessible entrances, attached shorelines, clear vegetation, and readable gold connections.
@@ -12,7 +18,7 @@ These are actual Godot captures of constructed 3D geometry, not generated concep
 
 ### Reusable supply batch — 6 September 2026
 
-The existing kit now builds **60 independent model candidates**, not one
+The existing kit now builds **76 independent model candidates**, not one
 monolithic scene. This is a first Crossing supply batch, not the complete
 Crossing and not a set of canonically placed landmarks. The user accepted
 the first batch's building treatment as "good enough buildings" on 6 September;
@@ -91,6 +97,28 @@ The sack, driftwood, path treatment and water glare were revised during review.
 No credits were used. General prop collision, dense-city performance and actual
 Crossing room integration remain untested; the simple terrain is modular base
 geometry rather than a finished natural shoreline.
+
+The fourth batch adds fishmonger, chandlery, stone cottage and guard barracks;
+oak, willow and cypress trees; flower planter; hitching post, capstan, dock
+ladder, hand pump, rain barrel, grindstone, log bench and canvas shelter.
+See [landscape and trade additions](catalog/landscape-and-trade.png) and their
+[reverse views](catalog/landscape-and-trade-rear.png). The fishmonger and cottage
+reuse existing stock/planter recipes, not copied implementations. Trees extend
+the existing scene tree builder with tapered branches and a drooping willow
+form. These are reusable species-style candidates, not verified named flora.
+
+The saved workshop/quay assembly now uses 94 catalog instances. Its planted
+back strip, four trees, planters, grindstone and capstan demonstrate the new
+pieces at shared scale. Tree visual envelopes are checked against building
+envelopes; this is conservative canopy clearance, not full prop collision or
+navigation validation. The pump handle received a connected neck/pivot after
+visual review. Review-light shadow bias was reduced to make ground contact
+easier to inspect; that changes preview images, not the first 60 model exports.
+
+Foliage retains full authored geometry and is relatively expensive. The report
+records triangle/mesh counts; do not infer dense-world performance approval
+from successful generation or from one scene capture. No animation, creature
+rigs, runtime admission or canonical room placement is delivered by this batch.
 
 Rebuild and independently inspect using the existing builder:
 
