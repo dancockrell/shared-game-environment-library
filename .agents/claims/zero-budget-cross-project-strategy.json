@@ -3,9 +3,9 @@
   "task_id": "zero-budget-cross-project-strategy",
   "agent": "codex-olympus",
   "summary": "Record owner prohibition on paid production and second body rejection",
-  "status": "active",
+  "status": "completed",
   "claimed_at": "2026-09-06T01:15:00Z",
-  "updated_at": "2026-09-06T01:30:47.457912+00:00",
+  "updated_at": "2026-09-06T08:30:47.457912+07:00",
   "paths": [
     "docs/CROSS_PROJECT_ASSET_STRATEGY.md"
   ],
@@ -16,14 +16,11 @@
     "notes": "Existing blocked reference publication claim preserved. No edits to its owned intake or license docs. Reuse existing ledger and contract; strategy is not a second asset approval manifest."
   },
   "completion": {
-    "commit": "9844b210cc951fb27abade918bc059907d5a37d4",
+    "commit": "66afd291ecc0a0d116db82bc706e49e54cd22a05",
     "checks": [
-      "validate-resource-packs.ps1 passed 6 packs",
-      "validate-material-sources.ps1 passed 6 sets",
-      "test-generated-reference-validation.ps1 passed valid and five negative fixtures",
-      "git lfs fsck passed",
-      "git push uploaded 11 LFS objects and published main; ls-remote matched 9844b21",
-      "Magnific browser explicitly displays Unlimited generations for Nano Banana 2 Lite; no job submitted"
+      "Documentation-only update reviewed against direct owner instruction",
+      "Body alternative inspected via native Godot FBX render; rejected",
+      "Olympus stage113 and app45 checks pass; no paid calls"
     ]
   }
 }
