@@ -124,6 +124,10 @@ pub enum Assembly {
     Repeat {
         count: u32,
         step: V3,
+        /// Radians per copy about this repeat's local Y axis. Translation is
+        /// applied after rotation; an offset child describes a circular array.
+        #[serde(default)]
+        yaw_step: f32,
         child: Box<Assembly>,
     },
 }
@@ -834,7 +838,13 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                     )?
                 }
             }
-            Assembly::Repeat { count, step, child } => {
+            Assembly::Repeat {
+                count,
+                step,
+                yaw_step,
+                child,
+            } => {
+                finite(&[*yaw_step])?;
                 finite(step)?;
                 // Empty subtrees have no instances to emit. Without pruning,
                 // nested repeats can do billions of iterations despite passing
@@ -849,7 +859,7 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                     indices.push(i);
                     emit(
                         child,
-                        parent.compose(p, 0., 1.)?,
+                        parent.compose(p, *yaw_step * i as f32, 1.)?,
                         InstanceSource {
                             recipe_path: format!("{}/child", source.recipe_path),
                             repeat_indices: indices,
@@ -1074,6 +1084,7 @@ mod tests {
             child: Box::new(Assembly::Repeat {
                 count: 3,
                 step: [4., 0., 0.],
+                yaw_step: 0.,
                 child: Box::new(Assembly::Transform {
                     position: [1., 0., 0.],
                     yaw: -std::f32::consts::FRAC_PI_2,
@@ -1537,9 +1548,11 @@ mod tests {
         r.root = Assembly::Repeat {
             count: u32::MAX,
             step: [0.; 3],
+            yaw_step: 0.,
             child: Box::new(Assembly::Repeat {
                 count: u32::MAX,
                 step: [0.; 3],
+                yaw_step: 0.,
                 child: Box::new(Assembly::Group { children: vec![] }),
             }),
         };
@@ -1547,6 +1560,48 @@ mod tests {
         assert!(s.instances.is_empty());
         assert!(s.meshes.is_empty());
         assert_eq!(s.estimated_geometry_bytes, 0);
+    }
+    #[test]
+    fn angular_repeats_share_geometry_and_preserve_local_transforms() {
+        let mut r = recipe();
+        r.root = Assembly::Transform {
+            position: [10., 2., 3.],
+            yaw: 0.,
+            scale: 2.,
+            child: Box::new(Assembly::Repeat {
+                count: 4,
+                step: [0., 0.5, 0.],
+                yaw_step: std::f32::consts::FRAC_PI_2,
+                child: Box::new(Assembly::Part {
+                    mesh: "block".into(),
+                    position: [2., 0., 0.],
+                    yaw: 0.,
+                    scale: 1.,
+                }),
+            }),
+        };
+        let s = compile(&r).unwrap();
+        assert_eq!(s.meshes.len(), 1);
+        for (i, expected) in [[14., 2., 3.], [10., 3., -1.], [6., 4., 3.], [10., 5., 7.]]
+            .iter()
+            .enumerate()
+        {
+            for (actual, expected) in s.instances[i].position.iter().zip(expected) {
+                assert!((actual - expected).abs() < 1e-5);
+            }
+            assert_eq!(s.instances[i].source.repeat_indices, vec![i as u32]);
+            assert_eq!(s.instances[i].mesh, 0);
+        }
+        assert_eq!(
+            serde_json::to_string(&compile(&r).unwrap()).unwrap(),
+            serde_json::to_string(&s).unwrap()
+        );
+        if let Assembly::Transform { child, .. } = &mut r.root {
+            if let Assembly::Repeat { yaw_step, .. } = child.as_mut() {
+                *yaw_step = f32::NAN;
+            }
+        }
+        assert!(compile(&r).is_err());
     }
     #[test]
     fn room_batch_reuses_mesh_and_enforces_vertex_budget() {

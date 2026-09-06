@@ -1073,6 +1073,44 @@ actual GPU memory measurements remain outstanding.
 
 ![Rust-generated teapot construction baseline in Godot; not finished art](verification/scene-forge-teapot.png)
 
+### Cake and pie construction studies — not art-admitted
+
+`procedural/examples/patisserie.json` is the first editable paired study following
+the user's positive teapot response. The material direction is warm sponge and
+cream, dark berry filling and teal serving ceramics. All geometry is generated
+from the existing spline lathe and rounded stock operators. Eleven shared mesh
+definitions compose 42 instances: two cake sponge layers, filling, rounded icing,
+cream dollops and berries around the rim, plus a separate open-crust berry pie
+with ten rounded pastry strips. Both dishes share the same plate definition.
+
+To author circular decoration without manually listing every instance, the
+**existing** `repeat` now accepts optional `yaw_step` (radians per copy, default
+zero). Copy `i` has local translation `i * step` and Y rotation `i * yaw_step`;
+the child's offset is rotated first, then the repeat translation is added, then
+the enclosing transform is applied. Example: count 12, zero translation step,
+yaw step PI/6 and a child at `[0.105, 0.138, 0]` make a ring. A nonzero vertical
+step makes a helical array. Negative angles reverse direction. This does not
+deform or duplicate the shared mesh, infer topology, or guarantee collision-free
+placement. Definition sharing, bounds and source repeat indices follow the one
+existing assembly traversal. Legacy recipes default to zero angular step.
+
+CPU receipt:
+`procedural/generated/reviews/20260906-124814-31cb3724d7ec461cb21de8413ecaf1a6/report.json`.
+49 Rust tests and the full deterministic fixture workflow passed. The angular
+repeat test checks translated/scaled parent composition, quarter-turn positions,
+vertical steps, shared geometry, repeat identities and non-finite rejection.
+All eleven pastry mesh definitions have closed oriented exact-position graphs;
+this does not certify their assembled intersections. The generated definitions
+contain 90,404 triangles before instance reuse and the compiler estimates
+3,302,264 resident geometry/texture bytes, not measured engine RAM or VRAM.
+
+Outstanding: actual rendered inspection, native saved-output review, true
+over/under lattice weaving, fluted crust, richer piping, cake crumb detail and
+controlled natural variation. The current crossed strips and rotational dollops
+are explicitly construction studies, not finished pastry. No artistic gate is
+passed from CPU checks. The live teapot review remains untouched; no additional
+Godot process was launched during this study.
+
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
 groups/repetition; exact rectangular aperture subdivision; strict geometry and
 allocation limits; portable mesh/instance representation; native engine adapters;
