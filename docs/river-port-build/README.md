@@ -1,5 +1,11 @@
 # River-port construction study — 2026-09-05
 
+## Current direction — coherent authored scene (2026-09-06)
+
+The user has ended the exact-reference reconstruction objective. The illustration now supplies art direction, not a camera-calibration or pixel-matching acceptance target. Historical fitting notes and the overlay remain diagnostic history; do not spend further production passes minimizing reference pixel residuals. Preserve rich miniature detail and judge the actual scene for consistent scale, supported architecture, accessible entrances, attached shorelines, clear vegetation, and readable gold connections.
+
+This pass replaces detached sand ellipses with sloped banks derived from the quay boundary, leaving the central bridge channel open. Tree placement searches for ground-supported positions with conservative canopy clearance from building wall bounds. This is not full scene collision validation: roof overhangs, props and tree-to-tree clearance still require visual review.
+
 These are actual Godot captures of constructed 3D geometry, not generated concept images or image backgrounds. The approved painted-miniature reference remains the quality target in `../visual-reference/`; this study does **not** replace it or satisfy final visual admission.
 
 ## Deliverables

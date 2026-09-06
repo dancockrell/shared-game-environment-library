@@ -9,6 +9,81 @@ var camera: Camera3D
 var measured_buildings: Array[Dictionary] = []
 var bounded_surfaces: Array[Dictionary] = []
 
+func connected_banks() -> void:
+	# Follow the actual quay, not isolated picture-space sand ellipses.
+	var boundary: Array = bounded_surfaces[0].worldBoundary
+	kit.materials["bank_soil"] = kit.mat("stone5").duplicate()
+	kit.materials["bank_soil"].albedo_color = Color("6b6048")
+	for index in boundary.size():
+		var a := Vector3(boundary[index][0],-0.12,boundary[index][2])
+		var b := Vector3(boundary[(index+1)%boundary.size()][0],-0.12,boundary[(index+1)%boundary.size()][2])
+		var direction := (b-a).normalized()
+		var outward := Vector3(direction.z,0,-direction.x)
+		# Leave the bridge's central water channel open.
+		var middle := (a+b)/2
+		var bridge_node := kit.root.get_node("StoneArchBridge") as Node3D
+		if absf(bridge_node.to_local(middle).z) < 2.3:
+			continue
+		var length := a.distance_to(b)
+		var bank := kit.node_group("AttachedBank",Vector3(0,-0.12,0))
+		var width := 1.25
+		var previous: Array = boundary[(index-1+boundary.size())%boundary.size()]
+		var next: Array = boundary[(index+2)%boundary.size()]
+		var before := (a-Vector3(previous[0],a.y,previous[2])).normalized()
+		var after := (Vector3(next[0],b.y,next[2])-b).normalized()
+		var start_normal := (outward+Vector3(before.z,0,-before.x)).normalized()
+		var end_normal := (outward+Vector3(after.z,0,-after.x)).normalized()
+		var outer_a := a+start_normal*width/maxf(0.3,start_normal.dot(outward))
+		var outer_b := b+end_normal*width/maxf(0.3,end_normal.dot(outward))
+		# Cross-section intersects the retaining wall and slopes beneath water.
+		var section := PackedVector2Array([Vector2(a.x,a.z),Vector2(outer_a.x,outer_a.z),Vector2(outer_b.x,outer_b.z),Vector2(b.x,b.z)])
+		var mesh := kit.solid_polygon(section,0.18,0.015)
+		# Vertex heights are a continuous slope across the bank, including caps.
+		var arrays := mesh.surface_get_arrays(0)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		for i in vertices.size():
+			vertices[i].y -= maxf((Vector3(vertices[i].x,a.y,vertices[i].z)-a).dot(outward),0)*0.65
+		arrays[Mesh.ARRAY_VERTEX] = vertices
+		# Preserve the closed extrusion winding after shaping its height.
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for i in range(0,vertices.size(),3):
+			for offset in [0,1,2]:
+				st.add_vertex(vertices[i+offset])
+		st.generate_normals()
+		kit.piece(st.commit(),Vector3.ZERO,Vector3.ONE,"bank_soil",bank)
+		for i in maxi(1,int(length*3)):
+			var p := a.lerp(b,(i+0.5)/maxi(1,int(length*3)))+outward*0.25
+			p.y = -0.12
+			kit.rock(p,Vector3(0.3,0.2,0.24)*kit.rng.randf_range(0.6,1.5))
+			if index%3 == 0:
+				kit.beam(p,p+Vector3(0.12,kit.rng.randf_range(0.45,0.95),0.08),0.02,"reed")
+
+func place_clear_tree(preferred: Vector3, height: float) -> void:
+	var outline := PackedVector2Array()
+	for p in bounded_surfaces[0].worldBoundary:
+		outline.append(Vector2(p[0],p[2]))
+	var radius := height*0.32+1.45
+	for ring in 18:
+		for step in 24:
+			var angle := TAU*step/24.0
+			var candidate := preferred+Vector3(cos(angle),0,sin(angle))*ring*0.45
+			candidate.y = 0.88
+			if not Geometry2D.is_point_in_polygon(Vector2(candidate.x,candidate.z),outline):
+				continue
+			var clear := true
+			for building in kit.root.get_children():
+				if not building.has_meta("building_bounds"):
+					continue
+				var spec: Dictionary = building.get_meta("building_bounds")
+				var local: Vector3 = building.to_local(candidate)
+				if absf(local.x) < float(spec.width)/2+radius/building.scale.x and absf(local.z) < float(spec.depth)/2+radius/building.scale.z:
+					clear = false
+			if clear:
+				kit.tree(candidate,height)
+				return
+	push_warning("No safe tree position found; omitted rather than intersecting architecture.")
+
 func record_surface(id: String, points: Array[Vector3], description: String) -> void:
 	var coordinates: Array = []
 	for p in points:
@@ -710,21 +785,7 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 	dock()
 	rowboat(reference_point(Vector2(724,903),-0.14))
 	source_model("crate.glb",reference_point(Vector2(807,761),0.23),0.28)
-	# Irregular sand shelves with varied outlines, not square beach blocks.
-	for bank in [reference_point(Vector2(271,648),-0.43),reference_point(Vector2(1220,886),-0.43),reference_point(Vector2(82,577),-0.43)]:
-		var outline := PackedVector2Array()
-		for i in 32:
-			var a := TAU*i/32
-			var radius := kit.rng.randf_range(0.85,1.15)
-			outline.append(Vector2(cos(a)*3.4,sin(a)*1.7)*radius)
-		kit.piece(kit.solid_polygon(outline,0.14,0.025),bank,Vector3.ONE,"sand")
-		for i in 65:
-			var a := kit.rng.randf()*TAU
-			var r := kit.rng.randf()
-			kit.rock(bank+Vector3(cos(a)*3.3*r,0.1,sin(a)*1.65*r),Vector3(0.15,0.09,0.2)*kit.rng.randf_range(0.5,2.5))
-		for i in 90:
-			var a: Vector3 = bank+Vector3(kit.rng.randf_range(-2.5,2.5),0.15,kit.rng.randf_range(-1,1))
-			kit.beam(a,a+Vector3(kit.rng.randf_range(-0.3,0.3),kit.rng.randf_range(0.45,1.6),kit.rng.randf_range(-0.2,0.2)),0.025,"reed")
+	connected_banks()
 	# Stacked rocky bank at the shop side, low boulders behind the inn.
 	for i in 90:
 		var z := kit.rng.randf_range(-10,3.5)
@@ -733,7 +794,7 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 	for i in 35:
 		kit.rock(Vector3(kit.rng.randf_range(-9,13),-0.1,kit.rng.randf_range(-12,-10)),Vector3(1.2,0.8,1.0)*kit.rng.randf_range(0.7,1.5))
 	for pos in [reference_point(Vector2(175,361),1.3),reference_point(Vector2(323,306),1.3),reference_point(Vector2(1302,310),0.8)]:
-		kit.tree(pos,5.8)
+		place_clear_tree(pos,5.8)
 	for i in 38:
 		kit.shrub(Vector3(kit.rng.randf_range(-13,-11.5),0.9,kit.rng.randf_range(-9,1)),kit.rng.randf_range(0.35,0.7))
 	for pos in [Vector3(7.9,0.9,-0.7),Vector3(5.9,0.9,-1.3),Vector3(-3.9,0.85,-2.6)]:
