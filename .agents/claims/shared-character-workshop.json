@@ -35,6 +35,8 @@
     "tools/benchmark-character-physics.ps1",
     "tools/build-period-pattern.py",
     "tools/test-period-pattern.py",
+    "tools/measure-character-body.py",
+    "tools/test-character-measurements.py",
     "artifacts/character-iterations/",
     "assets/character-prototypes/makehuman/",
     "assets/character-sources/makehuman-system/",
@@ -50,6 +52,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Paper-grounded circumference study executed using Trimesh/SciPy: five analytic tests passed, actual female front/side landmark plot inspected and misplaced initial waist corrected; provisional bands recorded with every sampled tape and range-boundary warning; no full body preset or fitted costume claimed",
+      "Male measurement study rejected as anatomical evidence: first hip seed crossed thighs; revised waist interior minimum found, chest/hip seeds still hit search boundaries; topology-specific author landmarks not copied onto our bodies; all work CPU-only, no engine launch",
       "Existing compiler exports complete body JSON for offline fitting: actual female 27732 and male 27300 triangles, metres/Y-up/CCW, original mesh and compiler hashes; both headless bounded exports completed without engine errors, no source-assembly rebuild or new visible window",
       "Independent Trimesh analysis found one closed consistently oriented positive-volume body per sex after merging duplicate positions; twelve actual pattern/body tests passed for each; body-measurement mapping, posed fit and final character likeness remain unfinished",
       "GarmentCode author CGAL meshing executed CPU-only at 2 cm and 1 cm: 1023/3785 vertices, 1680/6876 triangles, 128/232 matched seam pairs; flat rest and rigid placement preserved; eleven tests passed at both resolutions; two 2 cm runs byte-identical across all ten outputs; actual triangulation image inspected, no fitted garment admission",
