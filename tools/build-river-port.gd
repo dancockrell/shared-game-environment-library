@@ -1146,6 +1146,10 @@ func assemble_catalog() -> void:
 	saved_instance(source,records,"rope-coil",low_pier.position+Vector3(0.6,1.145,0),assembly)
 	saved_instance(source,records,"cargo-crane",Vector3(-3.4,0.22,-7.3),assembly)
 	kit.block(Vector3(0,-1.9,-4),Vector3(55,0.2,45),"soil",kit.root)
+	kit.block(Vector3(0,-0.7,0),Vector3(36,1.4,20),"stone5",kit.root)
+	kit.mat("water").roughness = 0.82
+	kit.mat("water").metallic = 0.0
+	kit.mat("water").metallic_specular = 0.15
 	kit.block(Vector3(0,-0.98,-10),Vector3(55,0.035,40),"water",kit.root)
 	camera.position = Vector3(30,32,-42)
 	camera.look_at(Vector3(0,0,-2))
@@ -1157,6 +1161,7 @@ func assemble_catalog() -> void:
 	var placements: Array = []
 	for child in assembly.get_children():
 		placements.append({"assetId":child.get_meta("asset_id"),"position":vector_array(child.position),"rotation":vector_array(child.rotation)})
+	stage.reparent(kit.root)
 	assign_owners(kit.root,kit.root)
 	var packed := PackedScene.new()
 	assert(packed.pack(kit.root) == OK)
@@ -1205,8 +1210,23 @@ func inspect_catalog() -> void:
 			var corridor := AABB(Vector3(-1,0.75,-2.3),Vector3(2,0.8,4.6))
 			for mesh in collect_meshes(model):
 				assert(not corridor.intersects(model.global_transform.affine_inverse()*mesh.global_transform*mesh.mesh.get_aabb()),"Footbridge railing intrudes into corridor")
+		if entry.assetId.ends_with("stone-culvert"):
+			var corridor := AABB(Vector3(-0.35,0.02,-0.8),Vector3(0.7,0.6,1.6))
+			for mesh in collect_meshes(model):
+				assert(not corridor.intersects(model.global_transform.affine_inverse()*mesh.global_transform*mesh.mesh.get_aabb()),"Culvert opening blocked")
 		print("PASS independent native bounds, sockets and GLB hash: ",entry.assetId)
 	loaded.free()
+	if FileAccess.file_exists(folder.path_join("assembly-check.json")):
+		var evidence: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("assembly-check.json")))
+		assert(evidence.sourceCatalogSha256 == FileAccess.get_sha256(folder.path_join(report.native)),"Assembly must be rebuilt after catalog changes")
+		var saved := (load(folder.path_join("assembly-workshop-quay.scn")) as PackedScene).instantiate()
+		assert(collect_meshes(saved).size() == evidence.nativeReloadMeshCount)
+		assert(saved.find_children("*","Camera3D",true,false).size() == 1)
+		assert(saved.find_children("*","WorldEnvironment",true,false).size() == 1)
+		var placed := saved.get_node("WorkshopQuay_AssemblyTest_NotMudMap")
+		assert(placed.get_child_count() == evidence.placements.size())
+		saved.free()
+		print("PASS independent assembly reload: source hash, instance count, mesh count, camera and environment")
 	quit()
 
 func assign_owners(node: Node, owner_node: Node) -> void:

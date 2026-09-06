@@ -782,7 +782,8 @@ func catalog_model(id: String) -> Node3D:
 					beam(pos,pos+Vector3(0.03,rng.randf_range(0.08,0.2),0),0.018,"reed",g)
 			else:
 				for x in [-0.72,0.72]:
-					block(Vector3(x,0.164,0),Vector3(0.16,0.012,4),"sand",g)
+					for i in 20:
+						block(Vector3(x+rng.randf_range(-0.035,0.035),0.161,(i-9.5)*0.2),Vector3(rng.randf_range(0.12,0.2),0.005,0.2),"mortar",g)
 			for i in 25:
 				rock(Vector3(rng.randf_range(-1.9,1.9),0.15,rng.randf_range(-1.9,1.9)),Vector3(0.1,0.04,0.08),g)
 		var top := 0.22 if id.begins_with("cobble") else 0.16
@@ -876,10 +877,32 @@ func catalog_model(id: String) -> Node3D:
 			var b := PI*(i+1)/16
 			beam(Vector3(cos(a)*0.29,0.45+sin(a)*0.29,0),Vector3(cos(b)*0.29,0.45+sin(b)*0.29,0),0.02,"iron",g)
 	elif id == "sack-stack":
-		for pos in [Vector3(-0.32,0.32,0),Vector3(0.32,0.32,0),Vector3(0,0.85,0)]:
-			ellipsoid(pos,Vector3(0.32,0.33,0.4),"sand",g)
-			ellipsoid(pos+Vector3(0,0.32,0),Vector3(0.08,0.09,0.08),"sand",g)
-			ring(pos+Vector3(0,0.29,0),0.075,0.014,"oak",g)
+		materials["burlap"] = mat("cloth").duplicate()
+		materials["burlap"].resource_name = "burlap"
+		materials["burlap"].albedo_color = Color("938266")
+		var sphere := SphereMesh.new()
+		sphere.radius = 1
+		sphere.height = 2
+		sphere.radial_segments = 32
+		sphere.rings = 16
+		var arrays := sphere.get_mesh_arrays()
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		var surface := SurfaceTool.new()
+		surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for index in indices:
+			var v := vertices[index]
+			var width := (1-0.45*maxf(v.y,0))*(1+0.055*sin(v.y*18+atan2(v.z,v.x)*5))
+			v.x *= width
+			v.z *= width
+			v.y = maxf(-0.78,v.y)
+			surface.add_vertex(v)
+		surface.generate_normals()
+		var sack := surface.commit()
+		for pos in [Vector3(-0.36,0.39,0),Vector3(0.36,0.39,0.1),Vector3(0,1.13,0)]:
+			piece(sack,pos,Vector3(0.36,0.5,0.3),"burlap",g)
+			ellipsoid(pos+Vector3(0,0.48,0),Vector3(0.1,0.09,0.08),"burlap",g)
+			ring(pos+Vector3(0,0.43,0),0.085,0.018,"oak_light",g)
 	elif id == "mooring-cleat":
 		block(Vector3(0,0.055,0),Vector3(0.7,0.11,0.35),"iron",g)
 		for x in [-0.18,0.18]:
@@ -887,9 +910,11 @@ func catalog_model(id: String) -> Node3D:
 		beam(Vector3(-0.45,0.28,0),Vector3(0.45,0.28,0),0.1,"iron",g)
 		attachment(g,"rope",Vector3(0,0.27,0))
 	elif id == "driftwood":
-		beam(Vector3(-1.3,0.15,0),Vector3(1.1,0.2,0.1),0.27,"oak_light",g)
-		for side in [-1,1]:
-			beam(Vector3(side*0.4,0.18,0),Vector3(side*0.9,0.12,side*0.55),0.12,"oak_light",g)
+		for ends in [[Vector3(-1.3,0.19,0),Vector3(1.1,0.22,0.1),0.17],[Vector3(-0.4,0.2,0),Vector3(-1,0.15,-0.6),0.07],[Vector3(0.5,0.2,0),Vector3(1.0,0.17,0.65),0.08]]:
+			var a: Vector3 = ends[0]
+			var b: Vector3 = ends[1]
+			var log := cylinder((a+b)/2,ends[2],a.distance_to(b),"oak_light",g,16)
+			log.quaternion = Quaternion(Vector3.UP,(b-a).normalized())
 	elif id == "basalt-outcrop":
 		for x in range(-2,3):
 			for z in range(-1,2):
