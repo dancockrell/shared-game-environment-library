@@ -4,6 +4,7 @@
   "outfit": {
     "dyes": {
       "Cloak": "ffffffff",
+      "Cloak border": "ffffffff",
       "Clothing": "ffffffff",
       "Formal bottom": "ffffffff",
       "Formal top": "ffffffff",
@@ -20,7 +21,7 @@
       "Pointed ears": 0.0,
       "Square face": 0.0
     },
-    "profileSha256": "92a59d97b03e9167b1984e101031c9da03274de6f9c42c9a9e4f87098d2abd48",
+    "profileSha256": "d7bab563e7603c2d05b8babafac49e1ef5e5ae29a4fb833ea35ee8d0e19ae3e7",
     "slots": {
       "Clothes": "Casual 01",
       "Headwear": "Bare head",
@@ -150,6 +151,6 @@
     "Skeleton3D/ShortCloak::Square face": 0.0
   },
   "sourceFilename": "male-source.glb",
-  "sourceSha256": "fc9c4ac8172d4b3c2848cf9ba2a7bd37c75d993950fc19878871854f71f51a6c",
+  "sourceSha256": "bfe10855d2dca6c8105a99cb82e16f1279a59adf4ca82190579aadf2852cb639",
   "variationSeed": ""
 }

@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Historical outerwear prototypes and reusable character-art production skill",
+  "summary": "Refine outerwear collar and independent border; inspect free period source wardrobe",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T06:48:17Z",
+  "updated_at": "2026-09-06T06:56:31Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -34,6 +34,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Collar and two-surface border revision: both rendered workshop suites passed; independent border dye and cloaked scene reload passed; compiled artifact and compiler receipt hashes passed",
+      "Visual review rejects final cloak admission because upper-arm intersections and stiff drape remain; source suits02 historical subset identified but not downloaded",
       "Character-art-production skill committed as 570ac07; frontmatter, reference and UI structure checks passed; bundled quick_validate not_run because PyYAML is missing",
       "Short and long cloak prototypes built for both bodies; both rendered workshop suites passed with zero assertion failures; front/back renders inspected, final art admission rejected pending shoulder/closure/material/motion improvement",
       "node tools/test-character-production.mjs: passed 18 inventory and metadata admission assertions",

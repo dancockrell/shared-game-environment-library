@@ -10,6 +10,16 @@
         "surface": 0
       }
     ],
+    "Cloak border": [
+      {
+        "mesh": "Skeleton3D/ShortCloak",
+        "surface": 1
+      },
+      {
+        "mesh": "Skeleton3D/LongCloak",
+        "surface": 1
+      }
+    ],
     "Clothing": [
       {
         "mesh": "Skeleton3D/Outfit01",
@@ -226,5 +236,5 @@
       }
     }
   },
-  "sourceSha256": "7f74c0e75406dcb061a9c22fad77a2c3c32a0f8ac384137e01f77ae5ea20cda6"
+  "sourceSha256": "dc1c60f30ec1220ad8716b332e554ff8f5028e50b2a3fc58ccde14fff577855a"
 }

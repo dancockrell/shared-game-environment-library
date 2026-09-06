@@ -317,6 +317,19 @@ func run() -> void:
 					check(editor.parts["Skeleton3D/LongCloak"].visible == long_cut and editor.parts["Skeleton3D/ShortCloak"].visible != long_cut,"cloak selection is exclusive: "+cut)
 					var cloak: MeshInstance3D = editor.parts["Skeleton3D/LongCloak" if long_cut else "Skeleton3D/ShortCloak"]
 					check(cloak.mesh.get_blend_shape_count() == 8 and cloak.skin.get_bind_count() == 163,"cloak retains linked fit shapes and rig: "+cut)
+					check(cloak.mesh.get_surface_count() == 2,"cloak has separately constructed border: "+cut)
+					var cloth_color: Color = cloak.get_active_material(0).albedo_color
+					editor.outfit.colors["Cloak border"] = "eddcc0ff"
+					editor.outfit.apply()
+					check(cloak.get_active_material(0).albedo_color == cloth_color and cloak.get_active_material(1).albedo_color != cloth_color,"border dye leaves cloak cloth unchanged: "+cut)
+					if long_cut:
+						editor.export_character(args[1]+".scn")
+						var saved := ResourceLoader.load(args[1]+".scn","PackedScene",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+						var instance := saved.instantiate() if saved != null else null
+						var exported_cloak := instance.find_child("LongCloak",true,false) as MeshInstance3D if instance != null else null
+						check(exported_cloak != null and exported_cloak.visible and exported_cloak.mesh.get_surface_count() == 2,"cloaked export retains selected garment and border")
+						if instance != null:
+							instance.free()
 					for angle in [0.65,2.8]:
 						editor.pivot.rotation.y = angle
 						for i in 5:

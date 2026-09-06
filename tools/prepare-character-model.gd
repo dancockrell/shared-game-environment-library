@@ -315,7 +315,7 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 		var width := lerpf(.080,.255,shoulder)+maxf(0,t-.16)*.12
 		var depth := lerpf(.09,.155,shoulder)+maxf(0,t-.16)*.12
 		for column in segments+1:
-			var angle := lerpf(deg_to_rad(65),deg_to_rad(295),float(column)/segments)
+			var angle := lerpf(deg_to_rad(25),deg_to_rad(335),float(column)/segments)
 			var fold := sin(angle*12.0)*.013*pow(t,.7)
 			var drop := .035*shoulder+maxf(0,t-.16)/.84*(length-.035)
 			var point := Vector3(sin(angle)*(width+fold),anchor.y-.018-drop,anchor.z+cos(angle)*(depth+fold)-.025*t)
@@ -330,11 +330,16 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 			nearest.append(best)
 	var generated: Array[Array] = []
 	for variant in variants:
-		var surface := SurfaceTool.new()
-		surface.begin(Mesh.PRIMITIVE_TRIANGLES)
-		surface.set_smooth_group(0)
+		var panels: Array[SurfaceTool] = []
+		for panel in 2:
+			var surface := SurfaceTool.new()
+			surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+			surface.set_smooth_group(0)
+			panels.append(surface)
 		for row in rings:
 			for column in segments:
+				var border := row == 0 or row == rings-1 or column == 0 or column == segments-1
+				var surface := panels[1 if border else 0]
 				var a := row*(segments+1)+column
 				for index in [a,a+segments+1,a+1,a+1,a+segments+1,a+segments+2]:
 					surface.set_uv(Vector2(float(index%(segments+1))/segments,float(index/(segments+1))/rings))
@@ -343,24 +348,29 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 					surface.set_bones(PackedInt32Array([skeleton.find_bone("spine01"),0,0,0]))
 					surface.set_weights(PackedFloat32Array([1,0,0,0]))
 					surface.add_vertex(pattern[index]+variant[nearest[index]]-base_points[nearest[index]])
-		surface.generate_normals()
-		generated.append(surface.commit_to_arrays())
+		var panel_arrays := []
+		for surface in panels:
+			surface.generate_normals()
+			panel_arrays.append(surface.commit_to_arrays())
+		generated.append(panel_arrays)
 	var mesh := ArrayMesh.new()
 	mesh.blend_shape_mode = Mesh.BLEND_SHAPE_MODE_NORMALIZED
-	var shapes: Array[Array] = []
-	for i in shape_names.size():
-		mesh.add_blend_shape(shape_names[i])
-		var shape := []
-		shape.resize(Mesh.ARRAY_MAX)
-		shape[Mesh.ARRAY_VERTEX] = generated[i+1][Mesh.ARRAY_VERTEX]
-		shape[Mesh.ARRAY_NORMAL] = generated[i+1][Mesh.ARRAY_NORMAL]
-		shapes.append(shape)
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,generated[0],shapes)
-	var cloth := StandardMaterial3D.new()
-	cloth.albedo_color = Color("354d62")
-	cloth.roughness = .95
-	cloth.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mesh.surface_set_material(0,cloth)
+	for shape_name in shape_names:
+		mesh.add_blend_shape(shape_name)
+	for panel in 2:
+		var shapes: Array[Array] = []
+		for i in shape_names.size():
+			var shape := []
+			shape.resize(Mesh.ARRAY_MAX)
+			shape[Mesh.ARRAY_VERTEX] = generated[i+1][panel][Mesh.ARRAY_VERTEX]
+			shape[Mesh.ARRAY_NORMAL] = generated[i+1][panel][Mesh.ARRAY_NORMAL]
+			shapes.append(shape)
+		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,generated[0][panel],shapes)
+		var cloth := StandardMaterial3D.new()
+		cloth.albedo_color = Color("354d62") if panel == 0 else Color("c1a269")
+		cloth.roughness = .95
+		cloth.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mesh.surface_set_material(panel,cloth)
 	var instance := MeshInstance3D.new()
 	instance.name = part_name
 	instance.mesh = mesh
@@ -465,6 +475,7 @@ func build(sex: String) -> void:
 	profile.dyes.Hat = [{"mesh":"Skeleton3D/Hat","surface":0}]
 	profile.slots.Outerwear = {"No cloak":{"meshes":[],"hides":[]},"Short travelling cloak":{"meshes":["Skeleton3D/ShortCloak"],"hides":[]},"Long travelling cloak":{"meshes":["Skeleton3D/LongCloak"],"hides":[]}}
 	profile.dyes.Cloak = [{"mesh":"Skeleton3D/ShortCloak","surface":0},{"mesh":"Skeleton3D/LongCloak","surface":0}]
+	profile.dyes["Cloak border"] = [{"mesh":"Skeleton3D/ShortCloak","surface":1},{"mesh":"Skeleton3D/LongCloak","surface":1}]
 	for shape in shape_names:
 		profile.morphs[shape] = []
 	for mesh in skeleton.get_children():

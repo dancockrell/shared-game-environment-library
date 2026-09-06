@@ -4,6 +4,7 @@
   "outfit": {
     "dyes": {
       "Cloak": "ffffffff",
+      "Cloak border": "ffffffff",
       "Clothing": "ffffffff",
       "Formal bottom": "ffffffff",
       "Formal top": "ffffffff",
@@ -20,7 +21,7 @@
       "Pointed ears": 0.0,
       "Square face": 0.0
     },
-    "profileSha256": "f12deb7b606c93646ac818a3a60dd6ffdc86f8a97d7c8a3aa7374db3de4e6802",
+    "profileSha256": "c743a2ef38e8a92d553473d05baeb1f4e13e04e9b39038204fec7984e6f48514",
     "slots": {
       "Clothes": "Casual 01",
       "Headwear": "Bare head",
@@ -150,6 +151,6 @@
     "Skeleton3D/ShortCloak::Square face": 0.0
   },
   "sourceFilename": "female-source.glb",
-  "sourceSha256": "7f74c0e75406dcb061a9c22fad77a2c3c32a0f8ac384137e01f77ae5ea20cda6",
+  "sourceSha256": "dc1c60f30ec1220ad8716b332e554ff8f5028e50b2a3fc58ccde14fff577855a",
   "variationSeed": ""
 }
