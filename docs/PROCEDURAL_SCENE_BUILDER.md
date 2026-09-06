@@ -198,6 +198,70 @@ Saved MultiMeshes explicitly persist the union of transformed mesh bounds in
 rendering bounds after native package reload even though mesh vertices and
 instance transforms survived. Checking source mesh bounds alone missed this.
 
+Further diagnosis found the actual missing data: Godot's dummy headless backend
+saved instance counts but no instance buffer. Geometry-only tests were therefore
+insufficient. Native package export now requires a graphics-backed process,
+refuses missing buffers, and reloads the saved package to compare buffers and
+bounds exactly. Run export off-screen with no focus and a low frame limit. Most
+other validation remains headless. A valid AABB alone is not rendering proof.
+
+## Research-to-implementation ledger (reviewed 6 September 2026)
+
+This is a targeted current literature review, not an exhaustive claim of newest
+or best results. Paper claims below are not our measured performance. No upstream
+implementation has been copied or added by this review; any code adoption needs
+its own revision, dependency and MIT-or-more-permissive license audit.
+
+| Work | Relevant method | Decision for this builder |
+| --- | --- | --- |
+| [Infinigen Indoors, CVPR 2024](https://arxiv.org/abs/2406.11824) | Procedural assets plus a constraint language and arrangement solver | Adopt the separation of construction operators, relationships and placement objectives. Current rectangular shells and greedy placement are only a foundation; no equivalent general solver is implemented. |
+| [Design for Descent, SIGGRAPH Asia 2025](https://www.computationaldesign.group/assets/papers/SIGA-2025-D4Descent.pdf) | Structural grammar rewrites interleaved with continuous parameter optimization | Candidate: make bays, roof spans and facade subdivisions explicit, then optimize dimensions without discarding structure. Not implemented. The paper is CC BY-NC; reading its ideas is not permission to copy its code or assets into our permissive distribution. |
+| [Procedural Scene Programs, October 2025](https://arxiv.org/abs/2510.16147) | Dependent object-placement programs with search-based error repair | Candidate: place structure, then supports, then supported props; repair overlap and circulation failures while preserving description constraints. The paper uses an LLM for initial programs; its repair method does not require an LLM call at every correction. Our runtime must not depend on paid inference. |
+| [Sceniris, December 2025](https://arxiv.org/abs/2512.16896) | Batch sampling, cached representations and accelerated collision checks | High priority: batch candidate evaluation and cache invariant geometry rather than re-running individual object workflows. Its reported 234x improvement uses its own baseline and GPU collision system; it is not our speedup and does not establish an 8 GB fit. |
+| [Procedural Content Metageneration, August 18 2026](https://arxiv.org/abs/2608.17947) | Search over generators; reusable abstractions extracted from strong programs | Candidate: promote repeatedly successful construction rules into tested shared operators. This is evidence from game-level generation, not proof of detailed 3D fantasy architecture; do not import its inference costs or claim its method is already running here. |
+| [4DSynth, August 27 2026 preprint](https://arxiv.org/abs/2608.26947) | Multiple inputs converge on one editable geometry-grounded scene representation | Architectural reference: source prose, graph bindings and authored constraints should converge on the same recipe representation. Its actor animation and simulation work is outside our current static scenery milestone. |
+| [Infinigen-Sim, May 2025](https://arxiv.org/abs/2505.10755) | Procedural articulated assets with joint annotations | Later scenery work: hinges, shutters, gates, cranes and ferries need explicit pivots and parts even before animation. Not a replacement for Pirate Island's character workflow. |
+
+### What is actually implemented
+
+Deterministic CPU-side parametric mesh construction; reusable named geometry;
+groups/repetition; exact rectangular aperture subdivision; strict geometry and
+allocation limits; portable mesh/instance representation; native engine adapters;
+Crossing evidence rules; greedy bounded furnishing placement with reserved
+circulation; content-hashed rebuilds. This is not full shape-grammar search,
+wave-function collapse, learned generation, a city constraint solver, PBR synthesis,
+or automatic art-quality certification.
+
+### Iteration contract
+
+The next solver must maintain separate hard violations and soft quality scores.
+Never let a weighted visual improvement buy permission to break a MUD edge.
+Use deterministic seeds and a fixed candidate budget, not time-dependent output.
+
+```text
+for each changed cohort, in stable identifier order:
+    evidence = bind_room_specific_prose_and_authoritative_exits()
+    required = lock_graph_edges_and_authored_overrides(evidence)
+    proposal = instantiate_shared_construction_rules(required)
+    candidates = batch_local_rewrites(proposal, seed, fixed_budget)
+    reject candidates with missing exits, overlap, blocked approaches,
+           unsupported elevation, out_of_bounds geometry, or excess resources
+    rank remaining candidates by material evidence, proportion,
+         support plausibility, visibility, and deviation from authored intent
+    if no valid candidate: retain an explicit diagnostic, never mark complete
+    compile best valid candidate through the one Rust geometry implementation
+    export; reload; verify actual buffers, bounds, pivots and aperture bindings
+    render changed representatives and every newly flagged exception
+    compare against previous receipts; record regressions and resource costs
+    admit only after visual review; otherwise revise the shared rule and repeat
+```
+
+This is the implementation target for search/repair, not a claim that the loop
+above is already automated. The current real loop is build, regression tests,
+native reload, background capture, inspection and corrective edits. The missing
+instance-buffer defect demonstrates why successful code execution alone is not
+a valid scene-quality metric.
+
 Crossing integration must bind actual exits to these descriptors explicitly.
 The uncommitted earlier JavaScript shell experiment is not the production
 authority: its neighbor-position fallback is insufficient evidence for a door's

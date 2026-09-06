@@ -9,11 +9,27 @@ func _initialize() -> void:
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(args[0]))
 	var scene: Node3D = preload("res://addons/scene_forge/import_scene.gd").build(data)
 	for child in scene.get_children():
+		if child is MultiMeshInstance3D and child.multimesh.buffer.size() != child.multimesh.instance_count * 12:
+			push_error("Missing MultiMesh instance buffer; export requires a real rendering backend, not headless dummy rendering")
+			scene.free()
+			quit(1)
+			return
 		child.owner = scene
 	var packed := PackedScene.new()
 	var error := packed.pack(scene)
 	if error == OK:
 		error = ResourceSaver.save(packed, args[1])
+	if error == OK:
+		var reloaded: Node3D = (ResourceLoader.load(args[1], "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene).instantiate()
+		for index in scene.get_child_count():
+			var before: MultiMesh = scene.get_child(index).multimesh
+			var after: MultiMesh = reloaded.get_child(index).multimesh
+			if before.buffer != after.buffer or before.custom_aabb != after.custom_aabb:
+				error = ERR_INVALID_DATA
+				break
+		reloaded.free()
+	if error == OK:
+		print("Verified native package buffers and bounds: ", scene.get_child_count(), " shared meshes")
 	scene.free()
 	if error != OK:
 		push_error("Scene Forge package save failed: " + str(error))
