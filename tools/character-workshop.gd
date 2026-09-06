@@ -14,6 +14,7 @@ var source_name := ""
 var source_height := 1.0
 var target_height := 1.7
 var title_edit: LineEdit
+var outfit = preload("res://character-outfit.gd").new()
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -35,6 +36,7 @@ func _ready() -> void:
 	title_edit.placeholder_text = "Character / variant name"
 	panel.add_child(title_edit)
 	button(panel,"Open source GLB",func(): file_dialog(false,"*.glb",func(path): status.text = import_model(path)))
+	button(panel,"Open clothing/body profile",func(): file_dialog(false,"*.json",load_outfit_profile))
 	button(panel,"Save appearance",func(): file_dialog(true,"*.json",save_recipe))
 	button(panel,"Load appearance",func(): file_dialog(false,"*.json",load_recipe))
 	status = Label.new()
@@ -149,6 +151,7 @@ func import_model(path: String) -> String:
 	model.position -= Vector3(box.get_center().x,box.position.y,box.get_center().z)
 	parts.clear()
 	shapes.clear()
+	outfit = preload("res://character-outfit.gd").new()
 	for mesh in meshes:
 		var key := str(model.get_path_to(mesh))
 		parts[key] = mesh
@@ -192,6 +195,28 @@ func refresh_controls() -> void:
 			skeleton.reset_bone_poses()
 		if index>0:
 			clips[index-1][0].play(clips[index-1][1]))
+	if not outfit.profile.is_empty():
+		for slot in outfit.profile.slots:
+			var label := Label.new()
+			label.text = slot
+			controls.add_child(label)
+			var choices := OptionButton.new()
+			var names: Array = outfit.profile.slots[slot].keys()
+			for choice in names:
+				choices.add_item(choice)
+			choices.select(names.find(outfit.selections[slot]))
+			controls.add_child(choices)
+			choices.item_selected.connect(func(i): outfit.selections[slot] = names[i]; outfit.apply())
+		for control in outfit.morphs:
+			slider(control,0,1,outfit.morphs[control],func(v): outfit.morphs[control] = v; outfit.apply())
+		for channel in outfit.colors:
+			var picker := ColorPickerButton.new()
+			picker.text = channel
+			picker.edit_alpha = false
+			picker.color = Color.html(outfit.colors[channel])
+			controls.add_child(picker)
+			picker.color_changed.connect(func(c): outfit.colors[channel] = c.to_html(); outfit.apply())
+		return
 	for key in parts:
 		var mesh: MeshInstance3D = parts[key]
 		var check := CheckBox.new()
@@ -213,7 +238,10 @@ func make_recipe() -> Dictionary:
 		visibility[key] = parts[key].visible
 	for key in shapes:
 		weights[key] = shapes[key][0].get_blend_shape_value(shapes[key][1])
-	return {"schemaVersion":1,"name":title_edit.text,"sourceFilename":source_name,"sourceSha256":source_hash,"height":target_height,"parts":visibility,"shapes":weights}
+	var result := {"schemaVersion":1,"name":title_edit.text,"sourceFilename":source_name,"sourceSha256":source_hash,"height":target_height,"parts":visibility,"shapes":weights}
+	if not outfit.profile.is_empty():
+		result["outfit"] = outfit.recipe()
+	return result
 
 func apply_recipe(value: Variant) -> String:
 	if model == null:
@@ -239,6 +267,12 @@ func apply_recipe(value: Variant) -> String:
 			return "Unknown shape or invalid weight."
 		if not is_finite(float(weight)) or weight < 0 or weight > 1:
 			return "Shape weight is outside supported range."
+	if outfit.profile.is_empty() and data.has("outfit"):
+		return "Open the matching clothing/body profile first."
+	if not outfit.profile.is_empty():
+		var error: String = outfit.validate(data.get("outfit"))
+		if not error.is_empty():
+			return error
 	# All validation completes before any live state changes.
 	target_height = float(h)
 	title_edit.text = data.name
@@ -246,6 +280,8 @@ func apply_recipe(value: Variant) -> String:
 		parts[key].visible = data.parts[key]
 	for key in data.shapes:
 		shapes[key][0].set_blend_shape_value(shapes[key][1],data.shapes[key])
+	if not outfit.profile.is_empty():
+		outfit.restore(data.outfit)
 	frame_model()
 	refresh_controls()
 	return ""
@@ -258,10 +294,22 @@ func save_recipe(path: String) -> void:
 	if file == null:
 		status.text = "Could not save appearance."
 		return
-	file.store_string(JSON.stringify(make_recipe(),"  "))
+	file.store_string(JSON.stringify(make_recipe(),"  ",true,true))
 	file.close()
 	status.text = "Appearance saved. Source model unchanged."
 
 func load_recipe(path: String) -> void:
 	var error := apply_recipe(JSON.parse_string(FileAccess.get_file_as_string(path)))
 	status.text = "Appearance loaded." if error.is_empty() else error
+
+func load_outfit_profile(path: String) -> void:
+	if model == null:
+		status.text = "Open the source model first."
+		return
+	if not outfit.profile.is_empty():
+		status.text = "Reopen the source before changing its clothing/body profile."
+		return
+	var error: String = outfit.configure(JSON.parse_string(FileAccess.get_file_as_string(path)), parts, shapes, source_hash)
+	status.text = "Wardrobe and linked body controls ready." if error.is_empty() else error
+	if error.is_empty():
+		refresh_controls()

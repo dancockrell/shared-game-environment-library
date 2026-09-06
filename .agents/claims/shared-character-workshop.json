@@ -3,23 +3,25 @@
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
   "summary": "Build embeddable Godot character workshop for real GLB assets and validated appearance presets",
-  "status": "completed",
+  "status": "blocked",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T03:30:00Z",
+  "updated_at": "2026-09-06T10:16:00Z",
   "paths": [
     "tools/character-workshop.gd",
     "tools/character-workshop.tscn",
     "tools/test-character-workshop.gd",
-    "docs/CHARACTER_WORKSHOP.md"
+    "docs/CHARACTER_WORKSHOP.md",
+    "tools/character-outfit.gd",
+    "tools/test-character-outfit.gd"
   ],
   "symbols": [],
   "coordination": {
     "depends_on": [],
     "conflicts_with": [],
-    "notes": "Own character tooling only; DR Companion owns scenery. No paid generation or source model redistribution."
+    "notes": "Own character tooling only; DR Companion owns scenery. No paid generation. Resume asset completion when official MakeHuman assets are locally available: direct HTTPS unavailable, in-app download unverified, Chrome reports ERR_BLOCKED_BY_CLIENT. Do not bypass browser protection."
   },
   "completion": {
-    "commit": "722ed90",
-    "checks": ["Real GLB import and editor render passed", "Visibility height and file roundtrip passed", "Hash mismatch malformed visibility and invalid scale rejected atomically", "Failed import preserves current model", "Blend-shape deformation and clothing compatibility not yet verified", "No generation credits used; no source models redistributed"]
+    "commit": null,
+    "checks": ["test-character-outfit.gd: 15 mechanical checks passed", "test-character-workshop.gd: 17 headless checks passed", "Rendered editor visually inspected", "JSON full-precision save fixes measured-height roundtrip", "Dressed humanoid deformation and game integration not_run: no usable body asset acquired", "git diff --check passed", "git push failed: github.com:443 unavailable", "No generation credits used; no source models redistributed"]
   }
 }

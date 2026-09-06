@@ -1,6 +1,14 @@
 {
-  "height": 1.6,
-  "name": "Roundtrip test",
+  "height": 7.239968299865723,
+  "name": "",
+  "outfit": {
+    "dyes": {},
+    "morphs": {},
+    "profileSha256": "cccb3b0db964f2cae69434368c00ad12ef643c20cb3d0d68352a8d84667aa31f",
+    "slots": {
+      "Fixture part": "Hidden"
+    }
+  },
   "parts": {
     "Skeleton3D/Surface_Abyssal shadow hide": true,
     "Skeleton3D/Surface_Ancient sea-green hide": false,

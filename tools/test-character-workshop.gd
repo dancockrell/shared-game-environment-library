@@ -59,6 +59,22 @@ func run() -> void:
 	editor.import_model("C:/missing-character.glb")
 	check(editor.model == old_model,"failed import retains character")
 	editor.apply_recipe(baseline)
+	var profile := {"schemaVersion":1,"sourceSha256":editor.source_hash,"slots":{"Fixture part":{"Shown":{"meshes":[key],"hides":[]},"Hidden":{"meshes":[],"hides":[]}}},"morphs":{},"dyes":{}}
+	check(editor.outfit.configure(profile,editor.parts,editor.shapes,editor.source_hash).is_empty(),"configure profile in real editor")
+	editor.refresh_controls()
+	var dressed: Dictionary = editor.make_recipe()
+	dressed.outfit.slots["Fixture part"] = "Hidden"
+	check(editor.apply_recipe(dressed).is_empty() and not editor.parts[key].visible,"outfit recipe drives editor visibility")
+	before = editor.make_recipe()
+	bad = before.duplicate(true)
+	bad.height = 2.1
+	bad.outfit.profileSha256 = "wrong"
+	check(not editor.apply_recipe(bad).is_empty() and editor.make_recipe() == before,"outfit failure leaves entire editor unchanged")
+	editor.save_recipe(args[1]+".json")
+	editor.load_recipe(args[1]+".json")
+	check(editor.make_recipe() == before,"outfit file roundtrip")
+	dressed.outfit.slots["Fixture part"] = "Shown"
+	editor.apply_recipe(dressed)
 	editor.status.text = "Test fixture only—not approved character art.\n"+result
 	if DisplayServer.get_name() != "headless":
 		for i in 8:
