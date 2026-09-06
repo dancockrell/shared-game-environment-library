@@ -2,6 +2,8 @@
 
 ## Consumer-owned assembly recipes
 
+An optional `island` object builds continuous coastal terrain. It supplies `center`, `radii`, `hills` (x,z,height,radius), flattened `pads` (x,z,radius,height), inland `settlements`, visual `paths`, `seed` and `treeCount`. Terrain and roads use the existing builder; geography stays in the consumer recipe. This is visual prototyping, not collision, navigation or campaign topology. Quay-only assembly remains the default.
+
 The existing `--assemble-catalog` path accepts an optional absolute recipe JSON and output directory after the flag. A recipe supplies `sceneName`, `scope`, `buildings` and `props`. Each placement is `[catalog-id-suffix, x, z]` in metres. Shared quay staging and dock connections remain common; this is not a general terrain editor. Omitting recipe arguments preserves the original layout.
 
 `--inspect-catalog <absolute-assembly-directory>` verifies a consumer scene against its saved catalog: source hash, bounds, sockets, GLB hashes and native reload. New recipes being authored in the kit do not invalidate a saved consumer catalog. Normal catalog-only inspection still checks the current recipe count. Consumer lore and topology stay outside this builder.

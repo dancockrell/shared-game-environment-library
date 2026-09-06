@@ -1177,10 +1177,24 @@ func assemble_catalog(recipe: Dictionary = {}, destination: String = "") -> void
 	kit.mat("water").roughness = 0.82
 	kit.mat("water").metallic = 0.0
 	kit.mat("water").metallic_specular = 0.15
-	kit.block(Vector3(0,-0.98,-10),Vector3(55,0.035,40),"water",kit.root)
+	var island: Dictionary = recipe.get("island",{})
+	if island.is_empty():
+		kit.block(Vector3(0,-0.98,-10),Vector3(55,0.035,40),"water",kit.root)
+	else:
+		bed.queue_free()
+		build_island_landscape(island,source,records,assembly)
 	camera.position = Vector3(30,32,-42)
 	camera.look_at(Vector3(0,0,-2))
 	camera.size = 35
+	if not island.is_empty():
+		camera.position = Vector3(150,175,-170)
+		camera.look_at(Vector3(0,3,50))
+		camera.size = 158
+		camera.far = 1000
+		for sun in stage.find_children("*","DirectionalLight3D",true,false):
+			sun.directional_shadow_max_distance = 500
+			sun.shadow_bias = 0.15
+			sun.shadow_normal_bias = 2.0
 	for frame in 32:
 		await process_frame
 	RenderingServer.force_draw(false)
@@ -1188,12 +1202,18 @@ func assemble_catalog(recipe: Dictionary = {}, destination: String = "") -> void
 	if not recipe.is_empty():
 		camera.position = Vector3(-30,32,42)
 		camera.look_at(Vector3(0,0,-2))
+		if not island.is_empty():
+			camera.position = Vector3(-150,175,220)
+			camera.look_at(Vector3(0,3,50))
 		for frame in 32:
 			await process_frame
 		RenderingServer.force_draw(false)
 		assert(root.get_texture().get_image().save_png(result_dir.path_join("assembly-rear.png")) == OK)
 		camera.position = Vector3(30,32,-42)
 		camera.look_at(Vector3(0,0,-2))
+		if not island.is_empty():
+			camera.position = Vector3(150,175,-170)
+			camera.look_at(Vector3(0,3,50))
 	var placements: Array = []
 	for child in assembly.get_children():
 		placements.append({"assetId":child.get_meta("asset_id"),"position":vector_array(child.position),"rotation":vector_array(child.rotation)})
@@ -1211,6 +1231,115 @@ func assemble_catalog(recipe: Dictionary = {}, destination: String = "") -> void
 	source.free()
 	print("PASS saved-catalog assembly: ",placements.size()," instances, exact socket joins, separate building envelopes, native reload")
 	quit()
+
+# Generic terrain assembly; geography and placement data belong to the consumer recipe.
+func island_height(config: Dictionary, x: float, z: float) -> float:
+	var center: Array = config.center
+	var radii: Array = config.radii
+	var p := Vector2((x-center[0])/radii[0],(z-center[1])/radii[1])
+	var a := atan2(p.y,p.x)
+	var edge := 1.0+0.09*sin(a*3.0+0.7)+0.075*sin(a*7.0-0.3)+0.035*cos(a*11.0)
+	var inland := edge-p.length()
+	var y := -3.0+smoothstep(-0.06,0.18,inland)*6.0
+	for hill in config.hills:
+		var distance_squared := pow((x-hill[0])/hill[3],2)+pow((z-hill[1])/hill[3],2)
+		y += hill[2]*exp(-distance_squared*1.7)*smoothstep(0.03,0.3,inland)
+	y += (sin(x*.21)*cos(z*.17)+sin(x*.43+z*.18)*.45)*smoothstep(0.08,0.35,inland)
+	for pad in config.pads:
+		var d := Vector2(x-pad[0],z-pad[1]).length()
+		y = lerpf(y,float(pad[3]),1.0-smoothstep(float(pad[2]),float(pad[2])+7.0,d))
+	# Harbour apron joins the land; it is not the island's foundation.
+	var apron := maxf(absf(x)/20.0,absf(z-3.0)/13.0)
+	y = lerpf(y,-0.08,1.0-smoothstep(0.85,1.5,apron))
+	y -= 4.0*smoothstep(8.0,18.0,-z)*exp(-pow(x/10.0,4))
+	return y
+
+func build_island_landscape(config: Dictionary, source: Node3D, records: Dictionary, assembly: Node3D) -> void:
+	var surface := SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var step := 1.5
+	for zi in 124:
+		for xi in 136:
+			var x := -102.0+xi*step
+			var z := -35.0+zi*step
+			for offset in [Vector2(0,0),Vector2(step,0),Vector2(0,step),Vector2(step,0),Vector2(step,step),Vector2(0,step)]:
+				var px: float = x+offset.x
+				var pz: float = z+offset.y
+				var h := island_height(config,px,pz)
+				var color := Color("#286a64")
+				if h > -1.0:
+					color = Color("#d5bb7e").lerp(Color("#507348"),smoothstep(0.5,3.6,h))
+				if h > 8.0:
+					color = color.lerp(Color("#77736a"),smoothstep(8,20,h))
+				color = color.darkened((sin(px*.31)*cos(pz*.27)+1)*.035)
+				surface.set_color(color)
+				surface.set_uv(Vector2(px,pz)*.12)
+				surface.add_vertex(Vector3(px,h,pz))
+	surface.generate_normals()
+	var terrain := MeshInstance3D.new()
+	terrain.name = "ContinuousIslandTerrain"
+	terrain.mesh = surface.commit()
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.roughness = 1.0
+	terrain.material_override = mat
+	kit.root.add_child(terrain)
+	# Opaque sea lies above submerged terrain; no overlapping coplanar plates.
+	var sea := kit.block(Vector3(0,-1.08,50),Vector3(600,.1,600),"water",kit.root)
+	var water := StandardMaterial3D.new()
+	water.albedo_color = Color("#247f89")
+	water.roughness = .8
+	water.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	sea.material_override = water
+	for item in config.settlements:
+		saved_instance(source,records,item[0],Vector3(item[1],island_height(config,item[1],item[2]),item[2]),assembly)
+	var paths := SurfaceTool.new()
+	paths.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for route in config.paths:
+		var start := Vector2(route[0],route[1])
+		var end := Vector2(route[2],route[3])
+		var side := (end-start).normalized().orthogonal()*1.15
+		var count := ceili(start.distance_to(end))
+		for i in count:
+			var a := start.lerp(end,float(i)/count)
+			var b := start.lerp(end,float(i+1)/count)
+			for p in [a-side,b-side,a+side,b-side,b+side,a+side]:
+				paths.add_vertex(Vector3(p.x,island_height(config,p.x,p.y)+.12,p.y))
+	paths.generate_normals()
+	var road := MeshInstance3D.new()
+	road.name = "VisualPaths_NotNavigation"
+	road.mesh = paths.commit()
+	var road_mat := StandardMaterial3D.new()
+	road_mat.albedo_color = Color("#a69264")
+	road_mat.roughness = 1
+	road_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	road.material_override = road_mat
+	kit.root.add_child(road)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(config.seed)
+	var planted := 0
+	for attempt in 1200:
+		if planted >= int(config.treeCount):
+			break
+		var x := rng.randf_range(-78,78)
+		var z := rng.randf_range(12,130)
+		var h := island_height(config,x,z)
+		if h < 2.0 or h > 12:
+			continue
+		var blocked := false
+		for pad in config.pads:
+			if Vector2(x-pad[0],z-pad[1]).length() < float(pad[2])+5:
+				blocked = true
+		for route in config.paths:
+			var nearest := Geometry2D.get_closest_point_to_segment(Vector2(x,z),Vector2(route[0],route[1]),Vector2(route[2],route[3]))
+			if nearest.distance_to(Vector2(x,z)) < 4:
+				blocked = true
+		if blocked:
+			continue
+		var tree := saved_instance(source,records,"oak-tree" if planted%3 else "willow-tree",Vector3(x,h-.15,z),assembly)
+		tree.rotation.y = rng.randf_range(0,TAU)
+		planted += 1
+	assert(planted == int(config.treeCount),"Terrain tree placement budget not reached")
 
 func inspect_catalog(assembly_directory: String = "") -> void:
 	kit.root.free()

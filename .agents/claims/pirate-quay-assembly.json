@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "pirate-quay-assembly",
   "agent": "codex-root",
-  "summary": "Assemble Pirate Island landing quay from saved shared models through existing builder",
+  "summary": "Replace isolated quay presentation with whole-island terrain, settlements, woodland and paths using shared assembly",
   "status": "completed",
   "claimed_at": "2026-09-06T03:00:00Z",
   "updated_at": "2026-09-06T03:00:00Z",
@@ -14,10 +14,15 @@
   "coordination": {
     "depends_on": [],
     "conflicts_with": [],
-    "notes": "Existing shared catalog branch, no duplicate generator. Pirate Island owns recipe and output."
+    "notes": "No duplicate generator. Shared terrain assembly reads Pirate Island-owned geography. Previous isolated quay is superseded in place."
   },
   "completion": {
-    "commit": "31f947c",
-    "checks": ["Initial 78-instance assembly passed against 60 saved models; latest 90-instance assembly passed against 76 saved models", "Independent catalog bounds sockets GLB hashes and assembly reload: passed", "Front and rear actual renders reviewed; staging surface artifacts remain", "Shared owner committed initial builder extension in 31f947c; source expansion preserved, consumer landscape made explicit", "Cross-task message blocked by approval policy; coordination retained here", "Git transport unavailable; publication not verified"]
+    "commit": null,
+    "checks": [
+      "209 saved instances and continuous island mesh generated with zero credits",
+      "Independent source catalog and assembly reload passed",
+      "Main and rear actual renders inspected; shadow striping and buried dock corrected",
+      "Navigation, collision, faction bindings and performance not certified"
+    ]
   }
 }
