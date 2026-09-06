@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "runId": "20260906T102735318Z-2b00ea38",
+  "gitHead": "bd450ccc3d0f3bff3be8dfd573aaa4f1552ccb35",
+  "toolHashes": {
+    "prepare-character-model.gd": "c589626c288cbb71bcbd307241cd734b7ecb54d014ea4b1b0f8755d08d392376",
+    "test-character-outfit.gd": "ff6630d2f6d9ce67b096005301f0bbd8d3ae492573033c76d77214c6f4c5424d",
+    "addons/shared_character_builder/character_package.gd": "062943adef9dd9a97b596537839a0becacdded369aea16e17a584700e14646ce",
+    "test-character-workshop.gd": "6a03b901c80aa3d868203a813c717391b0b7de6311e58efbe62f1b5136186d76",
+    "test-character-textiles.gd": "73efc612788ca84de5462fd6600799d900e0d25fc83a9108caf1e81081eb4b57",
+    "sewing-pattern.gd": "988c0fa24025431c1e03a13dce32f6e37ad13b23e2028e59362e3fecb3ba1581",
+    "test-sewing-pattern.gd": "ccb1698f359d6ef556daed2847e049a8b145f7ab6a1bbd10a96b601458ff7066",
+    "character-workshop.gd": "8a17f57870bee3c8bc8520273534c506a73df2947a1932ee1032d42a1f80c975",
+    "character-textiles.gd": "68f6a6aafc611afdaee003306fddd99a087fb144a12ea03b5187b4aa93638697",
+    "character-outfit.gd": "7692f66d87355f6ecbfa024334c471344f39688f15652b7ec8390465099516ff",
+    "iterate-character-build.ps1": "531cdd1fb0ccb16178ea1a0edd9e0764cc00a87e61825d4971c7b7a190ce0b86"
+  },
+  "enginePath": "C:\\Users\\Admin\\Documents\\Codex\\2026-08-31\\referenced-chatgpt-conversation-this-is-an-4\\.local-tools\\godot-4.7.2\\Godot_v4.7.2-stable_win64.exe",
+  "requestedIterations": 1,
+  "rendered": true,
+  "status": "mechanical-checks-passed-visual-review-required",
+  "visualAdmission": "pending-human-review",
+  "vramBytes": null,
+  "memoryMetric": "sampled process working set bytes, not VRAM or guaranteed peak",
+  "stages": [
+    {
+      "name": "wardrobe",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 0.17,
+      "sampledWorkingSetBytes": 0,
+      "assertionsPassed": 41,
+      "engineErrorLines": [],
+      "log": "wardrobe.log"
+    },
+    {
+      "name": "textiles",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 0.156,
+      "sampledWorkingSetBytes": 0,
+      "assertionsPassed": 14,
+      "engineErrorLines": [],
+      "log": "textiles.log"
+    },
+    {
+      "name": "sewing",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 0.249,
+      "sampledWorkingSetBytes": 93995008,
+      "assertionsPassed": 31,
+      "engineErrorLines": [],
+      "log": "sewing.log"
+    },
+    {
+      "name": "build-1",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 35.506,
+      "sampledWorkingSetBytes": 419414016,
+      "assertionsPassed": 0,
+      "engineErrorLines": [],
+      "log": "build-1.log"
+    },
+    {
+      "name": "female-1",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 13.885,
+      "sampledWorkingSetBytes": 926601216,
+      "assertionsPassed": 278,
+      "engineErrorLines": [],
+      "log": "female-1.log"
+    },
+    {
+      "name": "female-packed-1",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 1.037,
+      "sampledWorkingSetBytes": 321372160,
+      "assertionsPassed": 41,
+      "engineErrorLines": [],
+      "log": "female-packed-1.log"
+    },
+    {
+      "name": "female-portable-1",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 1.069,
+      "sampledWorkingSetBytes": 304816128,
+      "assertionsPassed": 26,
+      "engineErrorLines": [],
+      "log": "female-portable-1.log"
+    },
+    {
+      "name": "male-1",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 12.018,
+      "sampledWorkingSetBytes": 904261632,
+      "assertionsPassed": 278,
+      "engineErrorLines": [],
+      "log": "male-1.log"
+    },
+    {
+      "name": "male-packed-1",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 0.898,
+      "sampledWorkingSetBytes": 240418816,
+      "assertionsPassed": 41,
+      "engineErrorLines": [],
+      "log": "male-packed-1.log"
+    },
+    {
+      "name": "male-portable-1",
+      "passed": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 1.05,
+      "sampledWorkingSetBytes": 304652288,
+      "assertionsPassed": 26,
+      "engineErrorLines": [],
+      "log": "male-portable-1.log"
+    }
+  ],
+  "results": [
+    {
+      "iteration": 1,
+      "buildReceipt": "iteration-1/build-receipt.json",
+      "sourceHashes": {
+        "male": "775671e63a5afb67d25f5933a49699cf4f4af1b04f9f5af47fee93550311d08f",
+        "female": "7bd71f01bfb16d606d38c4a138dc22cb7e96d28d0ad78a9b854501bfd1b20d2c"
+      }
+    }
+  ]
+}

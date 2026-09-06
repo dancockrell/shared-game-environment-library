@@ -1,0 +1,102 @@
+{
+  "bodyPenetration": null,
+  "maxRelativeEdgeStretch": 1.092751777460107e-06,
+  "maxSeamGapMetres": 0.0,
+  "pattern": {
+    "panels": [
+      {
+        "boundary": [
+          [
+            0,
+            0
+          ],
+          [
+            0.3,
+            0
+          ],
+          [
+            0.3,
+            0.4
+          ],
+          [
+            0,
+            0.4
+          ]
+        ],
+        "id": "left",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "u": [
+          1,
+          0,
+          0
+        ],
+        "v": [
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "boundary": [
+          [
+            0,
+            0
+          ],
+          [
+            0.3,
+            0
+          ],
+          [
+            0.3,
+            0.4
+          ],
+          [
+            0,
+            0.4
+          ]
+        ],
+        "id": "right",
+        "origin": [
+          0.4,
+          0,
+          0
+        ],
+        "u": [
+          1,
+          0,
+          0
+        ],
+        "v": [
+          0,
+          1,
+          0
+        ]
+      }
+    ],
+    "schemaVersion": 1,
+    "stitches": [
+      {
+        "a": [
+          "left",
+          1
+        ],
+        "b": [
+          "right",
+          3
+        ],
+        "reverse": true
+      }
+    ],
+    "units": "metres"
+  },
+  "schemaVersion": 1,
+  "selfIntersections": null,
+  "solverSha256": "988c0fa24025431c1e03a13dce32f6e37ad13b23e2028e59362e3fecb3ba1581",
+  "status": "sewing-coupon-not-garment-art",
+  "triangles": 64,
+  "vertices": 50
+}

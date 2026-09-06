@@ -19,7 +19,7 @@ $runRoot = Join-Path $repoPath ('artifacts/character-iterations/' + $runId)
 [IO.Directory]::CreateDirectory($runRoot) | Out-Null
 $stages = [Collections.Generic.List[object]]::new()
 $inputs = @{}
-foreach ($file in @('prepare-character-model.gd','character-workshop.gd','character-outfit.gd','character-textiles.gd','test-character-workshop.gd','test-character-outfit.gd','test-character-textiles.gd','addons/shared_character_builder/character_package.gd','iterate-character-build.ps1')) {
+foreach ($file in @('prepare-character-model.gd','character-workshop.gd','character-outfit.gd','character-textiles.gd','sewing-pattern.gd','test-sewing-pattern.gd','test-character-workshop.gd','test-character-outfit.gd','test-character-textiles.gd','addons/shared_character_builder/character_package.gd','iterate-character-build.ps1')) {
     $inputs[$file] = (Get-FileHash -LiteralPath (Join-Path $PSScriptRoot $file) -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 $head = (& git -C $repoPath rev-parse HEAD).Trim()
@@ -82,6 +82,7 @@ try {
     Save-Receipt
     Invoke-Stage 'wardrobe' 'test-character-outfit.gd' @() $true
     Invoke-Stage 'textiles' 'test-character-textiles.gd' @() $true
+    Invoke-Stage 'sewing' 'test-sewing-pattern.gd' @((Join-Path $runRoot 'sewing-coupon')) $true
     for ($iteration=1; $iteration -le $Iterations; $iteration++) {
         $directory = Join-Path $runRoot ('iteration-'+$iteration)
         [IO.Directory]::CreateDirectory($directory) | Out-Null

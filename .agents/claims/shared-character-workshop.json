@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Build shared creature/character construction; current checkpoint adds a rendered iteration runner and September 2026 methods review with explicit implementation boundaries",
+  "summary": "Build shared creature/character construction; current checkpoint adds explicit sewing panels, measured XPBD seam relaxation and metric-UV mesh output to the iteration loop; finished garments and art remain incomplete",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
   "updated_at": "2026-09-06T08:21:00Z",
@@ -26,6 +26,8 @@
     "tools/character-textiles.gd",
     "tools/test-character-textiles.gd",
     "tools/iterate-character-build.ps1",
+    "tools/sewing-pattern.gd",
+    "tools/test-sewing-pattern.gd",
     "artifacts/character-iterations/",
     "assets/character-prototypes/makehuman/",
     "assets/character-sources/makehuman-system/",
@@ -41,6 +43,9 @@
   "completion": {
     "commit": null,
     "checks": [
+      "2026-09-06 sewing checkpoint: 31 construction assertions passed, including seam gap, relative edge strain, analytic compliance, metric UVs, malformed input rejection and actual mesh save/reload",
+      "Rendered iteration 20260906T102735318Z-2b00ea38 passed all ten stages and 776 assertions; no engine error lines; character face render inspected and remains source-fixture quality, not target art",
+      "Sewing coupon: two 300 x 400 mm panels, 50 vertices, 64 triangles; 100 mm initial gap closes to reported zero; maximum relative edge error 1.09275178e-6; contact, bending and full cloth dynamics not implemented",
       "2026-09-06 methods review: screened recent primary papers/project sources for PatternGSL, Garment Particles, GarmentX, VBD/AVBD, r-adaptive cloth, UniRig and SkinTokens; no weights downloaded or solver falsely claimed implemented",
       "Corrected iteration run 20260906T092815725Z-91759fee passed 745 assertions across nine stages, 89.693 aggregate stage seconds; largest sampled native-engine working set 866.3 MiB, not VRAM",
       "Initial memory sample identified console launcher instead of engine; runner now resolves the native Godot executable. Do not use first-run launcher numbers as engine memory",
