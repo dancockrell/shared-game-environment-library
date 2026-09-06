@@ -410,7 +410,8 @@ func catalog_specs() -> Array:
 		["timber-doorway-section", "architecture"], ["window-wall-section", "architecture"],
 		["pine-shop-counter", "neutral_prop"], ["wooden-display-bin", "neutral_prop"],
 		["shield-hook-board", "neutral_prop"], ["wooden-park-bench", "neutral_prop"],
-		["gingham-picnic-table", "neutral_prop"]
+		["gingham-picnic-table", "neutral_prop"],
+		["clinker-rowboat", "architecture"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -556,10 +557,57 @@ func interior_module(id: String, g: Node3D) -> void:
 			for y in [0.72,0.92]:
 				block(Vector3(0,y,0.25),Vector3(2.2,0.15,0.065),shade("wood"),g)
 
+func rowboat(pos: Vector3, parent: Node3D = null) -> Node3D:
+	var g := node_group("ClinkerRowboat",pos)
+	if parent != null:
+		g.reparent(parent,false)
+	# Closed thin plank strips follow a pointed curved hull, not a solid block.
+	for side in [-1,1]:
+		for row in 6:
+			for segment in 24:
+				var corners: Array[Vector3] = []
+				for q in [Vector2(row,segment),Vector2(row+1,segment),Vector2(row+1,segment+1),Vector2(row,segment+1)]:
+					var v: float = q.x/6.0
+					var t: float = q.y/24.0
+					var z := (t-0.5)*4.3
+					var width := pow(sin(PI*(0.02+t*0.96)),0.8)*(0.18+0.59*v)
+					corners.append(Vector3(side*width,-0.18+v*0.65+0.24*pow(abs(z/2.15),4),z))
+				var st := SurfaceTool.new()
+				st.begin(Mesh.PRIMITIVE_TRIANGLES)
+				st.set_smooth_group(-1)
+				var vertices := corners.duplicate()
+				for p in corners:
+					vertices.append(p+Vector3(-side*0.045,0.018,0))
+				for face in [[0,1,2,3],[7,6,5,4],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]:
+					for index in ([0,2,1,0,3,2] if side == 1 else [0,1,2,0,2,3]):
+						st.add_vertex(vertices[face[index]])
+				st.generate_normals()
+				piece(st.commit(),Vector3.ZERO,Vector3.ONE,shade("wood"),g)
+				if row == 5:
+					beam(corners[1]+Vector3(0,0.025,0),corners[2]+Vector3(0,0.025,0),0.075,"oak_light",g)
+		for rib in 9:
+			var z := -1.65+rib*0.41
+			var width := pow(sin(PI*(0.02+(z/4.3+0.5)*0.96)),0.8)
+			for row in 5:
+				var v0 := row/5.0
+				var v1 := (row+1)/5.0
+				beam(Vector3(side*width*(0.18+0.54*v0),-0.13+v0*0.65,z),Vector3(side*width*(0.18+0.54*v1),-0.13+v1*0.65,z),0.065,"oak_light",g)
+	for z in [-0.95,0.0,0.95]:
+		block(Vector3(0,0.27,z),Vector3(1.18,0.07,0.27),"wood7",g)
+	for x in [-0.1,0.0,0.1]:
+		block(Vector3(x,-0.11,0),Vector3(0.095,0.05,3.0),"wood4",g)
+	beam(Vector3(-0.7,0.36,-1.5),Vector3(0.9,0.42,1.8),0.045,"oak_light",g)
+	var blade := block(Vector3(0.85,0.4,1.7),Vector3(0.15,0.025,0.6),"wood6",g)
+	blade.rotation.y = 0.45
+	return g
+
 func catalog_model(id: String) -> Node3D:
 	rng.seed = 5012026+id.hash() # Independent of build order and unrelated recipes.
 	var g := node_group(id,Vector3.ZERO)
-	if id in ["plaster-wall-section","stone-wall-section","timber-doorway-section","window-wall-section","pine-shop-counter","wooden-display-bin","shield-hook-board","wooden-park-bench","gingham-picnic-table"]:
+	if id == "clinker-rowboat":
+		rowboat(Vector3.ZERO,g)
+		attachment(g,"mooring",Vector3(0,0.6,-2.0))
+	elif id in ["plaster-wall-section","stone-wall-section","timber-doorway-section","window-wall-section","pine-shop-counter","wooden-display-bin","shield-hook-board","wooden-park-bench","gingham-picnic-table"]:
 		interior_module(id,g)
 	elif id in ["unpainted-armorer-shop","trellised-herbalist","low-brick-bathhouse","old-stone-residence","cruck-cottage","barn-stable","plain-weaponsmith"]:
 		# Complete exteriors. Shared archetypes, not named-game identity:

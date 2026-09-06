@@ -5998,6 +5998,63 @@
 			"statusHook": "consumer-owned",
 			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
 			"triangles": 3808
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.clinker-rowboat",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-0.92779940366745,
+					0.0,
+					-2.17279100418091
+				],
+				"size": [
+					1.85559892654419,
+					0.962477207183838,
+					4.34558200836182
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "clinker-rowboat.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"wood0",
+				"wood10",
+				"wood7",
+				"wood11",
+				"wood9",
+				"wood2",
+				"wood1",
+				"wood5",
+				"wood4",
+				"wood8",
+				"wood3",
+				"wood6",
+				"oak_light"
+			],
+			"meshInstances": 434,
+			"nativeNode": "painted_clinker_rowboat",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "e18a86651e3a84db927daefb7458cf99d1e7689dd76a8cda3e27dfdaf494513c",
+			"sockets": {
+				"mooring": [
+					0.120224170386791,
+					0.780000030994415,
+					2.0
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 7544
 		}
 	],
 	"engine": "4.7.2-stable (official)",

@@ -2,6 +2,26 @@
 
 ## Focused review, not a growing slideshow
 
+Catalog rebuilds now support `--catalog --render-only clinker-rowboat` (a
+comma-separated list is accepted). Geometry and native/GLB integrity checks
+still run for every model; existing front/rear images are reused for unselected
+models, and missing images are rendered. This is an explicitly selected render
+scope, **not automatic change detection**. Include every visually changed model;
+use a full render after shared material, camera, lighting or common-generator
+changes. Do not treat reused images as evidence for newly changed geometry.
+
+The original river-port rowboat construction now lives in `river-port-kit.gd`
+and is called by both the original scene and catalog. `clinker-rowboat` is a
+roughly 4.3 m plank-built boat with ribs, thwarts, oar and a mooring attachment.
+It supplies a reusable hull for the quay batch; dilapidation, mooring placement,
+waterline and exact named-room admission still require scene review. It is not
+a barge, gondola or flood raft substitute. No animation or paid generation.
+The 99-model build passed native bounds/socket/hash inspection, retained all
+98 existing GLB hashes, and reloaded the 94-instance assembly. Front and rear
+rowboat renders were inspected; they retain the earlier scene's segmented wood
+treatment, which still needs close-range polish. An invalid render-selection ID
+was tested and correctly exited with an error before rebuilding the catalog.
+
 Use the existing builder's `--review-catalog <comma-separated-ids>` mode to
 inspect a small named batch from the saved native catalog. For example:
 `godot --path tools --rendering-method forward_plus --script res://build-river-port.gd -- <absolute-repo> --review-catalog pine-shop-counter,wooden-display-bin,shield-hook-board`.

@@ -404,45 +404,8 @@ func dock() -> void:
 	kit.beam(post+Vector3(0,2.65,0)+arm,post+Vector3(0,0.65,0)+arm,0.03,"sand",g)
 
 func rowboat(pos: Vector3) -> void:
-	var g := kit.node_group("Reference_Clinker_Rowboat",pos,-0.225)
-	# Closed thin plank strips follow a pointed curved hull, not a solid block.
-	for side in [-1,1]:
-		for row in 6:
-			for segment in 24:
-				var corners: Array[Vector3] = []
-				for q in [Vector2(row,segment),Vector2(row+1,segment),Vector2(row+1,segment+1),Vector2(row,segment+1)]:
-					var v: float = q.x/6.0
-					var t: float = q.y/24.0
-					var z := (t-0.5)*4.3
-					var width := pow(sin(PI*(0.02+t*0.96)),0.8)*(0.18+0.59*v)
-					corners.append(Vector3(side*width,-0.18+v*0.65+0.24*pow(abs(z/2.15),4),z))
-				var st := SurfaceTool.new()
-				st.begin(Mesh.PRIMITIVE_TRIANGLES)
-				st.set_smooth_group(-1)
-				var vertices := corners.duplicate()
-				for p in corners:
-					vertices.append(p+Vector3(-side*0.045,0.018,0))
-				for face in [[0,1,2,3],[7,6,5,4],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]:
-					for index in ([0,2,1,0,3,2] if side == 1 else [0,1,2,0,2,3]):
-						st.add_vertex(vertices[face[index]])
-				st.generate_normals()
-				kit.piece(st.commit(),Vector3.ZERO,Vector3.ONE,kit.shade("wood"),g)
-				if row == 5:
-					kit.beam(corners[1]+Vector3(0,0.025,0),corners[2]+Vector3(0,0.025,0),0.075,"oak_light",g)
-		for rib in 9:
-			var z := -1.65+rib*0.41
-			var width := pow(sin(PI*(0.02+(z/4.3+0.5)*0.96)),0.8)
-			for row in 5:
-				var v0 := row/5.0
-				var v1 := (row+1)/5.0
-				kit.beam(Vector3(side*width*(0.18+0.54*v0),-0.13+v0*0.65,z),Vector3(side*width*(0.18+0.54*v1),-0.13+v1*0.65,z),0.065,"oak_light",g)
-	for z in [-0.95,0.0,0.95]:
-		kit.block(Vector3(0,0.27,z),Vector3(1.18,0.07,0.27),"wood7",g)
-	for x in [-0.1,0.0,0.1]:
-		kit.block(Vector3(x,-0.11,0),Vector3(0.095,0.05,3.0),"wood4",g)
-	kit.beam(Vector3(-0.7,0.36,-1.5),Vector3(0.9,0.42,1.8),0.045,"oak_light",g)
-	var blade := kit.block(Vector3(0.85,0.4,1.7),Vector3(0.15,0.025,0.6),"wood6",g)
-	blade.rotation.y = 0.45
+	var boat := kit.rowboat(pos)
+	boat.rotation.y = -0.225
 
 func source_model(filename: String, pos: Vector3, scale_value: float, rotation_y: float = 0) -> void:
 	var source := repo.path_join("resource_packs/terrain/tabletop-foundation/artifacts/models/").path_join(filename)
@@ -748,6 +711,9 @@ func build() -> void:
 	if args.size() == 3 and args[1] == "--review-catalog":
 		await review_catalog(args[2].split(",",false))
 		return
+	if args.size() == 4 and args[1] == "--catalog" and args[2] == "--render-only":
+		await build_catalog(args[3].split(",",false))
+		return
 	if args.size() == 2 and args[1] == "--catalog":
 		await build_catalog()
 		return
@@ -1014,7 +980,13 @@ func review_catalog(ids: PackedStringArray) -> void:
 	print("PASS focused review: ",selected.size()," saved assets; no geometry regenerated")
 	quit()
 
-func build_catalog() -> void:
+func build_catalog(render_ids: PackedStringArray = []) -> void:
+	for id in render_ids:
+		if not kit.catalog_specs().any(func(spec): return spec[0] == id):
+			push_error("Unknown catalog render selection: " + id)
+			kit.root.free()
+			quit(1)
+			return
 	# Batch mode of the existing builder, using the same kit/material owner.
 	# Native scene retains shared textures; separate GLBs are geometry-only.
 	var folder := output_dir.path_join("catalog")
@@ -1074,31 +1046,40 @@ func build_catalog() -> void:
 		for child in asset.find_children("*","Node3D",true,false):
 			if child.has_meta("presentation_only"):
 				sockets[str(child.name)] = vector_array(asset.to_local(child.global_position))
-		var aim := bounds.get_center()
-		camera.position = aim+Vector3(12,10,-16)
-		camera.look_at(aim)
-		# Frame actual projected corners, not a width-only heuristic.
-		var projected := AABB()
-		for corner in 8:
-			var p: Vector3 = camera.global_transform.affine_inverse()*bounds.get_endpoint(corner)
-			projected = AABB(p,Vector3.ZERO) if corner == 0 else projected.expand(p)
-		camera.size = maxf(projected.size.y,projected.size.x/ (640.0/520.0))*1.22
-		for frame in 12:
-			await process_frame
-		RenderingServer.force_draw(false)
-		var front := root.get_texture().get_image()
-		front.convert(Image.FORMAT_RGBA8)
-		assert(front.save_png(folder.path_join(id+".png")) == OK)
-		sheet.blit_rect(front,Rect2i(0,0,640,520),Vector2i((index%4)*640,(index/4)*560))
-		camera.position = aim+Vector3(-12,10,16)
-		camera.look_at(aim)
-		for frame in 8:
-			await process_frame
-		RenderingServer.force_draw(false)
-		var rear := root.get_texture().get_image()
-		rear.convert(Image.FORMAT_RGBA8)
-		assert(rear.save_png(folder.path_join(id+"-rear.png")) == OK)
-		rear_sheet.blit_rect(rear,Rect2i(0,0,640,520),Vector2i((index%4)*640,(index/4)*560))
+		var cached := FileAccess.file_exists(folder.path_join(id+".png")) and FileAccess.file_exists(folder.path_join(id+"-rear.png"))
+		if render_ids.is_empty() or id in render_ids or not cached:
+			var aim := bounds.get_center()
+			camera.position = aim+Vector3(12,10,-16)
+			camera.look_at(aim)
+			# Frame actual projected corners, not a width-only heuristic.
+			var projected := AABB()
+			for corner in 8:
+				var p: Vector3 = camera.global_transform.affine_inverse()*bounds.get_endpoint(corner)
+				projected = AABB(p,Vector3.ZERO) if corner == 0 else projected.expand(p)
+			camera.size = maxf(projected.size.y,projected.size.x/ (640.0/520.0))*1.22
+			for frame in 12:
+				await process_frame
+			RenderingServer.force_draw(false)
+			var front := root.get_texture().get_image()
+			front.convert(Image.FORMAT_RGBA8)
+			assert(front.save_png(folder.path_join(id+".png")) == OK)
+			sheet.blit_rect(front,Rect2i(0,0,640,520),Vector2i((index%4)*640,(index/4)*560))
+			camera.position = aim+Vector3(-12,10,16)
+			camera.look_at(aim)
+			for frame in 8:
+				await process_frame
+			RenderingServer.force_draw(false)
+			var rear := root.get_texture().get_image()
+			rear.convert(Image.FORMAT_RGBA8)
+			assert(rear.save_png(folder.path_join(id+"-rear.png")) == OK)
+			rear_sheet.blit_rect(rear,Rect2i(0,0,640,520),Vector2i((index%4)*640,(index/4)*560))
+		else:
+			var front := Image.load_from_file(folder.path_join(id+".png"))
+			var rear := Image.load_from_file(folder.path_join(id+"-rear.png"))
+			front.convert(Image.FORMAT_RGBA8)
+			rear.convert(Image.FORMAT_RGBA8)
+			sheet.blit_rect(front,Rect2i(0,0,640,520),Vector2i((index%4)*640,(index/4)*560))
+			rear_sheet.blit_rect(rear,Rect2i(0,0,640,520),Vector2i((index%4)*640,(index/4)*560))
 		# Preserve shared surface inputs in one native catalog, not 24 embedded
 		# copies of identical textures. Standalone GLBs retain all geometry.
 		var retained: Dictionary = {}
