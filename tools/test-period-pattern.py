@@ -352,10 +352,22 @@ class ActualPatternTests(unittest.TestCase):
         self.assertTrue(np.all(pairs[:,0]!=pairs[:,1]))
         supports = fitter.dressing_supports(data,body,offsets,placed)
         has_skirt = any("skirt" in name for name in data["panels"])
-        self.assertEqual(len(supports),24 if has_skirt else 16)
+        sleeve_supports = {i:s for i,s in supports.items() if s["kind"] == "sleeve-surface-route"}
+        self.assertEqual(len(supports)-len(sleeve_supports),24 if has_skirt else 16)
+        if has_skirt:
+            self.assertGreater(len(sleeve_supports),0)
+        for index,support in sleeve_supports.items():
+            path = np.asarray(support["pathXYZ"])
+            self.assertEqual(path.shape,(33,3))
+            self.assertTrue(np.isfinite(path).all())
+            np.testing.assert_allclose(path[0],placed[index],atol=1e-12)
+            np.testing.assert_allclose(path[-1],support["targetXYZ"],atol=1e-12)
+            self.assertLess(support["routeLengthMetres"],.7)
         self.assertEqual(sum(s["kind"]=="shoulder" for s in supports.values()),8)
         self.assertEqual(sum(s["kind"]=="torso-side" for s in supports.values()),8)
         for support in supports.values():
+            if support["kind"] == "sleeve-surface-route":
+                continue
             weights = np.asarray(support["barycentric"])
             triangle = np.asarray(body["vertices"])[body["triangles"][support["bodyTriangle"]]]
             surface = weights @ triangle

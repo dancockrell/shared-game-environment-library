@@ -158,6 +158,51 @@ def dressing_supports(data, body, offsets, placed):
         pairs.sort(key=lambda pair: placed[list(pair),1].mean())
         for pair in (pairs[0],pairs[len(pairs)//2]):
             attach(pair,"skirt-side",.2)
+    # Sleeve sewing needs a route around the limb, not a spring through it.
+    # Shortest paths follow source-body edges: a discrete surface approximation,
+    # not exact continuous geodesics. Guides are released with all other pins.
+    if any("sleeve" in name for name in data["panels"]):
+        from scipy.sparse import csr_matrix
+        from scipy.sparse.csgraph import dijkstra
+        from scipy.spatial import cKDTree
+        route_surface = trimesh.Trimesh(vertices,triangles,process=True)
+        route_vertices = np.asarray(route_surface.vertices)
+        route_normals = np.asarray(route_surface.vertex_normals)
+        edges = route_surface.edges_unique
+        lengths = np.linalg.norm(route_vertices[edges[:,0]]-route_vertices[edges[:,1]],axis=1)
+        graph = csr_matrix((np.tile(lengths,2),(np.concatenate([edges[:,0],edges[:,1]]),np.concatenate([edges[:,1],edges[:,0]]))),shape=(len(route_vertices),len(route_vertices)))
+        tree = cKDTree(route_vertices)
+        for seam in data["stitches"]:
+            if not all("sleeve" in n for n in seam["panels"]):
+                continue
+            seam_pairs = np.asarray(seam["vertexPairs"])+np.asarray([offsets[n] for n in seam["panels"]])
+            heights = placed[seam_pairs,1].mean(axis=1)
+            cuff_limit = heights.min()+.25*np.ptp(heights)
+            for local_a,local_b in seam["vertexPairs"]:
+                pair = sorted([offsets[seam["panels"][0]]+local_a,offsets[seam["panels"][1]]+local_b])
+                if placed[pair,1].mean() > cuff_limit:
+                    continue
+                _,ids = tree.query(placed[pair])
+                distances,predecessors = dijkstra(graph,indices=int(ids[0]),return_predecessors=True,limit=.6)
+                if not np.isfinite(distances[ids[1]]):
+                    raise ValueError("Sleeve seam has no local surface route")
+                route = [int(ids[1])]
+                while route[-1] != ids[0]:
+                    route.append(int(predecessors[route[-1]]))
+                route.reverse()
+                xyz = route_vertices[route]+.003*route_normals[route]
+                cumulative = np.r_[0,np.cumsum(np.linalg.norm(np.diff(xyz,axis=0),axis=1))]
+                half = cumulative[-1]/2
+                target = np.array([np.interp(half,cumulative,xyz[:,axis]) for axis in range(3)])
+                for endpoint,index in enumerate(pair):
+                    start_distance = 0 if endpoint == 0 else cumulative[-1]
+                    samples = np.linspace(start_distance,half,25)
+                    surface_path = np.column_stack([np.interp(samples,cumulative,xyz[:,axis]) for axis in range(3)])
+                    approach = np.linspace(placed[index],surface_path[0],9)
+                    path = np.concatenate([approach[:-1],surface_path])
+                    supports[index] = {"kind":"sleeve-surface-route","targetXYZ":target.tolist(),
+                        "pathXYZ":path.tolist(),"bodyRouteVertexIndices":route,
+                        "routeLengthMetres":float(cumulative[-1])}
     return supports
 
 
@@ -277,12 +322,16 @@ def solve(args):
         contacts, control = pipeline.contacts(), model.control()
         @wp.kernel
         def advance_supports(q:wp.array(dtype=wp.vec3), qd:wp.array(dtype=wp.vec3), ids:wp.array(dtype=wp.int32),
-                             starts:wp.array(dtype=wp.vec3), ends:wp.array(dtype=wp.vec3), step:wp.array(dtype=wp.int32)):
+                             paths:wp.array(dtype=wp.vec3), step:wp.array(dtype=wp.int32)):
             i = wp.tid()
             if step[0]<900:
-                t = float(step[0]+1)/900.0
-                q[ids[i]] = starts[i]*(1.0-t)+ends[i]*t
-                qd[ids[i]] = (ends[i]-starts[i])/1.5
+                t = float(step[0]+1)/900.0*32.0
+                segment = wp.min(int(t),31)
+                blend = t-float(segment)
+                a = paths[i*33+segment]
+                b = paths[i*33+segment+1]
+                q[ids[i]] = a*(1.0-blend)+b*blend
+                qd[ids[i]] = (b-a)*(32.0/1.5)
         @wp.kernel
         def advance_seams(lengths:wp.array(dtype=float), starts:wp.array(dtype=float), step:wp.array(dtype=wp.int32)):
             i = wp.tid()
@@ -291,14 +340,14 @@ def solve(args):
         def increment_step(step:wp.array(dtype=wp.int32)):
             step[0] = step[0]+1
         pin_ids = wp.array(list(supports),dtype=wp.int32)
-        pin_starts = wp.array(placed[list(supports)].astype(np.float32),dtype=wp.vec3)
-        pin_ends = wp.array([support["targetXYZ"] for support in supports.values()],dtype=wp.vec3)
+        pin_paths = wp.array(np.concatenate([support.get("pathXYZ",np.linspace(placed[index],support["targetXYZ"],33))
+                             for index,support in supports.items()]).astype(np.float32),dtype=wp.vec3)
         start_lengths = wp.array(initial_lengths,dtype=float)
         step_index = wp.zeros(1,dtype=wp.int32)
         def frame():
             nonlocal state0, state1
             for _ in range(10):
-                wp.launch(advance_supports,dim=len(supports),inputs=[state0.particle_q,state0.particle_qd,pin_ids,pin_starts,pin_ends,step_index])
+                wp.launch(advance_supports,dim=len(supports),inputs=[state0.particle_q,state0.particle_qd,pin_ids,pin_paths,step_index])
                 wp.launch(advance_seams,dim=len(pairs),inputs=[model.spring_rest_length,start_lengths,step_index])
                 state0.clear_forces()
                 pipeline.collide(state0, contacts)
@@ -383,7 +432,7 @@ def solve(args):
             "parameters":{"density":.25,"triKe":1000,"triKa":1000,"triKd":1,"bendKe":.001,
                           "seamKe":5000,"seamKd":1,"bodyContactKe":50000,"particleRadiusMetres":.002},
             "history":history, "elapsedSeconds":time.perf_counter()-start,
-            "versions": {name:importlib.metadata.version(name) for name in ("newton","warp-lang","numpy","trimesh")}}
+            "versions": {name:importlib.metadata.version(name) for name in ("newton","warp-lang","numpy","trimesh","scipy")}}
         (args.output/"fit.json").write_text(json.dumps(result, allow_nan=False))
         print(f"Saved {args.output / 'fit.json'}", flush=True)
 
