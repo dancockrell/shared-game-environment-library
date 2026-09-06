@@ -1028,7 +1028,8 @@ UV packing is not formally overlap-certified.
 
 The bounded exporter accepts a 128 MiB authoring file, one opaque Principled
 material per mesh, at most 100,000 vertices per mesh, 500,000 unique vertices
-per assembly, 32 unique meshes and 1,000 instances. It bakes 512-square base color,
+per assembly, 32 unique meshes and 1,000 instances. It bakes budget-planned
+128/256/512-square base color,
 roughness and tangent-space normal textures on CPU/two threads. Emission
 rerouting extracts unlit color/roughness; normal baking retains the authored
 bump response. Transparent/transmissive inputs are rejected. It exports embedded
@@ -1202,6 +1203,44 @@ tests pass; Python syntax check passes. These checks do not certify arbitrary
 nonuniform/negative-scale source graphs, quantitative image parity or engine
 appearance. Hidden CPU/two-thread runs use the existing resource watchdog;
 no VRAM certification, Godot restart, paid generation, push or Actions run.
+
+#### Surface-area texture budget (supersedes uniform 512 allocation)
+
+`texture_budget.py` is the deterministic allocation owner used by the existing
+baker. It selects 128/256/512-square textures from the maximum transformed
+triangle surface area of each shared mesh's placements. Repeated instances
+do not multiply texture allocation. World triangle area is measured directly,
+without assuming uniform scale. The planner defaults to 1024 texels/metre and
+a heuristic 2x area allowance for UV packing; actual occupancy is not measured.
+
+The default 32 MiB assembly budget counts three uncompressed RGBA8 maps per
+mesh with full mip chains. If needed, the planner halves the most overprovided
+current density first, using stable name tie-breaking. It rejects budgets
+that cannot fit minimum sizes, invalid areas, non-finite values and oversized
+requests. Function-level budget/density parameters are available; there is no
+new UI/CLI override yet. This is not a whole-scene VRAM cap: geometry, render
+targets, driver/engine allocations and source-side Blender images are excluded.
+Meshes hitting 512 are density-capped; camera coverage and hero-asset needs
+are not inferred. Source triangle tessellation is unchanged.
+
+On the exact preceding directional-tint reference, `baked-budget-001` and
+`baked-budget-002` produced byte-identical GLBs (SHA-256
+`3db33fb8809fa2035f42e1ce36ef32d76aa096bb4091159af39bfb94f230f6c9`).
+Crust/filling/plate retain 512 maps, six lattice meshes receive 256, and
+fruit/crimp receive 128. Estimated texture residency drops from 46,137,300
+to 19,398,612 bytes; GLB size from 5,282,872 to 4,044,380 bytes. Reimported
+image dimensions are checked against the plan, alongside existing complete
+geometry, placements, material/profile and mesh reuse checks.
+Final run: 12.12 seconds, sampled process RAM 647,487,488 bytes, hidden
+BelowNormal CPU/two threads with existing watchdog. Not a controlled speed
+benchmark or measured VRAM result.
+
+Five planner tests, ten profile tests, eight binary geometry tests and syntax
+checks passed. Reimported 640x512 assembly image inspected with unchanged
+camera/materials/lighting: no obvious degradation at that framing, but extreme
+close-up parity and smaller-mip seam behavior are not certified. Food art is
+still unapproved. The game-art pipeline comparison kept allocation as the only
+visual variable. No paid generation, Godot restart, remote push or Actions run.
 
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.

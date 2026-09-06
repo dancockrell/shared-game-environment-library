@@ -16,6 +16,7 @@ from mathutils import Vector
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import glb_geometry
+import texture_budget
 
 
 def world_bounds(obj):
@@ -23,7 +24,7 @@ def world_bounds(obj):
     return [[f(p[i] for p in points) for i in range(3)] for f in (min, max)]
 
 
-def bake_mesh(obj, destination):
+def bake_mesh(obj, destination, texture_size):
     """Mutate only this shared mesh's export UV/material, once per assembly."""
     destination.mkdir(exist_ok=False)
     scene = bpy.context.scene
@@ -74,7 +75,7 @@ def bake_mesh(obj, destination):
     emission = nodes.new("ShaderNodeEmission")
     images = {}
     for channel, socket in [("base_color", "Base Color"), ("roughness", "Roughness"), ("normal", None)]:
-        image = bpy.data.images.new(mesh_name + "_" + channel, 512, 512, alpha=False)
+        image = bpy.data.images.new(mesh_name + "_" + channel, texture_size, texture_size, alpha=False)
         image.colorspace_settings.name = "sRGB" if channel == "base_color" else "Non-Color"
         image.filepath_raw = str(destination / (channel + ".png"))
         image.file_format = "PNG"
@@ -151,9 +152,18 @@ def main():
         raise ValueError("Export requires 1..1000 instances and at most 32 unique meshes")
     if sum(len(o.data.vertices) for o in unique.values()) > 500000:
         raise ValueError("Assembly exceeds 500000 unique vertices")
-    # 3 RGBA8 512 maps and complete mip chains, conservative uncompressed
-    # estimate only: not measured VRAM and excludes engine render targets.
-    texture_bytes = len(unique) * 3 * sum(4 * (512 >> i) ** 2 for i in range(10))
+    # Measure transformed triangle area; repeated placements contribute their
+    # maximum, never their sum. Handles nonuniform scale without assuming s^2.
+    areas = {}
+    for obj in candidates:
+        obj.data.calc_loop_triangles()
+        basis = obj.matrix_world.to_3x3()
+        area = 0.0
+        for triangle in obj.data.loop_triangles:
+            a, b, c = [obj.data.vertices[i].co for i in triangle.vertices]
+            area += (basis @ (b - a)).cross(basis @ (c - a)).length * 0.5
+        areas[obj.data.name] = max(areas.get(obj.data.name, 0), area)
+    texture_plan = texture_budget.plan(areas)
     snapshots = {}
     for index, obj in enumerate(candidates):
         obj["scene_forge_export_id"] = index
@@ -171,7 +181,7 @@ def main():
         obj.matrix_world = transform
     baked = {}
     for index, (name, obj) in enumerate(sorted(unique.items())):
-        baked[name] = bake_mesh(obj, destination / ("mesh-%03d" % index))
+        baked[name] = bake_mesh(obj, destination / ("mesh-%03d" % index), texture_plan["sizes"][name])
         print("SCENE_FORGE_MESH_BAKED", name, index + 1, len(unique), flush=True)
     bpy.ops.object.select_all(action="DESELECT")
     for obj in candidates:
@@ -220,6 +230,10 @@ def main():
     for obj in imported:
         expected = snapshots[obj["scene_forge_export_id"]]
         assert obj["scene_forge_source_mesh"] == expected["mesh"]
+        image_nodes = [n for n in obj.data.materials[0].node_tree.nodes if n.type == "TEX_IMAGE"]
+        assert len(image_nodes) >= 3
+        planned_size = texture_plan["sizes"][expected["mesh"]]
+        assert all(tuple(n.image.size) == (planned_size, planned_size) for n in image_nodes)
         obj.data.calc_loop_triangles()
         assert len(obj.data.loop_triangles) == len(baked[expected["mesh"]]["triangles"])
         bounds = world_bounds(obj)
@@ -263,12 +277,12 @@ def main():
     receipt = {"source_sha256": source_hash,
                "glb_sha256": hashlib.sha256(raw).hexdigest(), "selection": selection,
                "unique_meshes": len(unique), "instances": len(snapshots),
-               "texture_size": 512, "texture_mip_bytes_estimate": texture_bytes,
+               "texture_plan": texture_plan,
                "unique_triangles": sum(len(v["triangles"]) for v in baked.values()), "bytes": len(raw),
                "world_bounds": restored_bounds,
                "geometry_audit": geometry_receipt,
                "device": "CPU", "threads": 2, "native_reimport": "passed",
-               "limitations": ["fixed 512 texture size per unique mesh", "subsurface and independent coat IOR omitted", "engine parity not tested",
+               "limitations": ["area-based texture planning, not camera/UV-occupancy optimization", "subsurface and independent coat IOR omitted", "engine parity not tested",
                                "UV packing not formally overlap-certified"]}
     (destination / "receipt.json").write_text(json.dumps(receipt, indent=2), encoding="utf8")
     print("SCENE_FORGE_BAKED_ASSET_PASS", json.dumps(receipt))
