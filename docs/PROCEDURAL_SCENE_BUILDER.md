@@ -658,6 +658,64 @@ engine render, not a generated concept image standing in for implemented work.
 
 ### What is actually implemented
 
+#### Curved construction checkpoint: teapot candidate, not admitted art
+
+The Rust core now implements cubic `sweep` and `lathe_spline` shapes. Both use
+one adaptive cubic sampler; the spline lathe delegates tessellation to the
+existing lathe implementation. This is not Catmull-Clark subdivision. Sweeps use
+double-reflection frames, variable circular radii, corrected taper normals,
+continuous longitudinal UVs and optional inner walls with annular end faces.
+All generation is CPU-side and dependency-free beyond the existing Rust stack.
+
+Sweep authoring format:
+
+```json
+{"kind":"sweep","sweep":{
+  "spans":[[[0,0,0,0.01],[0,0.03,0,0.01],[0.02,0.06,0,0.008],[0.04,0.07,0,0.006]]],
+  "sides":48,"tolerance":0.00005,"wall_thickness":0.001
+}}
+```
+
+Each control point is `[x,y,z,radius]` in metres. Connected spans must match
+position/radius and tangent/radius slope. `lathe_spline` takes a `profile` array
+of cubic spans with `[radius,height]` controls, plus `segments` and `tolerance`.
+Ordinary lathe meridians may now return downward to construct inner walls;
+crossings and nonadjacent contacts are rejected. Ordered profiles determine
+winding. Existing ascending profiles remain compatible.
+
+The tolerance bounds control-hull deviation from each accepted 4D chord
+(position plus radius), not complete mesh, shading, or screen-space error.
+Angular checks and a positive derivative-projection test reject hidden cusps.
+Sampling is capped at 12 subdivision levels, 64 spans, 8192 sweep samples or
+512 lathe samples, additionally constrained by the vertex budget. Caps fail
+explicitly. A local curvature/radius check rejects sampled folding; **global
+sweep self-intersection, complete solid validity and exact junction booleans
+are not certified**. Rim UVs remain simple diagnostic islands.
+
+`procedural/examples/teapot.json` is the first authored construction candidate:
+seven named parts, hollow body, fitted lid, finial, swept handle and hollow
+spout, foot and lid trim. It is not a separate mesh generator. Current remaining
+defects include the uncut body beneath the spout, unblended attachments, plain
+glossy finish, lack of designed ornament and unfinished rim treatment. No
+functional-pouring or high-end-art claim is made. This checkpoint does not pass
+the teapot gate, so cake/pie and ballerina work have not started.
+
+The actual native render below is retained as a construction baseline. The
+reviewer found its smooth silhouette useful but finish and attachment quality
+insufficient. The Godot diagnostic camera now frames sub-metre objects and
+accepts optional azimuth/elevation degrees after the output PNG argument for
+repeatable multi-angle inspection using the same import/validation path.
+
+Validation receipt: `procedural/generated/reviews/20260906-111412-397cea53ad9e4cdeb2fad4cb32590e0b/report.json`
+(local generated evidence): 34 Rust tests, strict clippy, release build and 41
+stages across nine fixtures passed, including deterministic output and native
+Godot package reload. Additional 0/180-degree views passed the same import
+checks and were visually inspected. Tightened depth range reduced some opening
+artifacts but did not establish final shading quality. Unity execution and
+actual GPU memory measurements remain outstanding.
+
+![Rust-generated teapot construction baseline in Godot; not finished art](verification/scene-forge-teapot.png)
+
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
 groups/repetition; exact rectangular aperture subdivision; strict geometry and
 allocation limits; portable mesh/instance representation; native engine adapters;

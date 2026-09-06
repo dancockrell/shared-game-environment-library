@@ -117,7 +117,17 @@ func _run() -> void:
 		for child in scene.get_children():
 			total_bounds = total_bounds.merge(child.multimesh.custom_aabb)
 		var center := total_bounds.get_center()
-		camera.position = center + Vector3(1, 1, 1).normalized() * maxf(10.0, total_bounds.size.length() * 2.0)
+		var direction := Vector3(1, 1, 1).normalized()
+		# Optional inspection angles, in degrees; geometry/import validation is
+		# identical for every view. Use front/side/rear without a second renderer.
+		if OS.get_cmdline_user_args().size() > 3:
+			assert(OS.get_cmdline_user_args()[2].is_valid_float())
+			assert(OS.get_cmdline_user_args()[3].is_valid_float())
+			var azimuth := deg_to_rad(float(OS.get_cmdline_user_args()[2]))
+			var elevation := deg_to_rad(float(OS.get_cmdline_user_args()[3]))
+			assert(is_finite(azimuth) and is_finite(elevation) and absf(elevation) < PI/2)
+			direction = Vector3(sin(azimuth)*cos(elevation), sin(elevation), cos(azimuth)*cos(elevation))
+		camera.position = center + direction * maxf(10.0, total_bounds.size.length() * 2.0)
 		camera.look_at(center)
 		var half_width := 0.0
 		var half_height := 0.0
@@ -125,8 +135,12 @@ func _run() -> void:
 			var relative := total_bounds.get_endpoint(corner) - center
 			half_width = maxf(half_width, absf(relative.dot(camera.basis.x)))
 			half_height = maxf(half_height, absf(relative.dot(camera.basis.y)))
-		camera.size = maxf(1.0, maxf(half_height * 2.0, half_width * 2.0 / (1280.0 / 800.0)) * 1.2)
-		camera.far = maxf(100.0, total_bounds.size.length() * 4.0)
+		camera.size = maxf(0.01, maxf(half_height * 2.0, half_width * 2.0 / (1280.0 / 800.0)) * 1.2)
+		# A fixed 100 m depth volume wastes precision on a 25 cm hero prop.
+		var distance_to_center := camera.position.distance_to(center)
+		var depth_margin := maxf(0.01, total_bounds.size.length() * 1.2)
+		camera.near = maxf(0.001, distance_to_center - depth_margin)
+		camera.far = distance_to_center + depth_margin
 		camera.current = true
 		var sun := DirectionalLight3D.new()
 		sun.rotation_degrees = Vector3(-45, -35, 0)

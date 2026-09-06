@@ -5,8 +5,10 @@ mod arch;
 mod paint;
 mod room;
 mod rounded_box;
+mod sweep;
 pub use paint::Paint;
 pub use room::{Opening, Room, Wall};
+pub use sweep::Sweep;
 pub type V3 = [f32; 3];
 type Result<T> = std::result::Result<T, String>;
 #[derive(Clone, Deserialize, Serialize)]
@@ -46,6 +48,14 @@ impl Default for MaterialSettings {
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Shape {
+    LatheSpline {
+        profile: Vec<[[f32; 2]; 4]>,
+        tolerance: f32,
+        segments: u32,
+    },
+    Sweep {
+        sweep: Sweep,
+    },
     Arch {
         width: f32,
         rise: f32,
@@ -316,6 +326,28 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         paint_texture: None,
     };
     match &d.shape {
+        Shape::LatheSpline {
+            profile,
+            tolerance,
+            segments,
+        } => {
+            let sampled = sweep::sample_profile(profile, *tolerance)?;
+            return mesh(
+                name,
+                &Definition {
+                    shape: Shape::Lathe {
+                        profile: sampled,
+                        segments: *segments,
+                        smooth: true,
+                        crease_angle: 45.,
+                    },
+                    color: d.color,
+                    material: d.material,
+                },
+                max_vertices,
+            );
+        }
+        Shape::Sweep { sweep } => sweep.build(&mut m, max_vertices)?,
         Shape::Arch {
             width,
             rise,
@@ -446,9 +478,9 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                     return Err("Negative radius".into());
                 }
             }
-            if profile.windows(2).any(|p| p[1][1] < p[0][1]) {
-                return Err("Lathe profile must ascend in height".into());
-            }
+            // A returned inner profile is required for hollow vessels. The
+            // ordered meridian determines winding, including inner surfaces.
+            sweep::validate_meridian(profile)?;
             let lengths: Vec<f64> = profile
                 .windows(2)
                 .map(|pair| {

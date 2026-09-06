@@ -5,7 +5,7 @@
   "summary": "Tool-only priority: paper-grounded high-end stylized construction; sequential teapot, cake/pie and coordinated ballerina quality gates; room expansion paused",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-06T11:00:00Z",
+  "updated_at": "2026-09-06T11:16:00Z",
   "paths": [
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",
@@ -15,6 +15,7 @@
     "docs/verification/scene-forge-check-report.json",
     "docs/verification/scene-forge-arches.png",
     "docs/verification/scene-forge-painted-surfaces.png",
+    "docs/verification/scene-forge-teapot.png",
     "README.md",
     "tools/build-river-port.gd",
     "tools/river-port-kit.gd",
@@ -29,6 +30,9 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Cubic sweep and hollow spline vessel checkpoint: 34 Rust tests, strict clippy, release, 41-stage nine-fixture real Godot run passed; report 20260906-111412-397cea53ad9e4cdeb2fad4cb32590e0b",
+      "Teapot default/front/rear renders inspected; depth range tightened, but blunt intersections and glossy plain finish remain rejected for art admission; spout/body opening and global sweep self-intersection certification remain unimplemented",
+      "Real package reload preserved seven teapot meshes/materials; approximate 12 MB geometry estimate is not measured VRAM; Unity execution not_run",
       "Procedural painted underlayer: 27 Rust tests and 37-stage eight-fixture run passed; texture/mipmap/palette disk persistence checked; actual surface render inspected and blotchy high-strength variant not admitted as finished art",
       "Elliptical arch operator: 25 Rust tests and 33-stage seven-fixture graphics-backed run passed; circular/shallow/tall actual render inspected; finish and column transition remain construction quality",
       "Single-command Scene Forge check run passed twice: 29 stages, six deterministic fixtures, six real renders and package reloads, dummy export refusal; source-hash stability gate passed; artistic approval remains pending",
