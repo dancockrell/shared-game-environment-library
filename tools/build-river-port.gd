@@ -1049,6 +1049,8 @@ func build_catalog() -> void:
 			material.normal_enabled = retained[key][2]
 		entries.append({"assetId":"painted-river-port."+id,"domain":specs[index][1],"assetKind":"model","nativeNode":str(asset.name),"geometryGlb":id+".glb","sha256":FileAccess.get_sha256(file),"scaleMeters":1,"forwardAxis":"-Z","pivotPolicy":"bottom-center of measured visual envelope","bounds":{"min":vector_array(bounds.position),"size":vector_array(bounds.size)},"sockets":sockets,"meshInstances":meshes.size(),"triangles":triangles,"materialSlots":materials,"collisionPolicy":"not supplied; visual envelope is not navigation","lodPolicy":"full authored geometry; no decimation","thumbnailPolicy":"fixed three-quarter front and rear; fitted to measured bounds","selectionHook":"assetId","statusHook":"consumer-owned","provenanceId":"local-river-port-kit","licenseStatus":"project-authored geometry; material source licenses listed separately","admissionStatus":"candidate","reviewStatus":"needs visual polish and consumer semantic review"})
 		entries[-1]["buildingStandard"] = "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate"
+		if index < 8:
+			entries[-1]["reviewStatus"] = "building visual treatment accepted by user 2026-09-06; consumer integration pending"
 		asset.visible = false
 		print("PASS ",id,": ",meshes.size()," meshes; ",triangles," triangles; GLB bounds/mesh roundtrip")
 	# Store all assets at local origin, hidden by default; consumers instantiate
@@ -1103,6 +1105,10 @@ func inspect_catalog() -> void:
 			var corridor := AABB(Vector3(-1.0,0.05,-1.45),Vector3(2.0,2.35,2.9))
 			for mesh in collect_meshes(model):
 				assert(not corridor.intersects(model.global_transform.affine_inverse()*mesh.global_transform*mesh.mesh.get_aabb()),"Gate passage obstructed")
+		if entry.assetId.ends_with("timber-footbridge"):
+			var corridor := AABB(Vector3(-1,0.75,-2.3),Vector3(2,0.8,4.6))
+			for mesh in collect_meshes(model):
+				assert(not corridor.intersects(model.global_transform.affine_inverse()*mesh.global_transform*mesh.mesh.get_aabb()),"Footbridge railing intrudes into corridor")
 		print("PASS independent native bounds, sockets and GLB hash: ",entry.assetId)
 	loaded.free()
 	quit()

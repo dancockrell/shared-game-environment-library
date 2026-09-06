@@ -12,9 +12,11 @@ These are actual Godot captures of constructed 3D geometry, not generated concep
 
 ### Reusable supply batch — 6 September 2026
 
-The existing kit now builds **24 independent model candidates**, not one
+The existing kit now builds **40 independent model candidates**, not one
 monolithic scene. This is a first Crossing supply batch, not the complete
-Crossing, not 24 canonically placed landmarks, and not final art approval.
+Crossing and not a set of canonically placed landmarks. The user accepted
+the first batch's building treatment as "good enough buildings" on 6 September;
+continue at this standard. That visual approval is separate from runtime admission.
 No paid generation, subscription, API or Magnific credits were consumed.
 
 - [Front review sheet](catalog/contact-sheet.png) and [rear review sheet](catalog/contact-sheet-rear.png): actual Godot geometry captures; thumbnails fit each asset individually and therefore are not a common scale chart.
@@ -30,6 +32,19 @@ quay wall, pier, landing stairs and mooring post. Produce/fish stalls share
 their frame but have different stock; these are not two architecture families.
 All are neutral reuse ingredients. Consumer room descriptions must authorize
 their selection before they are called part of an actual Crossing location.
+
+The second batch adds sixteen models: tollhouse with side service porch,
+wide-door boathouse with slip apron, ventilated granary, bell hall with open
+belfry, courtyard wall, timber gate, roofed notice board, trestle table, stool,
+stacked firewood, water trough, cargo crane, rope coil, timber footbridge,
+reed bank and rock shelf. See the [expansion front sheet](catalog/expansion-sheet.png)
+and [expansion rear sheet](catalog/expansion-sheet-rear.png). These use the same
+recipe registry, exporter, surfaces and metadata, not another asset pipeline.
+
+The older polish notes below describe future improvement opportunities, not
+a blocker to further production at the now-accepted building level. New models
+have been inspected against that working standard; named-place selection,
+collision and runtime performance remain consumer review tasks.
 
 Rebuild and independently inspect using the existing builder:
 
@@ -69,6 +84,13 @@ contact sheets were visually inspected, with the unresolved finish issues above
 retained as revisions, not approved quality. All eight existing resource packs
 passed their validator. No runtime client tests, Godot 4.3 compatibility tests,
 full manifold audit or city performance benchmark were run for this batch.
+
+Second-batch verification: all 40 models passed export/reimport mesh-count
+and bounds checks, independent native bounds/socket/hash checks, and the
+existing eight resource-pack validations. The footbridge also has a conservative
+2 m wide railing-clearance check above its deck. The original 24 GLB hashes
+remain unchanged. New front/rear sheets were visually inspected. All generation
+was local and consumed zero service credits; runtime placement remains pending.
 
 ### Connected-scene study
 
