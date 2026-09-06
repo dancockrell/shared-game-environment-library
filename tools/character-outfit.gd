@@ -16,6 +16,14 @@ func configure(value: Variant, available: Dictionary, shape_bindings: Dictionary
 		if not value.get(field) is Dictionary:
 			return "Missing profile field: " + field
 	var owned := {}
+	if value.has("constructionMorphs"):
+		if not value.constructionMorphs is Array:
+			return "Construction morphs must be an explicit control list."
+		var seen_construction := {}
+		for control in value.constructionMorphs:
+			if not control is String or not value.morphs.has(control) or seen_construction.has(control):
+				return "Unknown or duplicate construction control."
+			seen_construction[control] = true
 	if value.has("shadowlessMeshes"):
 		if not value.shadowlessMeshes is Array:
 			return "Shadow settings must name explicit meshes."

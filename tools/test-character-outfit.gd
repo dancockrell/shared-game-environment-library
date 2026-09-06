@@ -101,6 +101,10 @@ func run() -> void:
 	var numeric_recipe: Dictionary = outfit.recipe()
 	check(outfit.restore(JSON.parse_string(JSON.stringify(numeric_recipe,"",true,true))).is_empty() and outfit.recipe() == numeric_recipe,"integer-authored weights have stable JSON recipe types")
 	var layered_before: Dictionary = outfit.recipe()
+	for construction in ["Build",["Missing"],["Build","Build"],[42]]:
+		bad = layered.duplicate(true)
+		bad.constructionMorphs = construction
+		check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == layered_before,"invalid construction classification rejects atomically")
 	for exclusion in ["shirt",["Missing"],["coat"],[42]]:
 		bad = layered.duplicate(true)
 		bad.slots.Coat.On.excludes = exclusion

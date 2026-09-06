@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Remove unused visual resources from portable NPC exports while preserving authoring recipes and rig structure",
+  "summary": "Bake profile-owned construction shapes into selected NPC export geometry while preserving skinning and source editability",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T08:06:00Z",
+  "updated_at": "2026-09-06T08:21:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -34,6 +34,9 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Construction-shape baking: both full rendered body suites passed; independent vertex calculation and exact bone-weight comparisons passed; unclassified shapes retained",
+      "41 synthetic wardrobe assertions passed; both single and both six-actor fresh rendered reloads passed; actual standalone renders inspected; compiler/output hashes verified",
+      "Reviewed uncompressed tabard scenes: female 33039480 to 26667072 bytes, male 34018544 to 26853434 bytes; texture/rig/LOD optimization remains incomplete",
       "Selected visual-resource export: both full rendered suites passed; both single-actor and both six-actor fresh rendered reloads passed; reviewed standalone images preserve selected appearance",
       "Casual 02 retained geometry measured: female 22 to 8 meshes and 79350 to 23731 vertices; male 22 to 8 meshes and 84455 to 20388 vertices; not a frame-rate or LOD claim",
       "Inherited-hidden parent fixture passed: remove mesh/material resources, preserve attachment transforms and source editor data; all hairstyle export checks passed",

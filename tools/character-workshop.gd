@@ -414,6 +414,35 @@ func save_recipe(path: String) -> void:
 	file.close()
 	status.text = "Appearance saved. Source model unchanged."
 
+func bake_export_shapes(source_part: MeshInstance3D) -> ArrayMesh:
+	if outfit.profile.is_empty() or not outfit.profile.has("constructionMorphs") or not source_part.mesh is ArrayMesh or source_part.get_blend_shape_count() == 0:
+		return null
+	var path := str(model.get_path_to(source_part))
+	# Only profile-owned construction controls are frozen. Unknown expression or
+	# animation shapes on generic imports retain their original mesh.
+	var construction := {}
+	for control in outfit.profile.constructionMorphs:
+		var bindings_list: Array = outfit.profile.morphs[control]
+		for binding in bindings_list:
+			construction[binding] = true
+	for index in source_part.get_blend_shape_count():
+		if not construction.has(path+"::"+str(source_part.mesh.get_blend_shape_name(index))):
+			return null
+	var baked := source_part.bake_mesh_from_current_blend_shape_mix()
+	if baked == null or baked.get_surface_count() != source_part.mesh.get_surface_count():
+		return null
+	var result := ArrayMesh.new()
+	for surface in source_part.mesh.get_surface_count():
+		var arrays: Array = source_part.mesh.surface_get_arrays(surface).duplicate(true)
+		var deformed: Array = baked.surface_get_arrays(surface)
+		# Keep source UVs, indices and bone influences; bake construction, not pose.
+		for channel in [Mesh.ARRAY_VERTEX,Mesh.ARRAY_NORMAL,Mesh.ARRAY_TANGENT]:
+			if deformed[channel] != null:
+				arrays[channel] = deformed[channel]
+		result.add_surface_from_arrays(source_part.mesh.surface_get_primitive_type(surface),arrays)
+		result.surface_set_material(surface,source_part.get_active_material(surface))
+	return result
+
 func build_character() -> PackedScene:
 	if model == null:
 		return null
@@ -434,7 +463,7 @@ func build_character() -> PackedScene:
 			node.transform = rest_transforms[path]
 	# Freeze mutable appearance materials so later editor changes cannot recolor
 	# a previously built actor. Geometry and textures remain immutable resources.
-	var geometry := {"source_meshes":0,"retained_meshes":0,"source_vertices":0,"retained_vertices":0}
+	var geometry := {"source_meshes":0,"retained_meshes":0,"source_vertices":0,"retained_vertices":0,"baked_construction_meshes":0}
 	for part in body.find_children("*","MeshInstance3D",true,false):
 		if part.mesh == null:
 			continue
@@ -463,6 +492,12 @@ func build_character() -> PackedScene:
 			continue
 		geometry.retained_meshes += 1
 		geometry.retained_vertices += vertices
+		var source_part := model.get_node_or_null(body.get_path_to(part)) as MeshInstance3D
+		if source_part != null:
+			var baked := bake_export_shapes(source_part)
+			if baked != null:
+				part.mesh = baked
+				geometry.baked_construction_meshes += 1
 		for surface in part.mesh.get_surface_count():
 			var material: Material = part.get_active_material(surface)
 			if material != null:

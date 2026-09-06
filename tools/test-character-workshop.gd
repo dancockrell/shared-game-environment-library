@@ -232,7 +232,27 @@ func run() -> void:
 		check(editor.parts["Skeleton3D/Outfit01"].mesh != null,"export trimming preserves editable alternatives")
 		print("Selected export geometry: ",exported_geometry)
 		check(is_equal_approx(actor.scale.y,1.53/editor.source_height) and actor.rotation == Vector3.ZERO,"actor keeps height without preview rotation")
-		check(is_equal_approx(actor_garment.get_blend_shape_value(0),1.0),"actor keeps body shape")
+		check(actor_garment.get_blend_shape_count() == 0 and garment.get_blend_shape_count() > 0,"construction shapes bake only into export")
+		var source_arrays: Array = editor.parts["Skeleton3D/Outfit02"].mesh.surface_get_arrays(0)
+		var baked_arrays: Array = actor_garment.mesh.surface_get_arrays(0)
+		check(baked_arrays[Mesh.ARRAY_BONES] == source_arrays[Mesh.ARRAY_BONES] and baked_arrays[Mesh.ARRAY_WEIGHTS] == source_arrays[Mesh.ARRAY_WEIGHTS],"baked construction preserves skin influences")
+		var shape_reference: Array = editor.parts["Skeleton3D/Outfit02"].bake_mesh_from_current_blend_shape_mix().surface_get_arrays(0)
+		check(baked_arrays[Mesh.ARRAY_VERTEX] == shape_reference[Mesh.ARRAY_VERTEX],"export retains the selected deformed geometry")
+		var selected_source: MeshInstance3D = editor.parts["Skeleton3D/Outfit02"]
+		var expected_vertices: PackedVector3Array = source_arrays[Mesh.ARRAY_VERTEX].duplicate()
+		for shape in selected_source.get_blend_shape_count():
+			var weight := selected_source.get_blend_shape_value(shape)
+			var target: PackedVector3Array = selected_source.mesh.surface_get_blend_shape_arrays(0)[shape][Mesh.ARRAY_VERTEX]
+			for vertex in expected_vertices.size():
+				expected_vertices[vertex] += (target[vertex]-source_arrays[Mesh.ARRAY_VERTEX][vertex])*weight
+		var mix_error := 0.0
+		for vertex in expected_vertices.size():
+			mix_error = maxf(mix_error,expected_vertices[vertex].distance_to(baked_arrays[Mesh.ARRAY_VERTEX][vertex]))
+		check(mix_error < .00005,"baked vertices match independent normalized-shape calculation")
+		var construction_controls: Array = editor.outfit.profile.constructionMorphs
+		editor.outfit.profile.constructionMorphs = []
+		check(editor.bake_export_shapes(selected_source) == null,"unclassified animation shapes are not frozen")
+		editor.outfit.profile.constructionMorphs = construction_controls
 		var export_color: Color = actor_garment.get_active_material(0).albedo_color
 		editor.outfit.colors.Clothing = "ffffffff"
 		editor.outfit.apply()
@@ -460,7 +480,7 @@ func run() -> void:
 					for path in all_hair:
 						var exported_hair := hair_actor.find_child(path.get_file(),true,false) as MeshInstance3D
 						if path in selected:
-							check(exported_hair != null and exported_hair.mesh != null and exported_hair.visible and exported_hair.skin.get_bind_count() == 163 and exported_hair.mesh.get_blend_shape_count() == editor.outfit.profile.morphs.size(),"export retains selected fitted hairstyle: "+style+" / "+path)
+							check(exported_hair != null and exported_hair.mesh != null and exported_hair.visible and exported_hair.skin.get_bind_count() == 163 and exported_hair.mesh.get_blend_shape_count() == 0,"export retains selected baked hairstyle: "+style+" / "+path)
 						else:
 							check(exported_hair != null and exported_hair.mesh == null and exported_hair.skin == null,"export removes unselected hairstyle resources: "+style+" / "+path)
 					hair_actor.free()

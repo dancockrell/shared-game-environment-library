@@ -596,6 +596,7 @@ func build(sex: String) -> void:
 	profile.dyes.Eyebrows = [{"mesh":"Skeleton3D/Brows001","surface":0},{"mesh":"Skeleton3D/Brows005","surface":0}]
 	profile.dyes.Eyelashes = [{"mesh":"Skeleton3D/Lashes01","surface":0},{"mesh":"Skeleton3D/Lashes04","surface":0}]
 	profile.measurement = body_height_samples(sex)
+	profile.constructionMorphs = shape_names.duplicate()
 	profile.variationCaps = {"Defined cheekbones":.22,"Full cheeks":.35,"Larger eyes":.5,"Broad jaw":.55}
 	profile.variationChoices = {"Eyebrows":["Brow 01","Brow 05"],"Eyelashes":["Lashes 01","Lashes 04"]}
 	profile.shadowlessMeshes = []
