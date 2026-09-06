@@ -1,6 +1,8 @@
 //! Engine-neutral geometry and composition. No network, engine or GPU dependency.
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+mod room;
+pub use room::{Opening, Room, Wall};
 pub type V3 = [f32; 3];
 type Result<T> = std::result::Result<T, String>;
 #[derive(Clone, Deserialize, Serialize)]
@@ -21,6 +23,9 @@ pub struct Definition {
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Shape {
+    Room {
+        room: Room,
+    },
     Box {
         size: V3,
     },
@@ -160,6 +165,32 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         color: d.color,
     };
     match &d.shape {
+        Shape::Room { room } => {
+            let boxes = room.boxes()?;
+            if boxes.len() * 36 > max_vertices {
+                return Err("Vertex budget exceeded before room allocation".into());
+            }
+            for (size, position) in boxes {
+                let part = mesh(
+                    name,
+                    &Definition {
+                        shape: Shape::Box { size },
+                        color: d.color,
+                    },
+                    36,
+                )?;
+                let start = m.positions.len() as u32;
+                m.positions.extend(
+                    part.positions
+                        .into_iter()
+                        .map(|p| [p[0] + position[0], p[1] + position[1], p[2] + position[2]]),
+                );
+                m.normals.extend(part.normals);
+                m.uvs.extend(part.uvs);
+                m.indices
+                    .extend(part.indices.into_iter().map(|i| i + start));
+            }
+        }
         Shape::Gable { width, depth, rise } => {
             finite(&[*width, *depth, *rise])?;
             if *width <= 0. || *depth <= 0. || *rise <= 0. || max_vertices < 24 {
@@ -570,5 +601,24 @@ mod tests {
             assert_eq!(v["ok"], true);
             scene_forge_free(p, n);
         }
+    }
+    #[test]
+    fn room_batch_reuses_mesh_and_enforces_vertex_budget() {
+        let text = include_str!("../examples/rooms.json");
+        let mut r: Recipe = serde_json::from_str(text).unwrap();
+        if let Assembly::Repeat { count, .. } = &mut r.root {
+            *count = 17_000;
+        }
+        let s = compile(&r).unwrap();
+        assert_eq!(s.instances.len(), 17_000);
+        assert_eq!(s.meshes.len(), 1);
+        assert!(s.estimated_geometry_bytes < 2_000_000);
+        assert_eq!(s.instances[1].position, [10., 0., 0.]);
+        let m = &s.meshes[0];
+        assert_eq!(m.positions.len(), m.normals.len());
+        assert!(m.indices.iter().all(|i| (*i as usize) < m.positions.len()));
+        assert_eq!(compile_json(text).unwrap(), compile_json(text).unwrap());
+        r.limits.max_vertices = m.positions.len() - 1;
+        assert!(compile(&r).unwrap_err().contains("before room allocation"));
     }
 }

@@ -19,6 +19,8 @@ admission is unchanged; permissively licensed software dependencies are not art.
 - Rust library, command-line executable and C ABI dynamic library.
 - Reusable named mesh definitions; nested groups and repeated assemblies.
 - Boxes, solid gable roofs, lathed profiles and convex polygon extrusions.
+- Measured rectangular room shells with real door/window apertures on explicitly
+  selected walls; identical room definitions share one mesh across instances.
 - CCW, right-handed, Y-up, metre-based portable mesh/instance output.
 - Deterministic output, shared meshes, explicit geometry/instance budgets,
   pre-expansion count checks, finite-coordinate and geometry validation.
@@ -133,3 +135,40 @@ not prove the interactive dock workflow, Unity import, or 8 GB GPU capacity.
   references, then buildings/streets/terrain; batch Crossing without hand recipes.
 - Measure resident memory and frame time on an 8 GB GPU at dense-city scale.
 - Package reproducible releases with complete permissive-dependency notices.
+
+## Rectangular room operator
+
+`procedural/examples/rooms.json` is the executable schema example. A `room`
+shape takes clear interior width/depth/height in metres, wall and floor thickness,
+and up to 64 rectangular openings. Finished floor is Y=0, centred on X/Z; north
+is -Z, east +X, south +Z, west -X. Walls extend outward from the interior bounds;
+the floor extends below Y=0. North/south opening offsets increase along X,
+east/west offsets along Z, regardless of the direction an observer faces.
+
+Each opening has centre offset, width, height and optional sill height (zero
+means a floor-level door). Openings are geometric constraints, not evidence of
+MUD exits. A caller must choose their wall from actual layout/graph data. This
+operator neither creates graph links nor infers them from nearby rooms.
+
+The compiler subdivides wall spans into jamb, sill and lintel boxes and lowers
+them through the existing box mesher. It does not paint a black rectangle over
+a solid wall. Interior clearance remains empty. East/west walls own corner
+columns to avoid overlapping solid volumes. The result is a multi-solid mesh,
+not a welded boolean union; coincident internal faces remain at segment joins.
+Openings with overlapping horizontal spans are rejected, including vertically
+stacked openings: that more general cut arrangement is not supported yet.
+Out-of-bounds cuts and invalid dimensions fail rather than being silently moved.
+
+Room geometry respects the existing vertex allocation budget. Repeated rooms
+reuse their definition mesh. The 17,000-instance test demonstrates reuse and
+budget enforcement only, not 17,000 distinct room designs, city rendering speed,
+or measured VRAM. Roofs, material differentiation, trim, socket export, collision,
+MUD adapter integration and final art admission remain subsequent work.
+
+Validation for this operator: eleven Rust tests passed, including aperture-side
+occupancy, window sill/lintel solids, four-sided full-height cuts, invalid cuts,
+17,000 shared instances, deterministic output and vertex-budget rejection.
+Clippy with warnings denied and the release build passed. The four-room fixture
+imported, packed/reinstantiated and rendered in Godot 4.7.2 through the existing
+adapter; its openings were visually inspected. These plain shells are construction
+fixtures, not admitted Crossing art. Unity was not executed for this change.

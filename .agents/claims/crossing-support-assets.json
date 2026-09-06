@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Active shared Rust scene builder: deterministic bounded geometry, composition and Godot/Unity adapters for an 8 GB VRAM target; characters remain separately owned",
+  "summary": "Active shared Rust scene builder: measured room shells with bounded apertures, reusable geometry and Godot/Unity adapters for an 8 GB VRAM target; characters remain separately owned",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T06:13:07.162Z",
@@ -21,8 +21,12 @@
     "notes": "Character claim and uncommitted character files excluded; existing environment kit and catalog only."
   },
   "completion": {
-    "commit": "688ecc25c7ba3f0dc34f048fbfa42f71874a1f49",
+    "commit": null,
     "checks": [
+      "Room operator: 11 Rust tests, clippy with warnings denied and release build passed",
+      "Four-room Godot import, pack/reinstantiate and actual render inspection passed; 4 instances share 1 mesh",
+      "17000-instance Rust reuse and allocation-budget test passed; not a rendering speed or VRAM measurement",
+      "Room finishes, socket export, MUD integration, Unity execution and full Crossing completion remain unfinished",
       "89 model roundtrips passed",
       "80 existing GLB hashes preserved in initial batch",
       "94-instance assembly reloaded",
