@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Extend existing Godot review entry point with bounded sequential scene requests, reusable process and captures; retain the current preview pending user approval of one replacement",
+  "summary": "Test and harden canonical review request admission headlessly; reject malformed numeric and path fields before conversions and reuse the validated input snapshot; keep live preview unchanged",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T12:32:00Z",

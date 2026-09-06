@@ -1087,6 +1087,20 @@ replacement was requested from the user, not assumed from an automatic goal turn
 Headless `--check-only` passed for the modified script. Sequential graphics-backed
 switching and repeated-load memory behavior are **not yet executed or certified**.
 
+The same script has a headless `--test-review-requests` mode. It executes the
+actual request/header admission functions without constructing a scene or
+starting the mailbox timer. Native execution passed 37 rejected-request cases,
+nine invalid payload estimates, oversized mesh/instance cases and valid/default
+admission. Checks reject arrays, objects, nulls and booleans in numeric fields,
+non-finite or negative payload estimates, path traversal and sibling-directory
+prefix collisions before numeric conversions or imports. Input/output/sequence
+are required nonempty strings. Accepted imports consume the parsed snapshot,
+not a second file read after admission. Captures check for an existing output
+again after rendering; this is not an atomic filesystem reservation against
+another writer. The tests establish request admission behavior only, not live
+graphics switching, safe arbitrary third-party meshes or an OS memory quota.
+Local native-test log: `procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/request-tests.log`.
+
 The actual native render below is retained as a construction baseline. The
 reviewer found its smooth silhouette useful but finish and attachment quality
 insufficient. The Godot diagnostic camera now frames sub-metre objects and

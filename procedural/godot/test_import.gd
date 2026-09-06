@@ -7,8 +7,13 @@ var _request_root := ""
 var _last_request := ""
 var _request_sequence := ""
 var _busy := true
+var _pending_data: Dictionary = {}
 func _initialize() -> void:
 	_review_args = OS.get_cmdline_user_args()
+	if "--test-review-requests" in _review_args:
+		_test_review_requests()
+		quit()
+		return
 	for argument in _review_args:
 		if argument.begins_with("--watch-request="):
 			_request_path = argument.trim_prefix("--watch-request=").simplify_path()
@@ -25,6 +30,81 @@ func _initialize() -> void:
 		poll.start()
 	call_deferred("_run")
 
+static func _request_fields(request: Variant, directory: String) -> Dictionary:
+	if not request is Dictionary:
+		return {"error": "Review request must be an object"}
+	for key in ["input", "output", "sequence"]:
+		if not request.get(key) is String or request[key].is_empty():
+			return {"error": "Review input, output and sequence must be nonempty strings"}
+	var result: Dictionary = request.duplicate()
+	for key in ["azimuth", "elevation"]:
+		var value: Variant = request.get(key, 45.0 if key == "azimuth" else 25.0)
+		if not (value is int or value is float) or not is_finite(float(value)):
+			return {"error": "Review angles must be finite numbers"}
+		result[key] = float(value)
+	if absf(result.elevation) >= 89.0:
+		return {"error": "Review elevation must be between -89 and 89 degrees"}
+	var prefix := directory.replace("\\", "/").simplify_path().trim_suffix("/").to_lower() + "/"
+	for key in ["input", "output"]:
+		var path: String = request[key].replace("\\", "/").simplify_path()
+		if not path.is_absolute_path() or not path.to_lower().begins_with(prefix):
+			return {"error": "Review paths must stay inside the mailbox directory"}
+		result[key] = path
+	if result.input.get_extension().to_lower() != "json" or result.output.get_extension().to_lower() != "png":
+		return {"error": "Review needs a JSON input and a PNG output"}
+	return result
+
+static func _scene_header_error(data: Variant) -> String:
+	if not data is Dictionary or not data.get("meshes") is Array or not data.get("instances") is Array:
+		return "Review input is not a compiled scene"
+	var estimate: Variant = data.get("estimated_geometry_bytes")
+	if not (estimate is int or estimate is float):
+		return "Review payload estimate must be numeric"
+	if not is_finite(float(estimate)) or estimate < 0 or estimate > 64 * 1024 * 1024:
+		return "Review payload estimate exceeds budget or is invalid"
+	if data.meshes.is_empty() or data.meshes.size() > 128 or data.instances.size() > 1000:
+		return "Review scene exceeds the small-study mesh or instance budget"
+	if not data.get("version") in [1, 2, 1.0, 2.0] or data.get("coordinate_system") != "right-handed-y-up-ccw-metres":
+		return "Unsupported review scene format"
+	return ""
+
+static func _test_review_requests() -> void:
+	var valid := {"sequence":"one", "input":"C:/review/source.json", "output":"C:/review/first.png"}
+	assert(not _request_fields(valid, "C:/review").has("error"))
+	assert(_request_fields(valid, "C:/review").azimuth == 45.0)
+	var cases := [null, [], "bad", {}, {"sequence":1}]
+	for field in ["input", "output", "sequence", "azimuth", "elevation"]:
+		for value in [null, [], {}, true]:
+			var bad := valid.duplicate()
+			bad[field] = value
+			cases.append(bad)
+	for field in ["input", "output"]:
+		for value in ["C:/review/../elsewhere/test.png", "C:/review-other/test.png", "relative.png"]:
+			var bad := valid.duplicate()
+			bad[field] = value
+			cases.append(bad)
+	for value in [NAN, INF, -INF, 89.0, -89.0, "25"]:
+		var bad := valid.duplicate()
+		bad.elevation = value
+		cases.append(bad)
+	for bad in cases:
+		assert(_request_fields(bad, "C:/review").has("error"), str(bad))
+	var header := {"version":2.0, "coordinate_system":"right-handed-y-up-ccw-metres", "meshes":[{}], "instances":[], "estimated_geometry_bytes":64 * 1024 * 1024}
+	assert(_scene_header_error(header).is_empty())
+	for value in [null, [], {}, true, "1024", -1, INF, NAN, 64 * 1024 * 1024 + 1]:
+		var bad := header.duplicate()
+		bad.estimated_geometry_bytes = value
+		assert(not _scene_header_error(bad).is_empty())
+	var oversized := header.duplicate()
+	oversized.meshes = []
+	oversized.meshes.resize(129)
+	assert(not _scene_header_error(oversized).is_empty())
+	oversized = header.duplicate()
+	oversized.instances = []
+	oversized.instances.resize(1001)
+	assert(not _scene_header_error(oversized).is_empty())
+	print("Review admission tests passed: ", cases.size(), " rejected requests, 9 invalid payload estimates, mesh/instance limits and valid defaults")
+
 func _poll_request() -> void:
 	if _busy or not FileAccess.file_exists(_request_path):
 		return
@@ -35,40 +115,29 @@ func _poll_request() -> void:
 	if text == _last_request:
 		return
 	_last_request = text
-	var request: Variant = JSON.parse_string(text)
-	if not request is Dictionary:
-		push_warning("Review request is not JSON object; current scene retained")
+	var request := _request_fields(JSON.parse_string(text), _request_root)
+	if request.has("error"):
+		push_warning(request.error)
 		return
-	var input_path := str(request.get("input", "")).simplify_path()
-	var output_path := str(request.get("output", "")).simplify_path()
-	var azimuth := float(request.get("azimuth", 45.0))
-	var elevation := float(request.get("elevation", 25.0))
+	var input_path: String = request.input
+	var output_path: String = request.output
+	var azimuth: float = request.azimuth
+	var elevation: float = request.elevation
 	# Local mailbox only. Inputs and new captures stay inside its review directory.
 	# No shell commands, network listener, arbitrary output replacement or queue.
-	for path in [input_path, output_path]:
-		if not path.is_absolute_path() or not path.replace("\\", "/").to_lower().begins_with(_request_root):
-			push_warning("Review paths must stay inside the mailbox directory")
-			return
-	if input_path.get_extension().to_lower() != "json" or output_path.get_extension().to_lower() != "png" or FileAccess.file_exists(output_path):
-		push_warning("Review needs a JSON input and an unused PNG output")
-		return
-	if not is_finite(azimuth) or not is_finite(elevation) or absf(elevation) >= 89.0:
-		push_warning("Invalid review angles")
+	if FileAccess.file_exists(output_path):
+		push_warning("Review capture already exists")
 		return
 	var source := FileAccess.open(input_path, FileAccess.READ)
 	if source == null or source.get_length() > 32 * 1024 * 1024:
 		push_warning("Review input unavailable or exceeds 32 MiB")
 		return
 	var data: Variant = JSON.parse_string(source.get_as_text())
-	if not data is Dictionary or not data.get("meshes") is Array or not data.get("instances") is Array:
-		push_warning("Review input is not a compiled scene")
+	var error := _scene_header_error(data)
+	if not error.is_empty():
+		push_warning(error)
 		return
-	if data.meshes.is_empty() or data.meshes.size() > 128 or data.instances.size() > 1000 or float(data.get("estimated_geometry_bytes", INF)) > 64 * 1024 * 1024:
-		push_warning("Review scene exceeds the small-study mesh, instance or payload budget")
-		return
-	if not data.get("version") in [1, 2, 1.0, 2.0] or data.get("coordinate_system") != "right-handed-y-up-ccw-metres":
-		push_warning("Unsupported review scene format")
-		return
+	_pending_data = data
 	_review_args = PackedStringArray([input_path, output_path, str(azimuth), str(elevation), "--keep-open"])
 	_request_sequence = str(request.get("sequence", ""))
 	_busy = true
@@ -76,7 +145,9 @@ func _poll_request() -> void:
 
 func _run() -> void:
 	var path := _review_args[0]
-	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
+	# Use the admitted snapshot rather than rereading a file that may have changed.
+	var data: Dictionary = _pending_data if not _pending_data.is_empty() else JSON.parse_string(FileAccess.get_file_as_string(path))
+	_pending_data = {}
 	# Release only the previous study's owned scene/camera/lights. The mailbox
 	# timer and this process survive. At most one requested study is loaded.
 	for node in _review_nodes:
@@ -249,6 +320,10 @@ func _run() -> void:
 		_review_nodes.append(environment)
 		await create_timer(1).timeout
 		await RenderingServer.frame_post_draw
+		if not _request_sequence.is_empty() and FileAccess.file_exists(_review_args[1]):
+			push_warning("Capture appeared during review; refusing to replace it")
+			_busy = false
+			return
 		assert(root.get_texture().get_image().save_png(_review_args[1]) == OK)
 	print("Scene Forge Godot import passed: ", count, " instances, ", scene.get_child_count(), " shared meshes")
 	print("Spatial checks: ", "unavailable-data guards only (dummy renderer)" if DisplayServer.get_name() == "headless" else "graphics-backed transforms and bounds verified")
