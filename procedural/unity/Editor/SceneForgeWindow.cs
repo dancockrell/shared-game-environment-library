@@ -8,7 +8,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace SharedEnvironment.SceneForge {
-    [Serializable] public sealed class MeshData { public string name; public float[] positions, normals, uvs, color; public int[] indices; }
+    [Serializable] public sealed class MaterialData { public float roughness, metallic; }
+    [Serializable] public sealed class MeshData { public string name; public float[] positions, normals, uvs, color; public int[] indices; public MaterialData material; }
     [Serializable] public sealed class InstanceData { public int mesh; public float[] position; public float yaw, scale; }
     [Serializable] public sealed class SceneData { public int version; public string coordinate_system; public MeshData[] meshes; public InstanceData[] instances; public long estimated_geometry_bytes; }
     [Serializable] public sealed class Response { public bool ok; public string error; public SceneData scene; }
@@ -63,7 +64,14 @@ namespace SharedEnvironment.SceneForge {
                 // Reflect Z into Unity's left-handed space; CCW becomes Unity's CW.
                 var mesh=new Mesh{name=source.name,indexFormat=IndexFormat.UInt32};
                 mesh.vertices=vertices;mesh.normals=normals;mesh.uv=uv;mesh.triangles=source.indices;mesh.RecalculateBounds();meshes[i]=mesh;
-                var material=new Material(shader){name=source.name,enableInstancing=true};material.color=new Color(source.color[0],source.color[1],source.color[2],source.color[3]);materials[i]=material;
+                var material=new Material(shader){name=source.name,enableInstancing=true};material.color=new Color(source.color[0],source.color[1],source.color[2],source.color[3]);
+                float roughness=source.material!=null?source.material.roughness:0.85f;
+                material.SetFloat("_Metallic",source.material!=null?source.material.metallic:0f);
+                // Both supported shaders use smoothness; the portable recipe uses roughness.
+                if(material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness",1f-roughness);
+                if(material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness",1f-roughness);
+                if(material.HasProperty("_WorkflowMode")) material.SetFloat("_WorkflowMode",1f);
+                materials[i]=material;
             }
             var root=new GameObject("Scene Forge");Undo.RegisterCreatedObjectUndo(root,"Import procedural scene");
             foreach(InstanceData instance in data.instances) {

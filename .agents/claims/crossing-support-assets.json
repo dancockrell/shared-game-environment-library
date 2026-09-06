@@ -10,6 +10,7 @@
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",
     "docs/verification/scene-forge-rounded-stock.png",
+    "docs/verification/scene-forge-materials.png",
     "README.md",
     "tools/build-river-port.gd",
     "tools/river-port-kit.gd",
@@ -24,6 +25,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Portable scalar materials: 17 Rust tests, strict clippy, release build, Godot current and legacy imports passed; rendered material comparison inspected and disk material values verified",
+      "Unity material mappings and generic fixture smoke assertions added; Unity execution remains not_run",
       "Rounded stock operator: 16 Rust tests, strict clippy and release build passed; actual offscreen Godot comparison inspected",
       "Rounded stock: 12 instances/6 meshes imported; saved graphics-backed package buffers and bounds reloaded and verified; smooth-normal and winding import assertions passed",
       "Thin-box missing-face regression reproduced before fix; f64 normalization and scale-extreme regression passed",

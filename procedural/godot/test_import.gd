@@ -26,6 +26,10 @@ func _run() -> void:
 		var descriptors: Array = data.meshes[mesh_index].get("apertures", [])
 		var display: MultiMeshInstance3D = copy.get_child(mesh_index)
 		var spec: Dictionary = data.meshes[mesh_index]
+		var finish: Dictionary = spec.get("material", {})
+		var saved_material: StandardMaterial3D = display.multimesh.mesh.surface_get_material(0)
+		assert(is_equal_approx(saved_material.roughness, float(finish.get("roughness", 0.85))))
+		assert(is_equal_approx(saved_material.metallic, float(finish.get("metallic", 0.0))))
 		var surface := display.multimesh.mesh.surface_get_arrays(0)
 		var positions: PackedVector3Array = surface[Mesh.ARRAY_VERTEX]
 		var normals: PackedVector3Array = surface[Mesh.ARRAY_NORMAL]
@@ -87,6 +91,12 @@ func _run() -> void:
 		environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 		environment.environment.ambient_light_color = Color.WHITE
 		environment.environment.ambient_light_energy = 0.5
+		# Metallic surfaces require something to reflect. Use an engine-native
+		# procedural sky, not a downloaded HDRI or a paid asset.
+		var sky := Sky.new()
+		sky.sky_material = ProceduralSkyMaterial.new()
+		environment.environment.sky = sky
+		environment.environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 		root.add_child(environment)
 		await create_timer(1).timeout
 		await RenderingServer.frame_post_draw

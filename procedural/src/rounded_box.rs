@@ -104,6 +104,7 @@ mod tests {
                 segments,
             },
             color: [1.; 4],
+            material: crate::MaterialSettings::default(),
         }
     }
     #[test]

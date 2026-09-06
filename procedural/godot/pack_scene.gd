@@ -27,9 +27,14 @@ func _initialize() -> void:
 			if before.buffer != after.buffer or before.custom_aabb != after.custom_aabb:
 				error = ERR_INVALID_DATA
 				break
+			var before_material: StandardMaterial3D = before.mesh.surface_get_material(0)
+			var after_material: StandardMaterial3D = after.mesh.surface_get_material(0)
+			if before_material.albedo_color != after_material.albedo_color or before_material.roughness != after_material.roughness or before_material.metallic != after_material.metallic:
+				error = ERR_INVALID_DATA
+				break
 		reloaded.free()
 	if error == OK:
-		print("Verified native package buffers and bounds: ", scene.get_child_count(), " shared meshes")
+		print("Verified native package buffers, bounds and materials: ", scene.get_child_count(), " shared meshes")
 	scene.free()
 	if error != OK:
 		push_error("Scene Forge package save failed: " + str(error))

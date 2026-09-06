@@ -45,6 +45,42 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Portable material response
+
+Mesh definitions may now include `"material":{"roughness":0.2,"metallic":1}`.
+Both values must be finite and in 0..1; misspelled properties are rejected.
+Missing settings default to roughness 0.85 and metallic 0, preserving the previous
+Godot appearance. The compiler emits both resolved values, including defaults.
+Godot's legacy compiled-JSON fallback uses these same defaults. Unity's legacy
+fallback now explicitly matches them rather than depending on shader defaults.
+
+Godot maps these to StandardMaterial3D roughness and metallic. Unity maps metallic
+directly and smoothness to `1 - roughness`, using URP Lit `_Smoothness` or Standard
+`_Glossiness`; URP metallic workflow is selected explicitly. Property references:
+[Godot BaseMaterial3D](https://docs.godotengine.org/en/stable/classes/class_basematerial3d.html)
+and [Unity URP Lit source](https://github.com/Unity-Technologies/Graphics/blob/master/Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader).
+This is a portable scalar convention, not a claim of pixel-identical rendering.
+
+`procedural/examples/materials.json` holds geometry and color constant while
+comparing matte nonmetal, polished nonmetal, rough metal and polished metal.
+The Godot diagnostic now provides a procedural sky for reflections; the actual
+render shows changing highlight width and metallic response. The polished metal
+is dark in this lighting, so this is a parameter diagnostic, not an approved
+bronze/gold recipe or finished art. No external texture or paid asset is used.
+
+![Material response comparison in Godot](verification/scene-forge-materials.png)
+
+Rust tests cover defaults, partial settings, range errors, NaN/infinity and
+serialized f32 roundtrips. Godot checks settings after pack/reinstantiate;
+the graphics-backed exporter also compares color, roughness and metallic after
+disk reload. Unity's smoke test now accepts any compiler fixture and checks
+shared materials and smoothness conversion, but **has not executed locally**.
+Texture generation, surface-specific detail, material slots within a mesh,
+transparency/refraction, emission, clearcoat and cross-engine color calibration
+remain unsupported or unverified. Alpha is retained as existing color data,
+not an implemented transparency mode. Geometry residency estimates do not include
+engine material, sky or framebuffer allocations.
+
 ### Rounded stock operator
 
 `rounded_box` adds controlled edge curvature to reusable stock without changing
@@ -74,8 +110,9 @@ deterministic JSON and repeated mesh reuse. Precision-collapsed surfaces fail.
 inspected: narrow rounding preserves a crisp silhouette and broader rounding
 produces a smooth transition. The broad sample is intentionally exaggerated for
 diagnosis, not an instruction to make architecture pillow-like. This is a tool
-fixture, not approved environment art. Materials remain flat-color and uniformly
-rough; bespoke surface response and texture work are still missing.
+fixture, not approved environment art. That checkpoint used flat-color, uniformly
+rough materials; portable scalar response is now supported as described above,
+but bespoke textures and surface detail are still missing.
 
 ![Sharp to broad rounding, actual Godot diagnostic render](verification/scene-forge-rounded-stock.png)
 

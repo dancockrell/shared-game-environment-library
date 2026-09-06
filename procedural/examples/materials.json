@@ -1,0 +1,17 @@
+{
+  "version":1,
+  "definitions":{
+    "matte":{"shape":{"kind":"rounded_box","size":[6,3,4],"radius":0.55,"segments":8},"color":[0.55,0.3,0.12,1],"material":{"roughness":0.95,"metallic":0}},
+    "polished":{"shape":{"kind":"rounded_box","size":[6,3,4],"radius":0.55,"segments":8},"color":[0.55,0.3,0.12,1],"material":{"roughness":0.2,"metallic":0}},
+    "rough_metal":{"shape":{"kind":"rounded_box","size":[6,3,4],"radius":0.55,"segments":8},"color":[0.55,0.3,0.12,1],"material":{"roughness":0.65,"metallic":1}},
+    "polished_metal":{"shape":{"kind":"rounded_box","size":[6,3,4],"radius":0.55,"segments":8},"color":[0.55,0.3,0.12,1],"material":{"roughness":0.18,"metallic":1}},
+    "base":{"shape":{"kind":"rounded_box","size":[7,0.4,6],"radius":0.12,"segments":3},"color":[0.2,0.23,0.25,1]}
+  },
+  "root":{"kind":"group","children":[
+    {"kind":"part","mesh":"matte","position":[0,1.5,0]},
+    {"kind":"part","mesh":"polished","position":[10,1.5,0]},
+    {"kind":"part","mesh":"rough_metal","position":[20,1.5,0]},
+    {"kind":"part","mesh":"polished_metal","position":[30,1.5,0]},
+    {"kind":"repeat","count":4,"step":[10,0,0],"child":{"kind":"part","mesh":"base","position":[0,-0.2,0]}}
+  ]}
+}

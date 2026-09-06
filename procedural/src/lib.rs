@@ -20,6 +20,23 @@ pub struct Recipe {
 pub struct Definition {
     pub shape: Shape,
     pub color: [f32; 4],
+    #[serde(default)]
+    pub material: MaterialSettings,
+}
+/// Portable opaque metallic/roughness controls. Color remains on Definition.
+#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq)]
+#[serde(default, deny_unknown_fields)]
+pub struct MaterialSettings {
+    pub roughness: f32,
+    pub metallic: f32,
+}
+impl Default for MaterialSettings {
+    fn default() -> Self {
+        Self {
+            roughness: 0.85,
+            metallic: 0.,
+        }
+    }
 }
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
@@ -101,6 +118,7 @@ pub struct Mesh {
     pub uvs: Vec<[f32; 2]>,
     pub indices: Vec<u32>,
     pub color: [f32; 4],
+    pub material: MaterialSettings,
 }
 fn flat3<S: serde::Serializer>(v: &[V3], s: S) -> std::result::Result<S::Ok, S::Error> {
     s.collect_seq(v.iter().flatten())
@@ -158,6 +176,12 @@ fn quad(m: &mut Mesh, a: V3, b: V3, c: V3, d: V3) -> Result<()> {
     triangle(m, a, c, d)
 }
 fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
+    if [d.material.roughness, d.material.metallic]
+        .iter()
+        .any(|v| !v.is_finite() || !(0. ..=1.).contains(v))
+    {
+        return Err("Material roughness and metallic must be finite values in 0..1".into());
+    }
     finite(&d.color)?;
     if d.color.iter().any(|x| *x < 0. || *x > 1.) {
         return Err("Color outside 0..1".into());
@@ -170,6 +194,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         uvs: vec![],
         indices: vec![],
         color: d.color,
+        material: d.material,
     };
     match &d.shape {
         Shape::RoundedBox {
@@ -191,6 +216,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                     &Definition {
                         shape: Shape::Box { size },
                         color: d.color,
+                        material: d.material,
                     },
                     36,
                 )?;
@@ -584,6 +610,7 @@ mod tests {
                 &Definition {
                     shape: Shape::Box { size },
                     color: [1.; 4],
+                    material: MaterialSettings::default(),
                 },
                 36,
             )
@@ -594,6 +621,47 @@ mod tests {
                 assert!((n.iter().map(|v| v * v).sum::<f32>() - 1.).abs() < 1e-6);
             }
         }
+    }
+    #[test]
+    fn material_defaults_validation_and_serialization() {
+        let mut r = recipe();
+        assert_eq!(
+            compile(&r).unwrap().meshes[0].material,
+            MaterialSettings::default()
+        );
+        for roughness in [0., 0.2, 1.] {
+            for metallic in [0., 0.7, 1.] {
+                let settings = MaterialSettings {
+                    roughness,
+                    metallic,
+                };
+                r.definitions.get_mut("block").unwrap().material = settings;
+                let text = serde_json::to_string(&r).unwrap();
+                let result: serde_json::Value =
+                    serde_json::from_str(&compile_json(&text).unwrap()).unwrap();
+                let restored: MaterialSettings =
+                    serde_json::from_value(result["meshes"][0]["material"].clone()).unwrap();
+                assert_eq!(restored, settings);
+            }
+        }
+        for invalid in [-0.01, 1.01, f32::NAN, f32::INFINITY] {
+            for settings in [
+                MaterialSettings {
+                    roughness: invalid,
+                    metallic: 0.,
+                },
+                MaterialSettings {
+                    roughness: 0.5,
+                    metallic: invalid,
+                },
+            ] {
+                r.definitions.get_mut("block").unwrap().material = settings;
+                assert!(compile(&r).unwrap_err().contains("Material"));
+            }
+        }
+        let partial: MaterialSettings = serde_json::from_str(r#"{"metallic":1}"#).unwrap();
+        assert_eq!(partial.roughness, 0.85);
+        assert!(serde_json::from_str::<MaterialSettings>(r#"{"roughnes":0.1}"#).is_err());
     }
     #[test]
     fn invalid_geometry() {

@@ -32,7 +32,9 @@ static func build(data: Dictionary) -> Node3D:
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		var material := StandardMaterial3D.new()
 		material.albedo_color = Color(spec.color[0], spec.color[1], spec.color[2], spec.color[3])
-		material.roughness = 0.85
+		var finish: Dictionary = spec.get("material", {})
+		material.roughness = float(finish.get("roughness", 0.85))
+		material.metallic = float(finish.get("metallic", 0.0))
 		mesh.surface_set_material(0, material)
 		var instances: Array = data.instances.filter(func(item): return int(item.mesh) == mesh_index)
 		var multi := MultiMesh.new()
