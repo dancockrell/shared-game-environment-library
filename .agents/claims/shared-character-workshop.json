@@ -3,9 +3,9 @@
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
   "summary": "Export configured workshop characters as standalone Godot actors",
-  "status": "active",
+  "status": "completed",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T12:05:00Z",
+  "updated_at": "2026-09-06T12:52:00Z",
   "paths": [
     "tools/character-workshop.gd",
     "tools/character-workshop.tscn",
@@ -27,7 +27,17 @@
     "notes": "Own shared character tooling; DR Companion owns scenery. Free source assets obtained and staged. No paid generation. Broader builder remains unfinished: period wardrobe, face and creature construction, fit coverage and game integration."
   },
   "completion": {
-    "commit": null,
-    "checks": []
+    "commit": "ab79c68",
+    "checks": [
+      "Female and male rendered workshop suites: 46 checks each passed",
+      "Fresh-process standalone SCN render: 10 checks each passed; both images inspected",
+      "test-character-outfit.gd: 15 checks passed",
+      "Verified bundled exports have no external dependencies and retain appearance and rig",
+      "Source-transform and rest-pose export restore tested without mutating live preview",
+      "git diff --cached --check and manual staged credential-pattern check passed; full Gitleaks remains inaccessible; one-command hook override only",
+      "git push failed: github.com:443 unreachable",
+      "Game checkout inspected only; menu/controller integration not_run",
+      "Concurrent crossing-support claim and river-port-kit edits preserved untouched"
+    ]
   }
 }
