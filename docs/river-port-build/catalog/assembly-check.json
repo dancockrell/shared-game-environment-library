@@ -1,6 +1,6 @@
 {
 	"buildingEnvelopeOverlap": false,
-	"nativeReloadMeshCount": 14412,
+	"nativeReloadMeshCount": 21549,
 	"placements": [
 		{
 			"assetId": "painted-river-port.cobble-plaza",
@@ -70,6 +70,19 @@
 		{
 			"assetId": "painted-river-port.cobble-plaza",
 			"position": [
+				-16.0,
+				0.0,
+				12.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
 				-12.0,
 				0.0,
 				-8.0
@@ -125,6 +138,19 @@
 				-12.0,
 				0.0,
 				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-12.0,
+				0.0,
+				12.0
 			],
 			"rotation": [
 				0.0,
@@ -200,6 +226,19 @@
 		{
 			"assetId": "painted-river-port.cobble-plaza",
 			"position": [
+				-8.0,
+				0.0,
+				12.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
 				-4.0,
 				0.0,
 				-8.0
@@ -265,6 +304,19 @@
 		{
 			"assetId": "painted-river-port.cobble-plaza",
 			"position": [
+				-4.0,
+				0.0,
+				12.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
 				0.0,
 				0.0,
 				-8.0
@@ -320,6 +372,19 @@
 				0.0,
 				0.0,
 				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				0.0,
+				0.0,
+				12.0
 			],
 			"rotation": [
 				0.0,
@@ -395,6 +460,19 @@
 		{
 			"assetId": "painted-river-port.cobble-plaza",
 			"position": [
+				4.0,
+				0.0,
+				12.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
 				8.0,
 				0.0,
 				-8.0
@@ -460,6 +538,19 @@
 		{
 			"assetId": "painted-river-port.cobble-plaza",
 			"position": [
+				8.0,
+				0.0,
+				12.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
 				12.0,
 				0.0,
 				-8.0
@@ -525,6 +616,19 @@
 		{
 			"assetId": "painted-river-port.cobble-plaza",
 			"position": [
+				12.0,
+				0.0,
+				12.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
 				16.0,
 				0.0,
 				-8.0
@@ -580,6 +684,19 @@
 				16.0,
 				0.0,
 				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				16.0,
+				0.0,
+				12.0
 			],
 			"rotation": [
 				0.0,
@@ -965,6 +1082,19 @@
 			]
 		},
 		{
+			"assetId": "painted-river-port.capstan",
+			"position": [
+				-0.000000695885262302909,
+				-0.580000042915344,
+				-20.6099987030029
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
 			"assetId": "painted-river-port.mooring-cleat",
 			"position": [
 				-0.900000691413879,
@@ -1002,13 +1132,107 @@
 				0.0,
 				0.0
 			]
+		},
+		{
+			"assetId": "painted-river-port.oak-tree",
+			"position": [
+				-14.0,
+				0.219999998807907,
+				11.1999998092651
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.willow-tree",
+			"position": [
+				14.0,
+				0.219999998807907,
+				11.1999998092651
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cypress-tree",
+			"position": [
+				-4.5,
+				0.219999998807907,
+				11.6999998092651
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cypress-tree",
+			"position": [
+				4.5,
+				0.219999998807907,
+				11.6999998092651
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.flower-planter",
+			"position": [
+				8.30000019073486,
+				0.219999998807907,
+				0.400000005960464
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.flower-planter",
+			"position": [
+				11.6999998092651,
+				0.219999998807907,
+				0.400000005960464
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.grindstone",
+			"position": [
+				-9.0,
+				0.219999998807907,
+				-0.699999988079071
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
 		}
 	],
+	"sceneName": "WorkshopQuay_AssemblyTest_NotMudMap",
 	"scope": "Reusable asset composition and socket test only; not The Crossing topology",
+	"serviceCreditsConsumed": 0,
 	"socketJoinErrorsMeters": [
 		0.0,
 		0.0
 	],
-	"sourceCatalogSha256": "2c34f8a33902e40cb6e7f89b6571b22b7eabc514dc3944b8d699451f2f4842a7",
-	"sourceGeometryRegenerated": false
+	"sourceCatalogSha256": "ba2108a815e92a392d0594554881ad6c17978e156d6ae4521099019db8918466",
+	"sourceGeometryRegenerated": false,
+	"sourceRecipeSha256": null
 }

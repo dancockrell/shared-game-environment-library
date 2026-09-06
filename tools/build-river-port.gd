@@ -1169,8 +1169,11 @@ func assemble_catalog(recipe: Dictionary = {}, destination: String = "") -> void
 		if str(item[0]).ends_with("tree"):
 			for building in buildings:
 				assert(not (landscape.global_transform*bounds_of(landscape)).intersects(building.global_transform*bounds_of(building)),"Canopy intersects a building envelope")
-	kit.block(Vector3(0,-1.9,-4),Vector3(55,0.2,45),"soil",kit.root)
-	kit.block(Vector3(0,-0.7,2),Vector3(36,1.4,24),"stone5",kit.root)
+	var bed := kit.block(Vector3(0,-1.9,-4),Vector3(55,0.2,45),"soil",kit.root)
+	var foundation := kit.block(Vector3(0,-0.9,2),Vector3(36,1.8,24),"stone5",kit.root)
+	var bed_bounds: AABB = bed.global_transform*bed.mesh.get_aabb()
+	var foundation_bounds: AABB = foundation.global_transform*foundation.mesh.get_aabb()
+	assert(absf(foundation_bounds.position.y-bed_bounds.end.y) < 0.001,"Foundation must meet the bed, not float")
 	kit.mat("water").roughness = 0.82
 	kit.mat("water").metallic = 0.0
 	kit.mat("water").metallic_specular = 0.15

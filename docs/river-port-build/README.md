@@ -120,6 +120,13 @@ records triangle/mesh counts; do not infer dense-world performance approval
 from successful generation or from one scene capture. No animation, creature
 rigs, runtime admission or canonical room placement is delivered by this batch.
 
+Fourth-batch validation: all 76 model export/reimports and independent native
+bounds/socket/hash checks passed; the first 60 GLB hashes remain unchanged.
+The 94-instance assembly passed its source dependency, camera/environment,
+mesh count, socket joins, canopy/building envelope and foundation/bed-contact
+checks. New front/rear sheets and the updated assembly were visually inspected.
+All eight existing resource packs passed validation. No service credits used.
+
 Rebuild and independently inspect using the existing builder:
 
 ```text
