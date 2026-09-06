@@ -1143,6 +1143,36 @@ and wet highlights survive, but pastry remains too pink/regular and the filling
 still reads as an arrangement of small lumps. No final-art approval, paid work,
 Godot process replacement, remote push or Actions run.
 
+#### Independent pigment and surface-grain controls
+
+Reference noise profiles now optionally accept `pigment_scale` (finite 1..512)
+and `pigment_contrast` (finite 1..4), both requiring a color palette. Omission
+preserves the prior shared-frequency/default-contrast behavior. Color is driven
+by a separate noise field when requested; normal perturbation and roughness
+retain the original field. Contrast remaps around 0.5 before the bounded color
+ramp. These are reusable artistic controls, not a thermal baking simulation.
+
+The pastry study uses pigment scale 60 versus grain scale 180 and contrast 2.5.
+Its palette is darker and subsurface weight is zero, avoiding a reference-only
+scattering dependency for the crust. Fruit, lighting and geometry are unchanged.
+The first low-contrast/paler trial (`blender-browning-001`) looked like raw dough
+and is rejected. `blender-browning-002` adds visible broader brown patches but
+still has a pinkish cast and overly smooth regular strips. It is not approved
+food art. More noise is not the solution to the remaining defect: browning
+needs authored shape/exposure masks and the construction needs better pastry
+and filling detail.
+
+Both reference images and saved scenes live under the existing review root.
+Final native reference render and saved-source reload passed for 61 instances,
+11 meshes in 24.15 seconds, sampled process RAM 1,146,593,280 bytes. The entire
+updated assembly then baked to `baked-browning-001` and passed all 71,376 unique
+triangle comparisons, placement/reuse/material checks, native reimport and
+actual render inspection in 18.14 seconds, sampled RAM 693,002,240 bytes.
+Both used hidden CPU/two-thread BelowNormal runs with the existing watchdog;
+these are not VRAM measurements. Nine profile tests, eight binary-geometry
+tests and Python syntax checks passed. No Rust changes or full Rust rerun;
+no Godot restart, paid service, remote push or Actions run.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

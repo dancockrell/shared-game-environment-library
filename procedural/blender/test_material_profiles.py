@@ -58,6 +58,29 @@ class Profiles(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate(self.data)
 
+    def test_independent_pigment_scale(self):
+        noise = self.data["profiles"]["baked_pastry"]["noise"]
+        self.assertNotEqual(noise["scale"], noise["pigment_scale"])
+        for value in [0, 513, True, float("nan")]:
+            data = copy.deepcopy(self.data)
+            data["profiles"]["baked_pastry"]["noise"]["pigment_scale"] = value
+            with self.assertRaises(ValueError):
+                validate(data)
+        del noise["colors"]
+        with self.assertRaises(ValueError):
+            validate(self.data)
+
+    def test_pigment_contrast_limits(self):
+        for value in [0, 4.1, True, float("inf")]:
+            data = copy.deepcopy(self.data)
+            data["profiles"]["baked_pastry"]["noise"]["pigment_contrast"] = value
+            with self.assertRaises(ValueError):
+                validate(data)
+        del self.data["profiles"]["baked_pastry"]["noise"]["pigment_scale"]
+        del self.data["profiles"]["baked_pastry"]["noise"]["colors"]
+        with self.assertRaises(ValueError):
+            validate(self.data)
+
 
 if __name__ == "__main__":
     unittest.main()

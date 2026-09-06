@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Extend the existing Blender baker to bounded whole-assembly exports with one bake per unique mesh, instance reuse and complete saved-scene validation",
+  "summary": "Separate broad pigment variation from fine surface grain in reusable Blender profiles; inspect and bake revised pastry color treatment",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

@@ -67,12 +67,24 @@ def material(spec, profiles):
         links.new(noise.outputs["Fac"], ramp.inputs["Value"])
         links.new(ramp.outputs["Result"], shader.inputs["Roughness"])
         if "colors" in settings:
+            pigment_noise = noise
+            if "pigment_scale" in settings:
+                pigment_noise = nodes.new("ShaderNodeTexNoise")
+                pigment_noise.inputs["Scale"].default_value = settings["pigment_scale"]
+                pigment_noise.inputs["Detail"].default_value = settings["detail"]
+                links.new(coordinates.outputs[coordinate_socket], pigment_noise.inputs["Vector"])
             pigment = nodes.new("ShaderNodeValToRGB")
             pigment.color_ramp.elements.new(0.5)
             for element, position, color in zip(pigment.color_ramp.elements, [0, 0.5, 1], settings["colors"]):
                 element.position = position
                 element.color = [linear(v) for v in color] + [1]
-            links.new(noise.outputs["Fac"], pigment.inputs["Fac"])
+            contrast = nodes.new("ShaderNodeMath")
+            contrast.operation = "MULTIPLY_ADD"
+            amount = settings.get("pigment_contrast", 1)
+            contrast.inputs[1].default_value = amount
+            contrast.inputs[2].default_value = 0.5 - 0.5 * amount
+            links.new(pigment_noise.outputs["Fac"], contrast.inputs[0])
+            links.new(contrast.outputs[0], pigment.inputs["Fac"])
             links.new(pigment.outputs["Color"], shader.inputs["Base Color"])
     result["scene_forge_reference_profile"] = json.dumps(profile, sort_keys=True)
     result["scene_forge_original_material"] = json.dumps(finish)

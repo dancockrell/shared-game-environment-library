@@ -37,7 +37,7 @@ def validate(data):
         if noise is not None:
             if not isinstance(noise, dict):
                 raise ValueError("Expected noise mapping")
-            if set(noise) - {"scale", "detail", "strength", "distance", "roughness", "colors", "coordinates"} or not {"scale", "detail", "strength", "distance", "roughness"} <= set(noise):
+            if set(noise) - {"scale", "detail", "strength", "distance", "roughness", "colors", "coordinates", "pigment_scale", "pigment_contrast"} or not {"scale", "detail", "strength", "distance", "roughness"} <= set(noise):
                 raise ValueError("Invalid noise profile")
             if noise.get("coordinates", "generated") not in {"generated", "object"}:
                 raise ValueError("Unsupported texture coordinates")
@@ -55,6 +55,14 @@ def validate(data):
                 for color in noise["colors"]:
                     for v in color:
                         number(v, 0, 1)
+            if "pigment_scale" in noise:
+                if "colors" not in noise:
+                    raise ValueError("Pigment scale requires a color palette")
+                number(noise["pigment_scale"], 1, 512)
+            if "pigment_contrast" in noise:
+                if "colors" not in noise:
+                    raise ValueError("Pigment contrast requires a color palette")
+                number(noise["pigment_contrast"], 1, 4)
     for pattern, name in data["assignments"].items():
         if not isinstance(pattern, str) or not pattern or not isinstance(name, str) or name not in data["profiles"]:
             raise ValueError("Invalid surface assignment")
