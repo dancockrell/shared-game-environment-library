@@ -1,5 +1,7 @@
 extends Control
 ## Embeddable asset-backed workshop. Never modifies the source model.
+signal character_built(character: PackedScene, appearance: Dictionary)
+@export_dir var prepared_asset_directory := ""
 var viewport: SubViewport
 var stage: Node3D
 var pivot: Node3D
@@ -9,6 +11,7 @@ var controls: VBoxContainer
 var status: Label
 var parts: Dictionary = {}
 var shapes: Dictionary = {}
+var rest_transforms: Dictionary = {}
 var source_hash := ""
 var source_name := ""
 var source_height := 1.0
@@ -35,12 +38,20 @@ func _ready() -> void:
 	title_edit = LineEdit.new()
 	title_edit.placeholder_text = "Character / variant name"
 	panel.add_child(title_edit)
+	if prepared_asset_directory.is_empty():
+		prepared_asset_directory = ProjectSettings.globalize_path("res://").path_join("../assets/character-prototypes/makehuman").simplify_path()
+	if FileAccess.file_exists(prepared_asset_directory.path_join("female-source.glb")) and FileAccess.file_exists(prepared_asset_directory.path_join("male-source.glb")):
+		var bases := HBoxContainer.new()
+		panel.add_child(bases)
+		button(bases,"Female body",func(): open_prepared_body("female"))
+		button(bases,"Male body",func(): open_prepared_body("male"))
 	button(panel,"Open source GLB",func(): file_dialog(false,"*.glb",func(path): status.text = import_model(path)))
 	button(panel,"Open clothing/body profile",func(): file_dialog(false,"*.json",load_outfit_profile))
 	button(panel,"Save appearance",func(): file_dialog(true,"*.json",save_recipe))
 	button(panel,"Load appearance",func(): file_dialog(false,"*.json",load_recipe))
+	button(panel,"Export Godot character",func(): file_dialog(true,"*.scn",export_character))
 	status = Label.new()
-	status.text = "Open a real model. No source assets included.\nPreview does not grant publication approval."
+	status.text = "Open a source model and its wardrobe profile.\nPreview does not grant publication approval."
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	panel.add_child(status)
 	var scroll := ScrollContainer.new()
@@ -91,8 +102,22 @@ func button(parent: Node, text: String, action: Callable) -> void:
 	var control := Button.new()
 	control.text = text
 	control.custom_minimum_size.y = 38
+	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	parent.add_child(control)
 	control.pressed.connect(action)
+
+func open_prepared_body(body_type: String) -> void:
+	if body_type not in ["female","male"]:
+		status.text = "Unknown prepared body."
+		return
+	var source_path := prepared_asset_directory.path_join(body_type+"-source.glb")
+	var profile_path := prepared_asset_directory.path_join(body_type+"-profile.json")
+	if not FileAccess.file_exists(source_path) or not FileAccess.file_exists(profile_path):
+		status.text = "Prepared body or wardrobe profile is missing."
+		return
+	status.text = import_model(source_path)
+	if source_hash == FileAccess.get_sha256(source_path):
+		load_outfit_profile(profile_path)
 
 func file_dialog(save: bool, filter: String, action: Callable) -> void:
 	var dialog := FileDialog.new()
@@ -152,6 +177,10 @@ func import_model(path: String) -> String:
 	pivot.rotation = Vector3.ZERO
 	pivot.scale = Vector3.ONE
 	model.position -= Vector3(box.get_center().x,box.position.y,box.get_center().z)
+	rest_transforms.clear()
+	rest_transforms[""] = model.transform
+	for node in model.find_children("*","Node3D",true,false):
+		rest_transforms[str(model.get_path_to(node))] = node.transform
 	parts.clear()
 	shapes.clear()
 	outfit = preload("res://character-outfit.gd").new()
@@ -303,6 +332,67 @@ func save_recipe(path: String) -> void:
 	file.store_string(JSON.stringify(make_recipe(),"  ",true,true))
 	file.close()
 	status.text = "Appearance saved. Source model unchanged."
+
+func build_character() -> PackedScene:
+	if model == null:
+		return null
+	# Own one presentation-ready actor; no workshop UI, lights or camera.
+	var actor := Node3D.new()
+	actor.name = "Character"
+	actor.scale = Vector3.ONE*(target_height/source_height)
+	actor.set_meta("appearance",make_recipe())
+	actor.set_meta("art_status","workshop-export-requires-consumer-approval")
+	var body := model.duplicate() as Node3D
+	if body == null:
+		actor.free()
+		return null
+	actor.add_child(body)
+	for path in rest_transforms:
+		var node := body if path.is_empty() else body.get_node_or_null(NodePath(path)) as Node3D
+		if node != null:
+			node.transform = rest_transforms[path]
+	# Freeze mutable appearance materials so later editor changes cannot recolor
+	# a previously built actor. Geometry and textures remain immutable resources.
+	for part in body.find_children("*","MeshInstance3D",true,false):
+		if part.mesh == null:
+			continue
+		for surface in part.mesh.get_surface_count():
+			var material: Material = part.get_active_material(surface)
+			if material != null:
+				var owned_material: Material = material.duplicate()
+				part.set_surface_override_material(surface,owned_material)
+	# The preview's turntable and temporary poses must not become bind poses.
+	for player in body.find_children("*","AnimationPlayer",true,false):
+		player.stop()
+		player.autoplay = ""
+	for skeleton in body.find_children("*","Skeleton3D",true,false):
+		skeleton.reset_bone_poses()
+	set_export_owner(body,actor)
+	var packed := PackedScene.new()
+	var error := packed.pack(actor)
+	actor.free()
+	return packed if error == OK else null
+
+func set_export_owner(node: Node, owner_node: Node) -> void:
+	node.owner = owner_node
+	for child in node.get_children():
+		set_export_owner(child,owner_node)
+
+func export_character(path: String) -> void:
+	if not path.is_absolute_path() or path.get_extension().to_lower() != "scn":
+		status.text = "Choose an absolute .scn output path."
+		return
+	var packed := build_character()
+	if packed == null:
+		status.text = "Open a usable model before exporting."
+		return
+	# Bundle dynamically imported geometry, textures, materials and skins.
+	var error := ResourceSaver.save(packed,path,ResourceSaver.FLAG_BUNDLE_RESOURCES)
+	if error != OK:
+		status.text = "Character export failed."
+		return
+	character_built.emit(packed,make_recipe())
+	status.text = "Godot character exported with appearance and rig."
 
 func load_recipe(path: String) -> void:
 	var error := apply_recipe(JSON.parse_string(FileAccess.get_file_as_string(path)))

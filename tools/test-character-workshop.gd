@@ -21,6 +21,30 @@ func run() -> void:
 	var editor := scene.instantiate()
 	root.add_child(editor)
 	await process_frame
+	if args[0].get_extension() == "scn":
+		var packed := ResourceLoader.load(args[0],"PackedScene",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+		check(packed != null,"standalone exported actor loads")
+		if packed == null:
+			quit(1)
+			return
+		var actor := packed.instantiate() as Node3D
+		editor.stage.add_child(actor)
+		var appearance: Dictionary = actor.get_meta("appearance")
+		check(actor.find_child("Skeleton3D",true,false) != null,"standalone actor has rig")
+		for mesh in actor.find_children("*","MeshInstance3D",true,false):
+			check(mesh.mesh != null and mesh.get_active_material(0) != null,"standalone geometry and material: "+str(mesh.name))
+		editor.camera.size = appearance.height*1.5
+		editor.camera.position = Vector3(0,appearance.height*.6,appearance.height*3)
+		editor.camera.look_at(Vector3(0,appearance.height*.5,0))
+		editor.status.text = "Standalone exported character.\nNo source GLB or wardrobe profile loaded."
+		if DisplayServer.get_name() != "headless":
+			for i in 8:
+				await process_frame
+			RenderingServer.force_draw(false)
+			check(root.get_texture().get_image().save_png(args[1]+".png") == OK,"render standalone export")
+		print("Standalone export failures: ",failures)
+		quit(0 if failures == 0 else 1)
+		return
 	var result: String = editor.import_model(args[0])
 	check(editor.model != null,"real GLB import")
 	if editor.model == null:
@@ -80,6 +104,11 @@ func run() -> void:
 		editor.import_model(args[0])
 		editor.load_outfit_profile(args[2])
 		check(not editor.outfit.profile.is_empty(),"load authored source profile")
+		var prepared_before: Dictionary = editor.make_recipe()
+		editor.open_prepared_body("unknown")
+		check(editor.make_recipe() == prepared_before,"invalid prepared body preserves appearance")
+		editor.open_prepared_body("female" if args[0].get_file().begins_with("female") else "male")
+		check(not editor.outfit.profile.is_empty() and editor.source_hash == prepared_before.sourceSha256,"prepared body opens matching wardrobe automatically")
 		var body_mesh: MeshInstance3D = editor.parts["Skeleton3D/Body01"]
 		var garment: MeshInstance3D = editor.parts["Skeleton3D/Outfit01"]
 		for part in [body_mesh,garment]:
@@ -103,6 +132,53 @@ func run() -> void:
 		var fitted_recipe: Dictionary = editor.make_recipe()
 		editor.load_recipe(args[1]+".json")
 		check(editor.make_recipe() == fitted_recipe,"fitted wardrobe recipe roundtrip")
+		var export_before: Dictionary = editor.make_recipe()
+		editor.outfit.colors.Clothing = "8060c0ff"
+		editor.outfit.apply()
+		editor.target_height = 1.53
+		editor.frame_model()
+		editor.pivot.rotation.y = .7
+		var export_recipe: Dictionary = editor.make_recipe()
+		var source_transform: Transform3D = editor.model.transform
+		editor.model.position += Vector3(2,0,0)
+		var source_rig: Skeleton3D = editor.model.find_child("Skeleton3D",true,false)
+		var preview_rotation := Quaternion(Vector3.UP,.4)
+		source_rig.set_bone_pose_rotation(0,preview_rotation)
+		var built: PackedScene = editor.build_character()
+		check(built != null,"build portable character")
+		var actor: Node3D = built.instantiate()
+		var actor_body: Node3D = actor.get_child(0)
+		check(actor_body.transform == source_transform,"export restores source node transform")
+		var actor_rig: Skeleton3D = actor_body.find_child("Skeleton3D",true,false)
+		check(actor_rig.get_bone_pose_rotation(0).is_equal_approx(Quaternion.IDENTITY),"export restores skeleton rest pose")
+		check(source_rig.get_bone_pose_rotation(0).is_equal_approx(preview_rotation) and editor.model.position == source_transform.origin+Vector3(2,0,0),"export does not reset live preview")
+		editor.model.transform = source_transform
+		source_rig.reset_bone_poses()
+		var actor_garment: MeshInstance3D = actor_body.get_node("Skeleton3D/Outfit02")
+		check(actor_garment.visible and not actor_body.get_node("Skeleton3D/Outfit01").visible,"built actor keeps selected wardrobe")
+		check(is_equal_approx(actor.scale.y,1.53/editor.source_height) and actor.rotation == Vector3.ZERO,"actor keeps height without preview rotation")
+		check(is_equal_approx(actor_garment.get_blend_shape_value(0),1.0),"actor keeps body shape")
+		var export_color: Color = actor_garment.get_active_material(0).albedo_color
+		editor.outfit.colors.Clothing = "ffffffff"
+		editor.outfit.apply()
+		check(actor_garment.get_active_material(0).albedo_color == export_color,"built material is isolated from editor")
+		check(actor.get_meta("appearance") == export_recipe,"actor embeds source and appearance provenance")
+		check(actor.find_children("*","Control",true,false).is_empty() and actor.find_children("*","Camera3D",true,false).is_empty(),"actor excludes workshop UI and camera")
+		actor.free()
+		editor.apply_recipe(export_recipe)
+		editor.export_character(args[1]+".scn")
+		check(FileAccess.file_exists(args[1]+".scn"),"export bundled Godot scene")
+		check(ResourceLoader.get_dependencies(args[1]+".scn").is_empty(),"export has no external resource dependencies")
+		var reloaded := ResourceLoader.load(args[1]+".scn","PackedScene",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+		check(reloaded != null,"reload exported scene")
+		if reloaded != null:
+			var loaded_actor := reloaded.instantiate()
+			check(loaded_actor.get_meta("appearance") == export_recipe,"exported appearance roundtrip")
+			var loaded_rig: Skeleton3D = loaded_actor.find_child("Skeleton3D",true,false)
+			check(loaded_rig != null and loaded_rig.get_bone_count() == 163,"exported skeleton roundtrip")
+			loaded_actor.free()
+		editor.apply_recipe(export_before)
+		editor.pivot.rotation = Vector3.ZERO
 		editor.outfit.morphs.Lean = 0.0
 		editor.outfit.selections.Clothes = "Casual 01"
 		editor.outfit.apply()

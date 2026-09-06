@@ -12,6 +12,26 @@ godot --path tools res://character-workshop.tscn -- <absolute-source.glb>
 
 Or omit the final argument and use Open source GLB. The editor exposes actual imported mesh visibility, supported blend shapes, measured overall height, turntable and existing animation clips. It retains source materials and skeletons. Height uses uniform scaling, not anatomical reshaping. A model without blend shapes has no shape sliders. A material-batched model does not magically become a modular clothing library.
 
+When the prepared MakeHuman assets are present, **Female body** and **Male body** load the matching model and wardrobe together. Embedding applications can set `prepared_asset_directory`; the standalone tools project discovers the adjacent prepared assets by default. Custom GLB/profile loading remains available.
+
+## Export a configured character
+
+Choose clothes, body shape, colors and height, then **Export Godot character** to a `.scn` file. This is a self-contained binary Godot `PackedScene`: geometry, textures, wardrobe visibility, blend-shape values, skins and skeleton are bundled. Drop the scene into a Godot world or instantiate it with `load(path).instantiate()`. No workshop script, external GLB or wardrobe JSON is required to load it.
+
+The export has one `Character` root at the selected scale, retains the normalized ground placement, and excludes the editor UI, lights, camera and turntable rotation. Original node transforms and skeleton rest poses are restored in the copy; animation autoplay is cleared. Appearance metadata records the source hash, wardrobe hash and saved choices. The exported root is marked `workshop-export-requires-consumer-approval`; export is not art admission or a gameplay identity assignment.
+
+`build_character()` returns the same packed actor for an embedding host; successful file exports emit `character_built(character, appearance)`. Materials are copied so later editor dyes cannot alter an already built actor. Instances of a packed scene use Godot's normal shared-resource behavior: consumers that recolor individual instances must duplicate that instance's material. The exporter retains hidden wardrobe alternatives and editable blend shapes, so this is not yet a compact crowd/LOD export. A complete menu, game save binding and actor controller are still consumer integration work.
+
+The regression suite exports a dressed, recolored, lean character at 1.53 metres, reloads its scene and checks zero external resource dependencies. A separate process can exercise only the exported artifact:
+
+```text
+godot --path tools --script res://test-character-workshop.gd -- <absolute-character.scn> <absolute-render-output-stem>
+```
+
+Test-generated `*-review.scn` files are rebuildable local fixtures and are not committed as duplicate source assemblies. Their reviewed standalone screenshots are retained as evidence, not approved art.
+
+Export checkpoint, 2026-09-06: female and male workshop runs each passed 46 checks with rendering; each fresh-process exported-scene review passed 10 checks, and the synthetic wardrobe suite passed 15. Both standalone renders were inspected. The temporary local-to-scene material duplication path produced engine errors during teardown and was removed; ordinary isolated export materials passed the rerun. Existing environment log/certificate/tablet/shader-cache warnings remain distinct from these checks. The main game checkout was inspected but not modified in this checkpoint; no in-game menu or gameplay-controller integration is claimed.
+
 Appearance JSON stores schema version, name, source filename/hash, height, exact mesh paths and supported shape weights. Loading requires the matching model already open, validates all fields before changing live state, and never writes to the source asset. Absolute machine paths are not saved in presets. Animation and turntable are preview controls, not persistent identity. Save dialogue uses normal overwrite confirmation.
 
 ## Asset boundary

@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Shared character workshop and fitted CC0 body/wardrobe source preparation",
-  "status": "completed",
+  "summary": "Export configured workshop characters as standalone Godot actors",
+  "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T11:55:00Z",
+  "updated_at": "2026-09-06T12:05:00Z",
   "paths": [
     "tools/character-workshop.gd",
     "tools/character-workshop.tscn",
@@ -27,18 +27,7 @@
     "notes": "Own shared character tooling; DR Companion owns scenery. Free source assets obtained and staged. No paid generation. Broader builder remains unfinished: period wardrobe, face and creature construction, fit coverage and game integration."
   },
   "completion": {
-    "commit": "74837d5",
-    "checks": [
-      "System archive hash and 87 source hashes verified; repeat extraction passed",
-      "Core assets acquired by immutable upstream Git blob IDs with CC0 license",
-      "Female and male real-asset rendered tests: 29 checks each passed",
-      "Synthetic outfit suite: 15 checks passed",
-      "Inspected rest and lean upper-arm pose renders; corrected source fitting and normal packing defects",
-      "Reduced derivative GLBs from about 43 MB to about 11 MB each",
-      "Game integration and full pose/shape matrix: not_run",
-      "git diff --cached --check passed; manual staged credential-pattern scan passed",
-      "Full Gitleaks scan not_run: executable access denied; one-commit hook override used, no persistent hook change",
-      "git push failed: github.com:443 unreachable; not pushed or merged"
-    ]
+    "commit": null,
+    "checks": []
   }
 }
