@@ -1,0 +1,13 @@
+{
+  "version":1,
+  "definitions":{
+    "shell":{"shape":{"kind":"room","room":{"width":6,"depth":5,"height":3.2,"wall_thickness":0.2,"floor_thickness":0.2,"openings":[{"wall":"south","offset":0,"width":1.4,"height":2.2}]}},"color":[0.6,0.52,0.4,1]},
+    "vessel":{"shape":{"kind":"lathe","segments":24,"smooth":true,"profile":[[0,0],[0.3,0],[0.45,0.25],[0.5,0.5],[0.35,0.75],[0.2,0.9],[0,1]]},"color":[0.2,0.4,0.3,1]}
+  },
+  "root":{"kind":"transform","position":[2,0,1],"yaw":0.35,"scale":0.8,"child":{
+    "kind":"repeat","count":3,"step":[10,0,0],"child":{"kind":"group","children":[
+      {"kind":"part","mesh":"shell"},
+      {"kind":"transform","position":[-1,0,-1],"yaw":1.5707964,"scale":1.5,"child":{"kind":"repeat","count":3,"step":[0.8,0,0],"child":{"kind":"part","mesh":"vessel"}}}
+    ]}
+  }}
+}

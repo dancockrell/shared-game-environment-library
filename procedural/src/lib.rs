@@ -73,6 +73,15 @@ pub enum Shape {
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Assembly {
+    Transform {
+        #[serde(default)]
+        position: V3,
+        #[serde(default)]
+        yaw: f32,
+        #[serde(default = "one")]
+        scale: f32,
+        child: Box<Assembly>,
+    },
     Part {
         mesh: String,
         #[serde(default)]
@@ -96,6 +105,44 @@ fn one() -> f32 {
 }
 fn default_crease_angle() -> f32 {
     45.
+}
+#[derive(Clone, Copy)]
+struct Pose {
+    position: V3,
+    yaw: f32,
+    scale: f32,
+}
+impl Pose {
+    const IDENTITY: Self = Self {
+        position: [0.; 3],
+        yaw: 0.,
+        scale: 1.,
+    };
+    fn compose(self, position: V3, yaw: f32, scale: f32) -> Result<Self> {
+        finite(&position)?;
+        finite(&[yaw, scale])?;
+        if scale <= 0. {
+            return Err("Scale must be positive".into());
+        }
+        let (sin, cos) = (self.yaw as f64).sin_cos();
+        let scaled = position.map(|x| x as f64 * self.scale as f64);
+        let rotated = [
+            cos * scaled[0] + sin * scaled[2],
+            scaled[1],
+            -sin * scaled[0] + cos * scaled[2],
+        ];
+        let result = Self {
+            position: std::array::from_fn(|i| (self.position[i] as f64 + rotated[i]) as f32),
+            yaw: self.yaw + yaw,
+            scale: self.scale * scale,
+        };
+        finite(&result.position)?;
+        finite(&[result.yaw, result.scale])?;
+        if result.scale <= 0. {
+            return Err("Combined scale collapses at output precision".into());
+        }
+        Ok(result)
+    }
 }
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -139,6 +186,14 @@ pub struct Instance {
     pub position: V3,
     pub yaw: f32,
     pub scale: f32,
+    pub source: InstanceSource,
+}
+/// JSON Pointer to the authoring part plus outer-to-inner repetition indices.
+/// This identifies the source of an instance without reverse-engineering geometry.
+#[derive(Clone, Debug, Serialize, PartialEq)]
+pub struct InstanceSource {
+    pub recipe_path: String,
+    pub repeat_indices: Vec<u32>,
 }
 #[derive(Debug, Serialize)]
 pub struct Scene {
@@ -478,6 +533,7 @@ fn instance_count(node: &Assembly, depth: usize, limit: usize) -> Result<usize> 
     }
     let n = match node {
         Assembly::Part { .. } => 1,
+        Assembly::Transform { child, .. } => instance_count(child, depth + 1, limit)?,
         Assembly::Group { children } => {
             let mut sum = 0usize;
             for child in children {
@@ -519,23 +575,38 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
     let mut names = BTreeMap::new();
     fn emit(
         node: &Assembly,
-        offset: V3,
+        parent: Pose,
+        source: InstanceSource,
         r: &Recipe,
         s: &mut Scene,
         names: &mut BTreeMap<String, usize>,
     ) -> Result<()> {
         match node {
+            Assembly::Transform {
+                position,
+                yaw,
+                scale,
+                child,
+            } => {
+                emit(
+                    child,
+                    parent.compose(*position, *yaw, *scale)?,
+                    InstanceSource {
+                        recipe_path: format!("{}/child", source.recipe_path),
+                        repeat_indices: source.repeat_indices,
+                    },
+                    r,
+                    s,
+                    names,
+                )?;
+            }
             Assembly::Part {
                 mesh: name,
                 position,
                 yaw,
                 scale,
             } => {
-                finite(position)?;
-                finite(&[*yaw, *scale])?;
-                if *scale <= 0. {
-                    return Err("Scale must be positive".into());
-                }
+                let pose = parent.compose(*position, *yaw, *scale)?;
                 let index = if let Some(i) = names.get(name) {
                     *i
                 } else {
@@ -555,26 +626,31 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                     names.insert(name.clone(), index);
                     index
                 };
-                let p = [
-                    position[0] + offset[0],
-                    position[1] + offset[1],
-                    position[2] + offset[2],
-                ];
-                finite(&p)?;
                 s.estimated_geometry_bytes += 64;
                 if s.estimated_geometry_bytes > r.limits.gpu_geometry_bytes {
                     return Err("Instance residency budget exceeded".into());
                 }
                 s.instances.push(Instance {
                     mesh: index,
-                    position: p,
-                    yaw: *yaw,
-                    scale: *scale,
+                    position: pose.position,
+                    yaw: pose.yaw,
+                    scale: pose.scale,
+                    source,
                 });
             }
             Assembly::Group { children } => {
-                for child in children {
-                    emit(child, offset, r, s, names)?
+                for (i, child) in children.iter().enumerate() {
+                    emit(
+                        child,
+                        parent,
+                        InstanceSource {
+                            recipe_path: format!("{}/children/{i}", source.recipe_path),
+                            repeat_indices: source.repeat_indices.clone(),
+                        },
+                        r,
+                        s,
+                        names,
+                    )?
                 }
             }
             Assembly::Repeat { count, step, child } => {
@@ -586,19 +662,37 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                     return Ok(());
                 }
                 for i in 0..*count {
-                    let p = [
-                        offset[0] + step[0] * i as f32,
-                        offset[1] + step[1] * i as f32,
-                        offset[2] + step[2] * i as f32,
-                    ];
+                    let p = [step[0] * i as f32, step[1] * i as f32, step[2] * i as f32];
                     finite(&p)?;
-                    emit(child, p, r, s, names)?
+                    let mut indices = source.repeat_indices.clone();
+                    indices.push(i);
+                    emit(
+                        child,
+                        parent.compose(p, 0., 1.)?,
+                        InstanceSource {
+                            recipe_path: format!("{}/child", source.recipe_path),
+                            repeat_indices: indices,
+                        },
+                        r,
+                        s,
+                        names,
+                    )?
                 }
             }
         };
         Ok(())
     }
-    emit(&recipe.root, [0.; 3], recipe, &mut scene, &mut names)?;
+    emit(
+        &recipe.root,
+        Pose::IDENTITY,
+        InstanceSource {
+            recipe_path: "/root".into(),
+            repeat_indices: vec![],
+        },
+        recipe,
+        &mut scene,
+        &mut names,
+    )?;
     Ok(scene)
 }
 pub fn compile_json(text: &str) -> Result<String> {
@@ -668,6 +762,95 @@ mod tests {
         assert_eq!(s.meshes.len(), 1);
         assert_eq!(s.meshes[0].positions.len(), 36);
         assert!(s.estimated_geometry_bytes < 70_000);
+    }
+    #[test]
+    fn nested_assemblies_transform_local_repeats() {
+        let mut r = recipe();
+        r.root = Assembly::Transform {
+            position: [10., 3., 20.],
+            yaw: std::f32::consts::FRAC_PI_2,
+            scale: 2.,
+            child: Box::new(Assembly::Repeat {
+                count: 3,
+                step: [4., 0., 0.],
+                child: Box::new(Assembly::Transform {
+                    position: [1., 0., 0.],
+                    yaw: -std::f32::consts::FRAC_PI_2,
+                    scale: 0.5,
+                    child: Box::new(Assembly::Part {
+                        mesh: "block".into(),
+                        position: [1., 2., 0.],
+                        yaw: 0.3,
+                        scale: 3.,
+                    }),
+                }),
+            }),
+        };
+        let scene = compile(&r).unwrap();
+        assert_eq!(scene.meshes.len(), 1);
+        assert_eq!(scene.instances.len(), 3);
+        for (i, instance) in scene.instances.iter().enumerate() {
+            assert_eq!(instance.source.recipe_path, "/root/child/child/child");
+            assert_eq!(instance.source.repeat_indices, vec![i as u32]);
+            let expected = [11., 5., 18. - i as f32 * 8.];
+            for (actual, expected) in instance.position.iter().zip(expected) {
+                assert!((actual - expected).abs() < 1e-5);
+            }
+            assert!((instance.yaw - 0.3).abs() < 1e-6);
+            assert_eq!(instance.scale, 3.);
+        }
+        assert_eq!(
+            serde_json::to_string(&scene).unwrap(),
+            compile_json(&serde_json::to_string(&r).unwrap()).unwrap()
+        );
+        r.limits.max_instances = 2;
+        assert!(compile(&r).unwrap_err().contains("before expansion"));
+    }
+    #[test]
+    fn nested_transform_limits_are_enforced() {
+        let mut r = recipe();
+        r.root = Assembly::Part {
+            mesh: "block".into(),
+            position: [2., 0., 0.],
+            yaw: 0.,
+            scale: 1.,
+        };
+        r.root = Assembly::Transform {
+            position: [0.; 3],
+            yaw: 0.,
+            scale: 1e6,
+            child: Box::new(r.root),
+        };
+        assert!(compile(&r).unwrap_err().contains("coordinate"));
+        r.root = Assembly::Group { children: vec![] };
+        for _ in 0..34 {
+            r.root = Assembly::Transform {
+                position: [0.; 3],
+                yaw: 0.,
+                scale: 1.,
+                child: Box::new(r.root),
+            };
+        }
+        assert!(compile(&r).unwrap_err().contains("nesting"));
+        assert!(Pose::IDENTITY.compose([0.; 3], 0., 0.).is_err());
+        assert!(Pose::IDENTITY.compose([0.; 3], f32::NAN, 1.).is_err());
+    }
+    #[test]
+    fn source_paths_resolve_to_authoring_parts() {
+        let text = include_str!("../examples/transformed-assemblies.json");
+        let recipe: Recipe = serde_json::from_str(text).unwrap();
+        let authored: serde_json::Value = serde_json::from_str(text).unwrap();
+        let scene = compile(&recipe).unwrap();
+        assert_eq!(scene.instances.len(), 12);
+        let mut identities = std::collections::BTreeSet::new();
+        for instance in scene.instances {
+            let part = authored.pointer(&instance.source.recipe_path).unwrap();
+            assert_eq!(part["kind"], "part");
+            assert_eq!(part["mesh"], scene.meshes[instance.mesh].name);
+            assert!(
+                identities.insert((instance.source.recipe_path, instance.source.repeat_indices))
+            );
+        }
     }
     #[test]
     fn deterministic() {

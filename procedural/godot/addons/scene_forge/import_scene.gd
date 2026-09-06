@@ -57,8 +57,17 @@ static func build(data: Dictionary) -> Node3D:
 		display.multimesh = multi
 		# Shared local-space descriptors, not thousands of extra marker nodes.
 		display.set_meta("scene_forge_apertures", spec.get("apertures", []))
+		display.set_meta("scene_forge_sources", instances.map(func(item): return item.get("source", {})))
 		root.add_child(display)
 	return root
+
+## Authored recipe locations survive engine packing without extra scene nodes.
+## Return a copy so inspectors cannot accidentally mutate the shared metadata.
+static func instance_source(display: MultiMeshInstance3D, instance_index: int) -> Dictionary:
+	var sources: Array = display.get_meta("scene_forge_sources", [])
+	if instance_index < 0 or instance_index >= sources.size():
+		return {}
+	return sources[instance_index].duplicate(true)
 
 ## Query on demand; the caller binds an aperture to authoritative game data.
 ## Returned wall label stays in definition space; position/normal are world-space.

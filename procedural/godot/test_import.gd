@@ -25,6 +25,12 @@ func _run() -> void:
 	for mesh_index in data.meshes.size():
 		var descriptors: Array = data.meshes[mesh_index].get("apertures", [])
 		var display: MultiMeshInstance3D = copy.get_child(mesh_index)
+		var expected_instances: Array = data.instances.filter(func(item): return int(item.mesh) == mesh_index)
+		for instance_index in expected_instances.size():
+			var source: Dictionary = preload("res://addons/scene_forge/import_scene.gd").instance_source(display, instance_index)
+			assert(source == expected_instances[instance_index].get("source", {}))
+			source["test_only"] = true
+			assert(not preload("res://addons/scene_forge/import_scene.gd").instance_source(display, instance_index).has("test_only"))
 		var spec: Dictionary = data.meshes[mesh_index]
 		var finish: Dictionary = spec.get("material", {})
 		var saved_material: StandardMaterial3D = display.multimesh.mesh.surface_get_material(0)
@@ -58,7 +64,8 @@ func _run() -> void:
 			var second: Dictionary = importer.aperture_world(display, 1, 0)
 			var delta := display.multimesh.get_instance_transform(1).origin - display.multimesh.get_instance_transform(0).origin
 			assert((second.position - first.position).is_equal_approx(delta))
-			assert(is_equal_approx(first.width, float(aperture.width)))
+			var instance_scale := display.multimesh.get_instance_transform(0).basis.x.length()
+			assert(is_equal_approx(first.width, float(aperture.width) * instance_scale))
 			copy.rotation.y = PI / 2
 			copy.scale = Vector3.ONE * 2
 			copy.position = Vector3(3, 4, 5)

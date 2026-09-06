@@ -26,6 +26,7 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Nested assembly transforms and per-instance authoring pointers: 22 Rust tests, strict clippy, release build, Godot scaled aperture/source-copy tests and graphics-backed source metadata disk reload passed",
       "Lathe smoothing and crease-angle controls: 19 Rust tests, strict clippy and release build passed; two real Godot renders inspected, horizontal banding corrected through profile normal blending",
       "Portable scalar materials: 17 Rust tests, strict clippy, release build, Godot current and legacy imports passed; rendered material comparison inspected and disk material values verified",
       "Unity material mappings and generic fixture smoke assertions added; Unity execution remains not_run",

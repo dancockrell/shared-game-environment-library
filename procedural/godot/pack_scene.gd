@@ -24,6 +24,9 @@ func _initialize() -> void:
 		for index in scene.get_child_count():
 			var before: MultiMesh = scene.get_child(index).multimesh
 			var after: MultiMesh = reloaded.get_child(index).multimesh
+			if scene.get_child(index).get_meta("scene_forge_sources", []) != reloaded.get_child(index).get_meta("scene_forge_sources", []):
+				error = ERR_INVALID_DATA
+				break
 			if before.buffer != after.buffer or before.custom_aabb != after.custom_aabb:
 				error = ERR_INVALID_DATA
 				break

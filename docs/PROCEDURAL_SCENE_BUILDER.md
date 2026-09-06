@@ -45,6 +45,43 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Editable assembly transforms and instance provenance
+
+`{"kind":"transform","position":[2,0,1],"yaw":0.35,"scale":0.8,"child":...}`
+transforms an entire assembly in local coordinates. Translation defaults to zero,
+yaw to zero radians and positive uniform scale to one. Nested transforms compose
+parent-first; repetition steps rotate and scale with their enclosing assembly.
+Only Y-axis rotation and uniform positive scale are supported, so this cannot
+introduce shear or mirrored winding. Limits apply to composed transforms and
+nesting, not merely individual inputs. Meshes remain shared; the compiler emits
+ordinary flattened instances for both existing adapters.
+
+Every emitted instance now carries `source.recipe_path` (a JSON Pointer to its
+authoring part) and `source.repeat_indices` (outer-to-inner repetition indices).
+Together they distinguish generated copies and let an inspector find the original
+rule without guessing from the mesh name or geometry. Tests resolve each pointer
+against the original recipe and check unique identities across nested repeats.
+Godot retains this data as shared-node metadata, exposes a defensive-copy
+`instance_source` query and verifies it after saved-package reload. Legacy output
+without source data returns an empty descriptor, not fabricated provenance.
+
+These addresses are deterministic for an unchanged recipe, not permanent IDs
+across array reorderings. Persistent authored IDs, revision-aware edits, semantic
+part roles, full constraint explanations, per-instance bounds reports and Unity
+source-metadata persistence remain to be built. Do not present a pointer to a
+shared part as permission to change just one repeated copy: that requires an
+explicit override or a recipe edit with known scope.
+
+User requirement: generated content must feed rich structured data back to the
+editing agent and tools. Mesh-only output is insufficient. Keep construction
+parameters, provenance, geometry bounds, sockets/apertures, materials, constraints,
+resource costs and diagnostics accessible without image-based inference. The
+provenance fields are an implemented first step, not completion of that contract.
+
+`procedural/examples/transformed-assemblies.json` exercises nested transforms,
+rotated repetition, shared parts and scaled room apertures. It is an integration
+fixture, not an authored game room or an artistic-quality acceptance scene.
+
 ### Profile shading and texture coordinates
 
 Lathe recipes accept optional `"smooth":true` (default false). Analytic normals
