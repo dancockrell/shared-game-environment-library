@@ -9,7 +9,8 @@ using UnityEngine.Rendering;
 
 namespace SharedEnvironment.SceneForge {
     [Serializable] public sealed class MaterialData { public float roughness, metallic; }
-    [Serializable] public sealed class MeshData { public string name; public float[] positions, normals, uvs, color; public int[] indices; public MaterialData material; }
+    [Serializable] public sealed class PaintTextureData { public int width, height; public int[] rgba; }
+    [Serializable] public sealed class MeshData { public string name; public float[] positions, normals, uvs, color; public int[] indices; public MaterialData material; public PaintTextureData paint_texture; }
     [Serializable] public sealed class InstanceData { public int mesh; public float[] position; public float yaw, scale; }
     [Serializable] public sealed class SceneData { public int version; public string coordinate_system; public MeshData[] meshes; public InstanceData[] instances; public long estimated_geometry_bytes; }
     [Serializable] public sealed class Response { public bool ok; public string error; public SceneData scene; }
@@ -71,6 +72,15 @@ namespace SharedEnvironment.SceneForge {
                 if(material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness",1f-roughness);
                 if(material.HasProperty("_Glossiness")) material.SetFloat("_Glossiness",1f-roughness);
                 if(material.HasProperty("_WorkflowMode")) material.SetFloat("_WorkflowMode",1f);
+                if(source.paint_texture!=null) {
+                    var pixels=source.paint_texture;
+                    var texture=new Texture2D(pixels.width,pixels.height,TextureFormat.RGBA32,true,false){name=source.name+" painted underlayer",wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear};
+                    byte[] rgba=Array.ConvertAll(pixels.rgba,value=>checked((byte)value));
+                    texture.LoadRawTextureData(rgba);texture.Apply(true,false);
+                    material.color=Color.white;
+                    material.mainTexture=texture;
+                    if(material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap",texture);
+                }
                 materials[i]=material;
             }
             var root=new GameObject("Scene Forge");Undo.RegisterCreatedObjectUndo(root,"Import procedural scene");

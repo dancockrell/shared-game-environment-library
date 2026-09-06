@@ -45,6 +45,41 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Procedural painted underlayer
+
+Materials can include `"paint":{"color":[0.45,0.6,0.42],"strength":0.35,"seed":42}`.
+The existing definition color is the base palette entry. An original CPU routine
+lays 32 soft, elongated brush-shaped marks onto a repeating 64x64 RGBA8 tile,
+mixing toward the second color with bounded strength. A deterministic integer
+generator controls mark positions and orientation. No inference, external asset,
+paid service, noise library or shader fork is required. This is deliberately a
+small underpainting layer, not an automatic finished-material or art-style system.
+
+The compiler emits pixels and retains the palette, strength and seed in material
+metadata. Both engine adapters have texture-upload code; Godot's path is executed
+and Unity's remains unverified. Godot generates mipmaps, keeps the texture shared
+with its mesh definition and returns paint settings through live inspection. The
+saved-package gate compares texture bytes including mipmaps and retained paint
+metadata. Missing paint is represented as absent data, not an engine metadata error.
+
+Each painted mesh is charged 21,844 bytes for a full uncompressed 64x64 RGBA8 mip
+chain. For compatibility the existing `estimated_geometry_bytes` field now includes
+these generated textures as well as geometry and instances; it still excludes
+driver alignment, materials, framebuffers, CPU JSON and other engine overhead.
+Identical textures across different definitions are not yet deduplicated. Alpha
+remains opaque. Painting uses the shape's current UVs: lathe wrapping works, but
+triangle-local mappings on unfinished operators can repeat marks unnaturally.
+
+The actual painted-surface fixture shows controlled variation. Higher strength
+looks blotchy and must not be called finished painterly art. Further work needs
+surface-aware stroke direction, deliberate edge treatment, better UVs, material
+families and composition-level palette control. Tests cover deterministic pixels,
+seed changes, valid opaque output, zero-strength behavior, input rejection and
+shared texture residency accounting. Pixel-preserving Godot roundtrip is tested;
+cross-engine color matching is not certified.
+
+![Unpainted, subtle and stronger procedural underpainting in Godot](verification/scene-forge-painted-surfaces.png)
+
 ### Elliptical arch bands
 
 `{"kind":"arch","width":4,"rise":2,"thickness":0.35,"depth":0.8,"segments":32}`

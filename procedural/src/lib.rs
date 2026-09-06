@@ -2,8 +2,10 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 mod arch;
+mod paint;
 mod room;
 mod rounded_box;
+pub use paint::Paint;
 pub use room::{Opening, Room, Wall};
 pub type V3 = [f32; 3];
 type Result<T> = std::result::Result<T, String>;
@@ -30,12 +32,14 @@ pub struct Definition {
 pub struct MaterialSettings {
     pub roughness: f32,
     pub metallic: f32,
+    pub paint: Option<paint::Paint>,
 }
 impl Default for MaterialSettings {
     fn default() -> Self {
         Self {
             roughness: 0.85,
             metallic: 0.,
+            paint: None,
         }
     }
 }
@@ -182,6 +186,8 @@ pub struct Mesh {
     pub color: [f32; 4],
     pub material: MaterialSettings,
     pub bounds: Bounds,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub paint_texture: Option<paint::Texture>,
 }
 /// Axis-aligned geometric envelope in metres. Not collision or free-space proof.
 #[derive(Clone, Copy, Debug, Default, Serialize, PartialEq)]
@@ -307,6 +313,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         color: d.color,
         material: d.material,
         bounds: Bounds::default(),
+        paint_texture: None,
     };
     match &d.shape {
         Shape::Arch {
@@ -345,7 +352,10 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                     &Definition {
                         shape: Shape::Box { size },
                         color: d.color,
-                        material: d.material,
+                        material: MaterialSettings {
+                            paint: None,
+                            ..d.material
+                        },
                     },
                     36,
                 )?;
@@ -593,6 +603,11 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         return Err("Empty or degenerate mesh".into());
     }
     m.bounds = Bounds::from_points(m.positions.iter().copied());
+    m.paint_texture = d
+        .material
+        .paint
+        .map(|settings| paint::build(d.color, settings))
+        .transpose()?;
     Ok(m)
 }
 fn instance_count(node: &Assembly, depth: usize, limit: usize) -> Result<usize> {
@@ -686,6 +701,9 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                     let m = mesh(name, d, r.limits.max_vertices.saturating_sub(used))?;
                     s.estimated_geometry_bytes +=
                         (m.positions.len() * 32 + m.indices.len() * 4) as u64;
+                    if m.paint_texture.is_some() {
+                        s.estimated_geometry_bytes += 21_844;
+                    }
                     if s.estimated_geometry_bytes > r.limits.gpu_geometry_bytes {
                         return Err("Geometry residency budget exceeded".into());
                     }
@@ -957,6 +975,25 @@ mod tests {
         assert!(compile(&r).unwrap_err().contains("coordinate"));
     }
     #[test]
+    fn paint_is_shared_and_charged_to_residency_budget() {
+        let mut r = recipe();
+        let plain = compile(&r).unwrap();
+        r.definitions.get_mut("block").unwrap().material.paint = Some(Paint {
+            color: [0.3, 0.6, 0.4],
+            strength: 0.2,
+            seed: 5,
+        });
+        let painted = compile(&r).unwrap();
+        assert_eq!(painted.meshes.len(), 1);
+        assert_eq!(painted.meshes[0].positions, plain.meshes[0].positions);
+        assert_eq!(
+            painted.estimated_geometry_bytes - plain.estimated_geometry_bytes,
+            21_844
+        );
+        r.limits.gpu_geometry_bytes = painted.estimated_geometry_bytes - 1;
+        assert!(compile(&r).unwrap_err().contains("residency"));
+    }
+    #[test]
     fn deterministic() {
         let r = recipe();
         assert_eq!(
@@ -1016,6 +1053,7 @@ mod tests {
                 let settings = MaterialSettings {
                     roughness,
                     metallic,
+                    paint: None,
                 };
                 r.definitions.get_mut("block").unwrap().material = settings;
                 let text = serde_json::to_string(&r).unwrap();
@@ -1031,10 +1069,12 @@ mod tests {
                 MaterialSettings {
                     roughness: invalid,
                     metallic: 0.,
+                    paint: None,
                 },
                 MaterialSettings {
                     roughness: 0.5,
                     metallic: invalid,
+                    paint: None,
                 },
             ] {
                 r.definitions.get_mut("block").unwrap().material = settings;

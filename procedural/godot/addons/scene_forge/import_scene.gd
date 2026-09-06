@@ -36,6 +36,13 @@ static func build(data: Dictionary) -> Node3D:
 		var finish: Dictionary = spec.get("material", {})
 		material.roughness = float(finish.get("roughness", 0.85))
 		material.metallic = float(finish.get("metallic", 0.0))
+		if spec.has("paint_texture"):
+			var texture_data: Dictionary = spec.paint_texture
+			var painted := Image.create_from_data(int(texture_data.width), int(texture_data.height), false, Image.FORMAT_RGBA8, PackedByteArray(texture_data.rgba))
+			assert(painted.generate_mipmaps() == OK)
+			material.albedo_texture = ImageTexture.create_from_image(painted)
+			material.albedo_color = Color.WHITE
+			material.set_meta("scene_forge_paint", finish.get("paint", {}))
 		mesh.surface_set_material(0, material)
 		var instances: Array = data.instances.filter(func(item): return int(item.mesh) == mesh_index)
 		var multi := MultiMesh.new()
@@ -92,6 +99,8 @@ static func describe_instance(display: MultiMeshInstance3D, instance_index: int)
 		"indices": mesh.surface_get_array_index_len(0),
 		"material": {"roughness": material.roughness, "metallic": material.metallic, "color": [material.albedo_color.r, material.albedo_color.g, material.albedo_color.b, material.albedo_color.a]},
 		"aperture_count": display.get_meta("scene_forge_apertures", []).size(),
+		"paint": material.get_meta("scene_forge_paint") if material.has_meta("scene_forge_paint") else null,
+		"paint_texture_size": [material.albedo_texture.get_width(), material.albedo_texture.get_height()] if material.albedo_texture != null else [],
 	}
 
 ## Query on demand; the caller binds an aperture to authoritative game data.

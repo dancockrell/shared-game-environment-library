@@ -14,6 +14,7 @@
     "docs/verification/scene-forge-lathe-shading.png",
     "docs/verification/scene-forge-check-report.json",
     "docs/verification/scene-forge-arches.png",
+    "docs/verification/scene-forge-painted-surfaces.png",
     "README.md",
     "tools/build-river-port.gd",
     "tools/river-port-kit.gd",
@@ -28,6 +29,7 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Procedural painted underlayer: 27 Rust tests and 37-stage eight-fixture run passed; texture/mipmap/palette disk persistence checked; actual surface render inspected and blotchy high-strength variant not admitted as finished art",
       "Elliptical arch operator: 25 Rust tests and 33-stage seven-fixture graphics-backed run passed; circular/shallow/tall actual render inspected; finish and column transition remain construction quality",
       "Single-command Scene Forge check run passed twice: 29 stages, six deterministic fixtures, six real renders and package reloads, dummy export refusal; source-hash stability gate passed; artistic approval remains pending",
       "Bounds and live inspection: 23 Rust tests, strict clippy, release build and real-graphics transformed bounds/apertures passed; dummy renderer now reports missing spatial data instead of default transforms",

@@ -52,6 +52,13 @@ func _run() -> void:
 		var saved_material: StandardMaterial3D = display.multimesh.mesh.surface_get_material(0)
 		assert(is_equal_approx(saved_material.roughness, float(finish.get("roughness", 0.85))))
 		assert(is_equal_approx(saved_material.metallic, float(finish.get("metallic", 0.0))))
+		if spec.has("paint_texture"):
+			assert(saved_material.albedo_texture != null)
+			var painted := saved_material.albedo_texture.get_image()
+			assert(painted.get_width() == int(spec.paint_texture.width))
+			assert(painted.has_mipmaps())
+			assert(saved_material.get_meta("scene_forge_paint") == finish.paint)
+			assert(painted.get_data().slice(0, spec.paint_texture.rgba.size()) == PackedByteArray(spec.paint_texture.rgba))
 		var surface := display.multimesh.mesh.surface_get_arrays(0)
 		var positions: PackedVector3Array = surface[Mesh.ARRAY_VERTEX]
 		var normals: PackedVector3Array = surface[Mesh.ARRAY_NORMAL]

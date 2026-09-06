@@ -32,6 +32,13 @@ func _initialize() -> void:
 				break
 			var before_material: StandardMaterial3D = before.mesh.surface_get_material(0)
 			var after_material: StandardMaterial3D = after.mesh.surface_get_material(0)
+			if before_material.albedo_texture != null:
+				if before_material.get_meta("scene_forge_paint", {}) != after_material.get_meta("scene_forge_paint", {}):
+					error = ERR_INVALID_DATA
+					break
+				if after_material.albedo_texture == null or before_material.albedo_texture.get_image().get_data() != after_material.albedo_texture.get_image().get_data():
+					error = ERR_INVALID_DATA
+					break
 			if before_material.albedo_color != after_material.albedo_color or before_material.roughness != after_material.roughness or before_material.metallic != after_material.metallic:
 				error = ERR_INVALID_DATA
 				break
