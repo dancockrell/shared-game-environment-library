@@ -15,12 +15,15 @@ from pathlib import Path
 import bpy
 from mathutils import Matrix, Vector
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import material_profiles
+
 
 def linear(value):
     return value / 12.92 if value <= 0.04045 else ((value + 0.055) / 1.055) ** 2.4
 
 
-def material(spec):
+def material(spec, profiles):
     result = bpy.data.materials.new(spec["name"])
     result.use_nodes = True
     nodes = result.node_tree.nodes
@@ -43,40 +46,44 @@ def material(spec):
         texture = nodes.new("ShaderNodeTexImage")
         texture.image = image
         links.new(texture.outputs["Color"], shader.inputs["Base Color"])
-    # Authored review treatment, intentionally explicit and retained in .blend.
-    # These controls are not falsely claimed to round-trip through our adapters.
-    wet = spec["name"] in {"fruit.berry", "pie.filling", "pie.fruit_piece", "cake.filling"}
-    if wet:
-        shader.inputs["Coat Weight"].default_value = 0.85
-        shader.inputs["Coat Roughness"].default_value = 0.09
-        shader.inputs["Coat IOR"].default_value = 1.4
-        shader.inputs["Subsurface Weight"].default_value = 0.035
-        shader.inputs["Subsurface Scale"].default_value = 0.002
+    profile = material_profiles.resolve(profiles, spec["name"])
+    for key, value in profile.get("principled", {}).items():
+        shader.inputs[key].default_value = value
+    settings = profile.get("noise")
+    if settings:
         noise = nodes.new("ShaderNodeTexNoise")
-        noise.inputs["Scale"].default_value = 11 if spec["name"] == "pie.filling" else 24
-        noise.inputs["Detail"].default_value = 3
+        noise.inputs["Scale"].default_value = settings["scale"]
+        noise.inputs["Detail"].default_value = settings["detail"]
+        coordinates = nodes.new("ShaderNodeTexCoord")
+        coordinate_socket = "Object" if settings.get("coordinates") == "object" else "Generated"
+        links.new(coordinates.outputs[coordinate_socket], noise.inputs["Vector"])
         bump = nodes.new("ShaderNodeBump")
-        bump.inputs["Strength"].default_value = 0.28
-        bump.inputs["Distance"].default_value = 0.003 if spec["name"] == "pie.filling" else 0.00025
+        bump.inputs["Strength"].default_value = settings["strength"]
+        bump.inputs["Distance"].default_value = settings["distance"]
         links.new(noise.outputs["Fac"], bump.inputs["Height"])
         links.new(bump.outputs["Normal"], shader.inputs["Normal"])
         ramp = nodes.new("ShaderNodeMapRange")
-        ramp.inputs["To Min"].default_value = 0.14
-        ramp.inputs["To Max"].default_value = 0.32
+        ramp.inputs["To Min"].default_value, ramp.inputs["To Max"].default_value = settings["roughness"]
         links.new(noise.outputs["Fac"], ramp.inputs["Value"])
         links.new(ramp.outputs["Result"], shader.inputs["Roughness"])
-    if spec["name"] in {"cake.cream", "cake.icing", "piping.dollop"}:
-        shader.inputs["Subsurface Weight"].default_value = 0.08
-        shader.inputs["Subsurface Scale"].default_value = 0.003
-        shader.inputs["Roughness"].default_value = 0.55
+        if "colors" in settings:
+            pigment = nodes.new("ShaderNodeValToRGB")
+            pigment.color_ramp.elements.new(0.5)
+            for element, position, color in zip(pigment.color_ramp.elements, [0, 0.5, 1], settings["colors"]):
+                element.position = position
+                element.color = [linear(v) for v in color] + [1]
+            links.new(noise.outputs["Fac"], pigment.inputs["Fac"])
+            links.new(pigment.outputs["Color"], shader.inputs["Base Color"])
+    result["scene_forge_reference_profile"] = json.dumps(profile, sort_keys=True)
     result["scene_forge_original_material"] = json.dumps(finish)
     return result
 
 
-def verify_saved(data, output):
+def verify_saved(data, output, profiles):
     bpy.ops.wm.open_mainfile(filepath=str(output / "reference.blend"))
     scene = bpy.context.scene
     assert scene["scene_forge_recipe_json"] == data["recipe_json"]
+    assert scene["scene_forge_reference_profiles"] == json.dumps(profiles, sort_keys=True)
     objects = [o for o in scene.objects if o.type == "MESH"]
     assert len(objects) == len(data["instances"])
     assert len({o.data.name for o in objects}) == len(data["meshes"])
@@ -88,8 +95,10 @@ def verify_saved(data, output):
             p = spec["positions"][i * 3:i * 3 + 3]
             assert (vertex.co - Vector((p[0], -p[2], p[1]))).length < 0.000001
         shader = mesh.materials[0].node_tree.nodes.get("Principled BSDF")
-        if spec["name"] in {"fruit.berry", "pie.filling", "pie.fruit_piece", "cake.filling"}:
-            assert abs(shader.inputs["Coat Weight"].default_value - 0.85) < 0.00001
+        profile = material_profiles.resolve(profiles, spec["name"])
+        assert mesh.materials[0]["scene_forge_reference_profile"] == json.dumps(profile, sort_keys=True)
+        for key, value in profile.get("principled", {}).items():
+            assert abs(shader.inputs[key].default_value - value) < 0.00001
         if spec.get("paint_texture"):
             assert bpy.data.images[spec["name"] + " albedo"].packed_file is not None
     print("SCENE_FORGE_BLEND_RELOAD_PASS", len(objects), "instances", len(data["meshes"]), "meshes")
@@ -103,6 +112,7 @@ def main():
     source, output = Path(args[0]), Path(args[1])
     if source.stat().st_size > 32 * 1024 * 1024:
         raise ValueError("Reference input exceeds 32 MiB")
+    profiles = material_profiles.load(Path(__file__).with_name("reference_materials.json"))
     raw = source.read_bytes()
     data = json.loads(raw)
     if data["version"] != 2 or data["coordinate_system"] != "right-handed-y-up-ccw-metres":
@@ -112,7 +122,7 @@ def main():
     if sum(len(m["positions"]) // 3 for m in data["meshes"]) > 500000:
         raise ValueError("Reference mesh budget exceeded")
     if verify_only:
-        verify_saved(data, output)
+        verify_saved(data, output, profiles)
         return
     output.mkdir(parents=True, exist_ok=False)
     bpy.ops.object.select_all(action="SELECT")
@@ -135,7 +145,7 @@ def main():
         mesh.normals_split_custom_set_from_vertices(
             [(n[i], -n[i + 2], n[i + 1]) for i in range(0, len(n), 3)]
         )
-        mesh.materials.append(material(spec))
+        mesh.materials.append(material(spec, profiles))
         meshes.append(mesh)
     bounds = []
     for entry in data["instances"]:
@@ -153,6 +163,7 @@ def main():
     radius = max((upper - lower).length, 0.1)
     scene = bpy.context.scene
     scene["scene_forge_recipe_json"] = data["recipe_json"]
+    scene["scene_forge_reference_profiles"] = json.dumps(profiles, sort_keys=True)
     camera_data = bpy.data.cameras.new("Reference camera")
     camera = bpy.data.objects.new("Reference camera", camera_data)
     bpy.context.collection.objects.link(camera)
@@ -190,7 +201,7 @@ def main():
     scene.render.filepath = str(output / "reference.png")
     bpy.ops.wm.save_as_mainfile(filepath=str(output / "reference.blend"))
     bpy.ops.render.render(write_still=True)
-    verify_saved(data, output)
+    verify_saved(data, output, profiles)
     receipt = {"source_sha256": hashlib.sha256(raw).hexdigest(),
                "blender": bpy.app.version_string, "engine": "CYCLES", "device": "CPU",
                "threads": 2, "samples_limit": 32, "render_time_limit_seconds": 60,

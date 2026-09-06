@@ -976,6 +976,46 @@ This is a material reference, not final food art. Earlier rejected reference
 blender-glaze-001 is retained. No Godot process was changed; no remote push
 or Actions dispatch occurred.
 
+#### Editable Blender surface profiles
+
+The former hard-coded food-name treatment now has one data owner:
+procedural/blender/reference_materials.json, validated by material_profiles.py.
+Named profiles expose bounded Principled inputs, noise scale/detail,
+bump strength/distance, roughness ranges and an optional three-color palette.
+Assignments use explicit name patterns; overlapping matches fail rather than
+silently choosing an order. Unassigned surfaces retain the source material.
+Limits: 64 KiB profile file, 32 profiles, 64 assignments, whitelisted shader
+inputs and finite bounded numeric controls. Blender-reference scope remains
+explicit; these profiles are not a game-engine material export contract.
+
+The renderer saves the full profile document on the scene and the selected
+profile on each material. Fresh reload checks compare those exact documents
+and authored Principled input values, in addition to geometry and packed images.
+Seven Python unit tests cover assignments/fallback, ambiguity, finite ranges,
+palette shape, roughness ordering, unsupported inputs/coordinates, missing
+profiles and malformed document structures. Python compilation also passed.
+Rust sources and game adapters did not change and their suites were not rerun.
+
+First baked-pastry profile used Generated coordinates; thin strip bounds
+stretched the texture into strong streaks. Retained rejected render:
+procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/blender-baked-001/.
+The corrected baked profile uses Object coordinates, lower bump and coat
+strength, and a darker palette. It overrides the reference pastry albedo with
+procedural pigment; original painted images remain packed for editing.
+Object coordinates are local mesh units, not scale-invariant world-space
+texturing; changing instance scale still changes apparent grain size.
+
+Current render and editable scene:
+procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/blender-baked-002/
+(reference.png, reference.blend, receipt.json).
+Native rendering and saved-file reload passed for 61 instances/11 meshes.
+Observed render/save 29.11 seconds, sampled process peak 1,146,454,016 bytes;
+CPU two threads, 32 samples, same 3 GiB/150-second launch bounds as before.
+Geometry, lighting and wet-fruit treatment are unchanged from the input study.
+Visual review finds smaller-scale mottling instead of stretched streaks,
+but pastry is still too pink and regular; this remains unapproved reference art.
+No Godot process change, paid service, remote push or Actions run occurred.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

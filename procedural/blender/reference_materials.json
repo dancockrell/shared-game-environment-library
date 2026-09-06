@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "profiles": {
+    "glazed_fruit": {
+      "principled": {"Coat Weight": 0.85, "Coat Roughness": 0.09, "Coat IOR": 1.4, "Subsurface Weight": 0.035, "Subsurface Scale": 0.002},
+      "noise": {"scale": 24, "detail": 3, "strength": 0.28, "distance": 0.00025, "roughness": [0.14, 0.32]}
+    },
+    "compote": {
+      "principled": {"Coat Weight": 0.85, "Coat Roughness": 0.09, "Coat IOR": 1.4, "Subsurface Weight": 0.035, "Subsurface Scale": 0.002},
+      "noise": {"scale": 11, "detail": 3, "strength": 0.28, "distance": 0.003, "roughness": [0.14, 0.32]}
+    },
+    "cream": {
+      "principled": {"Subsurface Weight": 0.08, "Subsurface Scale": 0.003, "Roughness": 0.55}
+    },
+    "baked_pastry": {
+      "principled": {"Coat Weight": 0.025, "Coat Roughness": 0.3, "Subsurface Weight": 0.025, "Subsurface Scale": 0.001},
+      "noise": {"coordinates": "object", "scale": 180, "detail": 3, "strength": 0.055, "distance": 0.00015, "roughness": [0.55, 0.78],
+        "colors": [[0.22, 0.06, 0.012], [0.48, 0.2, 0.035], [0.72, 0.42, 0.13]]}
+    }
+  },
+  "assignments": {
+    "fruit.berry": "glazed_fruit", "pie.fruit_piece": "glazed_fruit", "cake.filling": "glazed_fruit",
+    "pie.filling": "compote",
+    "cake.cream": "cream", "cake.icing": "cream", "piping.dollop": "cream",
+    "pie.crust": "baked_pastry", "pie.crimp": "baked_pastry", "pie.lattice_*": "baked_pastry"
+  }
+}
