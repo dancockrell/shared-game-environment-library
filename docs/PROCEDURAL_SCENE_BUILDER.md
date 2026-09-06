@@ -45,6 +45,30 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Bounds and live machine-readable inspection
+
+Compiled meshes now include local `bounds.min`/`bounds.max`. Every instance
+includes the axis-aligned envelope of that mesh box under its final transform.
+Local bounds are computed once per mesh; placed bounds require eight transformed
+corners, not scanning the mesh for every repeated object. These are conservative
+geometric envelopes, not exact silhouettes, collision shapes, navigation clearance,
+or proof of non-overlap. Composed bounds must stay within the coordinate ceiling;
+a legal origin no longer permits the object's extents to exceed it.
+
+Godot's `describe_instance(display,index)` returns JSON-friendly source addresses,
+mesh identity, live world position/basis, world bounds, vertex/index counts,
+material settings and aperture count. It follows live parent transforms rather
+than assuming the recipe is still the editor's current pose. Individual aperture
+positions remain available through the existing on-demand aperture query.
+
+The independent Rust/Godot bounds comparison exposed that headless dummy rendering
+can return default MultiMesh transforms despite apparent in-memory import success.
+The inspector therefore returns an explicit error when the real instance buffer
+is absent. Do not use headless success as spatial evidence. Graphics-backed tests
+compare the compiler bounds to Godot's transformed mesh AABB (f32 tolerance), while
+headless tests require honest unavailable-data reporting. Unity live inspection is
+still pending. Geometry byte estimates exclude CPU metadata and engine overhead.
+
 ### Editable assembly transforms and instance provenance
 
 `{"kind":"transform","position":[2,0,1],"yaw":0.35,"scale":0.8,"child":...}`
@@ -67,7 +91,7 @@ without source data returns an empty descriptor, not fabricated provenance.
 
 These addresses are deterministic for an unchanged recipe, not permanent IDs
 across array reorderings. Persistent authored IDs, revision-aware edits, semantic
-part roles, full constraint explanations, per-instance bounds reports and Unity
+part roles, full constraint explanations and Unity
 source-metadata persistence remain to be built. Do not present a pointer to a
 shared part as permission to change just one repeated copy: that requires an
 explicit override or a recipe edit with known scope.

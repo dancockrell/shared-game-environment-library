@@ -173,6 +173,46 @@ pub struct Mesh {
     pub indices: Vec<u32>,
     pub color: [f32; 4],
     pub material: MaterialSettings,
+    pub bounds: Bounds,
+}
+/// Axis-aligned geometric envelope in metres. Not collision or free-space proof.
+#[derive(Clone, Copy, Debug, Default, Serialize, PartialEq)]
+pub struct Bounds {
+    pub min: V3,
+    pub max: V3,
+}
+impl Bounds {
+    fn from_points(points: impl Iterator<Item = V3>) -> Self {
+        let mut result = Self {
+            min: [f32::INFINITY; 3],
+            max: [f32::NEG_INFINITY; 3],
+        };
+        for point in points {
+            for (i, coordinate) in point.into_iter().enumerate() {
+                result.min[i] = result.min[i].min(coordinate);
+                result.max[i] = result.max[i].max(coordinate);
+            }
+        }
+        result
+    }
+    fn transformed(self, pose: Pose) -> Result<Self> {
+        let (sin, cos) = (pose.yaw as f64).sin_cos();
+        let bounds = Self::from_points((0..8).map(|corner| {
+            let p: [f64; 3] = std::array::from_fn(|i| {
+                (if corner & (1 << i) == 0 {
+                    self.min[i]
+                } else {
+                    self.max[i]
+                }) as f64
+                    * pose.scale as f64
+            });
+            let rotated = [cos * p[0] + sin * p[2], p[1], -sin * p[0] + cos * p[2]];
+            std::array::from_fn(|i| (pose.position[i] as f64 + rotated[i]) as f32)
+        }));
+        finite(&bounds.min)?;
+        finite(&bounds.max)?;
+        Ok(bounds)
+    }
 }
 fn flat3<S: serde::Serializer>(v: &[V3], s: S) -> std::result::Result<S::Ok, S::Error> {
     s.collect_seq(v.iter().flatten())
@@ -187,6 +227,7 @@ pub struct Instance {
     pub yaw: f32,
     pub scale: f32,
     pub source: InstanceSource,
+    pub bounds: Bounds,
 }
 /// JSON Pointer to the authoring part plus outer-to-inner repetition indices.
 /// This identifies the source of an instance without reverse-engineering geometry.
@@ -257,6 +298,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         indices: vec![],
         color: d.color,
         material: d.material,
+        bounds: Bounds::default(),
     };
     match &d.shape {
         Shape::RoundedBox {
@@ -525,6 +567,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
     if m.indices.is_empty() {
         return Err("Empty or degenerate mesh".into());
     }
+    m.bounds = Bounds::from_points(m.positions.iter().copied());
     Ok(m)
 }
 fn instance_count(node: &Assembly, depth: usize, limit: usize) -> Result<usize> {
@@ -631,6 +674,7 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                     return Err("Instance residency budget exceeded".into());
                 }
                 s.instances.push(Instance {
+                    bounds: s.meshes[index].bounds.transformed(pose)?,
                     mesh: index,
                     position: pose.position,
                     yaw: pose.yaw,
@@ -851,6 +895,41 @@ mod tests {
                 identities.insert((instance.source.recipe_path, instance.source.repeat_indices))
             );
         }
+    }
+    #[test]
+    fn bounds_describe_local_and_transformed_geometry() {
+        let mut r = recipe();
+        r.definitions.get_mut("block").unwrap().shape = Shape::Box { size: [2., 4., 6.] };
+        r.root = Assembly::Part {
+            mesh: "block".into(),
+            position: [10., 20., 30.],
+            yaw: std::f32::consts::FRAC_PI_2,
+            scale: 2.,
+        };
+        let scene = compile(&r).unwrap();
+        assert_eq!(
+            scene.meshes[0].bounds,
+            Bounds {
+                min: [-1., -2., -3.],
+                max: [1., 2., 3.]
+            }
+        );
+        let b = scene.instances[0].bounds;
+        for (actual, expected) in b
+            .min
+            .into_iter()
+            .chain(b.max)
+            .zip([4., 16., 28., 16., 24., 32.])
+        {
+            assert!((actual - expected).abs() < 1e-5);
+        }
+        r.root = Assembly::Part {
+            mesh: "block".into(),
+            position: [1_000_000., 0., 0.],
+            yaw: 0.,
+            scale: 1.,
+        };
+        assert!(compile(&r).unwrap_err().contains("coordinate"));
     }
     #[test]
     fn deterministic() {

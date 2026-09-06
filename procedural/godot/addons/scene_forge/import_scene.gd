@@ -29,6 +29,7 @@ static func build(data: Dictionary) -> Node3D:
 		arrays[Mesh.ARRAY_TEX_UV] = uvs
 		arrays[Mesh.ARRAY_INDEX] = indices
 		var mesh := ArrayMesh.new()
+		mesh.resource_name = spec.name
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		var material := StandardMaterial3D.new()
 		material.albedo_color = Color(spec.color[0], spec.color[1], spec.color[2], spec.color[3])
@@ -69,9 +70,35 @@ static func instance_source(display: MultiMeshInstance3D, instance_index: int) -
 		return {}
 	return sources[instance_index].duplicate(true)
 
+## JSON-friendly live inspection: follows editor transforms, not stale recipe poses.
+static func describe_instance(display: MultiMeshInstance3D, instance_index: int) -> Dictionary:
+	if instance_index < 0 or instance_index >= display.multimesh.instance_count:
+		return {}
+	if display.multimesh.buffer.size() != display.multimesh.instance_count * 12:
+		return {"error": "Live instance transforms unavailable: missing rendering buffer", "source": instance_source(display, instance_index)}
+	var mesh := display.multimesh.mesh
+	var transform := display.global_transform * display.multimesh.get_instance_transform(instance_index)
+	var bounds: AABB = transform * mesh.get_aabb()
+	var vector = func(v: Vector3): return [v.x, v.y, v.z]
+	var material: StandardMaterial3D = mesh.surface_get_material(0)
+	return {
+		"mesh": mesh.resource_name,
+		"source": instance_source(display, instance_index),
+		"position": vector.call(transform.origin),
+		"basis_columns": [vector.call(transform.basis.x), vector.call(transform.basis.y), vector.call(transform.basis.z)],
+		"bounds": {"min": vector.call(bounds.position), "max": vector.call(bounds.end)},
+		"bounds_kind": "world_axis_aligned_mesh_envelope_not_collision",
+		"vertices": mesh.surface_get_array_len(0),
+		"indices": mesh.surface_get_array_index_len(0),
+		"material": {"roughness": material.roughness, "metallic": material.metallic, "color": [material.albedo_color.r, material.albedo_color.g, material.albedo_color.b, material.albedo_color.a]},
+		"aperture_count": display.get_meta("scene_forge_apertures", []).size(),
+	}
+
 ## Query on demand; the caller binds an aperture to authoritative game data.
 ## Returned wall label stays in definition space; position/normal are world-space.
 static func aperture_world(display: MultiMeshInstance3D, instance_index: int, opening_index: int) -> Dictionary:
+	if display.multimesh.buffer.size() != display.multimesh.instance_count * 12:
+		return {}
 	if instance_index < 0 or instance_index >= display.multimesh.instance_count:
 		return {}
 	for aperture in display.get_meta("scene_forge_apertures", []):

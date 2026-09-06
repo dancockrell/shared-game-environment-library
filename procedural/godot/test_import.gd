@@ -27,6 +27,22 @@ func _run() -> void:
 		var display: MultiMeshInstance3D = copy.get_child(mesh_index)
 		var expected_instances: Array = data.instances.filter(func(item): return int(item.mesh) == mesh_index)
 		for instance_index in expected_instances.size():
+			var description: Dictionary = preload("res://addons/scene_forge/import_scene.gd").describe_instance(display, instance_index)
+			if DisplayServer.get_name() == "headless":
+				assert(description.has("error"))
+			else:
+				assert(description.vertices > 0 and description.indices > 0)
+			assert(JSON.parse_string(JSON.stringify(description)) is Dictionary)
+			if not description.has("error") and expected_instances[instance_index].has("bounds"):
+				for key in ["min", "max"]:
+					for axis in 3:
+						var actual := float(description.bounds[key][axis])
+						var expected := float(expected_instances[instance_index].bounds[key][axis])
+						# Different f32 transform implementations can differ near zero.
+						if absf(actual - expected) > 0.00001 * maxf(1.0, absf(expected)):
+							push_error("Bounds mismatch: actual=%s expected=%s" % [actual, expected])
+							quit(1)
+							return
 			var source: Dictionary = preload("res://addons/scene_forge/import_scene.gd").instance_source(display, instance_index)
 			assert(source == expected_instances[instance_index].get("source", {}))
 			source["test_only"] = true
@@ -59,6 +75,9 @@ func _run() -> void:
 		assert(display.get_meta("scene_forge_apertures") == descriptors)
 		if not descriptors.is_empty() and display.multimesh.instance_count > 1:
 			var importer = preload("res://addons/scene_forge/import_scene.gd")
+			if DisplayServer.get_name() == "headless":
+				assert(importer.aperture_world(display, 0, 0).is_empty())
+				continue
 			var aperture: Dictionary = descriptors[0]
 			var first: Dictionary = importer.aperture_world(display, 0, 0)
 			var second: Dictionary = importer.aperture_world(display, 1, 0)
@@ -109,5 +128,6 @@ func _run() -> void:
 		await RenderingServer.frame_post_draw
 		assert(root.get_texture().get_image().save_png(OS.get_cmdline_user_args()[1]) == OK)
 	print("Scene Forge Godot import passed: ", count, " instances, ", scene.get_child_count(), " shared meshes")
+	print("Spatial checks: ", "unavailable-data guards only (dummy renderer)" if DisplayServer.get_name() == "headless" else "graphics-backed transforms and bounds verified")
 	scene.queue_free()
 	quit()
