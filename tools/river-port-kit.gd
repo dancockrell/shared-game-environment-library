@@ -412,7 +412,10 @@ func catalog_specs() -> Array:
 		["shield-hook-board", "neutral_prop"], ["wooden-park-bench", "neutral_prop"],
 		["gingham-picnic-table", "neutral_prop"],
 		["clinker-rowboat", "architecture"],
-		["forge-bellows", "neutral_prop"]
+		["forge-bellows", "neutral_prop"],
+		["stoppered-jar", "neutral_prop"], ["glass-carboy", "neutral_prop"],
+		["ceramic-amphora", "neutral_prop"], ["liquid-vat", "neutral_prop"],
+		["long-worktable", "neutral_prop"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -601,6 +604,24 @@ func rowboat(pos: Vector3, parent: Node3D = null) -> Node3D:
 	var blade := block(Vector3(0.85,0.4,1.7),Vector3(0.15,0.025,0.6),"wood6",g)
 	blade.rotation.y = 0.45
 	return g
+
+func turned_vessel(profile: Array[Vector2], key: String, parent: Node3D) -> MeshInstance3D:
+	# Radius/height profile, capped by zero-radius endpoints. Clockwise faces
+	# and analytic outward normals preserve rounded silhouettes without baking.
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var sides := 48
+	for row in profile.size()-1:
+		for side in sides:
+			for pair in [[row,side],[row,side+1],[row+1,side],[row,side+1],[row+1,side+1],[row+1,side]]:
+				var angle := TAU*float(pair[1])/sides
+				var point: Vector2 = profile[pair[0]]
+				var sample_index: int = pair[0]
+				var delta := profile[mini(sample_index+1,profile.size()-1)]-profile[maxi(sample_index-1,0)]
+				st.set_normal(Vector3(cos(angle)*delta.y,-delta.x,sin(angle)*delta.y).normalized())
+				st.set_uv(Vector2(float(pair[1])/sides,point.y))
+				st.add_vertex(Vector3(cos(angle)*point.x,point.y,sin(angle)*point.x))
+	return piece(st.commit(),Vector3.ZERO,Vector3.ONE,key,parent)
 
 func catalog_model(id: String) -> Node3D:
 	rng.seed = 5012026+id.hash() # Independent of build order and unrelated recipes.
@@ -1035,10 +1056,10 @@ func catalog_model(id: String) -> Node3D:
 		for x in [-0.65,0.0,0.65]:
 			block(Vector3(x,1.75,0.14),Vector3(0.45,0.62,0.015),"sand",g)
 		attachment(g,"notice",Vector3(0,1.75,0.17))
-	elif id in ["trestle-table","stool"]:
-		var width := 2.8 if id == "trestle-table" else 0.55
-		var depth := 0.85 if id == "trestle-table" else 0.55
-		var height := 0.82 if id == "trestle-table" else 0.48
+	elif id in ["trestle-table","stool","long-worktable"]:
+		var width := 4.4 if id == "long-worktable" else 2.8 if id == "trestle-table" else 0.55
+		var depth := 1.15 if id == "long-worktable" else 0.85 if id == "trestle-table" else 0.55
+		var height := 0.9 if id == "long-worktable" else 0.82 if id == "trestle-table" else 0.48
 		for x in [-width*0.35,width*0.35]:
 			for side in [-1,1]:
 				beam(Vector3(x,0,side*depth*0.45),Vector3(x,height,side*depth*0.2),0.1,"oak",g)
@@ -1161,6 +1182,42 @@ func catalog_model(id: String) -> Node3D:
 		block(Vector3(1.0,1.03,0.38),Vector3(0.24,0.22,0.3),"iron",g)
 		beam(Vector3(1,0.9,0.5),Vector3(1,0.9,0.8),0.05,"iron",g)
 		attachment(g,"surface",Vector3(0,1.01,0))
+	elif id in ["stoppered-jar","glass-carboy","ceramic-amphora","liquid-vat"]:
+		material("alchemy_glaze",Color("657866"),0.23)
+		material("alchemy_dark_glass",Color("294c42"),0.12)
+		material("alchemy_ceramic",Color("9d6745"),0.55)
+		material("alchemy_liquid",Color("42594e"),0.16)
+		if id == "stoppered-jar":
+			turned_vessel([Vector2(0,0),Vector2(0.14,0),Vector2(0.18,0.035),Vector2(0.2,0.12),Vector2(0.2,0.3),Vector2(0.17,0.37),Vector2(0.12,0.4),Vector2(0.12,0.46),Vector2(0,0.46)],"alchemy_glaze",g)
+			cylinder(Vector3(0,0.47,0),0.1,0.055,"oak_light",g,32)
+			ring(Vector3(0,0.42,0),0.12,0.014,"alchemy_glaze",g)
+		elif id == "glass-carboy":
+			turned_vessel([Vector2(0,0),Vector2(0.2,0),Vector2(0.28,0.04),Vector2(0.34,0.16),Vector2(0.37,0.36),Vector2(0.36,0.6),Vector2(0.3,0.78),Vector2(0.2,0.9),Vector2(0.07,0.97),Vector2(0.07,1.1),Vector2(0,1.1)],"alchemy_dark_glass",g)
+			cylinder(Vector3(0,1.12,0),0.06,0.07,"oak_light",g,32)
+			for y in [0.18,0.6]:
+				ring(Vector3(0,y,0),0.355,0.022,"sand",g)
+		elif id == "ceramic-amphora":
+			turned_vessel([Vector2(0,0),Vector2(0.12,0),Vector2(0.16,0.06),Vector2(0.24,0.22),Vector2(0.3,0.42),Vector2(0.27,0.62),Vector2(0.18,0.78),Vector2(0.11,0.85),Vector2(0.11,1),Vector2(0,1)],"alchemy_ceramic",g)
+			for side in [-1,1]:
+				for segment in 16:
+					var a := PI*segment/16.0
+					var z := PI*(segment+1)/16.0
+					var start := Vector3(side*(0.16+sin(a)*0.25),0.61+cos(a)*0.25,0)
+					var end := Vector3(side*(0.16+sin(z)*0.25),0.61+cos(z)*0.25,0)
+					var handle := cylinder((start+end)*0.5,0.032,start.distance_to(end),"alchemy_ceramic",g,16)
+					handle.quaternion = Quaternion(Vector3.UP,(end-start).normalized())
+					ellipsoid(start,Vector3.ONE*0.032,"alchemy_ceramic",g)
+			cylinder(Vector3(0,1.02,0),0.1,0.065,"oak_light",g,32)
+		else:
+			for stave in 36:
+				var angle := TAU*stave/36.0
+				var wood := block(Vector3(cos(angle)*0.72,0.61,sin(angle)*0.72),Vector3(0.09,1.22,0.132),shade("wood"),g)
+				wood.rotation.y = -angle
+			for y in [0.14,0.55,1.1]:
+				ring(Vector3(0,y,0),0.77,0.025,"iron",g)
+			cylinder(Vector3(0,0.06,0),0.72,0.12,"oak",g,48)
+			cylinder(Vector3(0,0.94,0),0.69,0.025,"alchemy_liquid",g,48)
+			attachment(g,"liquid_surface",Vector3(0,0.953,0))
 	elif id == "forge-bellows":
 		# Static great bellows: timber leaves, folded leather body, iron nozzle,
 		# freestanding trestle and lever. Socket positions support later rigging;

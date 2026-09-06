@@ -1,5 +1,27 @@
 # Description-led Crossing building batch
 
+## Alchemy furnishing batch
+
+Five new candidates extend the catalog to 105 models: stoppered-jar,
+glass-carboy, ceramic-amphora, liquid-vat and long-worktable. Vessels use
+one radius/height profile constructor with outward normals and 48 radial
+segments; the long table extends the existing trestle-table construction.
+The table retains its measured surface socket, and the vat has a liquid
+surface socket. The vat contains a neutral visual liquid, not a claim about
+contents, quantity, safety or live inventory.
+
+First-pass horizontal shading bands and square-section amphora handles
+were rejected and revised. Current front views were inspected after the
+normal/handle correction. Materials remain candidates: dark opaque glass
+is not yet convincing transparent glass; vessels still need wear, surface
+variation and closer rim/stopper refinement. The ceramic amphora must not
+stand in for Chizili's explicitly glass specimen containers.
+
+Chizili's documented mixed vessels and vats, and the separate workroom's
+long table, establish the consumer needs. Exact shapes, sizes and colors
+are art-direction inferences. No specimens, active shop inventory or NPC
+are built into these props. No paid generation or credits were used.
+
 ## Static great bellows
 
 The 100th candidate, forge-bellows, extends the existing native kit with
