@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "task_id": "shared-character-workshop",
+  "agent": "codex-root",
+  "summary": "Build embeddable Godot character workshop for real GLB assets and validated appearance presets",
+  "status": "completed",
+  "claimed_at": "2026-09-06T03:30:00Z",
+  "updated_at": "2026-09-06T03:30:00Z",
+  "paths": [
+    "tools/character-workshop.gd",
+    "tools/character-workshop.tscn",
+    "tools/test-character-workshop.gd",
+    "docs/CHARACTER_WORKSHOP.md"
+  ],
+  "symbols": [],
+  "coordination": {
+    "depends_on": [],
+    "conflicts_with": [],
+    "notes": "Own character tooling only; DR Companion owns scenery. No paid generation or source model redistribution."
+  },
+  "completion": {
+    "commit": null,
+    "checks": ["Real GLB import and editor render passed", "Visibility height and file roundtrip passed", "Hash mismatch malformed visibility and invalid scale rejected atomically", "Failed import preserves current model", "Blend-shape deformation and clothing compatibility not yet verified", "No generation credits used; no source models redistributed"]
+  }
+}

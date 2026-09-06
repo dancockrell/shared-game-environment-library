@@ -1,0 +1,18 @@
+{
+  "height": 1.6,
+  "name": "Roundtrip test",
+  "parts": {
+    "Skeleton3D/Surface_Abyssal shadow hide": true,
+    "Skeleton3D/Surface_Ancient sea-green hide": false,
+    "Skeleton3D/Surface_Drowned temple gold": true,
+    "Skeleton3D/Surface_Impossible amber eyes": true,
+    "Skeleton3D/Surface_Necromantic tide light": true,
+    "Skeleton3D/Surface_Raised crown ridges": true,
+    "Skeleton3D/Surface_Storm membrane": true,
+    "Skeleton3D/Surface_Wet black horn": true
+  },
+  "schemaVersion": 1,
+  "shapes": {},
+  "sourceFilename": "cthulhu.glb",
+  "sourceSha256": "d46c2cf1517cdffe53d720940a99df3dc6e62c3813f29c912c5aa2e3df398a63"
+}
