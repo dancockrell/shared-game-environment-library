@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Verify native Godot package geometry, material pixels, placements and reuse; remove unreliable post-conversion node references and regression-test repeated imports",
+  "summary": "Verify Godot package data in a fresh process before loading the source GLB, reusing the existing exact snapshot checks",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

@@ -1422,8 +1422,17 @@ guard. No graphics backend was exercised. This portable ArrayMesh path retained
 its CPU buffers headlessly; it does not overturn the historical dummy-backend
 MultiMesh buffer gate in the separate compiled-JSON path.
 
-Rendered Godot appearance, UI interaction, fresh-process package loading,
-Unity and measured VRAM remain unverified. Existing previews were not replaced;
+Fresh-process package loading is now verified by the same script's third
+argument `--verify-package`: load the trusted saved package before importing
+the source GLB, reject declared external dependencies, then compare its complete
+snapshot against a fresh source import. `godot-cold-final.log` reports cold
+PASS for `portable-godot-004.scn` and the full 92-instance source; stderr is empty.
+The deliberately mismatched pie-only source versus full package reports cold
+FAIL and exits 1 (`godot-cold-mismatch.log`). This is a regression diagnostic
+for our generated packages, not a sandbox for untrusted native scenes.
+
+Rendered Godot appearance, UI interaction, Unity and measured VRAM remain
+unverified. Existing previews were not replaced;
 no paid generation, push or Actions run.
 
 Current core geometry is original first-principles code. serde/serde_json and

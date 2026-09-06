@@ -69,6 +69,17 @@ func _own_tree(node: Node, scene: Node) -> void:
 		child.owner = scene
 		_own_tree(child, scene)
 
+func _load_package_snapshot(path: String) -> Dictionary:
+	var saved := ResourceLoader.load(path, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	if saved == null:
+		return {}
+	var restored := saved.instantiate() as Node3D
+	if restored == null:
+		return {}
+	var snapshot := _snapshot(restored)
+	restored.free()
+	return snapshot
+
 func _verify_package(scene: Node3D, path: String) -> bool:
 	if FileAccess.file_exists(path):
 		push_error("Refusing to overwrite package diagnostic output")
@@ -81,14 +92,7 @@ func _verify_package(scene: Node3D, path: String) -> bool:
 	var packed := PackedScene.new()
 	if packed.pack(scene) != OK or ResourceSaver.save(packed, path) != OK:
 		return false
-	var saved := ResourceLoader.load(path, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
-	if saved == null:
-		return false
-	var restored := saved.instantiate() as Node3D
-	if restored == null:
-		return false
-	var same := before == _snapshot(restored)
-	restored.free()
+	var same := before == _load_package_snapshot(path)
 	print("SCENE_FORGE_PORTABLE_PACKAGE_", "PASS" if same else "FAIL", " graphics=not_run material_pixels=checked")
 	return same
 
@@ -101,9 +105,22 @@ func _initialize() -> void:
 		quit(1)
 		return
 	var args := OS.get_cmdline_user_args()
-	if args.size() < 1 or args.size() > 2:
+	if args.size() < 1 or args.size() > 3 or (args.size() == 3 and args[2] != "--verify-package"):
 		quit(1)
 		return
+	var cold_snapshot := {}
+	if args.size() == 3:
+		# Must happen before GLTFDocument imports any source assets in this process.
+		if not ResourceLoader.get_dependencies(args[1]).is_empty():
+			push_error("Portable package still references external resources")
+			quit(1)
+			return
+		cold_snapshot = _load_package_snapshot(args[1])
+		if cold_snapshot.is_empty():
+			push_error("Fresh package load failed or lacks required data")
+			quit(1)
+			return
+		print("SCENE_FORGE_COLD_PACKAGE_LOADED_BEFORE_SOURCE")
 	if not _preflight_tests(args[0]):
 		push_error("Portable preflight regression")
 		quit(1)
@@ -134,6 +151,9 @@ func _initialize() -> void:
 		ids[source_node.get_meta("scene_forge_export_id")] = true
 	var valid := parts.size() == int(manifest.instances) and ids.size() == parts.size()
 	print("SCENE_FORGE_PORTABLE_METADATA_", "PASS" if valid else "FAIL", " instances=", parts.size(), " graphics=not_run")
+	if valid and args.size() == 3:
+		valid = cold_snapshot == _snapshot(scene)
+		print("SCENE_FORGE_PORTABLE_COLD_", "PASS" if valid else "FAIL", " graphics=not_run material_pixels=checked")
 	if valid and args.size() == 2:
 		valid = _verify_package(scene, args[1])
 		var expected := _snapshot(scene)
