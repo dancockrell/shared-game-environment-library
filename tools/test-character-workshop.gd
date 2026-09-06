@@ -308,5 +308,23 @@ func run() -> void:
 				editor.outfit.selections.Headwear = "Bare head"
 				editor.outfit.apply()
 				check(not editor.parts["Skeleton3D/Hat"].visible and editor.parts["Skeleton3D/Hair"].visible,"removing headwear restores hair")
+				for cut in ["Short travelling cloak","Long travelling cloak"]:
+					editor.outfit.selections.Outerwear = cut
+					editor.outfit.colors.Cloak = "668dadff"
+					editor.outfit.apply()
+					editor.refresh_controls()
+					var long_cut: bool = cut.begins_with("Long")
+					check(editor.parts["Skeleton3D/LongCloak"].visible == long_cut and editor.parts["Skeleton3D/ShortCloak"].visible != long_cut,"cloak selection is exclusive: "+cut)
+					var cloak: MeshInstance3D = editor.parts["Skeleton3D/LongCloak" if long_cut else "Skeleton3D/ShortCloak"]
+					check(cloak.mesh.get_blend_shape_count() == 8 and cloak.skin.get_bind_count() == 163,"cloak retains linked fit shapes and rig: "+cut)
+					for angle in [0.65,2.8]:
+						editor.pivot.rotation.y = angle
+						for i in 5:
+							await process_frame
+						RenderingServer.force_draw(false)
+						check(root.get_texture().get_image().save_png(args[1]+("-long" if long_cut else "-short")+("-front.png" if angle < 1 else "-back.png")) == OK,"render cloak: "+cut)
+				editor.outfit.selections.Outerwear = "No cloak"
+				editor.outfit.apply()
+				check(not editor.parts["Skeleton3D/LongCloak"].visible and not editor.parts["Skeleton3D/ShortCloak"].visible,"removing outerwear hides both cuts")
 	print("Workshop failures: ",failures)
 	quit(0 if failures == 0 else 1)

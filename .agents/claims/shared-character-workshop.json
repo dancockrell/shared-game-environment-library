@@ -2,11 +2,12 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Shared character production coverage and period-aware wardrobe admission",
+  "summary": "Historical outerwear prototypes and reusable character-art production skill",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T14:10:00Z",
+  "updated_at": "2026-09-06T06:48:17Z",
   "paths": [
+    ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
     "tools/test-character-production.mjs",
     "catalog/characters/",
@@ -33,6 +34,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Character-art-production skill committed as 570ac07; frontmatter, reference and UI structure checks passed; bundled quick_validate not_run because PyYAML is missing",
+      "Short and long cloak prototypes built for both bodies; both rendered workshop suites passed with zero assertion failures; front/back renders inspected, final art admission rejected pending shoulder/closure/material/motion improvement",
       "node tools/test-character-production.mjs: passed 18 inventory and metadata admission assertions",
       "DragonRealms local-cache inventory: generated 11 races, 919 creature pages and 2493 NPC pages; all unassessed",
       "Both rendered workshop suites: 85 checks each passed",

@@ -3,6 +3,7 @@
   "name": "",
   "outfit": {
     "dyes": {
+      "Cloak": "ffffffff",
       "Clothing": "ffffffff",
       "Formal bottom": "ffffffff",
       "Formal top": "ffffffff",
@@ -19,10 +20,11 @@
       "Pointed ears": 0.0,
       "Square face": 0.0
     },
-    "profileSha256": "a5473710c7321a969fbcb5301a81a34fc28fefe55f9f287209494afa7928baea",
+    "profileSha256": "92a59d97b03e9167b1984e101031c9da03274de6f9c42c9a9e4f87098d2abd48",
     "slots": {
       "Clothes": "Casual 01",
-      "Headwear": "Bare head"
+      "Headwear": "Bare head",
+      "Outerwear": "Long travelling cloak"
     }
   },
   "parts": {
@@ -34,9 +36,11 @@
     "Skeleton3D/FormalTop": false,
     "Skeleton3D/Hair": true,
     "Skeleton3D/Hat": false,
+    "Skeleton3D/LongCloak": true,
     "Skeleton3D/Outfit01": true,
     "Skeleton3D/Outfit02": false,
-    "Skeleton3D/Shoes": true
+    "Skeleton3D/Shoes": true,
+    "Skeleton3D/ShortCloak": false
   },
   "schemaVersion": 1,
   "shapes": {
@@ -104,6 +108,14 @@
     "Skeleton3D/Hat::Oval face": 0.0,
     "Skeleton3D/Hat::Pointed ears": 0.0,
     "Skeleton3D/Hat::Square face": 0.0,
+    "Skeleton3D/LongCloak::Broad nose": 0.0,
+    "Skeleton3D/LongCloak::Full lips": 0.0,
+    "Skeleton3D/LongCloak::Lean": 0.0,
+    "Skeleton3D/LongCloak::Muscular": 0.0,
+    "Skeleton3D/LongCloak::Narrow chin": 0.0,
+    "Skeleton3D/LongCloak::Oval face": 0.0,
+    "Skeleton3D/LongCloak::Pointed ears": 0.0,
+    "Skeleton3D/LongCloak::Square face": 0.0,
     "Skeleton3D/Outfit01::Broad nose": 0.0,
     "Skeleton3D/Outfit01::Full lips": 0.0,
     "Skeleton3D/Outfit01::Lean": 0.0,
@@ -127,9 +139,17 @@
     "Skeleton3D/Shoes::Narrow chin": 0.0,
     "Skeleton3D/Shoes::Oval face": 0.0,
     "Skeleton3D/Shoes::Pointed ears": 0.0,
-    "Skeleton3D/Shoes::Square face": 0.0
+    "Skeleton3D/Shoes::Square face": 0.0,
+    "Skeleton3D/ShortCloak::Broad nose": 0.0,
+    "Skeleton3D/ShortCloak::Full lips": 0.0,
+    "Skeleton3D/ShortCloak::Lean": 0.0,
+    "Skeleton3D/ShortCloak::Muscular": 0.0,
+    "Skeleton3D/ShortCloak::Narrow chin": 0.0,
+    "Skeleton3D/ShortCloak::Oval face": 0.0,
+    "Skeleton3D/ShortCloak::Pointed ears": 0.0,
+    "Skeleton3D/ShortCloak::Square face": 0.0
   },
   "sourceFilename": "male-source.glb",
-  "sourceSha256": "26ff3a769f2fccff32ef6760ca5f5704779ef00c9ce6f0c5029b35b09cce3ff1",
+  "sourceSha256": "fc9c4ac8172d4b3c2848cf9ba2a7bd37c75d993950fc19878871854f71f51a6c",
   "variationSeed": ""
 }

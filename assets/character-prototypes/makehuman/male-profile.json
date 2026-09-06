@@ -1,5 +1,15 @@
 {
   "dyes": {
+    "Cloak": [
+      {
+        "mesh": "Skeleton3D/ShortCloak",
+        "surface": 0
+      },
+      {
+        "mesh": "Skeleton3D/LongCloak",
+        "surface": 0
+      }
+    ],
     "Clothing": [
       {
         "mesh": "Skeleton3D/Outfit01",
@@ -47,7 +57,9 @@
       "Skeleton3D/Hat::Broad nose",
       "Skeleton3D/Hair::Broad nose",
       "Skeleton3D/Eyes::Broad nose",
-      "Skeleton3D/Shoes::Broad nose"
+      "Skeleton3D/Shoes::Broad nose",
+      "Skeleton3D/ShortCloak::Broad nose",
+      "Skeleton3D/LongCloak::Broad nose"
     ],
     "Full lips": [
       "Skeleton3D/Body01::Full lips",
@@ -60,7 +72,9 @@
       "Skeleton3D/Hat::Full lips",
       "Skeleton3D/Hair::Full lips",
       "Skeleton3D/Eyes::Full lips",
-      "Skeleton3D/Shoes::Full lips"
+      "Skeleton3D/Shoes::Full lips",
+      "Skeleton3D/ShortCloak::Full lips",
+      "Skeleton3D/LongCloak::Full lips"
     ],
     "Lean": [
       "Skeleton3D/Body01::Lean",
@@ -73,7 +87,9 @@
       "Skeleton3D/Hat::Lean",
       "Skeleton3D/Hair::Lean",
       "Skeleton3D/Eyes::Lean",
-      "Skeleton3D/Shoes::Lean"
+      "Skeleton3D/Shoes::Lean",
+      "Skeleton3D/ShortCloak::Lean",
+      "Skeleton3D/LongCloak::Lean"
     ],
     "Muscular": [
       "Skeleton3D/Body01::Muscular",
@@ -86,7 +102,9 @@
       "Skeleton3D/Hat::Muscular",
       "Skeleton3D/Hair::Muscular",
       "Skeleton3D/Eyes::Muscular",
-      "Skeleton3D/Shoes::Muscular"
+      "Skeleton3D/Shoes::Muscular",
+      "Skeleton3D/ShortCloak::Muscular",
+      "Skeleton3D/LongCloak::Muscular"
     ],
     "Narrow chin": [
       "Skeleton3D/Body01::Narrow chin",
@@ -99,7 +117,9 @@
       "Skeleton3D/Hat::Narrow chin",
       "Skeleton3D/Hair::Narrow chin",
       "Skeleton3D/Eyes::Narrow chin",
-      "Skeleton3D/Shoes::Narrow chin"
+      "Skeleton3D/Shoes::Narrow chin",
+      "Skeleton3D/ShortCloak::Narrow chin",
+      "Skeleton3D/LongCloak::Narrow chin"
     ],
     "Oval face": [
       "Skeleton3D/Body01::Oval face",
@@ -112,7 +132,9 @@
       "Skeleton3D/Hat::Oval face",
       "Skeleton3D/Hair::Oval face",
       "Skeleton3D/Eyes::Oval face",
-      "Skeleton3D/Shoes::Oval face"
+      "Skeleton3D/Shoes::Oval face",
+      "Skeleton3D/ShortCloak::Oval face",
+      "Skeleton3D/LongCloak::Oval face"
     ],
     "Pointed ears": [
       "Skeleton3D/Body01::Pointed ears",
@@ -125,7 +147,9 @@
       "Skeleton3D/Hat::Pointed ears",
       "Skeleton3D/Hair::Pointed ears",
       "Skeleton3D/Eyes::Pointed ears",
-      "Skeleton3D/Shoes::Pointed ears"
+      "Skeleton3D/Shoes::Pointed ears",
+      "Skeleton3D/ShortCloak::Pointed ears",
+      "Skeleton3D/LongCloak::Pointed ears"
     ],
     "Square face": [
       "Skeleton3D/Body01::Square face",
@@ -138,7 +162,9 @@
       "Skeleton3D/Hat::Square face",
       "Skeleton3D/Hair::Square face",
       "Skeleton3D/Eyes::Square face",
-      "Skeleton3D/Shoes::Square face"
+      "Skeleton3D/Shoes::Square face",
+      "Skeleton3D/ShortCloak::Square face",
+      "Skeleton3D/LongCloak::Square face"
     ]
   },
   "schemaVersion": 1,
@@ -180,7 +206,25 @@
           "Skeleton3D/Hat"
         ]
       }
+    },
+    "Outerwear": {
+      "Long travelling cloak": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/LongCloak"
+        ]
+      },
+      "No cloak": {
+        "hides": [],
+        "meshes": []
+      },
+      "Short travelling cloak": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/ShortCloak"
+        ]
+      }
     }
   },
-  "sourceSha256": "26ff3a769f2fccff32ef6760ca5f5704779ef00c9ce6f0c5029b35b09cce3ff1"
+  "sourceSha256": "fc9c4ac8172d4b3c2848cf9ba2a7bd37c75d993950fc19878871854f71f51a6c"
 }

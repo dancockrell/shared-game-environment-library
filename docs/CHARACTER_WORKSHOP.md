@@ -1,5 +1,15 @@
 # Shared character workshop
 
+Reusable production instructions live in `.agents/skills/character-art-production/SKILL.md`. They preserve faction-specific art direction while using this shared implementation.
+
+## Outerwear construction checkpoint — 6 September 2026
+
+The compiler now constructs short and long open-front cloak prototypes for both prepared bodies. The same wardrobe profile exposes a mutually exclusive Outerwear slot, a shared cloak dye and all eight linked fit targets. This is actual generated cloth geometry with UVs, normals and skinning, not a reference image. Both rendered workshop runs completed with zero assertion failures, including front/back captures and removing outerwear.
+
+Visual review: the initial long cut stretched its yoke below the shoulders; separating shoulder drop from hem length and moving the collar anchor improved that defect. The current shoulder attachment still looks too square and lacks a convincing closure, hem treatment, material detail and secondary movement. It is a **construction prototype, not approved faction art**. The surrounding modern suits remain source-fitting fixtures. Cloaks follow the upper torso rigidly; eight fit targets and a valid rig do not prove combat-motion clearance or cloth simulation. Runtime admission remains pending.
+
+The original authored pattern is in `add_cloak` inside the existing compiler, fitted against the pinned CC0 source proxy. Preserve the compiled receipt and the `*-short-front`, `*-short-back`, `*-long-front`, `*-long-back` review images when refining it. No paid generation was used.
+
 Owner: Pirate Island work. DR Companion continues environment-asset production. The character editor and preset format are shared; neither game's lore or faction logic belongs here. No paid generation. The inspected CC0 MakeHuman source subset and fitted workshop derivatives are now included, separately from approved game art.
 
 ## Working first increment
