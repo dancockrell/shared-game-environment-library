@@ -745,6 +745,9 @@ func build() -> void:
 	root.msaa_3d = Viewport.MSAA_4X
 	root.use_taa = true
 	RenderingServer.directional_shadow_atlas_set_size(8192,true)
+	if args.size() == 2 and args[1] == "--catalog":
+		await build_catalog()
+		return
 	if args.size() == 2 and args[1] == "--inspect":
 		await inspect_saved_scene()
 		return
@@ -889,6 +892,171 @@ void fragment(){vec2 p=world_position.xz*vec2(4.4,7.2);float n=water(p);ALBEDO=m
 	file.store_string(JSON.stringify({"generator":"tools/build-river-port.gd + tools/river-port-kit.gd","engine":Engine.get_version_info().string,"renderer":RenderingServer.get_current_rendering_method(),"materialSources":kit.material_sources,"seed":5012026,"geometryPieces":kit.counts.pieces,"meshInstances":collect_meshes(kit.root).size(),"referenceImageSha256":FileAccess.get_sha256(repo.path_join("docs/visual-reference/painted-miniature-river-port-approved.png")),"referenceDimensions":[1536,1024],"groundMethod":"Manual visible perimeter and dock-corner pixel traces intersected with the camera ground plane; hidden perimeter inferred. Not a perceptual similarity score.","renderedObjects":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),"renderedPrimitives":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),"drawCalls":RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),"status":"authored environment study; not reference-matched or runtime-admitted","actors":"three 15-bone rigid-piece study rigs; not skinned or production character sculpts","exportNote":"Native .scn preserves procedural water and world triplanar materials; GLB is a geometry interchange proof and does not preserve those renderer-specific materials.","sceneSha256":FileAccess.get_sha256(output_dir.path_join("river-port-scene.glb"))},"\t")+"\n")
 	file.close()
 	print("Built river port: %d authored pieces" % kit.counts.pieces)
+	quit()
+
+func bounds_of(model: Node3D) -> AABB:
+	var result := AABB()
+	var first := true
+	for mesh in collect_meshes(model):
+		var box: AABB = model.global_transform.affine_inverse()*mesh.global_transform*mesh.mesh.get_aabb()
+		result = box if first else result.merge(box)
+		first = false
+	assert(not first and result.size.is_finite() and result.size.length() > 0)
+	return result
+
+func vector_array(v: Vector3) -> Array:
+	return [v.x,v.y,v.z]
+
+func build_catalog() -> void:
+	# Batch mode of the existing builder, using the same kit/material owner.
+	# Native scene retains shared textures; separate GLBs are geometry-only.
+	var folder := output_dir.path_join("catalog")
+	DirAccess.make_dir_recursive_absolute(folder)
+	root.size = Vector2i(640,520)
+	root.add_child(kit.root)
+	kit.setup_palette()
+	kit.apply_surface_sources(repo)
+	var stage := Node3D.new()
+	stage.name = "ReviewStage"
+	root.add_child(stage)
+	camera = Camera3D.new()
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.current = true
+	stage.add_child(camera)
+	var environment := WorldEnvironment.new()
+	environment.environment = Environment.new()
+	var env := environment.environment
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color("293238")
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color("bcc5ce")
+	env.ambient_light_energy = 0.45
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.ssao_enabled = true
+	env.ssao_radius = 0.8
+	env.ssao_intensity = 1.4
+	stage.add_child(environment)
+	var sun := DirectionalLight3D.new()
+	sun.rotation_degrees = Vector3(-48,-38,0)
+	sun.light_color = Color("fff0d5")
+	sun.light_energy = 1.25
+	sun.shadow_enabled = true
+	stage.add_child(sun)
+	var ground := kit.block(Vector3(0,-0.1,0),Vector3(60,0.2,60),"mortar",stage)
+	var entries: Array = []
+	var overlay := CanvasLayer.new()
+	root.add_child(overlay)
+	var caption := Label.new()
+	caption.position = Vector2(18,482)
+	caption.add_theme_font_size_override("font_size",24)
+	caption.add_theme_color_override("font_shadow_color",Color.BLACK)
+	caption.add_theme_constant_override("shadow_offset_x",2)
+	caption.add_theme_constant_override("shadow_offset_y",2)
+	overlay.add_child(caption)
+	var sheet := Image.create_empty(2560,3360,false,Image.FORMAT_RGBA8)
+	sheet.fill(Color("20282d"))
+	var specs := kit.catalog_specs()
+	for index in specs.size():
+		var id: String = specs[index][0]
+		caption.text = "%02d  %s" % [index+1,id.replace("-"," ").capitalize()]
+		var model: Node3D = kit.catalog_model(id)
+		# The original scene recipes face +Z. Wrap/rotate once at export so the
+		# shared catalog obeys -Z forward without changing the existing scene.
+		model.rotation.y = PI
+		var asset := Node3D.new()
+		asset.name = "painted_"+id.replace("-","_")
+		kit.root.add_child(asset)
+		model.reparent(asset,false)
+		var original := bounds_of(asset)
+		model.position -= Vector3(original.get_center().x,original.position.y,original.get_center().z)
+		var bounds := bounds_of(asset)
+		assert(absf(bounds.position.y) < 0.0001)
+		assert(Vector2(bounds.get_center().x,bounds.get_center().z).length() < 0.0001)
+		var meshes := collect_meshes(asset)
+		var triangles := 0
+		var materials: Array = []
+		for mesh in meshes:
+			assert(mesh.transform.is_finite())
+			var material := mesh.material_override as StandardMaterial3D
+			assert(material != null)
+			if material.resource_name not in materials:
+				materials.append(material.resource_name)
+			for surface in mesh.mesh.get_surface_count():
+				var arrays: Array = mesh.mesh.surface_get_arrays(surface)
+				var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+				triangles += (indices.size() if not indices.is_empty() else arrays[Mesh.ARRAY_VERTEX].size())/3
+		var sockets: Dictionary = {}
+		for child in asset.find_children("*","Node3D",true,false):
+			if child.has_meta("presentation_only"):
+				sockets[str(child.name)] = vector_array(asset.to_local(child.global_position))
+		var aim := bounds.get_center()
+		camera.position = aim+Vector3(12,10,-16)
+		camera.look_at(aim)
+		# Frame actual projected corners, not a width-only heuristic.
+		var projected := AABB()
+		for corner in 8:
+			var p: Vector3 = camera.global_transform.affine_inverse()*bounds.get_endpoint(corner)
+			projected = AABB(p,Vector3.ZERO) if corner == 0 else projected.expand(p)
+		camera.size = maxf(projected.size.y,projected.size.x/ (640.0/520.0))*1.22
+		for frame in 12:
+			await process_frame
+		RenderingServer.force_draw(false)
+		var front := root.get_texture().get_image()
+		front.convert(Image.FORMAT_RGBA8)
+		assert(front.save_png(folder.path_join(id+".png")) == OK)
+		sheet.blit_rect(front,Rect2i(0,0,640,520),Vector2i((index%4)*640,(index/4)*560))
+		camera.position = aim+Vector3(-12,10,16)
+		camera.look_at(aim)
+		for frame in 8:
+			await process_frame
+		RenderingServer.force_draw(false)
+		assert(root.get_texture().get_image().save_png(folder.path_join(id+"-rear.png")) == OK)
+		# Preserve shared surface inputs in one native catalog, not 24 embedded
+		# copies of identical textures. Standalone GLBs retain all geometry.
+		var retained: Dictionary = {}
+		for key in kit.materials:
+			var material: StandardMaterial3D = kit.materials[key]
+			retained[key] = [material.albedo_texture,material.normal_texture,material.normal_enabled]
+			material.albedo_texture = null
+			material.normal_texture = null
+			material.normal_enabled = false
+		var doc := GLTFDocument.new()
+		var state := GLTFState.new()
+		assert(doc.append_from_scene(asset,state) == OK)
+		var file := folder.path_join(id+".glb")
+		assert(doc.write_to_filesystem(state,file) == OK)
+		var imported_state := GLTFState.new()
+		assert(doc.append_from_file(file,imported_state) == OK)
+		var imported := doc.generate_scene(imported_state)
+		root.add_child(imported)
+		assert(collect_meshes(imported).size() == meshes.size(),"Lost mesh: "+id)
+		var loaded_bounds := bounds_of(imported)
+		assert(loaded_bounds.position.distance_to(bounds.position) < 0.001 and loaded_bounds.size.distance_to(bounds.size) < 0.001,"Changed bounds: "+id)
+		imported.free()
+		for key in retained:
+			var material: StandardMaterial3D = kit.materials[key]
+			material.albedo_texture = retained[key][0]
+			material.normal_texture = retained[key][1]
+			material.normal_enabled = retained[key][2]
+		entries.append({"assetId":"painted-river-port."+id,"domain":specs[index][1],"assetKind":"model","nativeNode":str(asset.name),"geometryGlb":id+".glb","sha256":FileAccess.get_sha256(file),"scaleMeters":1,"forwardAxis":"-Z","pivotPolicy":"bottom-center of measured visual envelope","bounds":{"min":vector_array(bounds.position),"size":vector_array(bounds.size)},"sockets":sockets,"meshInstances":meshes.size(),"triangles":triangles,"materialSlots":materials,"collisionPolicy":"not supplied; visual envelope is not navigation","lodPolicy":"full authored geometry; no decimation","thumbnailPolicy":"fixed three-quarter front and rear; fitted to measured bounds","selectionHook":"assetId","statusHook":"consumer-owned","provenanceId":"local-river-port-kit","licenseStatus":"project-authored geometry; material source licenses listed separately","admissionStatus":"candidate","reviewStatus":"needs visual polish and consumer semantic review"})
+		asset.visible = false
+		print("PASS ",id,": ",meshes.size()," meshes; ",triangles," triangles; GLB bounds/mesh roundtrip")
+	# Store all assets at local origin, hidden by default; consumers instantiate
+	# the selected child and make it visible. No display-grid transforms baked in.
+	assign_owners(kit.root,kit.root)
+	var packed := PackedScene.new()
+	assert(packed.pack(kit.root) == OK)
+	assert(ResourceSaver.save(packed,folder.path_join("catalog-native.scn")) == OK)
+	var reloaded := (load(folder.path_join("catalog-native.scn")) as PackedScene).instantiate()
+	assert(reloaded.get_child_count() == specs.size())
+	assert(collect_meshes(reloaded).size() == collect_meshes(kit.root).size())
+	reloaded.free()
+	assert(sheet.save_png(folder.path_join("contact-sheet.png")) == OK)
+	var report := FileAccess.open(folder.path_join("build-report.json"),FileAccess.WRITE)
+	report.store_string(JSON.stringify({"generator":"tools/build-river-port.gd --catalog","recipeSource":"tools/river-port-kit.gd","engine":Engine.get_version_info().string,"serviceCreditsConsumed":0,"materialSources":kit.material_sources,"assets":entries,"native":"catalog-native.scn","exportNote":"Native contains shared triplanar textures; standalone GLBs are geometry/material-color interchange only, not visual-equivalent exports.","scope":"Neutral Crossing supply candidates; no canonical room assignments or new MUD links."},"\t")+"\n")
+	report.close()
+	ground.queue_free()
+	print("PASS catalog native reload: ",entries.size()," independent models")
 	quit()
 
 func assign_owners(node: Node, owner_node: Node) -> void:

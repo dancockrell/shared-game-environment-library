@@ -336,6 +336,247 @@ func house(name_value: String, position: Vector3, width: float, depth: float, he
 	lantern(Vector3(-0.92,1.8,depth/2+0.4),g)
 	return g
 
+func catalog_specs() -> Array:
+	# One recipe registry; these are neutral ingredients, never named DR rooms.
+	return [
+		["bakery", "architecture"], ["smithy", "architecture"],
+		["warehouse", "architecture"], ["townhouse", "architecture"],
+		["meeting-hall", "architecture"], ["watchtower", "architecture"],
+		["gatehouse", "architecture"], ["stable", "architecture"],
+		["produce-stall", "neutral_prop"], ["fish-stall", "neutral_prop"],
+		["barrel", "neutral_prop"], ["cargo-stack", "neutral_prop"],
+		["handcart", "neutral_prop"], ["roofed-well", "neutral_prop"],
+		["fountain", "neutral_prop"], ["stone-bench", "neutral_prop"],
+		["street-lantern", "neutral_prop"], ["signpost", "neutral_prop"],
+		["hedge-run", "flora"], ["vine-bower", "flora"],
+		["quay-wall", "architecture"], ["pier-section", "architecture"],
+		["landing-stairs", "architecture"], ["mooring-post", "neutral_prop"]
+	]
+
+func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
+	var socket := node_group(name_value,pos,0,parent)
+	socket.set_meta("presentation_only",true)
+	return socket
+
+func barrel(parent: Node3D, pos: Vector3, size_value: float = 1.0) -> void:
+	var g := node_group("CooperedBarrel",pos,0,parent)
+	for stave in 20:
+		var a := TAU*stave/20.0
+		for row in 8:
+			var t := (row+0.5)/8.0
+			var r := 0.32+sin(t*PI)*0.07
+			var wood := block(Vector3(cos(a)*r,t*0.95,sin(a)*r),Vector3(0.055,0.124,0.106),shade("wood"),g)
+			wood.rotation.y = -a
+	for y in [0.1,0.28,0.68,0.85]:
+		ring(Vector3(0,y,0),0.34+sin(y/0.95*PI)*0.07,0.026,"iron",g)
+	cylinder(Vector3(0,0.925,0),0.32,0.035,"oak_light",g,20)
+	cylinder(Vector3(0,0.025,0),0.32,0.05,"oak",g,20)
+	for x in [-0.2,-0.1,0.0,0.1,0.2]:
+		block(Vector3(x,0.947,0),Vector3(0.009,0.005,sqrt(0.32*0.32-x*x)*2),"oak",g)
+	g.scale = Vector3.ONE*size_value
+
+func crate(parent: Node3D, pos: Vector3, size_value: Vector3) -> void:
+	var g := node_group("BracedCrate",pos,0,parent)
+	block(Vector3(0,size_value.y/2,0),size_value,"oak",g)
+	for side in [-1,1]:
+		for i in 6:
+			block(Vector3((i-2.5)*size_value.x/6,size_value.y/2,side*(size_value.z/2+0.012)),Vector3(size_value.x/6-0.012,size_value.y,0.04),shade("wood"),g)
+		for x in [-size_value.x/2+0.06,size_value.x/2-0.06]:
+			block(Vector3(x,size_value.y/2,side*(size_value.z/2+0.045)),Vector3(0.09,size_value.y,0.06),"oak_light",g)
+		beam(Vector3(-size_value.x/2,0.08,side*(size_value.z/2+0.065)),Vector3(size_value.x/2,size_value.y-0.08,side*(size_value.z/2+0.065)),0.07,"oak_light",g)
+	for i in 6:
+		block(Vector3((i-2.5)*size_value.x/6,size_value.y+0.02,0),Vector3(size_value.x/6-0.012,0.04,size_value.z),shade("wood"),g)
+
+func framed_elevations(g: Node3D, width: float, depth: float, height: float) -> void:
+	# All sides receive deliberate detail; a rotating camera cannot reveal a
+	# completely blank rear. Window modules face their own wall normals.
+	for face in [[Vector3(0,0,-depth/2-0.19),PI,width], [Vector3(width/2+0.19,0,0),PI/2,depth], [Vector3(-width/2-0.19,0,0),-PI/2,depth]]:
+		var elevation := node_group("Elevation",face[0],float(face[1]),g)
+		var span: float = face[2]
+		for x in [-span*0.29,span*0.29]:
+			window_at(Vector3(x,height*0.62,0.015),elevation,0.7)
+			for side in [-1,1]:
+				block(Vector3(x+side*0.52,height*0.62,0.025),Vector3(0.23,1.05,0.055),"oak_light",elevation)
+		for y in [height*0.45,height-0.12]:
+			block(Vector3(0,y,0),Vector3(span,0.16,0.14),"oak",elevation)
+		for x in [-span*0.46,0.0,span*0.46]:
+			block(Vector3(x,height/2,0),Vector3(0.14,height,0.15),"oak",elevation)
+
+func catalog_model(id: String) -> Node3D:
+	rng.seed = 5012026+id.hash() # Independent of build order and unrelated recipes.
+	var g := node_group(id,Vector3.ZERO)
+	if id in ["bakery","smithy","warehouse","townhouse","meeting-hall","stable"]:
+		var dimensions: Dictionary = {"bakery":Vector3(5.2,3.3,4.6),"smithy":Vector3(6.0,3.4,5.0),"warehouse":Vector3(7.5,4.6,7.0),"townhouse":Vector3(4.1,6.1,5.1),"meeting-hall":Vector3(8.2,5.2,6.1),"stable":Vector3(8.2,3.2,4.4)}
+		var d: Vector3 = dimensions[id]
+		var building := house("EnclosedShell",Vector3.ZERO,d.x,d.z,d.y,2.4 if id == "meeting-hall" else 1.9,"roof" if id in ["bakery","townhouse"] else "slate",false,"plaster",true,2.2 if id in ["warehouse","stable"] else 1.3,2.5,false,false)
+		building.reparent(g,false)
+		framed_elevations(building,d.x,d.z,d.y)
+		stairs(Vector3(0,0,d.z/2+0.2),2.4,0.315,0.85,building,false)
+		attachment(g,"entrance",Vector3(0,0,d.z/2+1.15))
+		attachment(g,"sign",Vector3(-1.6,2.6,d.z/2+0.3))
+		if id in ["bakery","smithy"]:
+			var oven := node_group("AttachedOven" if id == "bakery" else "ForgeChimney",Vector3(d.x/2+0.7,0,-0.7),0,g)
+			wall(1.5,1.8,1.5,Vector3.ZERO,oven)
+			wall(0.85,d.y+2.3,0.8,Vector3(0,0.3,-0.22),oven)
+			block(Vector3(0,d.y+2.7,-0.22),Vector3(1.05,0.18,1.05),"stone9",oven)
+			block(Vector3(0,0.7,0.78),Vector3(0.8,1.0,0.06),"iron",oven)
+		if id == "bakery":
+			var awning := block(Vector3(0,2.7,d.z/2+0.85),Vector3(3.3,0.09,1.3),"cloth",g)
+			awning.rotation.x = 0.16
+			for x in [-1.5,1.5]:
+				beam(Vector3(x,0,d.z/2+1.45),Vector3(x,2.6,d.z/2+1.45),0.1,"oak",g)
+		elif id == "smithy":
+			block(Vector3(-2.3,0.55,d.z/2+0.85),Vector3(0.75,1.1,0.7),"oak",g)
+			block(Vector3(-2.3,1.22,d.z/2+0.85),Vector3(1.05,0.26,0.4),"iron",g)
+		elif id == "warehouse":
+			beam(Vector3(0,d.y-0.25,d.z/2),Vector3(0,d.y-0.25,d.z/2+1.7),0.22,"oak",g)
+			beam(Vector3(0,d.y-1.6,d.z/2),Vector3(0,d.y-0.25,d.z/2+1.4),0.13,"oak",g)
+			ring(Vector3(0,d.y-0.6,d.z/2+1.5),0.22,0.04,"iron",g,true)
+		elif id == "townhouse":
+			block(Vector3(0,3.3,d.z/2+0.65),Vector3(3.6,0.22,1.25),"oak",g)
+			for x in [-1.7,1.7]:
+				beam(Vector3(x,2.3,d.z/2),Vector3(x,3.3,d.z/2+1.15),0.16,"oak",g)
+			for i in 12:
+				block(Vector3(-1.65+i*0.3,3.85,d.z/2+1.2),Vector3(0.065,0.95,0.065),"oak_light",g)
+			block(Vector3(0,4.34,d.z/2+1.2),Vector3(3.6,0.1,0.12),"oak",g)
+		elif id == "meeting-hall":
+			for x in [-2.1,2.1]:
+				wall(0.5,3.3,0.5,Vector3(x,0,d.z/2+1.5),g)
+			roof(4.8,1.8,3.3,1.3,"slate",node_group("EntryPortico",Vector3(0,0,d.z/2+1),0,g))
+			banner(Vector3(-3.2,4.4,d.z/2+0.3),0.7,2.2,g)
+			banner(Vector3(3.2,4.4,d.z/2+0.3),0.7,2.2,g)
+		elif id == "stable":
+			for x in [-3.1,3.1]:
+				crate(g,Vector3(x,0,d.z/2+0.65),Vector3(1.25,0.7,0.65))
+			beam(Vector3(-2.0,0.95,d.z/2+1.5),Vector3(2.0,0.95,d.z/2+1.5),0.13,"oak",g)
+	elif id in ["watchtower","gatehouse"]:
+		for x in ([-3.0,3.0] if id == "gatehouse" else [0.0]):
+			var tower := node_group("Tower",Vector3(x,0,0),0,g)
+			block(Vector3(0,3.1,0),Vector3(3.3,6.2,3.3),"mortar",tower)
+			for face in 4:
+				var elevation := node_group("MasonryFace",Vector3.ZERO,face*PI/2,tower)
+				wall(3.3,6.2,0.3,Vector3(0,0,1.65),elevation)
+				window_at(Vector3(0,4.7,1.83),elevation,0.5)
+				for bx in [-1.2,0.0,1.2]:
+					block(Vector3(bx,6.55,1.65),Vector3(0.55,0.7,0.5),"stone9",elevation)
+			block(Vector3(0,6.15,0),Vector3(3.8,0.24,3.8),"stone7",tower)
+		if id == "gatehouse":
+			block(Vector3(0,4.35,0),Vector3(3.0,1.0,3.2),"stone5",g)
+			for z in [-1.7,1.7]:
+				block(Vector3(0,5.05,z),Vector3(3.0,0.5,0.25),"stone9",g)
+			attachment(g,"route_a",Vector3(0,0,2.2))
+			attachment(g,"route_b",Vector3(0,0,-2.2))
+		else:
+			block(Vector3(0,1.05,1.83),Vector3(1.05,2.1,0.08),"oak",g)
+			attachment(g,"entrance",Vector3(0,0,2.1))
+	elif id in ["produce-stall","fish-stall"]:
+		for x in [-1.45,1.45]:
+			for z in [-0.65,0.65]:
+				beam(Vector3(x,0,z),Vector3(x,2.55,z),0.1,"oak",g)
+		for i in 16:
+			var roof_panel := block(Vector3((i-7.5)*0.2,2.65,0),Vector3(0.2,0.07,1.95),"cloth" if i%2 == 0 else "sand",g)
+			roof_panel.rotation.x = -0.12
+		crate(g,Vector3.ZERO,Vector3(2.8,0.95,1.05))
+		for tray in 3:
+			var x := (tray-1)*0.85
+			crate(g,Vector3(x,0.96,0),Vector3(0.78,0.14,0.85))
+			for item in 9:
+				ellipsoid(Vector3(x+(item%3-1)*0.2,1.14+(item/3)*0.015,(item/3-1)*0.21),Vector3(0.085,0.08,0.085) if id == "produce-stall" else Vector3(0.055,0.035,0.15),"roof8" if id == "produce-stall" else "stone10",g)
+		attachment(g,"vendor",Vector3(0,0,-1.25))
+		attachment(g,"customer",Vector3(0,0,1.2))
+	elif id == "barrel":
+		barrel(g,Vector3.ZERO)
+	elif id == "cargo-stack":
+		crate(g,Vector3(-0.45,0,0),Vector3(1,0.8,0.9))
+		crate(g,Vector3(-0.4,0.82,0),Vector3(0.7,0.55,0.7))
+		barrel(g,Vector3(0.65,0,0.15))
+	elif id == "handcart":
+		crate(g,Vector3(0,0.55,0),Vector3(1.15,0.42,1.7))
+		for x in [-0.8,0.8]:
+			var wheel := node_group("SpokedWheel",Vector3(x,0.5,0),0,g)
+			wheel.rotation.z = PI/2
+			ring(Vector3.ZERO,0.46,0.045,"iron",wheel)
+			cylinder(Vector3.ZERO,0.1,0.18,"oak",wheel)
+			for i in 10:
+				beam(Vector3.ZERO,Vector3(cos(i*TAU/10)*0.44,0,sin(i*TAU/10)*0.44),0.045,"oak_light",wheel)
+			beam(Vector3(x*0.65,0.7,0.4),Vector3(x*0.65,0.55,2.3),0.08,"oak",g)
+		attachment(g,"handle",Vector3(0,0.55,2.3))
+	elif id in ["roofed-well","fountain"]:
+		for row in 4:
+			for i in 20:
+				var a := TAU*(i+0.5*(row%2))/20
+				var stone := block(Vector3(cos(a)*1.05,0.12+row*0.24,sin(a)*1.05),Vector3(0.32,0.23,0.27),shade("stone"),g)
+				stone.rotation.y = -a
+		cylinder(Vector3(0,0.22,0),0.96,0.045,"water",g,40)
+		if id == "roofed-well":
+			for x in [-1.25,1.25]:
+				beam(Vector3(x,0,0),Vector3(x,2.75,0),0.16,"oak",g)
+			roof(3.1,2.2,2.65,0.85,"slate",g)
+			beam(Vector3(-1.3,1.75,0),Vector3(1.3,1.75,0),0.12,"oak_light",g)
+			beam(Vector3(0,0.7,0),Vector3(0,1.75,0),0.025,"sand",g)
+		else:
+			cylinder(Vector3(0,0.95,0),0.19,1.6,"stone9",g,20)
+			cylinder(Vector3(0,1.68,0),0.57,0.16,"stone7",g,32)
+			ellipsoid(Vector3(0,1.94,0),Vector3(0.15,0.22,0.15),"stone10",g)
+	elif id == "stone-bench":
+		for x in [-0.8,0.8]:
+			block(Vector3(x,0.23,0),Vector3(0.3,0.46,0.5),"stone5",g)
+		block(Vector3(0,0.53,0),Vector3(2.1,0.18,0.65),"stone10",g)
+		attachment(g,"seat",Vector3(0,0.62,0))
+	elif id in ["street-lantern","signpost","mooring-post"]:
+		var h := 3.0 if id == "street-lantern" else (2.4 if id == "signpost" else 1.1)
+		cylinder(Vector3(0,0.1,0),0.24,0.2,"stone5",g)
+		cylinder(Vector3(0,h/2,0),0.12,h,"oak",g)
+		if id == "street-lantern":
+			beam(Vector3(0,2.8,0),Vector3(0.7,2.8,0),0.08,"iron",g)
+			lantern(Vector3(0.6,2.3,0),g)
+		elif id == "signpost":
+			for y in [1.8,2.2]:
+				block(Vector3(0,y,0),Vector3(1.3,0.23,0.08),"oak_light",g)
+			attachment(g,"label",Vector3(0,2.2,0.06))
+		else:
+			for y in [0.65,0.72,0.79]:
+				ring(Vector3(0,y,0),0.15,0.025,"sand",g)
+			attachment(g,"mooring",Vector3(0,0.72,0))
+	elif id in ["hedge-run","vine-bower"]:
+		if id == "hedge-run":
+			for i in 12:
+				shrub(Vector3((i-5.5)*0.25,0,0),0.5,g)
+		else:
+			for x in [-1.45,1.45]:
+				for z in [-0.75,0.75]:
+					beam(Vector3(x,0,z),Vector3(x,2.25,z),0.1,"oak",g)
+			for i in 11:
+				var x := (i-5)*0.3
+				beam(Vector3(x,2.3,-1.05),Vector3(x,2.3,1.05),0.08,"oak_light",g)
+				shrub(Vector3(x,2.3,-0.65),0.5,g,true)
+				shrub(Vector3(x,2.3,0.65),0.5,g,true)
+			for z in [-0.75,0.75]:
+				beam(Vector3(-1.6,2.23,z),Vector3(1.6,2.23,z),0.12,"oak",g)
+	elif id == "quay-wall":
+		wall(4.0,1.3,0.7,Vector3.ZERO,g)
+		for i in 8:
+			block(Vector3((i-3.5)*0.5,1.36,0),Vector3(0.48,0.18,0.88),shade("stone"),g)
+		attachment(g,"join_a",Vector3(-2,0,0))
+		attachment(g,"join_b",Vector3(2,0,0))
+	elif id == "pier-section":
+		for x in [-1.3,1.3]:
+			for z in [-1.7,1.7]:
+				cylinder(Vector3(x,0.8,z),0.15,1.6,"oak",g)
+			beam(Vector3(x,0.5,-1.7),Vector3(x,1.1,1.7),0.12,"oak",g)
+			block(Vector3(x,0.92,0),Vector3(0.2,0.2,4.0),"oak",g)
+		for i in 24:
+			block(Vector3(0,1.08,(i-11.5)*0.165),Vector3(2.9,0.13,0.15),shade("wood"),g)
+		attachment(g,"join_a",Vector3(0,1.145,-1.98))
+		attachment(g,"join_b",Vector3(0,1.145,1.98))
+	elif id == "landing-stairs":
+		stairs(Vector3(0,0,-1.5),2.4,1.44,3.0,g,true)
+		attachment(g,"upper",Vector3(0,1.44,-1.5))
+		attachment(g,"lower",Vector3(0,0,1.5))
+	else:
+		assert(false,"Unknown catalog recipe: "+id)
+	return g
+
 func shelving(parent: Node3D, pos: Vector3) -> void:
 	for x in [-1.05,1.05]:
 		block(pos+Vector3(x,1.2,0),Vector3(0.14,2.4,0.35),"oak",parent)

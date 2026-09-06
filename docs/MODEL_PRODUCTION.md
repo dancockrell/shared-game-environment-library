@@ -1,11 +1,32 @@
 # Shared model production
 
-Decision date: 5 September 2026. This repository is the reusable catalog.
+Decision date: 6 September 2026. This repository is the reusable catalog.
 DR Companion and Pirate Island are consumers. The older Project 42
 `resource-packs` catalog is evidence for migration, not another canonical home
 for new shared work. Do not move or delete its assets until references and
 provenance have been reconciled. Stable IDs, archive hashes and source-member
 paths are the migration keys; directory similarity is not identity.
+
+## Current scope and cost constraint
+
+Build a substantial reusable library for The Crossing, not a sequence of
+single-building demonstration fixes. Work in batches across architecture,
+street furniture, market equipment, waterfront construction and terrain.
+Repeated recipes must differ structurally and functionally, not just in color.
+The existing river-port scene is a coherence/finish study, not the complete city.
+
+There is no generation budget. Use local authoring and already licensed assets.
+Do not consume paid-service credits. Magnific is optional only if the exact
+model-building operation is verified to consume no credits; uncertain means
+do not submit. No new subscriptions, purchases or paid API calls.
+
+The user explicitly superseded exact picture reconstruction: make a coherent
+scene with known geometric bounds and correctly aligned entrances. The image
+below remains the finish/style reference, not a pixel-matching requirement.
+Permanent half-open houses are demo-only and rejected for production. Shared
+building exteriors must be complete; intentional interior presentation is a
+separate later consumer feature. Static environmental detail is in scope;
+animation remains deferred. Quality is still subject to visual review.
 
 ## Approved visual reference - controlling art target
 
@@ -44,7 +65,7 @@ were not separately approved and must not be applied by assumption.
 - Painterly material variation and believable light response: wood grain,
   stone joints, roof variation, restrained wear, contact shadows, warm lights
   in interiors, and softly shaded water with readable shallow shore details.
-- Distinct rooflines and entrances; a cutaway shop with shelving and counter;
+- Distinct rooflines and entrances; complete enclosed shops with readable roles;
   believable relationship between buildings, paved public space and bridge.
 - Timber quay/dock construction, mooring details, rowboat, stone banks,
   sandy transitions, rocks and grouped reeds. Water and land meet deliberately.
@@ -63,9 +84,9 @@ from each game's evidence. Static now and rig-ready actors remain the scope.
 ### Acceptance and implementation consequences
 
 For each assembled scene, capture the actual engine output at comparable
-framing and place it beside this reference. Review silhouette, surface finish,
-palette, lighting, material separation, density, actor readability, cutaway
-readability and shoreline quality. Record pass/revise per dimension. Structural
+framing and use this reference to judge finish, not exact reconstruction. Review
+silhouette, surface finish, palette, lighting, material separation, density,
+actor readability, entrances and shoreline quality. Record pass/revise per dimension. Structural
 checks, source licenses and low polygon counts cannot substitute for visual
 acceptance. Unfinished geometry remains explicitly labeled as base art.
 
@@ -76,10 +97,10 @@ appearance at the reference framing. If a budget conflicts with the image,
 measure and report the conflict; do not silently lower quality or claim both
 targets passed. The reference does not by itself prove performance feasibility.
 
-Next visual milestone: build an engine scene with a stone quay, timber dock,
-bridge approach, roofed facade, cutaway shop and properly scaled actor pieces,
-then assess it directly against this image. Favor a convincing connected
-scene over a larger collection of isolated pieces that misses this standard.
+Next visual milestone: a broad batch of independently reusable buildings,
+market/street props and waterfront modules, reviewed both individually and in
+coherent assemblies. The existing quay/dock/bridge scene remains the lighting
+and material testbed. A single improved shop is not a catalog milestone.
 
 ## Review of the incoming DR Companion handoff
 
@@ -264,5 +285,9 @@ existing basalt pack is a useful volcano ingredient, not a complete volcano.
 
 The shared repository accepts source and derivative readiness independently.
 This work does not bind any new asset to a game, change DR Companion's
-submodule, or proclaim a city complete. The next model-authoring gate is a
-reviewed neutral terrain/cutaway kit, followed by evidence-led landmark recipes.
+submodule, or proclaim a city complete. The next model-authoring gate is the
+multi-model batch above, followed by evidence-led Crossing placement recipes.
+The local DR content handoff includes `docs/CROSSING_GEOMETRIC_KIT.md` with
+104 individually specified demand cards. Its inventory is useful, but its
+older cute/block-built style is superseded by this document. Card counts are
+not delivered-model counts; named landmarks still require room evidence.
