@@ -298,10 +298,40 @@ still pending. Geometry byte estimates exclude CPU metadata and engine overhead.
 transforms an entire assembly in local coordinates. Translation defaults to zero,
 yaw to zero radians and positive uniform scale to one. Nested transforms compose
 parent-first; repetition steps rotate and scale with their enclosing assembly.
-Only Y-axis rotation and uniform positive scale are supported, so this cannot
-introduce shear or mirrored winding. Limits apply to composed transforms and
-nesting, not merely individual inputs. Meshes remain shared; the compiler emits
-ordinary flattened instances for both existing adapters.
+Full 3D orientation is now available through a wrapper:
+`{"kind":"rotate","axis":[1,0,0],"angle":1.5707963,"child":...}`.
+`angle` is right-handed radians and `axis` is a nonzero direction in the parent's
+local coordinates, normalized by the compiler. This rotates the child about the
+wrapper's origin. Use nested translation/rotation wrappers to choose a pivot.
+Outer transforms multiply inner transforms; changing their order changes the
+result. Existing yaw inputs remain valid. Only positive uniform scale is allowed,
+so these operations do not introduce shear or mirrored winding. Limits apply to
+composed transforms and nesting, not merely individual inputs. Meshes stay shared.
+
+**Compiled scene format is now version 2.** Input recipes remain version 1 with
+the additional strict `rotate` node. Every compiled instance carries `position`
+and `basis`: nine values, three consecutive XYZ basis columns including scale.
+The compiler no longer emits a misleading single `yaw`/`scale` pair for a fully
+oriented instance. World points are `position + basis * local_point`. Bounds
+transform all eight local AABB corners through that same transform owner.
+
+Both adapters accept historical version-1 yaw/scale files and new version-2
+bases; old adapters reject the version bump rather than silently dropping tilt.
+Godot uses the columns directly. Unity mirrors the mesh through Z and transforms
+its basis as `S * basis * S`, `S = diag(1,1,-1)`, then recovers its rotation and
+positive scale. CPU tests cover ordered/inverse rotations, axis normalization,
+invalid inputs, local-space repeats, source paths and tilted bounds. Engine
+basis/reflection assertions have been added but are not executed in the current
+CPU-only workflow. Version-2 saved-engine output and visual rendering therefore
+remain unverified; retained screenshots and package receipts predate this format.
+
+CPU receipt: `procedural/generated/reviews/20260906-121210-9c418e5575164c4bb8269341460c97b0/report.json`:
+44 tests, format, strict clippy, release and nine deterministic fixtures passed.
+All nine mesh sets are unchanged. Independent comparison of the eight unchanged
+placement fixtures verified 99 instances against their earlier yaw/scale
+transforms and bounds, with zero observed numerical difference. The remaining
+composition fixture intentionally tilts its repeated vessels; this is a transform
+integration case, not a visually approved arrangement or physical-support claim.
 
 Every emitted instance now carries `source.recipe_path` (a JSON Pointer to its
 authoring part) and `source.repeat_indices` (outer-to-inner repetition indices).

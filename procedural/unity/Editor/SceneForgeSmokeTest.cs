@@ -30,6 +30,16 @@ namespace SharedEnvironment.SceneForge {
                 for(int i=0;i<filters.Length;i++) {
                     int meshIndex=answer.scene.instances[i].mesh;
                     MeshData source=answer.scene.meshes[meshIndex];
+                    if(answer.scene.version==2) {
+                        InstanceData placed=answer.scene.instances[i];
+                        for(int point=0;point<4;point++) {
+                            Vector3 local=point==0?Vector3.zero:point==1?Vector3.right:point==2?Vector3.up:Vector3.back;
+                            Vector3 expected=new Vector3(placed.position[0],placed.position[1],-placed.position[2]);
+                            if(point>0) {int c=(point-1)*3;expected+=new Vector3(placed.basis[c],placed.basis[c+1],-placed.basis[c+2]);}
+                            Vector3 actual=filters[i].transform.TransformPoint(local);
+                            if((actual-expected).magnitude>0.00001f*Mathf.Max(1f,expected.magnitude)) throw new Exception("Full instance basis reflection or placement lost");
+                        }
+                    }
                     Material material=filters[i].GetComponent<MeshRenderer>().sharedMaterial;
                     if(sharedMeshes.ContainsKey(meshIndex)) {
                         if(sharedMeshes[meshIndex]!=filters[i].sharedMesh||sharedMaterials[meshIndex]!=material) throw new Exception("Repeated geometry or material is not shared");

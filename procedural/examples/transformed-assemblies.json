@@ -7,7 +7,7 @@
   "root":{"kind":"transform","position":[2,0,1],"yaw":0.35,"scale":0.8,"child":{
     "kind":"repeat","count":3,"step":[10,0,0],"child":{"kind":"group","children":[
       {"kind":"part","mesh":"shell"},
-      {"kind":"transform","position":[-1,0,-1],"yaw":1.5707964,"scale":1.5,"child":{"kind":"repeat","count":3,"step":[0.8,0,0],"child":{"kind":"part","mesh":"vessel"}}}
+      {"kind":"transform","position":[-1,0,-1],"yaw":1.5707964,"scale":1.5,"child":{"kind":"rotate","axis":[0,0,1],"angle":0.35,"child":{"kind":"repeat","count":3,"step":[0.8,0,0],"child":{"kind":"part","mesh":"vessel"}}}}
     ]}
   }}
 }

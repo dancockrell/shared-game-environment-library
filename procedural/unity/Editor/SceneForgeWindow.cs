@@ -11,7 +11,7 @@ namespace SharedEnvironment.SceneForge {
     [Serializable] public sealed class MaterialData { public float roughness, metallic; }
     [Serializable] public sealed class PaintTextureData { public int width, height; public int[] rgba; }
     [Serializable] public sealed class MeshData { public string name; public float[] positions, normals, uvs, color; public int[] indices; public MaterialData material; public PaintTextureData paint_texture; }
-    [Serializable] public sealed class InstanceData { public int mesh; public float[] position; public float yaw, scale; }
+    [Serializable] public sealed class InstanceData { public int mesh; public float[] position, basis; public float yaw, scale; }
     [Serializable] public sealed class SceneData { public int version; public string coordinate_system, recipe_json; public MeshData[] meshes; public InstanceData[] instances; public long estimated_geometry_bytes; }
     [Serializable] public sealed class Response { public bool ok; public string error; public SceneData scene; }
     public static class Native {
@@ -66,7 +66,7 @@ namespace SharedEnvironment.SceneForge {
             } catch(Exception error) {status=error.Message;Debug.LogException(error);} finally {job=null;Repaint();}
         }
         public static GameObject Import(SceneData data) {
-            if(data.version!=1||data.coordinate_system!="right-handed-y-up-ccw-metres") throw new InvalidDataException("Unsupported scene format");
+            if((data.version!=1&&data.version!=2)||data.coordinate_system!="right-handed-y-up-ccw-metres") throw new InvalidDataException("Unsupported scene format");
             var meshes=new Mesh[data.meshes.Length];var materials=new Material[data.meshes.Length];
             Shader shader=Shader.Find("Universal Render Pipeline/Lit")??Shader.Find("Standard");
             if(shader==null) throw new InvalidOperationException("No supported lit shader found");
@@ -103,7 +103,19 @@ namespace SharedEnvironment.SceneForge {
             foreach(InstanceData instance in data.instances) {
                 var item=new GameObject(data.meshes[instance.mesh].name);item.transform.SetParent(root.transform,false);
                 item.transform.localPosition=new Vector3(instance.position[0],instance.position[1],-instance.position[2]);
-                item.transform.localRotation=Quaternion.Euler(0,-instance.yaw*Mathf.Rad2Deg,0);item.transform.localScale=Vector3.one*instance.scale;
+                if(data.version==2) {
+                    if(instance.basis==null||instance.basis.Length!=9) throw new InvalidDataException("Invalid version-2 basis");
+                    float[] b=instance.basis;
+                    // Reflect both domain and range: S * basis * S, S=diag(1,1,-1).
+                    var x=new Vector3(b[0],b[1],-b[2]);
+                    var y=new Vector3(b[3],b[4],-b[5]);
+                    var z=new Vector3(-b[6],-b[7],b[8]);
+                    item.transform.localRotation=Quaternion.LookRotation(z.normalized,y.normalized);
+                    item.transform.localScale=new Vector3(x.magnitude,y.magnitude,z.magnitude);
+                } else {
+                    item.transform.localRotation=Quaternion.Euler(0,-instance.yaw*Mathf.Rad2Deg,0);
+                    item.transform.localScale=Vector3.one*instance.scale;
+                }
                 item.AddComponent<MeshFilter>().sharedMesh=meshes[instance.mesh];item.AddComponent<MeshRenderer>().sharedMaterial=materials[instance.mesh];
             }
             Selection.activeGameObject=root;

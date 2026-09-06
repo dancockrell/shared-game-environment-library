@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Tool-only priority: retain one canonical source recipe per generated scene and expose export in Godot/Unity; CPU roundtrip validation, engine verification pending; teapot, cake/pie and coordinated ballerina gates remain active",
+  "summary": "Tool-only priority: full 3D assembly orientation using one transform owner, version-2 instance bases and legacy adapter reads; CPU placement/bounds tests; engine validation pending",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-06T12:07:00Z",
+  "updated_at": "2026-09-06T12:13:00Z",
   "paths": [
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",
@@ -30,6 +30,7 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Full 3D transforms: CPU run 20260906-121210-9c418e5575164c4bb8269341460c97b0 passed 44 tests and nine deterministic fixtures; ordered/inverse rotations, axis validation, tilted bounds, repeat-space and source identity tested. Nine mesh sets unchanged; eight legacy placement fixtures/99 instances compared with zero observed difference. Compiled version 2 bases, adapters retain version 1 reads; engine rendering/package and Unity checks not_run.",
       "Recoverable source recipes: CPU run 20260906-120629-d28b31e71e9949039a42e9ca5e65732c passed 42 tests and nine deterministic fixtures; full source restoration/recompile equality, unused definitions and bounded serialization tested. Other scene fields unchanged; teapot source 5106 bytes. Godot/Unity root preservation and export UI implemented but engine execution not_run; no manual-engine-edit reconciliation or rendering claim.",
       "Authored sweep frame: CPU run 20260906-120046-a986ec3bf5744f92a054000cc1fd7940 passed 41 tests and nine deterministic fixtures; regression reproduces automatic axis reversal and confirms stable explicit direction; projection/roll, invalid inputs and roundtrip checked. All nine output JSON files byte-identical to prior checkpoint. No engine launched; no visual or VRAM claim.",
       "Elliptical sweeps: CPU run 20260906-115635-879c15bf77c74af2b3e86e290fdfeb05 passed 39 tests and nine deterministic fixtures; tapered gradient, closed solid/hollow meshes, rotated extents, legacy defaults and invalid controls passed. Eight fixtures and six teapot parts unchanged; handle now flattened with same 3237 indexed vertices/6000 triangles and updated bounds. No new engine render, Unity execution or VRAM measurement; candidate not art-approved.",

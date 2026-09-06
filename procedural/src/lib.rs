@@ -95,6 +95,11 @@ pub enum Shape {
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Assembly {
+    Rotate {
+        axis: V3,
+        angle: f32,
+        child: Box<Assembly>,
+    },
     Transform {
         #[serde(default)]
         position: V3,
@@ -131,39 +136,72 @@ fn default_crease_angle() -> f32 {
 #[derive(Clone, Copy)]
 struct Pose {
     position: V3,
-    yaw: f32,
-    scale: f32,
+    /// Column-major rotation with positive uniform scale, calculated in f64.
+    basis: [[f64; 3]; 3],
 }
 impl Pose {
     const IDENTITY: Self = Self {
         position: [0.; 3],
-        yaw: 0.,
-        scale: 1.,
+        basis: [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
     };
+    fn vector(self, v: [f64; 3]) -> [f64; 3] {
+        std::array::from_fn(|row| (0..3).map(|col| self.basis[col][row] * v[col]).sum())
+    }
+    fn point(self, v: V3) -> V3 {
+        let rotated = self.vector(v.map(f64::from));
+        std::array::from_fn(|i| (self.position[i] as f64 + rotated[i]) as f32)
+    }
+    fn combine(self, position: V3, basis: [[f64; 3]; 3]) -> Result<Self> {
+        let result = Self {
+            position: self.point(position),
+            basis: basis.map(|v| self.vector(v)),
+        };
+        finite(&result.position)?;
+        for column in result.basis {
+            finite(&column.map(|x| x as f32))?;
+            let length = column.iter().map(|x| x * x).sum::<f64>().sqrt() as f32;
+            finite(&[length])?;
+            if length <= 0. {
+                return Err("Combined scale collapses at output precision".into());
+            }
+        }
+        Ok(result)
+    }
+    fn rotate(self, axis: V3, angle: f32) -> Result<Self> {
+        finite(&axis)?;
+        finite(&[angle])?;
+        let length = axis.iter().map(|x| (*x as f64).powi(2)).sum::<f64>().sqrt();
+        if length <= 1e-15 {
+            return Err("Rotation axis must be nonzero".into());
+        }
+        let [x, y, z] = axis.map(|x| x as f64 / length);
+        let (s, c) = (angle as f64).sin_cos();
+        let d = 1. - c;
+        self.combine(
+            [0.; 3],
+            [
+                [c + x * x * d, y * x * d + z * s, z * x * d - y * s],
+                [x * y * d - z * s, c + y * y * d, z * y * d + x * s],
+                [x * z * d + y * s, y * z * d - x * s, c + z * z * d],
+            ],
+        )
+    }
     fn compose(self, position: V3, yaw: f32, scale: f32) -> Result<Self> {
         finite(&position)?;
         finite(&[yaw, scale])?;
         if scale <= 0. {
             return Err("Scale must be positive".into());
         }
-        let (sin, cos) = (self.yaw as f64).sin_cos();
-        let scaled = position.map(|x| x as f64 * self.scale as f64);
-        let rotated = [
-            cos * scaled[0] + sin * scaled[2],
-            scaled[1],
-            -sin * scaled[0] + cos * scaled[2],
-        ];
-        let result = Self {
-            position: std::array::from_fn(|i| (self.position[i] as f64 + rotated[i]) as f32),
-            yaw: self.yaw + yaw,
-            scale: self.scale * scale,
-        };
-        finite(&result.position)?;
-        finite(&[result.yaw, result.scale])?;
-        if result.scale <= 0. {
-            return Err("Combined scale collapses at output precision".into());
-        }
-        Ok(result)
+        let (sin, cos) = (yaw as f64).sin_cos();
+        let scale = scale as f64;
+        self.combine(
+            position,
+            [
+                [cos * scale, 0., -sin * scale],
+                [0., scale, 0.],
+                [sin * scale, 0., cos * scale],
+            ],
+        )
     }
 }
 #[derive(Clone, Deserialize, Serialize)]
@@ -222,18 +260,15 @@ impl Bounds {
         result
     }
     fn transformed(self, pose: Pose) -> Result<Self> {
-        let (sin, cos) = (pose.yaw as f64).sin_cos();
         let bounds = Self::from_points((0..8).map(|corner| {
-            let p: [f64; 3] = std::array::from_fn(|i| {
-                (if corner & (1 << i) == 0 {
+            let p: V3 = std::array::from_fn(|i| {
+                if corner & (1 << i) == 0 {
                     self.min[i]
                 } else {
                     self.max[i]
-                }) as f64
-                    * pose.scale as f64
+                }
             });
-            let rotated = [cos * p[0] + sin * p[2], p[1], -sin * p[0] + cos * p[2]];
-            std::array::from_fn(|i| (pose.position[i] as f64 + rotated[i]) as f32)
+            pose.point(p)
         }));
         finite(&bounds.min)?;
         finite(&bounds.max)?;
@@ -250,8 +285,8 @@ fn flat2<S: serde::Serializer>(v: &[[f32; 2]], s: S) -> std::result::Result<S::O
 pub struct Instance {
     pub mesh: usize,
     pub position: V3,
-    pub yaw: f32,
-    pub scale: f32,
+    #[serde(serialize_with = "flat3")]
+    pub basis: [V3; 3],
     pub source: InstanceSource,
     pub bounds: Bounds,
 }
@@ -685,6 +720,7 @@ fn instance_count(node: &Assembly, depth: usize, limit: usize) -> Result<usize> 
     let n = match node {
         Assembly::Part { .. } => 1,
         Assembly::Transform { child, .. } => instance_count(child, depth + 1, limit)?,
+        Assembly::Rotate { child, .. } => instance_count(child, depth + 1, limit)?,
         Assembly::Group { children } => {
             let mut sum = 0usize;
             for child in children {
@@ -717,7 +753,7 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
     }
     instance_count(&recipe.root, 0, recipe.limits.max_instances)?;
     let mut scene = Scene {
-        version: 1,
+        version: 2,
         recipe_json: serialize_recipe(recipe, 16 * 1024 * 1024)?,
         coordinate_system: "right-handed-y-up-ccw-metres",
         meshes: vec![],
@@ -734,6 +770,19 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
         names: &mut BTreeMap<String, usize>,
     ) -> Result<()> {
         match node {
+            Assembly::Rotate { axis, angle, child } => {
+                emit(
+                    child,
+                    parent.rotate(*axis, *angle)?,
+                    InstanceSource {
+                        recipe_path: format!("{}/child", source.recipe_path),
+                        repeat_indices: source.repeat_indices,
+                    },
+                    r,
+                    s,
+                    names,
+                )?;
+            }
             Assembly::Transform {
                 position,
                 yaw,
@@ -794,8 +843,7 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                     bounds: s.meshes[index].bounds.transformed(pose)?,
                     mesh: index,
                     position: pose.position,
-                    yaw: pose.yaw,
-                    scale: pose.scale,
+                    basis: pose.basis.map(|v| v.map(|x| x as f32)),
                     source,
                 });
             }
@@ -1077,8 +1125,9 @@ mod tests {
             for (actual, expected) in instance.position.iter().zip(expected) {
                 assert!((actual - expected).abs() < 1e-5);
             }
-            assert!((instance.yaw - 0.3).abs() < 1e-6);
-            assert_eq!(instance.scale, 3.);
+            assert!((instance.basis[0][0] - 3. * 0.3_f32.cos()).abs() < 1e-6);
+            assert!((instance.basis[0][2] + 3. * 0.3_f32.sin()).abs() < 1e-6);
+            assert_eq!(instance.basis[1], [0., 3., 0.]);
         }
         assert_eq!(
             serde_json::to_string(&scene).unwrap(),
@@ -1131,6 +1180,73 @@ mod tests {
             assert!(
                 identities.insert((instance.source.recipe_path, instance.source.repeat_indices))
             );
+        }
+    }
+    #[test]
+    fn full_rotation_composition_is_ordered_and_invertible() {
+        let half = std::f32::consts::FRAC_PI_2;
+        let x_then_z = Pose::IDENTITY
+            .rotate([1., 0., 0.], half)
+            .unwrap()
+            .rotate([0., 0., 1.], half)
+            .unwrap();
+        let z_then_x = Pose::IDENTITY
+            .rotate([0., 0., 1.], half)
+            .unwrap()
+            .rotate([1., 0., 0.], half)
+            .unwrap();
+        for (actual, expected) in [
+            (x_then_z.point([0., 1., 0.]), [-1., 0., 0.]),
+            (z_then_x.point([0., 1., 0.]), [0., 0., 1.]),
+        ] {
+            for (a, e) in actual.into_iter().zip(expected) {
+                assert!((a - e).abs() < 1e-6);
+            }
+        }
+        let p = Pose::IDENTITY.rotate([1., 2., 3.], 0.7).unwrap();
+        let scaled_axis = Pose::IDENTITY.rotate([7., 14., 21.], 0.7).unwrap();
+        let inverse = p.rotate([1., 2., 3.], -0.7).unwrap();
+        for column in 0..3 {
+            for row in 0..3 {
+                assert!((p.basis[column][row] - scaled_axis.basis[column][row]).abs() < 1e-12);
+                assert!(
+                    (inverse.basis[column][row] - Pose::IDENTITY.basis[column][row]).abs() < 1e-12
+                );
+            }
+        }
+        for (axis, angle) in [
+            ([0.; 3], 0.),
+            ([f32::NAN, 0., 0.], 1.),
+            ([1., 0., 0.], f32::INFINITY),
+        ] {
+            assert!(Pose::IDENTITY.rotate(axis, angle).is_err());
+        }
+    }
+    #[test]
+    fn tilted_parts_repeat_in_parent_space_with_full_bounds_and_shared_meshes() {
+        let mut r = recipe();
+        r.definitions.get_mut("block").unwrap().shape = Shape::Box { size: [2., 4., 6.] };
+        r.root = serde_json::from_str(r#"{"kind":"transform","position":[10,0,0],"child":{"kind":"rotate","axis":[1,0,0],"angle":1.5707963267948966,"child":{"kind":"repeat","count":2,"step":[0,2,0],"child":{"kind":"part","mesh":"block","position":[1,2,3]}}}}"#).unwrap();
+        let s = compile(&r).unwrap();
+        assert_eq!(s.version, 2);
+        assert_eq!(s.meshes.len(), 1);
+        assert_eq!(s.instances.len(), 2);
+        for (i, instance) in s.instances.iter().enumerate() {
+            let z = 2. + 2. * i as f32;
+            for (actual, expected) in instance
+                .position
+                .into_iter()
+                .chain(instance.bounds.min)
+                .chain(instance.bounds.max)
+                .zip([11., -3., z, 10., -6., z - 2., 12., 0., z + 2.])
+            {
+                assert!((actual - expected).abs() < 1e-5);
+            }
+            assert_eq!(instance.source.recipe_path, "/root/child/child/child");
+            assert_eq!(instance.source.repeat_indices, vec![i as u32]);
+            let values = serde_json::to_value(instance).unwrap();
+            assert_eq!(values["basis"].as_array().unwrap().len(), 9);
+            assert!(values.get("yaw").is_none() && values.get("scale").is_none());
         }
     }
     #[test]

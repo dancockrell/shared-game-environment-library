@@ -2,7 +2,7 @@
 extends RefCounted
 ## Sole Godot adapter for the engine-neutral mesh format. Meshes are shared via MultiMesh.
 static func build(data: Dictionary) -> Node3D:
-	assert(data.get("version") == 1 and data.get("coordinate_system") == "right-handed-y-up-ccw-metres", "Unsupported scene format")
+	assert(data.get("version") in [1, 2] and data.get("coordinate_system") == "right-handed-y-up-ccw-metres", "Unsupported scene format")
 	var root := Node3D.new()
 	root.name = "SceneForge"
 	root.set_meta("scene_forge_recipe_json", str(data.get("recipe_json", "")))
@@ -54,7 +54,13 @@ static func build(data: Dictionary) -> Node3D:
 		var instance_bounds := AABB()
 		for i in instances.size():
 			var item: Dictionary = instances[i]
-			var basis := Basis(Vector3.UP, float(item.yaw)).scaled(Vector3.ONE * float(item.scale))
+			var basis: Basis
+			if data.version == 2:
+				var columns: Array = item.basis
+				assert(columns.size() == 9, "Invalid version-2 basis")
+				basis = Basis(Vector3(columns[0], columns[1], columns[2]), Vector3(columns[3], columns[4], columns[5]), Vector3(columns[6], columns[7], columns[8]))
+			else:
+				basis = Basis(Vector3.UP, float(item.yaw)).scaled(Vector3.ONE * float(item.scale))
 			var transform := Transform3D(basis, Vector3(item.position[0], item.position[1], item.position[2]))
 			multi.set_instance_transform(i, transform)
 			var bounds: AABB = transform * mesh.get_aabb()

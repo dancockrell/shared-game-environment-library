@@ -35,6 +35,10 @@ func _run() -> void:
 			else:
 				assert(description.vertices > 0 and description.indices > 0)
 			assert(JSON.parse_string(JSON.stringify(description)) is Dictionary)
+			if not description.has("error") and data.version == 2:
+				for column in 3:
+					for axis in 3:
+						assert(absf(float(description.basis_columns[column][axis]) - float(expected_instances[instance_index].basis[column * 3 + axis])) < 0.00001)
 			if not description.has("error") and expected_instances[instance_index].has("bounds"):
 				for key in ["min", "max"]:
 					for axis in 3:
