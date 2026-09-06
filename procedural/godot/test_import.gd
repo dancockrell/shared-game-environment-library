@@ -25,9 +25,9 @@ func _initialize() -> void:
 		_request_root = _request_path.get_base_dir().replace("\\", "/").to_lower() + "/"
 		var poll := Timer.new()
 		poll.wait_time = 1.0
+		poll.autostart = true
 		poll.timeout.connect(_poll_request)
 		root.add_child(poll)
-		poll.start()
 	call_deferred("_run")
 
 static func _request_fields(request: Variant, directory: String) -> Dictionary:

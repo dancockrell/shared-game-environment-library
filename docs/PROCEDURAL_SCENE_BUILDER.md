@@ -1085,7 +1085,12 @@ matching sequence, input, capture and unchanged process ID, then inspect the PNG
 The old running preview cannot acquire this code without one replacement; that
 replacement was requested from the user, not assumed from an automatic goal turn.
 Headless `--check-only` passed for the modified script. Sequential graphics-backed
-switching and repeated-load memory behavior are **not yet executed or certified**.
+switching was initially unexecuted. After explicit user approval, native startup
+exposed a Timer started before tree entry. It now uses autostart. One corrective
+restart was needed; subsequent material revisions loaded in the same PID 30828.
+Matching `Review ready` log entries and actual captures verify sequential scene
+switching. This supersedes the pending-switch status, but does not certify
+long-run memory stability or a hard VRAM limit.
 
 The same script has a headless `--test-review-requests` mode. It executes the
 actual request/header admission functions without constructing a scene or
@@ -1175,8 +1180,24 @@ flat-strip counts, not the distinction between estimates and engine measurement.
 Outstanding: actual rendered inspection, native saved-output review, fluted
 crust, richer piping, cake crumb detail and controlled natural variation. The
 ribbons and rotational dollops remain construction studies, not finished pastry.
-No artistic gate is passed from CPU checks. The live teapot review remains
-untouched; no additional Godot process was launched during this study.
+No artistic gate is passed from CPU checks. The first native pastry review has
+now been executed after the user's explicit approval to replace the teapot
+preview. It revealed washed-out cream, excessively orange pastry and plastic-like
+highlights. Palette values were adjusted first under unchanged camera/lighting.
+On the user's subsequent "make it less plastic" request, food roughness was raised
+to 0.96 (cream/pastry) and 0.70 (fruit/filling), leaving the ceramic plate unchanged.
+Seeded, editable paint marks add restrained baked variation to sponge and crust.
+These are albedo marks, not geometric crumb, normal mapping or displacement.
+256-pixel textures keep the compiled review input within its 32 MiB cap; a
+512-pixel candidate exceeded that cap and was rejected by the running viewer.
+
+Native reviewed capture:
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pastry-matte2.png`.
+The same PID 30828 loaded both palette and matte revisions with all 42-instance,
+14-mesh native import checks passing. Lighting/camera were held fixed. The finish
+is less glossy; perfectly smooth frosting, regular dollops and unfluted crust
+still limit its food quality. No production-art approval or native disk package
+reload is claimed for this revision.
 
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
 groups/repetition; exact rectangular aperture subdivision; strict geometry and
