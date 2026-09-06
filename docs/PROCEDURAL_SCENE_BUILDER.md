@@ -149,23 +149,35 @@ transitions and uniform finishes remain construction quality. The complete runne
 passed 33 stages across seven fixtures, including 25 Rust tests; this is not
 artistic admission of the arches or a generated environment.
 
-### Repeatable technical and visual review run
+### Shared-machine validation: current CPU-only entry point
 
-Run `procedural/check-scene-forge.ps1 -Godot <graphics-executable> -Cargo <cargo>`
-on Windows. This is the single validation entry point for the current fixtures:
+Run `procedural/check-scene-forge.ps1 -Cargo <cargo>` on Windows. Following the
+user's crash warning, this command launches **no Godot or Unity process**.
+The old `-Godot` invocation is explicitly rejected before execution. It runs
 locked Rust tests, formatting, strict clippy, release compilation, byte-for-byte
-determinism for every example, actual Godot render/import checks and native
-package reload checks. It also requires the deliberately unsupported dummy-renderer
-export to fail without leaving a package. The graphics executable (not its console
-wrapper) is required so process ownership and timeout termination stay precise.
+determinism for every example. Cargo uses one job and tests use one thread.
+Each owned native process runs hidden and BelowNormal, with a 90-second default
+timeout, a sampled 1 GiB root-process working-set ceiling and a 6 GiB
+whole-machine free-RAM floor. These are sampled safeguards, not an OS reservation
+or a bound on total child-process memory. The runner can terminate only its
+owned process tree. It refuses heavy work if headroom is insufficient.
 
 Each run creates a fresh `procedural/generated/reviews/<time-and-id>/` directory
-containing compiled JSON, renders, packages, logs and a structured `report.json`.
-The report records source/compiler hashes, step times, exit codes, fixture mesh and
-instance counts, estimated geometry bytes and output locations. Changed source
+containing compiled JSON, logs and a structured `report.json`. The report records
+source/compiler hashes, times, errors, sampled root working set and available
+RAM, output hashes and sizes. Unsampled measurements are null, never zero claims.
+It does not inflate the full scene JSON into PowerShell objects. Changed source
 hashes during a run invalidate the result. Logs, failure reports and unfinished
-artifacts are retained for diagnosis. Godot runs sequentially, off-screen,
-BelowNormal priority, capped at 10 FPS, with a per-process timeout (default 90s).
+artifacts are retained for diagnosis. `engine_checks` and `visual_review` are
+explicitly `not_run`; there are no new renders or native packages from this mode.
+
+The existing Godot importer, spatial tests and native-package verifier are
+retained, but their former repeated-launch orchestration is retired. A reusable
+owned background session with resource monitoring must replace that workflow
+before unattended engine checks resume. Headless dummy rendering cannot certify
+real MultiMesh transforms, rendered appearance or graphics-backed package data.
+Do not attach to or stop another thread's process. No persistent review worker
+has been implemented or started at this checkpoint.
 
 Every render starts with `visual_review: pending`, even when technical checks pass.
 The initial render inspection confirms the fixtures are visible but remain crude
@@ -176,7 +188,10 @@ certificate. Its purpose is to supply repeatable evidence for the next iteration
 The retained [initial verification report](verification/scene-forge-check-report.json)
 records 29 passing technical stages across six fixtures. Its absolute artifact
 paths identify the local run; those generated binaries and images are not bundled
-with the report. Rerun the script to reproduce them on another machine.
+with the report. This is historical graphics-backed evidence; the current
+CPU-only command does not reproduce those engine checks. Latest CPU receipt
+`20260906-114229-6bd0f3a215334b1d8459e079585c3b33` passed 22 stages across nine
+fixtures; explicit legacy-launch and low-headroom refusal tests also passed.
 
 ### Bounds and live machine-readable inspection
 

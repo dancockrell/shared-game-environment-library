@@ -1,54 +1,58 @@
 param(
-    [Parameter(Mandatory)][string]$Godot,
+    [string]$Godot,
     [string]$Cargo = 'cargo',
-    [ValidateRange(10,600)][int]$TimeoutSeconds = 90
+    [ValidateRange(10,600)][int]$TimeoutSeconds = 90,
+    [ValidateRange(4,128)][int]$MinimumFreeRamGiB = 6,
+    [ValidateRange(256,2048)][int]$MaximumProcessMiB = 1024
 )
 $ErrorActionPreference = 'Stop'
 $forgeRoot = $PSScriptRoot
-$Godot = (Resolve-Path -LiteralPath $Godot).Path
-if ($Godot.EndsWith('_console.exe')) { throw 'Use the graphics executable, not its console wrapper, so timeout ownership is exact.' }
+if ($Godot) { throw 'Automatic Godot launches are retired. Omit -Godot for CPU-only checks. Engine validation requires a separately managed reusable session; this command will not open or close it.' }
 $runRoot = Join-Path $forgeRoot ('generated/reviews/' + [DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $runRoot -Force | Out-Null
 $report = [ordered]@{
     started_utc = [DateTime]::UtcNow.ToString('o'); status = 'running';
-    scope = 'Compiler and Godot graphics-backed fixtures; not artistic admission, Unity certification or VRAM measurement';
-    godot = $Godot; steps = [System.Collections.Generic.List[object]]::new();
+    scope = 'CPU compiler and deterministic fixtures only; no engine launched';
+    engine_checks = 'not_run'; visual_review = 'not_run'; gpu_memory = 'not_measured';
+    limits = @{minimum_free_ram_gib=$MinimumFreeRamGiB; maximum_process_mib=$MaximumProcessMiB; timeout_seconds=$TimeoutSeconds; cargo_jobs=1; test_threads=1};
+    steps = [System.Collections.Generic.List[object]]::new();
     fixtures = [System.Collections.Generic.List[object]]::new();
     source_hashes = [ordered]@{}
 }
 function Invoke-NativeCheck([string]$Name, [string]$Executable, [string[]]$Arguments) {
     $log = Join-Path $runRoot ($Name + '.log')
+    $errorLog = Join-Path $runRoot ($Name + '.stderr.log')
+    $freeRam = { [long](Get-CimInstance Win32_OperatingSystem -ErrorAction Stop).FreePhysicalMemory * 1024 }
+    if ((& $freeRam) -lt $MinimumFreeRamGiB * 1GB) { throw "Insufficient shared-machine RAM headroom before $Name" }
+    $resolved = (Get-Command $Executable -ErrorAction Stop).Source
+    if ($Arguments | Where-Object { $_.Contains('"') }) { throw 'Unexpected quote in native argument' }
+    $quoted = $Arguments | ForEach-Object { '"' + $_ + '"' }
     $watch = [Diagnostics.Stopwatch]::StartNew()
-    & $Executable @Arguments *> $log
-    $code = $LASTEXITCODE
-    $report.steps.Add(@{name=$Name; exit_code=$code; seconds=$watch.Elapsed.TotalSeconds; log=$log})
-    if ($code -ne 0) { throw "$Name failed with exit $code; see $log" }
-}
-function Invoke-GodotCheck([string]$Name, [string]$Script, [string[]]$Inputs, [string]$Marker, [switch]$ExpectDummyFailure) {
-    $log = Join-Path $runRoot ($Name + '.log')
-    $arguments = @('--path',(Join-Path $forgeRoot 'godot'),'--log-file',$log,'--script',$Script)
-    if ($ExpectDummyFailure) { $arguments += '--headless' }
-    else { $arguments += @('--position','-4000,-4000','--no-focus','--max-fps','10','--rendering-method','gl_compatibility') }
-    $arguments += @('--') + $Inputs
-    # Windows paths cannot contain quote characters. Quote all arguments, including spaces.
-    $quoted = $arguments | ForEach-Object { '"' + $_ + '"' }
-    $watch = [Diagnostics.Stopwatch]::StartNew()
-    $process = Start-Process -FilePath $Godot -ArgumentList $quoted -WindowStyle Hidden -PassThru
+    $process = Start-Process -FilePath $resolved -ArgumentList $quoted -WindowStyle Hidden -PassThru -RedirectStandardOutput $log -RedirectStandardError $errorLog
+    $peak = $null
+    $minFree = [long]::MaxValue
+    $failure = $null
     try {
         if (-not $process.HasExited) { $process.PriorityClass = 'BelowNormal' }
-        if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
-            # Only the process created by this invocation is terminated.
-            $process.Kill(); $process.WaitForExit()
-            throw "$Name timed out; retained log: $log"
+        while (-not $process.WaitForExit(500)) {
+            $process.Refresh()
+            if ($null -eq $peak -or $process.WorkingSet64 -gt $peak) { $peak = $process.WorkingSet64 }
+            $free = & $freeRam
+            $minFree = [Math]::Min($minFree, $free)
+            if ($process.WorkingSet64 -gt $MaximumProcessMiB * 1MB) { throw "$Name exceeded its root-process RAM ceiling" }
+            if ($free -lt $MinimumFreeRamGiB * 1GB) { throw "$Name stopped to preserve shared-machine RAM headroom" }
+            if ($watch.Elapsed.TotalSeconds -gt $TimeoutSeconds) { throw "$Name timed out" }
         }
         $process.Refresh()
-        $code = $process.ExitCode
-        $text = Get-Content -LiteralPath $log -Raw
-        $report.steps.Add(@{name=$Name; exit_code=$code; seconds=$watch.Elapsed.TotalSeconds; log=$log})
-        $expectedCode = if ($ExpectDummyFailure) { 1 } else { 0 }
-        if ($code -ne $expectedCode -or -not $text.Contains($Marker)) { throw "$Name failed its exit/marker contract; see $log" }
-        if (-not $ExpectDummyFailure -and $text -match '(?m)^(SCRIPT ERROR:|ERROR:)') { throw "$Name logged an engine error; see $log" }
-    } finally { $process.Dispose() }
+        if ($process.ExitCode -ne 0) { throw "$Name failed with exit $($process.ExitCode); see $errorLog" }
+    } catch {
+        $failure = $_.Exception.Message
+        if (-not $process.HasExited) { $process.Kill($true); $process.WaitForExit() }
+        throw
+    } finally {
+        $report.steps.Add(@{name=$Name; seconds=$watch.Elapsed.TotalSeconds; log=$log; stderr=$errorLog; error=$failure; sampled_root_working_set_peak_bytes=$peak; minimum_sampled_free_ram_bytes=$(if ($minFree -eq [long]::MaxValue) {$null} else {$minFree}); memory_scope='root working set plus whole-machine free RAM; not tree peak or VRAM'})
+        $process.Dispose()
+    }
 }
 try {
     $manifest = Join-Path $forgeRoot 'Cargo.toml'
@@ -61,10 +65,10 @@ try {
     foreach ($path in @('Cargo.toml','Cargo.lock','check-scene-forge.ps1','godot/test_import.gd','godot/pack_scene.gd')) {
         $report.source_hashes[$path] = (Get-FileHash -LiteralPath (Join-Path $forgeRoot $path) -Algorithm SHA256).Hash
     }
-    Invoke-NativeCheck 'rust-tests' $Cargo @('test','--locked','--manifest-path',$manifest)
+    Invoke-NativeCheck 'rust-tests' $Cargo @('test','--locked','-j','1','--manifest-path',$manifest,'--','--test-threads=1')
     Invoke-NativeCheck 'rust-format' $Cargo @('fmt','--manifest-path',$manifest,'--','--check')
-    Invoke-NativeCheck 'rust-clippy' $Cargo @('clippy','--locked','--manifest-path',$manifest,'--all-targets','--','-D','warnings')
-    Invoke-NativeCheck 'rust-release' $Cargo @('build','--release','--locked','--manifest-path',$manifest)
+    Invoke-NativeCheck 'rust-clippy' $Cargo @('clippy','--locked','-j','1','--manifest-path',$manifest,'--all-targets','--','-D','warnings')
+    Invoke-NativeCheck 'rust-release' $Cargo @('build','--release','--locked','-j','1','--manifest-path',$manifest)
     $compiler = Join-Path $forgeRoot 'target/release/scene-forge-cli.exe'
     $report.compiler_sha256 = (Get-FileHash -LiteralPath $compiler).Hash
     foreach ($recipe in Get-ChildItem -LiteralPath (Join-Path $forgeRoot 'examples') -Filter '*.json' -File | Sort-Object Name) {
@@ -74,18 +78,9 @@ try {
         Invoke-NativeCheck "$name-compile" $compiler @($recipe.FullName,$scenePath)
         Invoke-NativeCheck "$name-determinism" $compiler @($recipe.FullName,$repeatPath)
         if ((Get-FileHash $scenePath).Hash -ne (Get-FileHash $repeatPath).Hash) { throw "$name is not byte deterministic" }
-        $scene = Get-Content -LiteralPath $scenePath -Raw | ConvertFrom-Json
-        $png = Join-Path $runRoot ($name + '.png')
-        $package = Join-Path $runRoot ($name + '.scn')
-        Invoke-GodotCheck "$name-render" 'res://test_import.gd' @($scenePath,$png) 'Spatial checks: graphics-backed transforms and bounds verified'
-        if (-not (Test-Path -LiteralPath $png) -or (Get-Item -LiteralPath $png).Length -eq 0) { throw "$name has no render" }
-        Invoke-GodotCheck "$name-package" 'res://pack_scene.gd' @($scenePath,$package) 'Verified native package buffers, bounds and materials'
-        $report.fixtures.Add(@{name=$name; instances=$scene.instances.Count; shared_meshes=$scene.meshes.Count; estimated_geometry_bytes=$scene.estimated_geometry_bytes; render=$png; package=$package; package_sha256=(Get-FileHash $package).Hash; visual_review='pending'})
+        # Do not inflate entire scene arrays into PowerShell objects.
+        $report.fixtures.Add(@{name=$name; output=$scenePath; sha256=(Get-FileHash $scenePath).Hash; file_bytes=(Get-Item $scenePath).Length; render=$null; package=$null; engine_checks='not_run'})
     }
-    $firstScene = Join-Path $runRoot ($report.fixtures[0].name + '.json')
-    $dummyOutput = Join-Path $runRoot 'dummy-must-not-save.scn'
-    Invoke-GodotCheck 'reject-dummy-export' 'res://pack_scene.gd' @($firstScene,$dummyOutput) 'Missing MultiMesh instance buffer' -ExpectDummyFailure
-    if (Test-Path -LiteralPath $dummyOutput) { throw 'Dummy export left an invalid package' }
     foreach ($relative in $report.source_hashes.Keys) {
         if ((Get-FileHash -LiteralPath (Join-Path $forgeRoot $relative)).Hash -ne $report.source_hashes[$relative]) {
             throw "Source changed during verification: $relative; results cannot certify one version"
@@ -99,5 +94,5 @@ try {
 } finally {
     $report.finished_utc = [DateTime]::UtcNow.ToString('o')
     $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $runRoot 'report.json') -Encoding utf8
-    Write-Output "Scene Forge verification $($report.status): $runRoot"
+    Write-Output "Scene Forge CPU-only verification $($report.status): $runRoot"
 }

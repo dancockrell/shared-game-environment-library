@@ -5,7 +5,7 @@
   "summary": "Tool-only priority: paper-grounded high-end stylized construction; sequential teapot, cake/pie and coordinated ballerina quality gates; room expansion paused",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-06T11:40:00Z",
+  "updated_at": "2026-09-06T11:44:00Z",
   "paths": [
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",
@@ -30,6 +30,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "CPU-only shared-machine runner passed twice; latest 20260906-114345-9e11150ff79d4530bf2184003ee28c5b: 22 stages, 35 Rust tests, nine deterministic fixtures, no engine launched; old Godot parameter and inadequate RAM both rejected in explicit negative checks",
+      "Automatic repeated engine launch orchestration removed; original Godot import/package assertions retained for future reusable session integration. Sampled RAM safeguards are not hard memory reservations or full tree/VRAM measurements. Timeout/tree termination path not fault-injected in this checkpoint.",
       "Painted ornament: 35 Rust tests and 41-stage nine-fixture run 20260906-113650-0042b62817704931bdb9b2fe9fe32c74 passed before the shared-machine workflow change; actual render inspected and linear hook-like strokes revised to cubic-width leaves; not final art admission",
       "User crash warning: no more automatic graphics launches or engine cycling; existing render receipts are historical, not authorization for another run. No Godot process found during current inspection.",
       "Cubic sweep and hollow spline vessel checkpoint: 34 Rust tests, strict clippy, release, 41-stage nine-fixture real Godot run passed; report 20260906-111412-397cea53ad9e4cdeb2fad4cb32590e0b",
