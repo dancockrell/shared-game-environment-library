@@ -3,6 +3,8 @@ extends SceneTree
 var source := ""
 var destination := ""
 var failure := false
+const Textiles = preload("res://character-textiles.gd")
+var textile_maps: Dictionary = {}
 var core := ""
 var body := PackedVector3Array()
 var body_variants: Array[PackedVector3Array] = []
@@ -402,6 +404,7 @@ func add_overgarment(parent: Node3D, part_name: String, sex: String, length: flo
 					surface.add_vertex(fitted_pattern[index])
 		var panel_arrays := []
 		for surface in panels:
+			surface.generate_tangents()
 			panel_arrays.append(surface.commit_to_arrays())
 		generated.append(panel_arrays)
 	var mesh := ArrayMesh.new()
@@ -417,10 +420,9 @@ func add_overgarment(parent: Node3D, part_name: String, sex: String, length: flo
 			shape[Mesh.ARRAY_NORMAL] = generated[i+1][panel][Mesh.ARRAY_NORMAL]
 			shapes.append(shape)
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,generated[0][panel],shapes)
-		var cloth := StandardMaterial3D.new()
-		cloth.albedo_color = Color("354d62") if panel == 0 else Color("c1a269")
-		cloth.roughness = .95
-		cloth.cull_mode = BaseMaterial3D.CULL_DISABLED
+		if textile_maps.is_empty():
+			textile_maps = Textiles.generate(1024,128,17)
+		var cloth := Textiles.material(textile_maps,Color("354d62") if panel == 0 else Color("c1a269"),8.0)
 		mesh.surface_set_material(panel,cloth)
 	var instance := MeshInstance3D.new()
 	instance.name = part_name
@@ -636,6 +638,7 @@ func run() -> void:
 		var receipt := {"schemaVersion":1,"status":"development-source-assembly-not-approved-game-art",
 			"license":"CC0-1.0","engine":Engine.get_version_info().string,
 			"compilerSha256":FileAccess.get_sha256("res://prepare-character-model.gd"),
+			"textileCompilerSha256":FileAccess.get_sha256("res://character-textiles.gd"),
 			"systemManifestSha256":FileAccess.get_sha256(source.path_join("source-manifest.json")),
 			"coreManifestSha256":FileAccess.get_sha256(core.path_join("source-manifest.json")),
 			"textureMaxDimension":1024,"bones":163,"linkedMorphs":shape_names,"files":records,

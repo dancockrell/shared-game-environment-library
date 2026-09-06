@@ -29,7 +29,7 @@
       "Pointed ears": 0.0,
       "Square face": 0.0
     },
-    "profileSha256": "2fa108a621f017c3a5b34d1ea74c90a631befbbb42167a6814761a5829f993da",
+    "profileSha256": "fd6d10255345fe23180238b749878bac35bcf99d3f67f9127cc10f872bfca328",
     "slots": {
       "Clothes": "Casual 01",
       "Eyebrows": "Brow 01",
@@ -331,6 +331,6 @@
     "Skeleton3D/Tabard::Square face": 0.0
   },
   "sourceFilename": "female-source.glb",
-  "sourceSha256": "34b184078d5ef3079d4d74b850a54d267330974f8dcd1aaf9c282f9861f0051d",
+  "sourceSha256": "7bd71f01bfb16d606d38c4a138dc22cb7e96d28d0ad78a9b854501bfd1b20d2c",
   "variationSeed": ""
 }

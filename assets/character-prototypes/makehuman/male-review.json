@@ -29,7 +29,7 @@
       "Pointed ears": 0.0,
       "Square face": 0.0
     },
-    "profileSha256": "34995d0cefcef6d2ecfc9f5f92c04a4f558c12664fa2d66bc9b25aefe96774c6",
+    "profileSha256": "d414bbd09f0b7c4a3bb5f49f4e804eee9825a9991b087b5169d30d5acdd34f7e",
     "slots": {
       "Clothes": "Casual 01",
       "Eyebrows": "Brow 01",
@@ -331,6 +331,6 @@
     "Skeleton3D/Tabard::Square face": 0.0
   },
   "sourceFilename": "male-source.glb",
-  "sourceSha256": "34972df63eb3f9c39f74a1ad0d8f13066acf82a8d510943f19d2ee2425722d26",
+  "sourceSha256": "775671e63a5afb67d25f5933a49699cf4f4af1b04f9f5af47fee93550311d08f",
   "variationSeed": ""
 }

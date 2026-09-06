@@ -23,6 +23,8 @@
     "tools/test-character-outfit.gd",
     "tools/prepare-character-assets.ps1",
     "tools/prepare-character-model.gd",
+    "tools/character-textiles.gd",
+    "tools/test-character-textiles.gd",
     "assets/character-prototypes/makehuman/",
     "assets/character-sources/makehuman-system/",
     "assets/character-sources/makehuman-core/",
@@ -37,6 +39,11 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Original textile generator: deterministic periodic albedo/normal/roughness maps, matte range, normal mipmaps, shared dye textures and source immutability checks passed",
+      "Fixed observed weave moire: runtime GLTF imports lacked mipmaps; shared import preparation now rebuilds mip levels, renormalizes normal maps and reuses texture resources",
+      "Both rebuilt body assemblies passed full rendered workshop suites; four fresh single-character SCN/portable-package rendered reloads passed, including texture mipmap retention; representative actual renders inspected",
+      "Both source assemblies, profiles, compiler and textile-generator hashes match build receipt; wardrobe suite and 18 production checks passed; no paid operations",
+      "Portable adapter checkpoint committed locally as 8f98f5c; push failed because github.com:443 is unreachable",
       "Portable GLB checkpoint: both real-body headless suites passed; exact file hash, canonical appearance restore, 163-bone skeleton, retained meshes and six invalid-manifest cases verified",
       "Godot import plugin parses and initializes in the editor; both portable packages rendered in fresh loads; source wardrobe remains rejected construction art",
       "Unity adapter not executed: local version folder lacks Unity.exe and managed engine assemblies; 8 GB VRAM and native Unity behavior remain unverified",

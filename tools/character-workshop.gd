@@ -156,6 +156,10 @@ func import_model(path: String) -> String:
 	var candidate := document.generate_scene(state) as Node3D
 	if candidate == null:
 		return "No model scene found."
+	var material_error: String = preload("res://addons/shared_character_builder/character_package.gd").prepare_materials(candidate)
+	if not material_error.is_empty():
+		candidate.free()
+		return material_error
 	stage.add_child(candidate)
 	var meshes := candidate.find_children("*","MeshInstance3D",true,false)
 	var box := AABB()

@@ -46,6 +46,13 @@ func run() -> void:
 				check(mesh.skin == null and mesh.material_override == null and mesh.material_overlay == null,"unused visual resources are absent: "+str(mesh.name))
 				continue
 			check(mesh.mesh != null and mesh.get_active_material(0) != null,"standalone geometry and material: "+str(mesh.name))
+			for surface in mesh.mesh.get_surface_count():
+				var material = mesh.get_active_material(surface)
+				if material is BaseMaterial3D:
+					for channel in BaseMaterial3D.TEXTURE_MAX:
+						var texture: Texture2D = material.get_texture(channel)
+						if texture != null:
+							check(texture.get_image().has_mipmaps(),"standalone texture retains mipmaps: "+str(mesh.name)+" / "+str(channel))
 		editor.camera.size = appearance.height*1.5
 		editor.camera.position = Vector3(0,appearance.height*.6,appearance.height*3)
 		editor.camera.look_at(Vector3(0,appearance.height*.5,0))
@@ -308,6 +315,10 @@ func run() -> void:
 		for mesh in portable_actor.find_children("*","MeshInstance3D",true,false):
 			if mesh.mesh != null:
 				portable_meshes += 1
+				if str(mesh.name) in ["ShortCloak","LongCloak","Tabard"]:
+					var fabric: StandardMaterial3D = mesh.get_active_material(0)
+					check(fabric != null and fabric.normal_enabled and fabric.normal_texture != null and fabric.roughness_texture != null,"portable GLB preserves generated fabric maps")
+					check(fabric.normal_texture.get_image().has_mipmaps(),"portable import restores normal-map mip levels")
 		check(portable_meshes == portable_manifest.geometry.retained_meshes,"portable GLB contains only retained visual resources")
 		check(portable_actor.get_meta("art_status") == portable_manifest.artStatus,"Godot integration preserves art admission status")
 		var portable_packed := PackedScene.new()
