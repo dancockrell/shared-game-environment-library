@@ -358,7 +358,17 @@ func catalog_specs() -> Array:
 		["stool", "neutral_prop"], ["woodpile", "neutral_prop"],
 		["water-trough", "neutral_prop"], ["cargo-crane", "neutral_prop"],
 		["rope-coil", "neutral_prop"], ["timber-footbridge", "architecture"],
-		["reed-bank", "flora"], ["rock-shelf", "geology"]
+		["reed-bank", "flora"], ["rock-shelf", "geology"],
+		["cobble-plaza", "terrain"], ["cobble-street", "terrain"],
+		["dirt-path", "terrain"], ["grass-verge", "terrain"],
+		["curb-run", "architecture"], ["curb-corner", "architecture"],
+		["quay-corner", "architecture"], ["dock-ramp", "architecture"],
+		["workbench", "neutral_prop"], ["anvil", "neutral_prop"],
+		["tool-rack", "neutral_prop"], ["forge-hearth", "neutral_prop"],
+		["bucket", "neutral_prop"], ["sack-stack", "neutral_prop"],
+		["fishing-rack", "neutral_prop"], ["mooring-cleat", "neutral_prop"],
+		["driftwood", "neutral_prop"], ["basalt-outcrop", "geology"],
+		["beach-slope", "terrain"], ["stone-culvert", "architecture"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -409,6 +419,18 @@ func framed_elevations(g: Node3D, width: float, depth: float, height: float) -> 
 			block(Vector3(0,y,0),Vector3(span,0.16,0.14),"oak",elevation)
 		for x in [-span*0.46,0.0,span*0.46]:
 			block(Vector3(x,height/2,0),Vector3(0.14,height,0.15),"oak",elevation)
+
+func sloped_block(parent: Node3D, width: float, depth: float, high: float, low: float, key: String) -> void:
+	var raw := solid_polygon(PackedVector2Array([Vector2(-width/2,-depth/2),Vector2(width/2,-depth/2),Vector2(width/2,depth/2),Vector2(-width/2,depth/2)]),1,0.01)
+	var vertices: PackedVector3Array = raw.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+	var surface := SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	surface.set_smooth_group(-1)
+	for vertex in vertices:
+		vertex.y *= lerpf(high,low,(vertex.z+depth/2)/depth)
+		surface.add_vertex(vertex)
+	surface.generate_normals()
+	piece(surface.commit(),Vector3.ZERO,Vector3.ONE,key,parent)
 
 func catalog_model(id: String) -> Node3D:
 	rng.seed = 5012026+id.hash() # Independent of build order and unrelated recipes.
@@ -742,6 +764,149 @@ func catalog_model(id: String) -> Node3D:
 	elif id == "rock-shelf":
 		for i in 12:
 			rock(Vector3(rng.randf_range(-1.4,1.4),0,rng.randf_range(-0.9,0.9)),Vector3(rng.randf_range(0.7,1.5),rng.randf_range(0.35,0.8),rng.randf_range(0.6,1.2)),g)
+	elif id in ["cobble-plaza","cobble-street","dirt-path","grass-verge"]:
+		block(Vector3(0,0.08,0),Vector3(4,0.16,4),"mortar" if id.begins_with("cobble") else "soil",g)
+		if id.begins_with("cobble"):
+			for row in 16:
+				for col in 12:
+					var x := -2+(col+0.5)*4/12.0
+					block(Vector3(x,0.19,-2+(row+0.5)*0.25),Vector3(4/12.0-0.018,0.06,0.235),shade("stone"),g)
+			if id == "cobble-street":
+				for x in [-1.85,1.85]:
+					for row in 10:
+						block(Vector3(x,0.25,(row-4.5)*0.4),Vector3(0.28,0.18,0.39),"stone9",g)
+		else:
+			if id == "grass-verge":
+				for i in 130:
+					var pos := Vector3(rng.randf_range(-1.8,1.8),0.16,rng.randf_range(-1.8,1.8))
+					beam(pos,pos+Vector3(0.03,rng.randf_range(0.08,0.2),0),0.018,"reed",g)
+			else:
+				for x in [-0.72,0.72]:
+					block(Vector3(x,0.164,0),Vector3(0.16,0.012,4),"sand",g)
+			for i in 25:
+				rock(Vector3(rng.randf_range(-1.9,1.9),0.15,rng.randf_range(-1.9,1.9)),Vector3(0.1,0.04,0.08),g)
+		var top := 0.22 if id.begins_with("cobble") else 0.16
+		attachment(g,"north",Vector3(0,top,-2))
+		attachment(g,"south",Vector3(0,top,2))
+		attachment(g,"west",Vector3(-2,top,0))
+		attachment(g,"east",Vector3(2,top,0))
+	elif id in ["curb-run","curb-corner","quay-corner"]:
+		var height := 1.4 if id == "quay-corner" else 0.25
+		for leg in (1 if id == "curb-run" else 2):
+			var arm := node_group("Arm",Vector3.ZERO,-leg*PI/2,g)
+			for i in (8 if id == "curb-run" else 4):
+				block(Vector3(-1.75+i*0.5,height/2,0),Vector3(0.48,height,0.4),shade("stone"),arm)
+		if id != "curb-run":
+			block(Vector3(0,height/2,0),Vector3(0.4,height,0.4),"stone9",g)
+		attachment(g,"join_a",Vector3(-2,height,0))
+		attachment(g,"join_b",Vector3(2,height,0) if id == "curb-run" else Vector3(0,height,-2))
+	elif id in ["dock-ramp","beach-slope"]:
+		var width := 2.8 if id == "dock-ramp" else 4.0
+		sloped_block(g,width,4,0.9,0.1,"oak" if id == "dock-ramp" else "sand")
+		if id == "dock-ramp":
+			for i in 24:
+				var z := -2+(i+0.5)*4/24.0
+				var plank := block(Vector3(0,lerpf(0.9,0.1,(z+2)/4)+0.025,z),Vector3(width,0.06,0.15),shade("wood"),g)
+				plank.rotation.x = atan(0.2)
+		else:
+			for i in 20:
+				var z := rng.randf_range(-1.8,1.8)
+				rock(Vector3(rng.randf_range(-1.8,1.8),lerpf(0.9,0.1,(z+2)/4),z),Vector3(0.15,0.08,0.2),g)
+		attachment(g,"upper",Vector3(0,0.95 if id == "dock-ramp" else 0.9,-2))
+		attachment(g,"lower",Vector3(0,0.15 if id == "dock-ramp" else 0.1,2))
+	elif id == "workbench":
+		for x in [-1.1,1.1]:
+			for z in [-0.4,0.4]:
+				block(Vector3(x,0.45,z),Vector3(0.15,0.9,0.15),"oak",g)
+		for y in [0.25,0.95]:
+			for i in 6:
+				block(Vector3(0,y,(i-2.5)*0.17),Vector3(2.6,0.12,0.16),shade("wood"),g)
+		block(Vector3(1.0,1.03,0.38),Vector3(0.24,0.22,0.3),"iron",g)
+		beam(Vector3(1,0.9,0.5),Vector3(1,0.9,0.8),0.05,"iron",g)
+		attachment(g,"surface",Vector3(0,1.01,0))
+	elif id == "anvil":
+		cylinder(Vector3(0,0.3,0),0.36,0.6,"oak",g,20)
+		block(Vector3(0,0.64,0),Vector3(0.6,0.12,0.4),"iron",g)
+		block(Vector3(0,0.82,0),Vector3(0.3,0.3,0.24),"iron",g)
+		block(Vector3(0,1.0,0),Vector3(0.78,0.15,0.35),"iron",g)
+		var horn := CylinderMesh.new()
+		horn.top_radius = 0.015
+		horn.bottom_radius = 0.16
+		horn.height = 0.5
+		var mesh := piece(horn,Vector3(0.55,0.99,0),Vector3.ONE,"iron",g)
+		mesh.rotation.z = -PI/2
+		attachment(g,"strike",Vector3(0,1.08,0))
+	elif id in ["tool-rack","fishing-rack"]:
+		for x in [-1.1,1.1]:
+			beam(Vector3(x,0,0),Vector3(x,2.0,0),0.11,"oak",g)
+			beam(Vector3(x,0,-0.45),Vector3(x,0,0.45),0.13,"oak",g)
+		for y in [0.5,1.8]:
+			beam(Vector3(-1.2,y,0),Vector3(1.2,y,0),0.1,"oak_light",g)
+		if id == "tool-rack":
+			for i in 5:
+				var x := (i-2)*0.43
+				beam(Vector3(x,0.65,0.08),Vector3(x,1.8,0.08),0.045,"oak_light",g)
+				block(Vector3(x,1.7,0.08),Vector3(0.28,0.14,0.1),"iron",g)
+		else:
+			for i in 18:
+				var x := (i-8.5)*0.12
+				beam(Vector3(x,0.6,0.04),Vector3(x,1.7,0.04),0.013,"sand",g)
+			for i in 10:
+				beam(Vector3(-1.03,0.6+i*0.12,0.04),Vector3(1.03,0.6+i*0.12,0.04),0.013,"sand",g)
+	elif id == "forge-hearth":
+		block(Vector3(0,0.15,0),Vector3(1.8,0.3,1.5),"stone5",g)
+		wall(1.8,1.5,0.3,Vector3(0,0,-0.6),g)
+		for x in [-0.8,0.8]:
+			wall(1.5,0.9,0.25,Vector3(x,0,0),g,true)
+		for i in 24:
+			rock(Vector3(rng.randf_range(-0.5,0.5),0.3,rng.randf_range(-0.3,0.45)),Vector3(0.14,0.08,0.12),g).material_override = mat("iron")
+		for i in 5:
+			ellipsoid(Vector3((i-2)*0.18,0.36,0),Vector3(0.06,0.025,0.06),"lamp",g)
+		attachment(g,"fire",Vector3(0,0.45,0))
+	elif id == "bucket":
+		cylinder(Vector3(0,0.025,0),0.25,0.05,"oak",g,20)
+		for i in 20:
+			var a := i*TAU/20
+			var stave := block(Vector3(cos(a)*0.25,0.25,sin(a)*0.25),Vector3(0.035,0.48,0.075),shade("wood"),g)
+			stave.rotation.y = -a
+		for y in [0.08,0.4]:
+			ring(Vector3(0,y,0),0.27,0.018,"iron",g)
+		for i in 16:
+			var a := PI*i/16
+			var b := PI*(i+1)/16
+			beam(Vector3(cos(a)*0.29,0.45+sin(a)*0.29,0),Vector3(cos(b)*0.29,0.45+sin(b)*0.29,0),0.02,"iron",g)
+	elif id == "sack-stack":
+		for pos in [Vector3(-0.32,0.32,0),Vector3(0.32,0.32,0),Vector3(0,0.85,0)]:
+			ellipsoid(pos,Vector3(0.32,0.33,0.4),"sand",g)
+			ellipsoid(pos+Vector3(0,0.32,0),Vector3(0.08,0.09,0.08),"sand",g)
+			ring(pos+Vector3(0,0.29,0),0.075,0.014,"oak",g)
+	elif id == "mooring-cleat":
+		block(Vector3(0,0.055,0),Vector3(0.7,0.11,0.35),"iron",g)
+		for x in [-0.18,0.18]:
+			beam(Vector3(x,0.1,0),Vector3(x,0.27,0),0.08,"iron",g)
+		beam(Vector3(-0.45,0.28,0),Vector3(0.45,0.28,0),0.1,"iron",g)
+		attachment(g,"rope",Vector3(0,0.27,0))
+	elif id == "driftwood":
+		beam(Vector3(-1.3,0.15,0),Vector3(1.1,0.2,0.1),0.27,"oak_light",g)
+		for side in [-1,1]:
+			beam(Vector3(side*0.4,0.18,0),Vector3(side*0.9,0.12,side*0.55),0.12,"oak_light",g)
+	elif id == "basalt-outcrop":
+		for x in range(-2,3):
+			for z in range(-1,2):
+				var h := rng.randf_range(0.6,2.0)
+				cylinder(Vector3(x*0.46,h/2,z*0.43+(x%2)*0.2),0.29,h,"slate2",g,6)
+	elif id == "stone-culvert":
+		for x in [-1.05,1.05]:
+			wall(1.8,0.8,0.65,Vector3(x,0,0),g,true)
+		for i in 16:
+			var a := i*PI/16
+			var b := (i+1)*PI/16
+			# Side profile extruded along depth, leaving an actual water passage.
+			var profile := PackedVector2Array([Vector2(cos(a)*0.72,sin(a)*0.72),Vector2(cos(a)*1.25,sin(a)*1.25),Vector2(cos(b)*1.25,sin(b)*1.25),Vector2(cos(b)*0.72,sin(b)*0.72)])
+			var segment := piece(solid_polygon(profile,1.8,0.01),Vector3(0,0.45,0.9),Vector3.ONE,shade("stone"),g)
+			segment.rotation.x = -PI/2
+		attachment(g,"water_a",Vector3(0,0.25,-0.9))
+		attachment(g,"water_b",Vector3(0,0.25,0.9))
 	else:
 		assert(false,"Unknown catalog recipe: "+id)
 	return g
