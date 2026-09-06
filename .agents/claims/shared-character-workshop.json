@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Construct bordered arm vents and continuous cloth normals; verify rendered export",
+  "summary": "Measure morphed rest-body stature independently from clothing and preserve it through export",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
   "updated_at": "2026-09-06T07:06:18Z",
@@ -34,6 +34,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Rest-body envelope: full source/base and individual target extrema verified during compiler build; 47 female and 44 male extreme candidates retained",
+      "Both rendered workshop runs and separately checked headless body runs passed; clothing independence, scale and grounding verified; synthetic wardrobe suite passed 20 assertions including malformed measurement atomicity",
       "Side vents and shared-grid normals: both rendered body suites passed, including seam continuity and triangle orientation; reviewed images remain construction prototypes",
       "Source pack acquisition: Chrome blocked archive with ERR_BLOCKED_BY_CLIENT; no bypass, download or paid operation performed",
       "Collar and two-surface border revision: both rendered workshop suites passed; independent border dye and cloaked scene reload passed; compiled artifact and compiler receipt hashes passed",

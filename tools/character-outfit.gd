@@ -1,4 +1,5 @@
 extends RefCounted
+signal changed
 ## Asset-authored wardrobe on one imported body/rig. No inferred body regions.
 var profile: Dictionary = {}
 var selections: Dictionary = {}
@@ -15,6 +16,34 @@ func configure(value: Variant, available: Dictionary, shape_bindings: Dictionary
 		if not value.get(field) is Dictionary:
 			return "Missing profile field: " + field
 	var owned := {}
+	if value.has("measurement"):
+		var measure: Variant = value.measurement
+		if not measure is Dictionary or measure.get("kind") != "rest-body-height-envelope" or not measure.get("morphs") is Array or not measure.get("samples") is Array or measure.samples.size() < 2:
+			return "Invalid body measurement envelope."
+		if measure.morphs.size() != value.morphs.size():
+			return "Measurement controls must match body controls."
+		var seen := {}
+		for control in measure.morphs:
+			if not control is String or not value.morphs.has(control) or seen.has(control):
+				return "Unknown or duplicate measurement control."
+			seen[control] = true
+		var least_upper := INF
+		var greatest_lower := -INF
+		for row in measure.samples:
+			if not row is Array or row.size() != measure.morphs.size()+1:
+				return "Malformed body measurement sample."
+			for number in row:
+				if not (number is float or number is int) or not is_finite(float(number)):
+					return "Non-finite body measurement."
+			var lower: float = row[0]
+			var upper: float = row[0]
+			for delta in row.slice(1):
+				lower += minf(0,delta)
+				upper += maxf(0,delta)
+			least_upper = minf(least_upper,upper)
+			greatest_lower = maxf(greatest_lower,lower)
+		if greatest_lower-least_upper <= .001:
+			return "Body measurement must remain positive across morph bounds."
 	var next_selections := {}
 	for slot in value.slots:
 		var choices: Variant = value.slots[slot]
@@ -83,6 +112,19 @@ func configure(value: Variant, available: Dictionary, shape_bindings: Dictionary
 func recipe() -> Dictionary:
 	return {"profileSha256":JSON.stringify(profile, "", true).sha256_text(), "slots":selections.duplicate(), "morphs":morphs.duplicate(), "dyes":colors.duplicate()}
 
+func body_vertical_bounds() -> Vector2:
+	if not profile.has("measurement"):
+		return Vector2.ZERO
+	var low := INF
+	var high := -INF
+	for row in profile.measurement.samples:
+		var y: float = row[0]
+		for i in profile.measurement.morphs.size():
+			y += row[i+1]*morphs[profile.measurement.morphs[i]]
+		low = minf(low,y)
+		high = maxf(high,y)
+	return Vector2(low,high)
+
 func validate(value: Variant) -> String:
 	if not value is Dictionary or value.get("profileSha256") != recipe().profileSha256:
 		return "Wardrobe profile mismatch."
@@ -137,3 +179,4 @@ func apply() -> void:
 	for channel in colors:
 		for entry in profile.dyes[channel]:
 			meshes[entry.mesh].get_surface_override_material(entry.surface).albedo_color = base_colors[str(entry.mesh)+"::"+str(entry.surface)] * Color.html(colors[channel])
+	changed.emit()

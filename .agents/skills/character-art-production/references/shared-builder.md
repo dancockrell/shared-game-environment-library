@@ -29,7 +29,7 @@ Source skeleton hierarchy and skin weights are present, but global-axis rest fra
 
 Prepared GLBs contain hidden alternative bodies/outfits. Apply the matching profile; a raw viewer may show overlapping alternatives. Actor export is self-contained, but retained alternatives and morph targets do not constitute a crowd-optimized LOD. Inspect actual triangle, texture and retained-resource budgets.
 
-Default sample casual/formal suits and hats are fitting fixtures, not approved period clothes or hero identities. Procedural cloak cuts are construction prototypes until fit, fastening, surface treatment and motion have been reviewed. Current whole-assembly height measurement must not be presented as naked-body anatomical height without verifying the implementation.
+Default sample casual/formal suits and hats are fitting fixtures, not approved period clothes or hero identities. Procedural cloak cuts are construction prototypes until fit, fastening, surface treatment and motion have been reviewed. Prepared body profiles carry a source-vertex stature envelope; verify its fitting space and morph domain before applying it to new anatomy. Unprofiled imports still use assembly bounds and must not be presented as anatomical height measurements.
 
 ## Evidence and budgets
 

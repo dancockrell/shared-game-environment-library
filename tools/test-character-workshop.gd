@@ -112,6 +112,13 @@ func run() -> void:
 		editor.import_model(args[0])
 		editor.load_outfit_profile(args[2])
 		check(not editor.outfit.profile.is_empty(),"load authored source profile")
+		var measured_height: float = editor.source_height
+		editor.outfit.selections.Headwear = "Felt hat"
+		editor.outfit.selections.Outerwear = "Long travelling cloak"
+		editor.outfit.apply()
+		check(is_equal_approx(editor.source_height,measured_height),"clothing cannot alter measured body height")
+		var vertical: Vector2 = editor.outfit.body_vertical_bounds()
+		check(is_equal_approx((vertical.y-vertical.x)*editor.pivot.scale.y,editor.target_height) and is_zero_approx(editor.model.position.y+vertical.x),"source body is correctly scaled and grounded")
 		var unvaried: Dictionary = editor.make_recipe()
 		editor.create_variation("npc-001")
 		var first_variation: Dictionary = editor.make_recipe()

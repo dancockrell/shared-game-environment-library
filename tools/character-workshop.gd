@@ -187,6 +187,7 @@ func import_model(path: String) -> String:
 	parts.clear()
 	shapes.clear()
 	outfit = preload("res://character-outfit.gd").new()
+	outfit.changed.connect(update_body_measurement)
 	for mesh in meshes:
 		var key := str(model.get_path_to(mesh))
 		parts[key] = mesh
@@ -196,7 +197,21 @@ func import_model(path: String) -> String:
 	frame_model()
 	return "%s\n%d mesh parts · %d shape controls\nOriginal materials and rig retained." % [source_name,parts.size(),shapes.size()]
 
+func update_body_measurement() -> void:
+	if model == null:
+		return
+	var bounds: Vector2 = outfit.body_vertical_bounds()
+	if bounds.y-bounds.x <= .001:
+		return
+	source_height = bounds.y-bounds.x
+	model.position.y = -bounds.x
+	var rest: Transform3D = rest_transforms[""]
+	rest.origin.y = model.position.y
+	rest_transforms[""] = rest
+	pivot.scale = Vector3.ONE*(target_height/source_height)
+
 func frame_model() -> void:
+	update_body_measurement()
 	pivot.scale = Vector3.ONE*(target_height/source_height)
 	camera.size = maxf(target_height*1.45,.1)
 	camera.position = Vector3(0,target_height*.6,target_height*3)
@@ -218,7 +233,7 @@ func refresh_controls() -> void:
 	controls.add_child(views)
 	button(views,"Face view",focus_face)
 	button(views,"Full body",frame_model)
-	slider("Height (source units assumed metres)",.1,maxf(10,source_height*2),target_height,func(v): target_height=v; frame_model())
+	slider("Rest body height (metres)" if outfit.profile.has("measurement") else "Height (source units assumed metres)",.1,maxf(10,source_height*2),target_height,func(v): target_height=v; frame_model())
 	var animations := OptionButton.new()
 	animations.add_item("Rest pose")
 	var clips: Array = []

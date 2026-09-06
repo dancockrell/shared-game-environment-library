@@ -22,6 +22,14 @@ Owner: Pirate Island work. DR Companion continues environment-asset production. 
 
 ## Working first increment
 
+### Rest-body stature
+
+Prepared profiles now include a `measurement` envelope derived from the **unclothed fitted body proxy**, not the assembly bounds. It stores vertical base coordinates and per-morph deltas for every vertex that could determine the minimum or maximum height across independent 0..1 controls. The compiler checks the reduced envelope against the full source for the base and each individual target. Current builds retain 47 female and 44 male measurement vertices, rather than every vertex of the source body.
+
+The wardrobe owner evaluates this envelope whenever appearance changes. The editor updates body scale and grounding while preserving the requested rest-body height. Hats, shoes, hair and cloaks do not redefine stature. The same scale and origin go into exported actors and generated batches. The UI labels this as **Rest body height (metres)**; it is not the height of a crouching animation or the top of headwear. Unprofiled models still use the explicitly labelled source-unit/assembly assumption.
+
+Profiles with missing measurement data remain compatible. Malformed controls, non-finite samples and envelopes that cannot guarantee positive height are rejected before mutation. This does not establish race-specific limb proportions, face identity or approved anatomy; those remain separate production work.
+
 `tools/character-workshop.tscn` is an embeddable Godot Control with its own 3D viewport. Launch it in the existing tools project:
 
 ```text

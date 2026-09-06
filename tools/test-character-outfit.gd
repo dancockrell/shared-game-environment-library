@@ -66,6 +66,17 @@ func run() -> void:
 	bad.slots.Coat.On.meshes = ["shirt"]
 	check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == before,"ambiguous slot ownership is atomic")
 	check(outfit.restore(JSON.parse_string(JSON.stringify(before))).is_empty(),"JSON roundtrip")
+	var measured := profile.duplicate(true)
+	measured.measurement = {"kind":"rest-body-height-envelope","morphs":["Build"],"samples":[[-.8,-.1],[.8,.2]]}
+	check(outfit.configure(measured,meshes,shapes,"test").is_empty(),"configure measured body")
+	outfit.morphs.Build = .5
+	outfit.apply()
+	check(outfit.body_vertical_bounds().is_equal_approx(Vector2(-.85,.9)),"measurement follows additive body morph")
+	var measured_before: Dictionary = outfit.recipe()
+	for measurement in [{"kind":"rest-body-height-envelope","morphs":["Build"],"samples":[[0,0],[0,0]]},{"kind":"rest-body-height-envelope","morphs":["Missing"],"samples":[[-1,0],[1,0]]},{"kind":"rest-body-height-envelope","morphs":["Build"],"samples":[[-1,NAN],[1,0]]}]:
+		bad = measured.duplicate(true)
+		bad.measurement = measurement
+		check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == measured_before,"invalid measurement rejects atomically")
 	for mesh in meshes.values():
 		mesh.free()
 	print("Outfit failures: ",failures)

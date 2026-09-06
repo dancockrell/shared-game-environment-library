@@ -442,6 +442,50 @@ func make_rig(parent: Node3D) -> void:
 			continue
 		for pair in weights[bone]:
 			vertex_weights[int(pair[0])][index] = float(pair[1])
+func body_height_samples(sex: String) -> Dictionary:
+	var fit := proxy_data(source.path_join("proxymeshes/%s_generic/%s_generic.proxy" % [sex,sex]))
+	var positions: Array[PackedVector3Array] = [fitted(fit,body)]
+	for variant in body_variants:
+		positions.append(fitted(fit,variant))
+	var rows := []
+	var intervals := []
+	var least_upper := INF
+	var greatest_lower := -INF
+	for i in positions[0].size():
+		var y := positions[0][i].y
+		var row := [y]
+		var lower := y
+		var upper := y
+		for variant in positions.slice(1):
+			var delta: float = variant[i].y-y
+			row.append(delta)
+			lower += minf(0,delta)
+			upper += maxf(0,delta)
+		rows.append(row)
+		intervals.append(Vector2(lower,upper))
+		least_upper = minf(least_upper,upper)
+		greatest_lower = maxf(greatest_lower,lower)
+	# Retain every vertex that could be either vertical extreme for any set
+	# of independent 0..1 morph weights. Other vertices cannot set stature.
+	var samples := []
+	for i in rows.size():
+		if intervals[i].x <= least_upper or intervals[i].y >= greatest_lower:
+			samples.append(rows[i])
+	for variant in positions.size():
+		var full := Vector2(INF,-INF)
+		var reduced := Vector2(INF,-INF)
+		for point in positions[variant]:
+			full.x = minf(full.x,point.y)
+			full.y = maxf(full.y,point.y)
+		for row in samples:
+			var y: float = row[0]+(row[variant] if variant > 0 else 0.0)
+			reduced.x = minf(reduced.x,y)
+			reduced.y = maxf(reduced.y,y)
+		if full.distance_to(reduced) > .000001:
+			fail("Reduced body measurement lost a source extreme")
+	print("Verified ",sex," rest-height envelope: ",samples.size()," of ",rows.size()," source vertices retained.")
+	return {"kind":"rest-body-height-envelope","morphs":shape_names,"samples":samples}
+
 func build(sex: String) -> void:
 	body = add_target(read_vertices(core.path_join("base.obj")),core.path_join("targets/macrodetails/caucasian-"+sex+"-young.target"))
 	body_variants = [add_target(body,core.path_join("targets/macrodetails/universal-"+sex+"-young-averagemuscle-minweight.target")),add_target(body,core.path_join("targets/macrodetails/universal-"+sex+"-young-maxmuscle-averageweight.target"))]
@@ -503,6 +547,7 @@ func build(sex: String) -> void:
 	profile.slots.Outerwear = {"No cloak":{"meshes":[],"hides":[]},"Short travelling cloak":{"meshes":["Skeleton3D/ShortCloak"],"hides":[]},"Long travelling cloak":{"meshes":["Skeleton3D/LongCloak"],"hides":[]}}
 	profile.dyes.Cloak = [{"mesh":"Skeleton3D/ShortCloak","surface":0},{"mesh":"Skeleton3D/LongCloak","surface":0}]
 	profile.dyes["Cloak border"] = [{"mesh":"Skeleton3D/ShortCloak","surface":1},{"mesh":"Skeleton3D/LongCloak","surface":1}]
+	profile.measurement = body_height_samples(sex)
 	for shape in shape_names:
 		profile.morphs[shape] = []
 	for mesh in skeleton.get_children():
