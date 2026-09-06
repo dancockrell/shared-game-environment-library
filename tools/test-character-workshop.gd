@@ -318,6 +318,33 @@ func run() -> void:
 					var cloak: MeshInstance3D = editor.parts["Skeleton3D/LongCloak" if long_cut else "Skeleton3D/ShortCloak"]
 					check(cloak.mesh.get_blend_shape_count() == 8 and cloak.skin.get_bind_count() == 163,"cloak retains linked fit shapes and rig: "+cut)
 					check(cloak.mesh.get_surface_count() == 2,"cloak has separately constructed border: "+cut)
+					var cloth_arrays: Array = cloak.mesh.surface_get_arrays(0)
+					var border_arrays: Array = cloak.mesh.surface_get_arrays(1)
+					var seam_normals := {}
+					for v in cloth_arrays[Mesh.ARRAY_VERTEX].size():
+						seam_normals[var_to_str(cloth_arrays[Mesh.ARRAY_VERTEX][v])] = cloth_arrays[Mesh.ARRAY_NORMAL][v]
+					var seam_count := 0
+					var seam_error := 0.0
+					for v in border_arrays[Mesh.ARRAY_VERTEX].size():
+						var point_key := var_to_str(border_arrays[Mesh.ARRAY_VERTEX][v])
+						if seam_normals.has(point_key):
+							seam_count += 1
+							seam_error = maxf(seam_error,seam_normals[point_key].distance_to(border_arrays[Mesh.ARRAY_NORMAL][v]))
+					check(seam_count > 0 and seam_error < .001,"cloth and border share smooth seam normals: "+cut)
+					var orientation_ok := true
+					for surface_arrays in [cloth_arrays,border_arrays]:
+						var indices: Variant = surface_arrays[Mesh.ARRAY_INDEX]
+						if indices == null or indices.is_empty():
+							indices = range(surface_arrays[Mesh.ARRAY_VERTEX].size())
+						for face in range(0,indices.size(),3):
+							var a: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][indices[face]]
+							var b: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][indices[face+1]]
+							var c: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][indices[face+2]]
+							var expected := -(b-a).cross(c-a).normalized()
+							var average: Vector3 = surface_arrays[Mesh.ARRAY_NORMAL][indices[face]]+surface_arrays[Mesh.ARRAY_NORMAL][indices[face+1]]+surface_arrays[Mesh.ARRAY_NORMAL][indices[face+2]]
+							if expected.dot(average.normalized()) <= 0:
+								orientation_ok = false
+					check(orientation_ok,"cloak normals agree with triangle winding: "+cut)
 					var cloth_color: Color = cloak.get_active_material(0).albedo_color
 					editor.outfit.colors["Cloak border"] = "eddcc0ff"
 					editor.outfit.apply()

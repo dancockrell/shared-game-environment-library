@@ -296,6 +296,18 @@ func add_part(parent: Node3D, part_name: String, obj_path: String, material_path
 	instance.skin = skin
 	instance.skeleton = NodePath("..")
 
+func cloak_drop(t: float, length: float) -> float:
+	return .035*minf(t/.16,1.0)+maxf(0,t-.16)/.84*(length-.035)
+
+func cloak_panel_present(row: int, column: int, rings: int, segments: int, length: float) -> bool:
+	if row < 0 or row >= rings or column < 0 or column >= segments:
+		return false
+	var angle := lerpf(25,335,(float(column)+.5)/segments)
+	var drop := cloak_drop((float(row)+.5)/rings,length)
+	# Sewn side vents provide arm clearance; no skin polygons are hidden.
+	var side := (angle > 55 and angle < 125) or (angle > 235 and angle < 305)
+	return not (side and drop > .09 and drop < .45)
+
 func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) -> void:
 	# Authored radial cloth pattern, not a replacement body mesh. Open front,
 	# shoulder yoke and widening folded hem. Fit deltas use the existing proxy.
@@ -317,7 +329,7 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 		for column in segments+1:
 			var angle := lerpf(deg_to_rad(25),deg_to_rad(335),float(column)/segments)
 			var fold := sin(angle*12.0)*.013*pow(t,.7)
-			var drop := .035*shoulder+maxf(0,t-.16)/.84*(length-.035)
+			var drop := cloak_drop(t,length)
 			var point := Vector3(sin(angle)*(width+fold),anchor.y-.018-drop,anchor.z+cos(angle)*(depth+fold)-.025*t)
 			pattern.append(point)
 			var best := 0
@@ -330,6 +342,16 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 			nearest.append(best)
 	var generated: Array[Array] = []
 	for variant in variants:
+		var fitted_pattern := PackedVector3Array()
+		for i in pattern.size():
+			fitted_pattern.append(pattern[i]+variant[nearest[i]]-base_points[nearest[i]])
+		var pattern_normals := PackedVector3Array()
+		for row in rings+1:
+			for column in segments+1:
+				var across := fitted_pattern[row*(segments+1)+mini(column+1,segments)]-fitted_pattern[row*(segments+1)+maxi(column-1,0)]
+				var down := fitted_pattern[mini(row+1,rings)*(segments+1)+column]-fitted_pattern[maxi(row-1,0)*(segments+1)+column]
+				# Match Godot's clockwise front-face convention for this grid.
+				pattern_normals.append(across.cross(down).normalized())
 		var panels: Array[SurfaceTool] = []
 		for panel in 2:
 			var surface := SurfaceTool.new()
@@ -338,7 +360,12 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 			panels.append(surface)
 		for row in rings:
 			for column in segments:
-				var border := row == 0 or row == rings-1 or column == 0 or column == segments-1
+				if not cloak_panel_present(row,column,rings,segments,length):
+					continue
+				var border := false
+				for offset in [Vector2i(-1,0),Vector2i(1,0),Vector2i(0,-1),Vector2i(0,1)]:
+					if not cloak_panel_present(row+offset.x,column+offset.y,rings,segments,length):
+						border = true
 				var surface := panels[1 if border else 0]
 				var a := row*(segments+1)+column
 				for index in [a,a+segments+1,a+1,a+1,a+segments+1,a+segments+2]:
@@ -347,10 +374,10 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 					# intentionally not claimed by this static tailoring prototype.
 					surface.set_bones(PackedInt32Array([skeleton.find_bone("spine01"),0,0,0]))
 					surface.set_weights(PackedFloat32Array([1,0,0,0]))
-					surface.add_vertex(pattern[index]+variant[nearest[index]]-base_points[nearest[index]])
+					surface.set_normal(pattern_normals[index])
+					surface.add_vertex(fitted_pattern[index])
 		var panel_arrays := []
 		for surface in panels:
-			surface.generate_normals()
 			panel_arrays.append(surface.commit_to_arrays())
 		generated.append(panel_arrays)
 	var mesh := ArrayMesh.new()

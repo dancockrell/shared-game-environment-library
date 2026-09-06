@@ -1,24 +1,24 @@
 {
   "bones": 163,
-  "compilerSha256": "dcbf2fd86d4100c5186da0816871f0fb26551d994de9fa1b2aa7b6e49e3834b6",
+  "compilerSha256": "0d9a526d0732029d8028d24151d9af1faec523429bab69064af0374af785ab38",
   "coreManifestSha256": "b433552d36cfaaee461336b77035faeae7342c2cd8be1fe906f0a7931bf063b3",
   "engine": "4.7.2-stable (official)",
   "files": [
     {
       "path": "female-source.glb",
-      "sha256": "dc1c60f30ec1220ad8716b332e554ff8f5028e50b2a3fc58ccde14fff577855a"
+      "sha256": "7d7bdfa25af08f23ac016b48a6f22670cd885c8fee267cb50637ae0f54d38fb3"
     },
     {
       "path": "female-profile.json",
-      "sha256": "e4314b9b8105f8e69ac8a6d7f4defbe0796456f56980a6609fadd89886f487c2"
+      "sha256": "c36d53d28c702d51240f3bbbf22339c53efad3a2b0a372b4b8718655a3075a46"
     },
     {
       "path": "male-source.glb",
-      "sha256": "bfe10855d2dca6c8105a99cb82e16f1279a59adf4ca82190579aadf2852cb639"
+      "sha256": "c35a747cfc07f6595143fb0f68175c7d746fc9de89d8a7e97941e8e395c6c4bf"
     },
     {
       "path": "male-profile.json",
-      "sha256": "1d0dd07023d909388261c75b947e40858d1d974da3affbf247b9ecb270d4e4ef"
+      "sha256": "16bfdc5b9fec5cfe861cfd6147ce56ec8cf28e62e670ffdd2caa23c97de995f4"
     }
   ],
   "license": "CC0-1.0",

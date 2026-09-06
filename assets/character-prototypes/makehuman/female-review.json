@@ -21,7 +21,7 @@
       "Pointed ears": 0.0,
       "Square face": 0.0
     },
-    "profileSha256": "c743a2ef38e8a92d553473d05baeb1f4e13e04e9b39038204fec7984e6f48514",
+    "profileSha256": "24abaef98486f1cd91bc46b10874a55b38473c0526e82c411e122e35c6a85605",
     "slots": {
       "Clothes": "Casual 01",
       "Headwear": "Bare head",
@@ -151,6 +151,6 @@
     "Skeleton3D/ShortCloak::Square face": 0.0
   },
   "sourceFilename": "female-source.glb",
-  "sourceSha256": "dc1c60f30ec1220ad8716b332e554ff8f5028e50b2a3fc58ccde14fff577855a",
+  "sourceSha256": "7d7bdfa25af08f23ac016b48a6f22670cd885c8fee267cb50637ae0f54d38fb3",
   "variationSeed": ""
 }

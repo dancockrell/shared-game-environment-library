@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Refine outerwear collar and independent border; inspect free period source wardrobe",
+  "summary": "Construct bordered arm vents and continuous cloth normals; verify rendered export",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T06:56:31Z",
+  "updated_at": "2026-09-06T07:06:18Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -34,6 +34,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Side vents and shared-grid normals: both rendered body suites passed, including seam continuity and triangle orientation; reviewed images remain construction prototypes",
+      "Source pack acquisition: Chrome blocked archive with ERR_BLOCKED_BY_CLIENT; no bypass, download or paid operation performed",
       "Collar and two-surface border revision: both rendered workshop suites passed; independent border dye and cloaked scene reload passed; compiled artifact and compiler receipt hashes passed",
       "Visual review rejects final cloak admission because upper-arm intersections and stiff drape remain; source suits02 historical subset identified but not downloaded",
       "Character-art-production skill committed as 570ac07; frontmatter, reference and UI structure checks passed; bundled quick_validate not_run because PyYAML is missing",

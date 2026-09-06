@@ -21,7 +21,7 @@
       "Pointed ears": 0.0,
       "Square face": 0.0
     },
-    "profileSha256": "d7bab563e7603c2d05b8babafac49e1ef5e5ae29a4fb833ea35ee8d0e19ae3e7",
+    "profileSha256": "c48770b2d375efabac88253cd157fd6394ae34fa866c16aa9485cb50d99564cc",
     "slots": {
       "Clothes": "Casual 01",
       "Headwear": "Bare head",
@@ -151,6 +151,6 @@
     "Skeleton3D/ShortCloak::Square face": 0.0
   },
   "sourceFilename": "male-source.glb",
-  "sourceSha256": "bfe10855d2dca6c8105a99cb82e16f1279a59adf4ca82190579aadf2852cb639",
+  "sourceSha256": "c35a747cfc07f6595143fb0f68175c7d746fc9de89d8a7e97941e8e395c6c4bf",
   "variationSeed": ""
 }

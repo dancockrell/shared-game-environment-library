@@ -10,9 +10,13 @@ Visual review: the initial long cut stretched its yoke below the shoulders; sepa
 
 The next revision expands the front opening around the collar and constructs an independently dyeable border as a second mesh surface. Both cuts retain all linked fit shapes. The front now reads as a cloak, but the arm/body intersections remain visible: add proper arm openings or revise the drape before admission. This revision supersedes the initial untrimmed review images, not their historical evidence in Git. The long-cut export is reloaded to check that its selected clothing and both surfaces survive bundling.
 
+Current refinement: both cuts now have authored side vents with bordered edges, removing the obvious upper-arm intersections in the reviewed rest views without deleting skin. The cloth and border derive normals from the same fitted grid. An initial normal-direction error was caught in the render and corrected for Godot's clockwise winding; tests now check both seam continuity and normal agreement with triangles after GLB import. Both rendered body suites pass. These remain stiff construction samples with oversized angular trim and no fastening or secondary-motion solution; this is not combat-pose or final-art approval.
+
 The original authored pattern is in `add_cloak` inside the existing compiler, fitted against the pinned CC0 source proxy. Preserve the compiled receipt and the `*-short-front`, `*-short-back`, `*-long-front`, `*-long-back` review images when refining it. No paid generation was used.
 
 The [MakeHuman suits02 source pack](https://static.makehumancommunity.org/assets/assetpacks/suits02.html), checked 6 September 2026, lists RehmanPolanski's Viking tunic, pants and boots and Donitz's monk robe and hood variants as CC0. These are acquisition candidates, **not downloaded or admitted assets**. The pack also contains unrelated sci-fi/franchise designs; do not import it wholesale into either game's runtime or treat its CC0 label as approval of those character identities. Inspect individual mesh, fitting and material files before adding the historical subset to the existing compiler.
+
+Acquisition attempt: the source page loaded in Chrome, but its mirror1 ZIP link returned `ERR_BLOCKED_BY_CLIENT`. No archive was acquired and no browser protection was bypassed. Local construction remains available; this download failure does not establish a blocker for the entire character-production goal.
 
 Owner: Pirate Island work. DR Companion continues environment-asset production. The character editor and preset format are shared; neither game's lore or faction logic belongs here. No paid generation. The inspected CC0 MakeHuman source subset and fitted workshop derivatives are now included, separately from approved game art.
 
