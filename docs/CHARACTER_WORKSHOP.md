@@ -2,6 +2,12 @@
 
 Reusable production instructions live in `.agents/skills/character-art-production/SKILL.md`. They preserve faction-specific art direction while using this shared implementation.
 
+## Shared-machine execution rule — user clarification, 6 September 2026
+
+Keep Godot behind the scenes and headless. Do not open visible editor/review windows or repeatedly open and close the editor. Reuse an owned running session when available; never attach to, navigate, kill or restart another task's engine. Before heavy work, inspect current free RAM, GPU memory and existing engine processes. Leave substantial headroom for the user and other tasks; a nominal 8 GB target is not permission to consume the remaining GPU memory. Defer heavy execution when headroom is inadequate and continue paper/code/pattern work instead. Run at most one heavy character build or solver job at a time, with a timeout and termination limited to its owned process tree.
+
+The historical `iterate-character-build.ps1` starts separate engines for its stages and defaults to rendered reviews. Do not invoke that historical batch in this shared-session workflow until its lifecycle has been revised. Headless numerical checks do not count as visual inspection; keep art approval pending until a controlled, resource-budgeted offscreen render can be reviewed without disrupting the desktop. Existing rendered evidence remains historical evidence, not permission to reopen windows.
+
 ## Current methods and research decisions — 6 September 2026
 
 This is not a finished character generator. Imports and regression tests are working; garment construction, general creature topology, production skinning and final art remain incomplete. The historical checkpoints below are evidence, not a competing current design.
