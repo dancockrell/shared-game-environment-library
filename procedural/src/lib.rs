@@ -29,7 +29,7 @@ pub struct Definition {
     pub material: MaterialSettings,
 }
 /// Portable opaque metallic/roughness controls. Color remains on Definition.
-#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(default, deny_unknown_fields)]
 pub struct MaterialSettings {
     pub roughness: f32,
@@ -321,7 +321,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         uvs: vec![],
         indices: vec![],
         color: d.color,
-        material: d.material,
+        material: d.material.clone(),
         bounds: Bounds::default(),
         paint_texture: None,
     };
@@ -342,7 +342,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                         crease_angle: 45.,
                     },
                     color: d.color,
-                    material: d.material,
+                    material: d.material.clone(),
                 },
                 max_vertices,
             );
@@ -638,6 +638,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
     m.paint_texture = d
         .material
         .paint
+        .as_ref()
         .map(|settings| paint::build(d.color, settings))
         .transpose()?;
     Ok(m)
@@ -733,8 +734,8 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                     let m = mesh(name, d, r.limits.max_vertices.saturating_sub(used))?;
                     s.estimated_geometry_bytes +=
                         (m.positions.len() * 32 + m.indices.len() * 4) as u64;
-                    if m.paint_texture.is_some() {
-                        s.estimated_geometry_bytes += 21_844;
+                    if let Some(texture) = &m.paint_texture {
+                        s.estimated_geometry_bytes += texture.mip_bytes();
                     }
                     if s.estimated_geometry_bytes > r.limits.gpu_geometry_bytes {
                         return Err("Geometry residency budget exceeded".into());
@@ -1014,6 +1015,8 @@ mod tests {
             color: [0.3, 0.6, 0.4],
             strength: 0.2,
             seed: 5,
+            size: 64,
+            strokes: vec![],
         });
         let painted = compile(&r).unwrap();
         assert_eq!(painted.meshes.len(), 1);
@@ -1087,7 +1090,7 @@ mod tests {
                     metallic,
                     paint: None,
                 };
-                r.definitions.get_mut("block").unwrap().material = settings;
+                r.definitions.get_mut("block").unwrap().material = settings.clone();
                 let text = serde_json::to_string(&r).unwrap();
                 let result: serde_json::Value =
                     serde_json::from_str(&compile_json(&text).unwrap()).unwrap();

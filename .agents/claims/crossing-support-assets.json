@@ -5,7 +5,7 @@
   "summary": "Tool-only priority: paper-grounded high-end stylized construction; sequential teapot, cake/pie and coordinated ballerina quality gates; room expansion paused",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-06T11:16:00Z",
+  "updated_at": "2026-09-06T11:40:00Z",
   "paths": [
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",
@@ -30,6 +30,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Painted ornament: 35 Rust tests and 41-stage nine-fixture run 20260906-113650-0042b62817704931bdb9b2fe9fe32c74 passed before the shared-machine workflow change; actual render inspected and linear hook-like strokes revised to cubic-width leaves; not final art admission",
+      "User crash warning: no more automatic graphics launches or engine cycling; existing render receipts are historical, not authorization for another run. No Godot process found during current inspection.",
       "Cubic sweep and hollow spline vessel checkpoint: 34 Rust tests, strict clippy, release, 41-stage nine-fixture real Godot run passed; report 20260906-111412-397cea53ad9e4cdeb2fad4cb32590e0b",
       "Teapot default/front/rear renders inspected; depth range tightened, but blunt intersections and glossy plain finish remain rejected for art admission; spout/body opening and global sweep self-intersection certification remain unimplemented",
       "Real package reload preserved seven teapot meshes/materials; approximate 12 MB geometry estimate is not measured VRAM; Unity execution not_run",

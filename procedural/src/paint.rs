@@ -1,11 +1,28 @@
 //! Small reproducible painted underlayer. Original CPU implementation, no model.
 use serde::{Deserialize, Serialize};
-#[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Paint {
     pub color: [f32; 3],
     pub strength: f32,
     pub seed: u32,
+    #[serde(default = "default_size")]
+    pub size: u32,
+    #[serde(default)]
+    pub strokes: Vec<BrushStroke>,
+}
+fn default_size() -> u32 {
+    64
+}
+/// Editable UV-space calligraphic marks, composited in authoring order.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct BrushStroke {
+    pub points: [[f32; 2]; 4],
+    pub widths: [f32; 4],
+    pub color: [f32; 3],
+    pub opacity: f32,
+    pub repeat_u: u32,
 }
 #[derive(Clone, Debug, Serialize)]
 pub struct Texture {
@@ -13,7 +30,45 @@ pub struct Texture {
     pub height: u32,
     pub rgba: Vec<u8>,
 }
-pub fn build(base: [f32; 4], paint: Paint) -> crate::Result<Texture> {
+impl Texture {
+    pub fn mip_bytes(&self) -> u64 {
+        let (mut w, mut h) = (self.width, self.height);
+        let mut bytes = 0;
+        loop {
+            bytes += w as u64 * h as u64 * 4;
+            if w == 1 && h == 1 {
+                break;
+            }
+            w = (w / 2).max(1);
+            h = (h / 2).max(1);
+        }
+        bytes
+    }
+}
+pub fn build(base: [f32; 4], paint: &Paint) -> crate::Result<Texture> {
+    if ![64, 128, 256, 512].contains(&paint.size) || paint.strokes.len() > 64 {
+        return Err("Paint requires size 64/128/256/512 and at most 64 strokes".into());
+    }
+    for s in &paint.strokes {
+        if s.points
+            .iter()
+            .flatten()
+            .any(|x| !x.is_finite() || !(0. ..=1.).contains(x))
+            || s.widths
+                .iter()
+                .any(|x| !x.is_finite() || !(0. ..=0.1).contains(x))
+            || s.widths == [0.; 4]
+            || !(1..=16).contains(&s.repeat_u)
+            || s.color
+                .iter()
+                .chain([s.opacity].iter())
+                .any(|x| !x.is_finite() || !(0. ..=1.).contains(x))
+        {
+            return Err(
+                "Invalid brush stroke coordinates, widths, palette, opacity or repeat count".into(),
+            );
+        }
+    }
     if paint
         .color
         .iter()
@@ -38,14 +93,15 @@ pub fn build(base: [f32; 4], paint: Paint) -> crate::Result<Texture> {
             )
         })
         .collect();
-    let mut rgba = Vec::with_capacity(64 * 64 * 4);
-    for y in 0..64 {
-        for x in 0..64 {
+    let size = paint.size;
+    let mut rgba = Vec::with_capacity((size * size * 4) as usize);
+    for y in 0..size {
+        for x in 0..size {
             let mut weight = 0.;
             for &(cx, cy, rx, ry, angle) in &strokes {
-                let mut dx = (x as f64 + 0.5) / 64. - cx;
+                let mut dx = (x as f64 + 0.5) / size as f64 - cx;
                 dx -= dx.round();
-                let mut dy = (y as f64 + 0.5) / 64. - cy;
+                let mut dy = (y as f64 + 0.5) / size as f64 - cy;
                 dy -= dy.round();
                 let (s, c) = angle.sin_cos();
                 let radius = ((dx * c + dy * s) / rx).powi(2) + ((-dx * s + dy * c) / ry).powi(2);
@@ -59,30 +115,153 @@ pub fn build(base: [f32; 4], paint: Paint) -> crate::Result<Texture> {
             rgba.push(255);
         }
     }
+    let mut work_left = 16_000_000_usize;
+    for stroke in &paint.strokes {
+        draw_stroke(&mut rgba, size as usize, stroke, &mut work_left)?;
+    }
     Ok(Texture {
-        width: 64,
-        height: 64,
+        width: size,
+        height: size,
         rgba,
     })
+}
+fn draw_stroke(
+    pixels: &mut [u8],
+    size: usize,
+    s: &BrushStroke,
+    work_left: &mut usize,
+) -> crate::Result<()> {
+    if s.opacity == 0. {
+        return Ok(());
+    }
+    let mut coverage = vec![0_f32; size * size];
+    let point = |t: f64, k: u32| {
+        let a = 1. - t;
+        let p: [f64; 2] = std::array::from_fn(|i| {
+            a * a * a * s.points[0][i] as f64
+                + 3. * a * a * t * s.points[1][i] as f64
+                + 3. * a * t * t * s.points[2][i] as f64
+                + t * t * t * s.points[3][i] as f64
+        });
+        [
+            ((p[0] + k as f64) / s.repeat_u as f64) * size as f64,
+            p[1] * size as f64,
+        ]
+    };
+    // 128 bounded samples per mark; union coverage avoids dark seams between
+    // line segments. UV repeat wraps horizontally, not onto vessel interiors.
+    for k in 0..s.repeat_u {
+        for step in 0..128 {
+            let t0 = step as f64 / 128.;
+            let t1 = (step + 1) as f64 / 128.;
+            let a = point(t0, k);
+            let b = point(t1, k);
+            let d = [b[0] - a[0], b[1] - a[1]];
+            let length = d[0] * d[0] + d[1] * d[1];
+            let width = |t: f64| {
+                let a = 1. - t;
+                (a * a * a * s.widths[0] as f64
+                    + 3. * a * a * t * s.widths[1] as f64
+                    + 3. * a * t * t * s.widths[2] as f64
+                    + t * t * t * s.widths[3] as f64)
+                    * size as f64
+                    * 0.5
+            };
+            let radius = width(t0).max(width(t1)) + 1.;
+            for y in ((a[1].min(b[1]) - radius).floor() as i32).max(0)
+                ..=((a[1].max(b[1]) + radius).ceil() as i32).min(size as i32 - 1)
+            {
+                for x in (a[0].min(b[0]) - radius).floor() as i32
+                    ..=(a[0].max(b[0]) + radius).ceil() as i32
+                {
+                    if *work_left == 0 {
+                        return Err("Paint raster work budget exceeded".into());
+                    }
+                    *work_left -= 1;
+                    let v = [x as f64 + 0.5 - a[0], y as f64 + 0.5 - a[1]];
+                    let f = if length > 0. {
+                        ((v[0] * d[0] + v[1] * d[1]) / length).clamp(0., 1.)
+                    } else {
+                        0.
+                    };
+                    let dist = (v[0] - f * d[0]).hypot(v[1] - f * d[1]);
+                    let alpha = (width(t0 + (t1 - t0) * f) + 0.5 - dist).clamp(0., 1.) as f32;
+                    let idx = y as usize * size + x.rem_euclid(size as i32) as usize;
+                    coverage[idx] = coverage[idx].max(alpha);
+                }
+            }
+        }
+    }
+    for (i, c) in coverage.into_iter().enumerate() {
+        let mix = c * s.opacity;
+        for channel in 0..3 {
+            let previous = pixels[i * 4 + channel] as f32 / 255.;
+            pixels[i * 4 + channel] =
+                ((previous + (s.color[channel] - previous) * mix) * 255.).round() as u8;
+        }
+    }
+    Ok(())
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn editable_marks_repeat_taper_and_roundtrip() {
+        let mut p: Paint =
+            serde_json::from_str(r#"{"color":[0,0,0],"strength":0,"seed":1}"#).unwrap();
+        assert_eq!(p.size, 64);
+        p.strokes.push(BrushStroke {
+            points: [[0., 0.5], [0.33, 0.5], [0.67, 0.5], [1., 0.5]],
+            widths: [0.08, 0.06, 0.04, 0.02],
+            color: [1., 0.7, 0.2],
+            opacity: 1.,
+            repeat_u: 2,
+        });
+        let painted = build([0., 0., 0., 1.], &p).unwrap();
+        assert!(painted.rgba[(32 * 64 + 4) * 4] > 200);
+        assert_eq!(
+            painted.rgba[(32 * 64 + 4) * 4],
+            painted.rgba[(32 * 64 + 36) * 4]
+        );
+        assert_eq!(painted.rgba[0], 0);
+        let restored: Paint = serde_json::from_slice(&serde_json::to_vec(&p).unwrap()).unwrap();
+        assert_eq!(p, restored);
+        assert_eq!(
+            painted.rgba,
+            build([0., 0., 0., 1.], &restored).unwrap().rgba
+        );
+        assert_eq!(painted.mip_bytes(), 21844);
+        let mut pixels = vec![0; 64 * 64 * 4];
+        assert!(draw_stroke(&mut pixels, 64, &p.strokes[0], &mut 0).is_err());
+        p.size = 63;
+        assert!(build([0.; 4], &p).is_err());
+        p.size = 64;
+        p.strokes[0].repeat_u = 0;
+        assert!(build([0.; 4], &p).is_err());
+    }
     #[test]
     fn deterministic_bounded_and_seeded() {
         let p = Paint {
             color: [0.7, 0.6, 0.3],
             strength: 0.6,
             seed: 42,
+            size: 64,
+            strokes: vec![],
         };
-        let first = build([0.2, 0.3, 0.1, 1.], p).unwrap();
+        let first = build([0.2, 0.3, 0.1, 1.], &p).unwrap();
         assert_eq!(first.rgba.len(), 64 * 64 * 4);
-        assert_eq!(first.rgba, build([0.2, 0.3, 0.1, 1.], p).unwrap().rgba);
+        assert_eq!(first.rgba, build([0.2, 0.3, 0.1, 1.], &p).unwrap().rgba);
         assert_ne!(
             first.rgba,
-            build([0.2, 0.3, 0.1, 1.], Paint { seed: 43, ..p })
-                .unwrap()
-                .rgba
+            build(
+                [0.2, 0.3, 0.1, 1.],
+                &Paint {
+                    seed: 43,
+                    ..p.clone()
+                }
+            )
+            .unwrap()
+            .rgba
         );
         assert!(first
             .rgba
@@ -90,7 +269,14 @@ mod tests {
             .0
             .iter()
             .all(|pixel| pixel[3] == 255));
-        let solid = build([0.2, 0.3, 0.1, 1.], Paint { strength: 0., ..p }).unwrap();
+        let solid = build(
+            [0.2, 0.3, 0.1, 1.],
+            &Paint {
+                strength: 0.,
+                ..p.clone()
+            },
+        )
+        .unwrap();
         assert!(solid
             .rgba
             .as_chunks::<4>()
@@ -99,7 +285,7 @@ mod tests {
             .all(|pixel| *pixel == [51, 77, 26, 255]));
         assert!(build(
             [0.; 4],
-            Paint {
+            &Paint {
                 strength: f32::NAN,
                 ..p
             }
