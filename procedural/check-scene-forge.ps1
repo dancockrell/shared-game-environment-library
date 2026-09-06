@@ -56,7 +56,7 @@ function Invoke-NativeCheck([string]$Name, [string]$Executable, [string[]]$Argum
 }
 try {
     $manifest = Join-Path $forgeRoot 'Cargo.toml'
-    foreach ($path in @('src','examples','godot/addons/scene_forge','unity/Editor')) {
+    foreach ($path in @('src','examples','godot/addons/scene_forge','unity')) {
         foreach ($file in Get-ChildItem -LiteralPath (Join-Path $forgeRoot $path) -File -Recurse | Sort-Object FullName) {
             $relative = [IO.Path]::GetRelativePath($forgeRoot,$file.FullName)
             $report.source_hashes[$relative] = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash

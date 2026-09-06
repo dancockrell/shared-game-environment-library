@@ -5,6 +5,7 @@ static func build(data: Dictionary) -> Node3D:
 	assert(data.get("version") == 1 and data.get("coordinate_system") == "right-handed-y-up-ccw-metres", "Unsupported scene format")
 	var root := Node3D.new()
 	root.name = "SceneForge"
+	root.set_meta("scene_forge_recipe_json", str(data.get("recipe_json", "")))
 	root.set_meta("geometry_bytes_estimate", data.estimated_geometry_bytes)
 	for mesh_index in data.meshes.size():
 		var spec: Dictionary = data.meshes[mesh_index]

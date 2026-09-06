@@ -12,7 +12,7 @@ namespace SharedEnvironment.SceneForge {
     [Serializable] public sealed class PaintTextureData { public int width, height; public int[] rgba; }
     [Serializable] public sealed class MeshData { public string name; public float[] positions, normals, uvs, color; public int[] indices; public MaterialData material; public PaintTextureData paint_texture; }
     [Serializable] public sealed class InstanceData { public int mesh; public float[] position; public float yaw, scale; }
-    [Serializable] public sealed class SceneData { public int version; public string coordinate_system; public MeshData[] meshes; public InstanceData[] instances; public long estimated_geometry_bytes; }
+    [Serializable] public sealed class SceneData { public int version; public string coordinate_system, recipe_json; public MeshData[] meshes; public InstanceData[] instances; public long estimated_geometry_bytes; }
     [Serializable] public sealed class Response { public bool ok; public string error; public SceneData scene; }
     public static class Native {
         [DllImport("scene_forge", CallingConvention=CallingConvention.Cdecl)] private static extern IntPtr scene_forge_compile(byte[] input, UIntPtr length, out UIntPtr outputLength);
@@ -33,6 +33,7 @@ namespace SharedEnvironment.SceneForge {
         private static void Open() { GetWindow<SceneForgeWindow>("Scene Forge"); }
         private void OnGUI() {
             EditorGUILayout.HelpBox(status,MessageType.Info);
+            if(GUILayout.Button("Export selected source recipe…")) ExportSource();
             using(new EditorGUI.DisabledScope(job!=null)) if(GUILayout.Button("Compile recipe into scene")) {
                 string path=EditorUtility.OpenFilePanel("Procedural recipe","","json");
                 if(!string.IsNullOrEmpty(path)) {
@@ -40,6 +41,20 @@ namespace SharedEnvironment.SceneForge {
                     status="Compiling…";
                 }
             }
+        }
+        private void ExportSource() {
+            var selected=Selection.activeGameObject;
+            var source=selected!=null?selected.GetComponentInParent<SceneForgeSource>():null;
+            if(source==null||string.IsNullOrEmpty(source.RecipeJson)) {
+                status="No source snapshot: select an imported root or part. Older imports may lack the recipe.";
+                return;
+            }
+            string path=EditorUtility.SaveFilePanel("Export original recipe (manual engine edits not included)","","scene-forge-recipe","json");
+            if(string.IsNullOrEmpty(path)) return;
+            try {
+                File.WriteAllText(path,source.RecipeJson,new UTF8Encoding(false));
+                status="Original recipe exported; manual engine edits are not included";
+            } catch(Exception error) {status="Source export failed: "+error.Message;}
         }
         private void OnInspectorUpdate() {
             if(job==null||!job.IsCompleted) return;
@@ -84,6 +99,7 @@ namespace SharedEnvironment.SceneForge {
                 materials[i]=material;
             }
             var root=new GameObject("Scene Forge");Undo.RegisterCreatedObjectUndo(root,"Import procedural scene");
+            root.AddComponent<SceneForgeSource>().Initialize(data.recipe_json);
             foreach(InstanceData instance in data.instances) {
                 var item=new GameObject(data.meshes[instance.mesh].name);item.transform.SetParent(root.transform,false);
                 item.transform.localPosition=new Vector3(instance.position[0],instance.position[1],-instance.position[2]);

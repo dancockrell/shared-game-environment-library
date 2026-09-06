@@ -45,6 +45,46 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Recoverable construction recipes in engine imports
+
+Compiled scenes carry `recipe_json`: a single canonical serialized recipe,
+including definitions, material/paint controls, assembly/repetition structure,
+limits and unused authored definitions. It is source data, not mesh inference.
+Serialization normalizes formatting and fills defaults; it does not preserve
+the original file's byte layout. A bounded writer refuses a canonical snapshot
+larger than 16 MiB. The snapshot is CPU/editor metadata and is not charged as
+GPU geometry. It is stored once at the scene root, not duplicated per instance.
+
+Godot stores `scene_forge_recipe_json` on that root. Its dock's **Export selected
+source recipe** action walks from one selected part to the imported root and
+saves the source through a file dialog. Unity adds one runtime-serializable
+`SceneForgeSource` root component and exposes the equivalent export action in
+the existing Scene Forge editor window. Runtime placement keeps the component
+outside the editor-only assembly so scene serialization can retain it.
+
+The export is the **original construction snapshot**: later hand-edited engine
+transforms, materials or meshes are NOT reconciled into it. Recompile an edited
+export through the existing import action; that imports a new scene rather than
+silently replacing an edited one. The UI explicitly states this limitation.
+Older scenes lacking a snapshot remain importable but cannot export a recovered
+recipe. Source snapshots can contain author-entered names and unused designs;
+review before sharing them. No network publishing is performed by these actions.
+
+CPU tests restore and recompile all nine fixture recipes and compare complete
+scene serialization. They also verify unused definitions survive, exact-limit
+acceptance and over-limit refusal. Engine tests now assert Godot in-memory/disk
+metadata retention and Unity component serialization/recompilation, but those
+engine tests and export dialogs have **not been executed** under the current
+CPU-only workflow. Unity scene/prefab disk persistence and manual-edit merging
+remain unverified/unimplemented respectively. No engine or VRAM claim follows.
+
+CPU receipt: `procedural/generated/reviews/20260906-120629-d28b31e71e9949039a42e9ca5e65732c/report.json`:
+42 tests, format, strict clippy, release and nine deterministic fixtures passed.
+Independent saved-output comparison verified all prior scene fields unchanged.
+The current teapot's canonical source is 5,106 UTF-8 bytes. Source hashing now
+covers the Unity runtime component as well as the editor adapter; hashing is
+provenance, not an executed C# compilation check.
+
 ### Exact vertex reuse without shape simplification
 
 The compiler now indexes each named mesh by the complete bitwise position,

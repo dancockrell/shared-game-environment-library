@@ -7,6 +7,7 @@ func _run() -> void:
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
 	var scene: Node3D = preload("res://addons/scene_forge/import_scene.gd").build(data)
 	root.add_child(scene)
+	assert(scene.get_meta("scene_forge_recipe_json", "") == data.get("recipe_json", ""))
 	assert(scene.get_child_count() == data.meshes.size())
 	var count := 0
 	for child in scene.get_children():
@@ -20,6 +21,7 @@ func _run() -> void:
 		child.owner = scene
 	assert(packed.pack(scene) == OK)
 	var copy: Node3D = packed.instantiate()
+	assert(copy.get_meta("scene_forge_recipe_json", "") == scene.get_meta("scene_forge_recipe_json", ""))
 	assert(copy.get_child_count() == scene.get_child_count())
 	root.add_child(copy)
 	for mesh_index in data.meshes.size():

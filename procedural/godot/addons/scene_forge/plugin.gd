@@ -6,6 +6,8 @@ var executable: LineEdit
 var dialog: EditorFileDialog
 var status: Label
 var worker: Thread
+var export_dialog: EditorFileDialog
+var export_source: String
 func _enter_tree() -> void:
 	dock = VBoxContainer.new()
 	dock.name = "Scene Forge"
@@ -17,6 +19,17 @@ func _enter_tree() -> void:
 	button.text = "Compile recipe into scene"
 	button.pressed.connect(func(): dialog.popup_centered_ratio())
 	dock.add_child(button)
+	var export_button := Button.new()
+	export_button.text = "Export selected source recipe…"
+	export_button.tooltip_text = "Original construction recipe; manual engine edits are not captured."
+	export_button.pressed.connect(_choose_source_export)
+	dock.add_child(export_button)
+	export_dialog = EditorFileDialog.new()
+	export_dialog.access = EditorFileDialog.ACCESS_FILESYSTEM
+	export_dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
+	export_dialog.add_filter("*.json", "Scene Forge source recipe")
+	export_dialog.file_selected.connect(_write_source_export)
+	dock.add_child(export_dialog)
 	status = Label.new()
 	status.text = "Local CPU generation; no server"
 	dock.add_child(status)
@@ -27,6 +40,30 @@ func _enter_tree() -> void:
 	dialog.file_selected.connect(_compile)
 	dock.add_child(dialog)
 	add_control_to_dock(DOCK_SLOT_RIGHT_UL, dock)
+func _choose_source_export() -> void:
+	var selected := EditorInterface.get_selection().get_selected_nodes()
+	if selected.size() != 1:
+		status.text = "Select one imported scene or one of its parts"
+		return
+	var node: Node = selected[0]
+	while node != null and not node.has_meta("scene_forge_recipe_json"):
+		node = node.get_parent()
+	export_source = "" if node == null else str(node.get_meta("scene_forge_recipe_json", ""))
+	if export_source.is_empty():
+		status.text = "No source snapshot: this scene may predate recipe preservation"
+		return
+	export_dialog.current_file = "scene-forge-recipe.json"
+	export_dialog.popup_centered_ratio()
+func _write_source_export(path: String) -> void:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		status.text = "Cannot write source recipe: " + str(FileAccess.get_open_error())
+		return
+	file.store_string(export_source)
+	file.flush()
+	var error := file.get_error()
+	file.close()
+	status.text = "Original recipe exported; manual engine edits are not included" if error == OK else "Source write failed: " + str(error)
 func _compile(path: String) -> void:
 	if worker != null:
 		status.text = "A compile is already running"

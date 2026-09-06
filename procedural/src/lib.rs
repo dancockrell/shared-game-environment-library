@@ -265,6 +265,8 @@ pub struct InstanceSource {
 #[derive(Debug, Serialize)]
 pub struct Scene {
     pub version: u32,
+    /// Canonical source snapshot, once per scene; not reverse-engineered meshes.
+    pub recipe_json: String,
     pub coordinate_system: &'static str,
     pub meshes: Vec<Mesh>,
     pub instances: Vec<Instance>,
@@ -716,6 +718,7 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
     instance_count(&recipe.root, 0, recipe.limits.max_instances)?;
     let mut scene = Scene {
         version: 1,
+        recipe_json: serialize_recipe(recipe, 16 * 1024 * 1024)?,
         coordinate_system: "right-handed-y-up-ccw-metres",
         meshes: vec![],
         instances: vec![],
@@ -853,6 +856,32 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
     )?;
     Ok(scene)
 }
+fn serialize_recipe(recipe: &Recipe, limit: usize) -> Result<String> {
+    struct BoundedWriter {
+        bytes: Vec<u8>,
+        limit: usize,
+    }
+    impl std::io::Write for BoundedWriter {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            if bytes.len() > self.limit.saturating_sub(self.bytes.len()) {
+                return Err(std::io::Error::other(
+                    "Canonical recipe exceeds source snapshot budget",
+                ));
+            }
+            self.bytes.extend_from_slice(bytes);
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let mut writer = BoundedWriter {
+        bytes: Vec::new(),
+        limit,
+    };
+    serde_json::to_writer(&mut writer, recipe).map_err(|e| e.to_string())?;
+    String::from_utf8(writer.bytes).map_err(|e| e.to_string())
+}
 pub fn compile_json(text: &str) -> Result<String> {
     if text.len() > 16 * 1024 * 1024 {
         return Err("Recipe exceeds 16 MiB".into());
@@ -925,6 +954,17 @@ mod tests {
         ];
         for text in fixtures {
             let recipe: Recipe = serde_json::from_str(text).unwrap();
+            let scene = compile(&recipe).unwrap();
+            let restored: Recipe = serde_json::from_str(&scene.recipe_json).unwrap();
+            assert_eq!(
+                serde_json::to_value(&recipe).unwrap(),
+                serde_json::to_value(&restored).unwrap()
+            );
+            assert_eq!(
+                serde_json::to_vec(&scene).unwrap(),
+                serde_json::to_vec(&compile(&restored).unwrap()).unwrap(),
+                "Source snapshot must reproduce the complete scene"
+            );
             for (name, d) in &recipe.definitions {
                 let source = mesh(name, d, 1_000_000).unwrap();
                 let mut indexed = source.clone();
@@ -982,6 +1022,27 @@ mod tests {
         assert_eq!(s.meshes[0].positions.len(), 30);
         assert_eq!(s.meshes[0].indices.len(), 36);
         assert!(s.estimated_geometry_bytes < 70_000);
+    }
+    #[test]
+    fn source_snapshot_is_bounded_and_preserves_unused_definitions() {
+        let mut r = recipe();
+        r.definitions.insert(
+            "unused-authoring-part".into(),
+            r.definitions["block"].clone(),
+        );
+        assert!(serialize_recipe(&r, 32)
+            .unwrap_err()
+            .contains("source snapshot budget"));
+        let scene = compile(&r).unwrap();
+        let saved: Recipe = serde_json::from_str(&scene.recipe_json).unwrap();
+        assert_eq!(scene.meshes.len(), 1);
+        assert_eq!(saved.definitions.len(), 2);
+        assert!(saved.definitions.contains_key("unused-authoring-part"));
+        assert_eq!(
+            serialize_recipe(&r, scene.recipe_json.len()).unwrap(),
+            scene.recipe_json
+        );
+        assert!(serialize_recipe(&r, scene.recipe_json.len() - 1).is_err());
     }
     #[test]
     fn nested_assemblies_transform_local_repeats() {

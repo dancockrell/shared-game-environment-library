@@ -21,6 +21,8 @@ func _initialize() -> void:
 		error = ResourceSaver.save(packed, args[1])
 	if error == OK:
 		var reloaded: Node3D = (ResourceLoader.load(args[1], "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene).instantiate()
+		if reloaded.get_meta("scene_forge_recipe_json", "") != data.get("recipe_json", ""):
+			error = ERR_INVALID_DATA
 		for index in scene.get_child_count():
 			var before: MultiMesh = scene.get_child(index).multimesh
 			var after: MultiMesh = reloaded.get_child(index).multimesh

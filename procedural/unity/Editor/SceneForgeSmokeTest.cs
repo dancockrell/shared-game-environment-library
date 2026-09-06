@@ -13,6 +13,15 @@ namespace SharedEnvironment.SceneForge {
                 Response answer=JsonUtility.FromJson<Response>(Native.Compile(File.ReadAllText(args[index+1])));
                 if(!answer.ok) throw new Exception(answer.error);
                 GameObject root=SceneForgeWindow.Import(answer.scene);
+                var recipeSource=root.GetComponent<SceneForgeSource>();
+                if(recipeSource==null||recipeSource.RecipeJson!=answer.scene.recipe_json) throw new Exception("Source snapshot lost at import");
+                var restoredObject=new GameObject("Recipe serialization check");
+                var restoredSource=restoredObject.AddComponent<SceneForgeSource>();
+                EditorJsonUtility.FromJsonOverwrite(EditorJsonUtility.ToJson(recipeSource),restoredSource);
+                if(restoredSource.RecipeJson!=recipeSource.RecipeJson) throw new Exception("Source snapshot lost in component serialization");
+                Response rebuilt=JsonUtility.FromJson<Response>(Native.Compile(restoredSource.RecipeJson));
+                if(!rebuilt.ok||rebuilt.scene.recipe_json!=answer.scene.recipe_json) throw new Exception("Restored source cannot be recompiled");
+                UnityEngine.Object.DestroyImmediate(restoredObject);
                 MeshFilter[] filters=root.GetComponentsInChildren<MeshFilter>();
                 if(filters.Length!=answer.scene.instances.Length) throw new Exception("Instances lost in Unity adapter");
                 foreach(MeshFilter item in filters) if(item.sharedMesh.vertexCount==0||item.sharedMesh.normals.Length!=item.sharedMesh.vertexCount) throw new Exception("Invalid imported mesh");
