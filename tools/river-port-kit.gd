@@ -189,12 +189,12 @@ func beam(a: Vector3, b: Vector3, width: float, key: String, parent: Node3D = ro
 	node.position = a
 	return node
 
-func node_group(name_value: String, position: Vector3, rotation_y: float = 0) -> Node3D:
+func node_group(name_value: String, position: Vector3, rotation_y: float = 0, parent: Node3D = root) -> Node3D:
 	var g := Node3D.new()
 	g.name = name_value
 	g.position = position
 	g.rotation.y = rotation_y
-	root.add_child(g)
+	parent.add_child(g)
 	return g
 
 func wall(length: float, height: float, thickness: float, position: Vector3, parent: Node3D, rotated: bool = false) -> void:

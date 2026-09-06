@@ -664,40 +664,37 @@ func construct_inn() -> void:
 			kit.cylinder(seat-Vector3(0,0.15,0),0.05,0.3,"oak",kit.root)
 
 func construct_shop() -> void:
-	var shop := kit.house("Reference_Cutaway_Apothecary",Vector3(-7.45,1.1,3.3),6.2,5.4,3.4,2.0,"slate",true)
+	# Enclosed exterior replaces the cutaway demo in the same scene slot.
+	var shop := kit.house("Reference_Enclosed_Apothecary",Vector3(-7.45,1.1,3.3),6.2,5.4,3.4,2.0,"slate",false,"plaster",true,1.4,2.2,true,false)
 	shop.scale = Vector3(1.15,1.1,1.15)
-	kit.shelving(shop,Vector3(-1.5,0.3,-2.28))
-	kit.shelving(shop,Vector3(0.85,0.3,-2.28))
-	# Side wall shelf is turned into the open interior, not facing the camera.
-	var side := Node3D.new()
-	shop.add_child(side)
-	side.position = Vector3(2.7,0,0)
-	side.rotation.y = -PI/2
-	kit.shelving(side,Vector3(0,0.3,0))
-	kit.block(Vector3(-0.2,0.87,0.75),Vector3(3.2,1.1,0.85),"oak",shop)
-	kit.block(Vector3(-0.2,1.47,0.75),Vector3(3.4,0.16,1.0),"oak_light",shop)
-	for x in [-1.55,-0.9,-0.2,0.5,1.15]:
-		kit.block(Vector3(x,0.95,1.2),Vector3(0.1,0.8,0.08),"oak_light",shop)
-	for i in 13:
-		kit.cylinder(Vector3(kit.rng.randf_range(-1.6,1.3),1.65,kit.rng.randf_range(0.4,1.1)),kit.rng.randf_range(0.055,0.1),kit.rng.randf_range(0.12,0.27),kit.shade("roof"),shop)
-	# The reference roof is a substantial rear roof, not a small lean-to.
-	var canopy := Node3D.new()
-	shop.add_child(canopy)
-	canopy.position = Vector3(0,3.65,-1.9)
-	canopy.rotation.y = PI/2
-	kit.roof(2.3,6.5,0,1.6,"slate",canopy)
-	dormer(shop,Vector3(1.35,3.55,-0.6),0,"slate")
-	chimney(shop,Vector3(-2.9,0.3,1.0),5.2,0.8)
-	for z in [-2.7,0,2.7]:
-		kit.block(Vector3(-3.15,1.1,z),Vector3(0.6,2.2,0.6),"stone6",shop)
-	for x in [-3.1,3.1]:
-		kit.block(Vector3(x,0.85,2.7),Vector3(0.6,0.18,0.65),"stone9",shop)
-	kit.banner(Vector3(-0.9,1.25,2.94),2.3,0.95,shop)
-	# Cutaway deliberately omits the front upper wall and overhead beam.
-	kit.stairs(Vector3(2.8,-0.3,2.9),1.25,0.6,1.1,shop,false)
-	kit.lantern(Vector3(2.5,2.0,2.9),shop)
-	for i in 6:
-		kit.shrub(Vector3(-9.7+i*1.0,0.9,2.45),0.35)
+	shop.set_meta("exterior_role","enclosed_apothecary")
+	chimney(shop,Vector3(-2.9,0.3,-1.0),5.4,0.8)
+	# The sole public approach shares the door's X/Z and floor-top datum.
+	var socket := shop.get_node("EntranceSocket") as Node3D
+	var stair_base := (0.88-shop.position.y)/shop.scale.y
+	var approach := kit.node_group("ShopEntrance",socket.position,0,shop)
+	kit.stairs(Vector3(0,stair_base-socket.position.y,0),1.75,socket.position.y-stair_base,1.2,approach)
+	approach.set_meta("plaza_height",0.88)
+	# Carved blue trade board with a gold vial silhouette; no exposed interior.
+	kit.beam(Vector3(-2.65,3.15,2.9),Vector3(-2.65,3.15,3.65),0.1,"iron",shop)
+	for x in [-2.94,-2.36]:
+		kit.beam(Vector3(x,3.13,3.59),Vector3(x,2.92,3.59),0.018,"iron",shop)
+	kit.block(Vector3(-2.65,2.58,3.59),Vector3(0.88,0.74,0.09),"oak",shop)
+	kit.block(Vector3(-2.65,2.58,3.65),Vector3(0.77,0.64,0.035),"cloth",shop)
+	kit.block(Vector3(-2.65,2.53,3.69),Vector3(0.25,0.28,0.025),"gold",shop)
+	kit.block(Vector3(-2.65,2.74,3.69),Vector3(0.10,0.15,0.025),"gold",shop)
+	kit.block(Vector3(-2.65,2.84,3.69),Vector3(0.18,0.045,0.025),"gold",shop)
+	# Side windows and shutters make the complete volume useful from other angles.
+	for side in [-1,1]:
+		var facade := kit.node_group("SideWindow",Vector3(side*3.29,0,-0.8),side*PI/2,shop)
+		kit.window_at(Vector3(0,2.1,0),facade,0.9)
+		for x in [-0.72,0.72]:
+			kit.block(Vector3(x,2.1,0.12),Vector3(0.3,1.4,0.08),"wood5",facade)
+	for x in [-2.1,2.1]:
+		kit.block(Vector3(x,0.50,3.12),Vector3(1.12,0.32,0.48),"oak",shop)
+		kit.block(Vector3(x,0.68,3.12),Vector3(1.0,0.045,0.37),"soil",shop)
+		kit.shrub(Vector3(x,0.72,3.12),0.30,shop,true)
+	kit.lantern(Vector3(0.96,1.8,3.0),shop)
 
 func construct_guild() -> void:
 	var guild := kit.house("Reference_Ornate_Guild",Vector3(14.8,1.4,-2.5),5.5,7.0,5.5,4.1,"slate",false,"stone6",false,1.7,2.7)
@@ -906,6 +903,14 @@ func inspect_saved_scene() -> void:
 	var loaded := packed.instantiate()
 	root.add_child(loaded)
 	var meshes := collect_meshes(loaded)
+	var shop := loaded.get_node("Reference_Enclosed_Apothecary") as Node3D
+	assert(shop != null and not shop.get_meta("building_bounds").cutaway)
+	assert(shop.has_node("RoofFrame") and not loaded.has_node("Reference_Cutaway_Apothecary"))
+	var approach := shop.get_node("ShopEntrance") as Node3D
+	var door := shop.get_node("EntranceSocket") as Node3D
+	assert(approach.global_position.distance_to(door.global_position) < 0.001)
+	assert(is_equal_approx(float(approach.get_meta("plaza_height")),0.88))
+	print("PASS: enclosed apothecary, roof frame and aligned entrance; demo cutaway absent")
 	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(output_dir.path_join("build-report.json")))
 	assert(meshes.size() == int(report.meshInstances),"Native mesh count must match generated scene")
 	var geometry: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(output_dir.path_join("geometry-bounds.json")))
