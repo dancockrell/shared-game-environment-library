@@ -1057,6 +1057,36 @@ output and two camera-angle arguments for explicitly requested live inspection;
 it caps the retained preview at 12 FPS. Normal checks still exit. The CPU runner
 still never launches Godot. Do not restart or touch another task's engine session.
 
+For sequential review in that same process, the existing entry point now accepts
+`--watch-request=<absolute mailbox.json path>` together with `--keep-open` and
+the existing positional input, output and camera-angle arguments. The mailbox
+is a local JSON file, not a socket, service or world server. Place it in the
+generated review directory containing the study inputs. A request has this form:
+
+```json
+{"sequence":"pastry-front-001","input":"C:/review/patisserie.json","output":"C:/review/pastry-front-001.png","azimuth":45,"elevation":25}
+```
+
+Paths above are illustrative, not repository paths. Both input and output must
+resolve lexically beneath the mailbox directory; output must be a new PNG.
+Use a different capture name for every review. The one-second poll ignores
+unchanged mailbox bytes and never queues concurrent imports. Limits: 4 KiB
+request, 32 MiB compiled JSON, 128 mesh definitions, 1,000 instances and a 64 MiB
+compiler payload estimate. These caps are review admission limits, not a hard
+OS RAM/VRAM quota or an untrusted-file security sandbox. Feed it compiler outputs,
+not arbitrary external JSON; deep mesh validity remains the compiler's contract.
+
+On an admitted request, the tool frees only its previous study nodes, retains
+the process and polling timer, then uses the existing full import-check and
+capture path. No second renderer or adapter is introduced. Invalid request
+headers leave the current study in place; an import assertion is a failed review,
+never evidence of success. Wait for the log's `Review ready` JSON containing the
+matching sequence, input, capture and unchanged process ID, then inspect the PNG.
+The old running preview cannot acquire this code without one replacement; that
+replacement was requested from the user, not assumed from an automatic goal turn.
+Headless `--check-only` passed for the modified script. Sequential graphics-backed
+switching and repeated-load memory behavior are **not yet executed or certified**.
+
 The actual native render below is retained as a construction baseline. The
 reviewer found its smooth silhouette useful but finish and attachment quality
 insufficient. The Godot diagnostic camera now frames sub-metre objects and

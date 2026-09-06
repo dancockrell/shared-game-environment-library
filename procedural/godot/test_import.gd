@@ -1,12 +1,90 @@
 extends SceneTree
 const PluginScript = preload("res://addons/scene_forge/plugin.gd")
+var _review_args := PackedStringArray()
+var _review_nodes: Array[Node] = []
+var _request_path := ""
+var _request_root := ""
+var _last_request := ""
+var _request_sequence := ""
+var _busy := true
 func _initialize() -> void:
+	_review_args = OS.get_cmdline_user_args()
+	for argument in _review_args:
+		if argument.begins_with("--watch-request="):
+			_request_path = argument.trim_prefix("--watch-request=").simplify_path()
+	if not _request_path.is_empty():
+		if not _request_path.is_absolute_path() or not "--keep-open" in _review_args or DisplayServer.get_name() == "headless":
+			push_error("Request review requires an absolute mailbox path, --keep-open and a graphics backend")
+			quit(1)
+			return
+		_request_root = _request_path.get_base_dir().replace("\\", "/").to_lower() + "/"
+		var poll := Timer.new()
+		poll.wait_time = 1.0
+		poll.timeout.connect(_poll_request)
+		root.add_child(poll)
+		poll.start()
 	call_deferred("_run")
+
+func _poll_request() -> void:
+	if _busy or not FileAccess.file_exists(_request_path):
+		return
+	var file := FileAccess.open(_request_path, FileAccess.READ)
+	if file == null or file.get_length() > 4096:
+		return
+	var text := file.get_as_text()
+	if text == _last_request:
+		return
+	_last_request = text
+	var request: Variant = JSON.parse_string(text)
+	if not request is Dictionary:
+		push_warning("Review request is not JSON object; current scene retained")
+		return
+	var input_path := str(request.get("input", "")).simplify_path()
+	var output_path := str(request.get("output", "")).simplify_path()
+	var azimuth := float(request.get("azimuth", 45.0))
+	var elevation := float(request.get("elevation", 25.0))
+	# Local mailbox only. Inputs and new captures stay inside its review directory.
+	# No shell commands, network listener, arbitrary output replacement or queue.
+	for path in [input_path, output_path]:
+		if not path.is_absolute_path() or not path.replace("\\", "/").to_lower().begins_with(_request_root):
+			push_warning("Review paths must stay inside the mailbox directory")
+			return
+	if input_path.get_extension().to_lower() != "json" or output_path.get_extension().to_lower() != "png" or FileAccess.file_exists(output_path):
+		push_warning("Review needs a JSON input and an unused PNG output")
+		return
+	if not is_finite(azimuth) or not is_finite(elevation) or absf(elevation) >= 89.0:
+		push_warning("Invalid review angles")
+		return
+	var source := FileAccess.open(input_path, FileAccess.READ)
+	if source == null or source.get_length() > 32 * 1024 * 1024:
+		push_warning("Review input unavailable or exceeds 32 MiB")
+		return
+	var data: Variant = JSON.parse_string(source.get_as_text())
+	if not data is Dictionary or not data.get("meshes") is Array or not data.get("instances") is Array:
+		push_warning("Review input is not a compiled scene")
+		return
+	if data.meshes.is_empty() or data.meshes.size() > 128 or data.instances.size() > 1000 or float(data.get("estimated_geometry_bytes", INF)) > 64 * 1024 * 1024:
+		push_warning("Review scene exceeds the small-study mesh, instance or payload budget")
+		return
+	if not data.get("version") in [1, 2, 1.0, 2.0] or data.get("coordinate_system") != "right-handed-y-up-ccw-metres":
+		push_warning("Unsupported review scene format")
+		return
+	_review_args = PackedStringArray([input_path, output_path, str(azimuth), str(elevation), "--keep-open"])
+	_request_sequence = str(request.get("sequence", ""))
+	_busy = true
+	call_deferred("_run")
+
 func _run() -> void:
-	var path := OS.get_cmdline_user_args()[0]
+	var path := _review_args[0]
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
+	# Release only the previous study's owned scene/camera/lights. The mailbox
+	# timer and this process survive. At most one requested study is loaded.
+	for node in _review_nodes:
+		node.free()
+	_review_nodes.clear()
 	var scene: Node3D = preload("res://addons/scene_forge/import_scene.gd").build(data)
 	root.add_child(scene)
+	_review_nodes.append(scene)
 	assert(scene.get_meta("scene_forge_recipe_json", "") == data.get("recipe_json", ""))
 	assert(scene.get_child_count() == data.meshes.size())
 	var count := 0
@@ -114,11 +192,12 @@ func _run() -> void:
 			assert(importer.aperture_world(display, 0, 999).is_empty())
 			copy.transform = Transform3D.IDENTITY
 	copy.free()
-	if OS.get_cmdline_user_args().size() > 1:
+	if _review_args.size() > 1:
 		root.size = Vector2i(1280, 800)
 		var camera := Camera3D.new()
 		camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 		root.add_child(camera)
+		_review_nodes.append(camera)
 		var total_bounds: AABB = scene.get_child(0).multimesh.custom_aabb
 		for child in scene.get_children():
 			total_bounds = total_bounds.merge(child.multimesh.custom_aabb)
@@ -126,11 +205,11 @@ func _run() -> void:
 		var direction := Vector3(1, 1, 1).normalized()
 		# Optional inspection angles, in degrees; geometry/import validation is
 		# identical for every view. Use front/side/rear without a second renderer.
-		if OS.get_cmdline_user_args().size() > 3:
-			assert(OS.get_cmdline_user_args()[2].is_valid_float())
-			assert(OS.get_cmdline_user_args()[3].is_valid_float())
-			var azimuth := deg_to_rad(float(OS.get_cmdline_user_args()[2]))
-			var elevation := deg_to_rad(float(OS.get_cmdline_user_args()[3]))
+		if _review_args.size() > 3:
+			assert(_review_args[2].is_valid_float())
+			assert(_review_args[3].is_valid_float())
+			var azimuth := deg_to_rad(float(_review_args[2]))
+			var elevation := deg_to_rad(float(_review_args[3]))
 			assert(is_finite(azimuth) and is_finite(elevation) and absf(elevation) < PI/2)
 			direction = Vector3(sin(azimuth)*cos(elevation), sin(elevation), cos(azimuth)*cos(elevation))
 		camera.position = center + direction * maxf(10.0, total_bounds.size.length() * 2.0)
@@ -152,6 +231,7 @@ func _run() -> void:
 		sun.rotation_degrees = Vector3(-45, -35, 0)
 		sun.shadow_enabled = true
 		root.add_child(sun)
+		_review_nodes.append(sun)
 		var environment := WorldEnvironment.new()
 		environment.environment = Environment.new()
 		environment.environment.background_mode = Environment.BG_COLOR
@@ -166,15 +246,18 @@ func _run() -> void:
 		environment.environment.sky = sky
 		environment.environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 		root.add_child(environment)
+		_review_nodes.append(environment)
 		await create_timer(1).timeout
 		await RenderingServer.frame_post_draw
-		assert(root.get_texture().get_image().save_png(OS.get_cmdline_user_args()[1]) == OK)
+		assert(root.get_texture().get_image().save_png(_review_args[1]) == OK)
 	print("Scene Forge Godot import passed: ", count, " instances, ", scene.get_child_count(), " shared meshes")
 	print("Spatial checks: ", "unavailable-data guards only (dummy renderer)" if DisplayServer.get_name() == "headless" else "graphics-backed transforms and bounds verified")
-	if "--keep-open" in OS.get_cmdline_user_args() and DisplayServer.get_name() != "headless":
-		root.title = "Scene Forge — procedural teapot review (work in progress)"
+	if "--keep-open" in _review_args and DisplayServer.get_name() != "headless":
+		root.title = "Scene Forge — %s review (work in progress)" % path.get_file().get_basename()
 		# User-requested review reuses this process; normal automated tests still exit.
 		Engine.max_fps = 12
+		_busy = false
+		print("Review ready: ", JSON.stringify({"sequence": _request_sequence, "input": path, "capture": _review_args[1] if _review_args.size() > 1 else "", "process_id": OS.get_process_id()}))
 		return
 	scene.queue_free()
 	quit()

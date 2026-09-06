@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Replace flat pie lattice with alternating swept pastry ribbons; verify 25 crossings and reuse existing frame-controlled sweep geometry; live teapot remains untouched",
+  "summary": "Extend existing Godot review entry point with bounded sequential scene requests, reusable process and captures; retain the current preview pending user approval of one replacement",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T12:32:00Z",
