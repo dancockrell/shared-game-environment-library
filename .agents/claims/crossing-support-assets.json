@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Tool-only priority: extend the existing RMF sweep with bounded elliptical sections and authored orientation; CPU geometry tests before visual admission; sequential teapot, cake/pie and coordinated ballerina gates",
+  "summary": "Tool-only priority: stable authored sweep frames for editable oval sections; preserve automatic legacy outputs and reject degenerate directions; sequential teapot, cake/pie and coordinated ballerina gates",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-06T11:55:00Z",
+  "updated_at": "2026-09-06T12:01:00Z",
   "paths": [
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",
@@ -30,6 +30,7 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Authored sweep frame: CPU run 20260906-120046-a986ec3bf5744f92a054000cc1fd7940 passed 41 tests and nine deterministic fixtures; regression reproduces automatic axis reversal and confirms stable explicit direction; projection/roll, invalid inputs and roundtrip checked. All nine output JSON files byte-identical to prior checkpoint. No engine launched; no visual or VRAM claim.",
       "Elliptical sweeps: CPU run 20260906-115635-879c15bf77c74af2b3e86e290fdfeb05 passed 39 tests and nine deterministic fixtures; tapered gradient, closed solid/hollow meshes, rotated extents, legacy defaults and invalid controls passed. Eight fixtures and six teapot parts unchanged; handle now flattened with same 3237 indexed vertices/6000 triangles and updated bounds. No new engine render, Unity execution or VRAM measurement; candidate not art-approved.",
       "Exact vertex indexing: final CPU run 20260906-115257-1a4408baae2e49db94f5dbaf20449ad7 passed 37 tests and nine deterministic fixtures, including cross-definition construction budget regression; independent saved-output comparison confirmed all 427584 triangle corners and metadata unchanged; teapot stored vertices 337104 to 59061, estimated payload 13534292 to 4636916 bytes. No engine or VRAM verification.",
       "CPU-only shared-machine runner passed twice; latest 20260906-114345-9e11150ff79d4530bf2184003ee28c5b: 22 stages, 35 Rust tests, nine deterministic fixtures, no engine launched; old Godot parameter and inadequate RAM both rejected in explicit negative checks",

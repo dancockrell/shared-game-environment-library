@@ -761,11 +761,30 @@ winding. Existing ascending profiles remain compatible.
 Sweeps also accept `section_scale: [a,b]` (each 0.125..8, default `[1,1]`)
 and `section_roll` (degrees -360..360, default zero). These provide an elliptical
 cross-section in the transported normal/binormal plane and a constant initial
-orientation. Roll does not add progressive twisting. The initial frame projects
-world X perpendicular to the initial tangent, except when `abs(tangent.x) >= 0.8`,
-where world Y is used. Authored roll is relative to that deterministic frame.
-This automatic axis choice can change discontinuously when editing across that
-threshold; an explicit author-defined initial normal remains future work.
+orientation. Roll does not add progressive twisting. Optional `section_normal`
+provides a definition-local author-controlled direction: normalize it, project
+it perpendicular to the initial tangent, normalize the projection, then apply
+`section_roll`. Direction magnitude is not a width control. A zero/nonfinite
+direction or projection with squared length below `1e-12` fails explicitly;
+the tool does not silently replace an invalid authored direction.
+
+When `section_normal` is absent, the legacy initial frame projects world X
+perpendicular to the initial tangent, except when `abs(tangent.x) >= 0.8`, where
+world Y is used. This automatic choice can reverse the frame as an edit crosses
+that threshold. Authored directions remove this particular discontinuity as
+long as they remain sufficiently nonparallel to the tangent. They do not solve
+closed-loop frame holonomy or define an absolute orientation everywhere in a
+changing 3D curve. An explicit `[1,0,0]` on the current teapot handle preserves
+its existing geometry while stabilizing that editing choice.
+
+Authored-frame CPU receipt:
+`procedural/generated/reviews/20260906-120046-a986ec3bf5744f92a054000cc1fd7940/report.json`:
+41 tests, format, strict clippy, release and nine deterministic fixtures passed.
+The regression reproduces the automatic-frame reversal across the 0.8 threshold
+and verifies continuous authored frames, perpendicular/unit axes, projected
+direction plus roll, invalid-direction refusal and recipe roundtrip. All nine
+emitted fixture files remain byte-identical to the elliptical-section checkpoint.
+This is an authoring-control improvement, not a new visual render or art admission.
 
 Construction uses the existing [Wang et al. double-reflection frame transport](https://www.cs.hku.hk/data/techreps/document/TR-2007-07.pdf),
 not a second sweep implementation. The ellipse and shading extension is original

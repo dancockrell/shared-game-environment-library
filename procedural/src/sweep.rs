@@ -23,6 +23,10 @@ pub struct Sweep {
     /// Constant initial section rotation, in degrees about the spine tangent.
     #[serde(default)]
     pub section_roll: f32,
+    /// Authored direction projected perpendicular to the initial tangent.
+    /// Omission retains the legacy automatic axis; near-parallel inputs fail.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub section_normal: Option<V3>,
 }
 fn unit_section() -> [f32; 2] {
     [1., 1.]
@@ -67,6 +71,30 @@ fn transport(p: D3, next: D3, tangent: D3, next_tangent: D3, normal: D3) -> Resu
     let n = reflect(reflected_normal, sub(next_tangent, reflected_tangent))?;
     // Remove roundoff drift; this is not a fallback for a degenerate reflection.
     unit(sub(n, mul(next_tangent, dot(n, next_tangent))))
+}
+fn initial_frame(t: D3, authored: Option<V3>, roll: f32) -> Result<D3> {
+    let axis = if let Some(value) = authored {
+        finite(&value)?;
+        let axis = unit(value.map(f64::from))
+            .map_err(|_| "Sweep section_normal must be a nonzero finite direction")?;
+        let projected = sub(axis, mul(t, dot(axis, t)));
+        if dot(projected, projected) < 1e-12 {
+            return Err(
+                "Sweep section_normal is parallel or too close to the initial tangent".into(),
+            );
+        }
+        axis
+    } else if t[0].abs() < 0.8 {
+        [1., 0., 0.]
+    } else {
+        [0., 1., 0.]
+    };
+    let mut n = unit(sub(axis, mul(t, dot(axis, t))))?;
+    if roll != 0. {
+        let angle = (roll as f64).to_radians();
+        n = unit(add(mul(n, angle.cos()), mul(cross(t, n), angle.sin())))?;
+    }
+    Ok(n)
 }
 #[derive(Clone)]
 struct Sample {
@@ -292,16 +320,7 @@ impl Sweep {
         let samples = self.samples(((budget - ends) / per_ring + 1).min(8192))?;
         let mut frames = Vec::with_capacity(samples.len());
         let t = samples[0].t;
-        let axis = if t[0].abs() < 0.8 {
-            [1., 0., 0.]
-        } else {
-            [0., 1., 0.]
-        };
-        let mut n = unit(sub(axis, mul(t, dot(axis, t))))?;
-        if self.section_roll != 0. {
-            let angle = (self.section_roll as f64).to_radians();
-            n = unit(add(mul(n, angle.cos()), mul(cross(t, n), angle.sin())))?;
-        }
+        let mut n = initial_frame(t, self.section_normal, self.section_roll)?;
         frames.push(n);
         for pair in samples.windows(2) {
             n = transport(pair[0].p, pair[1].p, pair[0].t, pair[1].t, n)?;
@@ -478,6 +497,7 @@ mod tests {
                     wall_thickness: if hollow { 0.04 } else { 0. },
                     section_scale: unit_section(),
                     section_roll: 0.,
+                    section_normal: None,
                 },
             },
         }
@@ -631,6 +651,60 @@ mod tests {
         let back = transport(q, p, u, t, next).unwrap();
         assert!(dot(sub(back, n), sub(back, n)) < 1e-24);
         assert!(transport(p, p, t, t, n).is_err());
+    }
+    #[test]
+    fn authored_frame_remains_continuous_across_automatic_axis_threshold() {
+        let tangents = [0.79999_f64, 0.80001].map(|x| [x, (1. - x * x).sqrt(), 0.]);
+        let automatic = tangents.map(|t| initial_frame(t, None, 0.).unwrap());
+        assert!(dot(automatic[0], automatic[1]) < -0.9999);
+        let authored = tangents.map(|t| initial_frame(t, Some([1., 0., 0.]), 0.).unwrap());
+        assert!(dot(authored[0], authored[1]) > 0.9999);
+        for (t, n) in tangents.into_iter().zip(authored) {
+            assert!(dot(t, n).abs() < 1e-12);
+            assert!((dot(n, n) - 1.).abs() < 1e-12);
+        }
+    }
+    #[test]
+    fn authored_frame_projection_roll_and_invalid_directions() {
+        let t = [0., 1., 0.];
+        let n = initial_frame(t, Some([2., 5., 0.]), 90.).unwrap();
+        assert!(dot(n, [0., 0., -1.]) > 0.999999);
+        for value in [
+            [0.; 3],
+            [0., 1., 0.],
+            [0., -1., 0.],
+            [1e-8, 1., 0.],
+            [f32::NAN, 0., 0.],
+            [f32::INFINITY, 0., 0.],
+        ] {
+            let mut d = fixture(false);
+            let Shape::Sweep { sweep } = &mut d.shape else {
+                unreachable!()
+            };
+            sweep.section_normal = Some(value);
+            assert!(mesh("bad-authored-frame", &d, 100000).is_err());
+        }
+        let mut d = fixture(false);
+        let Shape::Sweep { sweep } = &mut d.shape else {
+            unreachable!()
+        };
+        sweep.section_normal = Some([0., 0., 1.]);
+        sweep.section_scale = [2., 0.5];
+        let roundtrip: Definition =
+            serde_json::from_slice(&serde_json::to_vec(&d).unwrap()).unwrap();
+        let m = mesh("authored", &d, 100000).unwrap();
+        assert_eq!(
+            serde_json::to_vec(&m).unwrap(),
+            serde_json::to_vec(&mesh("authored", &roundtrip, 100000).unwrap()).unwrap()
+        );
+        let extent = |axis: usize| {
+            m.positions
+                .iter()
+                .map(|p| p[axis].abs())
+                .fold(0_f32, f32::max)
+        };
+        assert!((extent(0) - 0.1).abs() < 1e-6);
+        assert!((extent(2) - 0.4).abs() < 1e-6);
     }
     #[test]
     fn budget_and_invalid_radius_rejected() {
