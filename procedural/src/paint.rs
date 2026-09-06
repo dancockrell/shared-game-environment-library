@@ -10,6 +10,45 @@ pub struct Paint {
     pub size: u32,
     #[serde(default)]
     pub strokes: Vec<BrushStroke>,
+    /// Fine periodic pigment deposits; albedo only, never baked directional light.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub granulation: Option<Granulation>,
+}
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Granulation {
+    pub cells: [u32; 2],
+    pub strength: f32,
+    pub color: [f32; 3],
+}
+impl Granulation {
+    fn coverage(&self, uv: [f64; 2], seed: u32) -> f64 {
+        let p: [f64; 2] = std::array::from_fn(|i| uv[i] * self.cells[i] as f64);
+        let cell = p.map(|v| v.floor() as i32);
+        let mut coverage = 0_f64;
+        for y in -1..=1 {
+            for x in -1..=1 {
+                let c = [cell[0] + x, cell[1] + y];
+                let mut hash = seed
+                    ^ (c[0].rem_euclid(self.cells[0] as i32) as u32).wrapping_mul(0x8da6b343)
+                    ^ (c[1].rem_euclid(self.cells[1] as i32) as u32).wrapping_mul(0xd8163841);
+                let mut next = || {
+                    hash ^= hash >> 16;
+                    hash = hash.wrapping_mul(0x7feb352d);
+                    hash ^= hash >> 15;
+                    hash = hash.wrapping_mul(0x846ca68b);
+                    hash = hash.wrapping_add(0x9e3779b9);
+                    hash as f64 / 4294967296.
+                };
+                let center = [c[0] as f64 + next(), c[1] as f64 + next()];
+                let radius = [0.16 + 0.3 * next(), 0.12 + 0.25 * next()];
+                let r2 = ((p[0] - center[0]) / radius[0]).powi(2)
+                    + ((p[1] - center[1]) / radius[1]).powi(2);
+                coverage = coverage.max((1. - r2).max(0.).powi(2));
+            }
+        }
+        coverage
+    }
 }
 fn default_size() -> u32 {
     64
@@ -46,6 +85,18 @@ impl Texture {
     }
 }
 pub fn build(base: [f32; 4], paint: &Paint) -> crate::Result<Texture> {
+    if let Some(g) = &paint.granulation {
+        if g.cells.iter().any(|c| !(4..=paint.size / 4).contains(c))
+            || g.color
+                .iter()
+                .chain([g.strength].iter())
+                .any(|v| !v.is_finite() || !(0. ..=1.).contains(v))
+        {
+            return Err(
+                "Granulation requires 4..size/4 cells and finite unit palette/strength".into(),
+            );
+        }
+    }
     if ![64, 128, 256, 512].contains(&paint.size) || paint.strokes.len() > 64 {
         return Err("Paint requires size 64/128/256/512 and at most 64 strokes".into());
     }
@@ -118,6 +169,25 @@ pub fn build(base: [f32; 4], paint: &Paint) -> crate::Result<Texture> {
     let mut work_left = 16_000_000_usize;
     for stroke in &paint.strokes {
         draw_stroke(&mut rgba, size as usize, stroke, &mut work_left)?;
+    }
+    if let Some(g) = &paint.granulation {
+        for y in 0..size {
+            for x in 0..size {
+                let mix = g.coverage(
+                    [
+                        (x as f64 + 0.5) / size as f64,
+                        (y as f64 + 0.5) / size as f64,
+                    ],
+                    paint.seed,
+                ) as f32
+                    * g.strength;
+                for channel in 0..3 {
+                    let i = ((y * size + x) * 4) as usize + channel;
+                    let before = rgba[i] as f32 / 255.;
+                    rgba[i] = ((before + (g.color[channel] - before) * mix) * 255.).round() as u8;
+                }
+            }
+        }
     }
     Ok(Texture {
         width: size,
@@ -206,6 +276,33 @@ fn draw_stroke(
 mod tests {
     use super::*;
     #[test]
+    fn granulation_is_periodic_bounded_and_optional() {
+        let mut p: Paint =
+            serde_json::from_str(r#"{"color":[0,0,0],"strength":0,"seed":19}"#).unwrap();
+        let plain = build([0.8, 0.7, 0.5, 1.], &p).unwrap();
+        let g = Granulation {
+            cells: [12, 7],
+            strength: 0.7,
+            color: [0.2, 0.1, 0.05],
+        };
+        for uv in [[0., 0.], [0.23, 0.78], [-0.12, 1.34]] {
+            let a = g.coverage(uv, 19);
+            assert!((0. ..=1.).contains(&a));
+            assert!((a - g.coverage([uv[0] + 1., uv[1] - 1.], 19)).abs() < 1e-12);
+        }
+        p.granulation = Some(g);
+        let first = build([0.8, 0.7, 0.5, 1.], &p).unwrap();
+        assert_ne!(first.rgba, plain.rgba);
+        assert_eq!(first.rgba, build([0.8, 0.7, 0.5, 1.], &p).unwrap().rgba);
+        assert_eq!(first.mip_bytes(), plain.mip_bytes());
+        p.granulation.as_mut().unwrap().strength = 0.;
+        assert_eq!(plain.rgba, build([0.8, 0.7, 0.5, 1.], &p).unwrap().rgba);
+        for invalid in [0, 17, u32::MAX] {
+            p.granulation.as_mut().unwrap().cells = [12, invalid];
+            assert!(build([1.; 4], &p).is_err());
+        }
+    }
+    #[test]
     fn editable_marks_repeat_taper_and_roundtrip() {
         let mut p: Paint =
             serde_json::from_str(r#"{"color":[0,0,0],"strength":0,"seed":1}"#).unwrap();
@@ -247,6 +344,7 @@ mod tests {
             seed: 42,
             size: 64,
             strokes: vec![],
+            granulation: None,
         };
         let first = build([0.2, 0.3, 0.1, 1.], &p).unwrap();
         assert_eq!(first.rgba.len(), 64 * 64 * 4);

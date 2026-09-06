@@ -730,6 +730,50 @@ cut interior, and validate those cues in the complete cake rather than treating
 a denser diagnostic block as visual success. These next steps are not yet
 implemented; existing cake and pie remain unapproved.
 
+#### Fine pigment granulation in the existing paint path
+
+Optional `material.paint.granulation` adds seeded, periodic soft pigment
+deposits after the existing editable strokes. Contract:
+`{"cells":[128,16],"strength":0.5,"color":[0.25,0.14,0.065]}`.
+Each axis must contain 4..texture_size/4 cells; strength and RGB must be finite
+and in 0..1. Independent U/V density accounts for differing surface lengths.
+These are authored UV-space frequencies, not automatically inferred metric
+texel density. A hash of the wrapped cell address and existing paint seed
+determines the deposit center and elliptical radius. Only nine neighboring
+cells are inspected per pixel; maximum radius is below one cell. Coverage is
+bounded, periodic, and blended without baked directional illumination.
+
+This is original CPU code within `paint.rs`, not a new renderer or a copied
+paper implementation. No extra geometry, shader, adapter path or network
+dependency is introduced. The existing texture and recipe metadata carry the
+result to both adapters. At fixed resolution it adds no resident texture
+bytes. The cake experiment increases its one shared sponge texture from
+256 to 512 pixels: RGBA8 plus all mip levels grows by 1,048,576 bytes.
+This is an estimate, not measured VRAM certification.
+
+The first full-scene render used equal U/V counts and strong contrast; it
+produced elongated dark spots, not believable crumb. It was rejected:
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pastry-granulated.png`.
+The corrected experiment uses the anisotropic counts above with lower contrast.
+Neither variant provides normal maps, roughness variation, physical cavities,
+subsurface scattering or a fresh-cut cake interior. Do not describe pigment
+marks as geometric porosity or regard this alone as final food-art admission.
+
+Corrected full-scene capture:
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pastry-fine-grain.png`.
+Visually reviewed: conspicuous horizontal spots are reduced to quieter, finer
+surface variation, but the sponge still lacks depth and the icing/crust remain
+too uniform. Keep as a material-development fixture, not final art.
+Native Godot import and spatial checks passed for 80 instances and 17 shared
+meshes in PID 30828, sequence `pastry-granulation-002`; no engine restart.
+The CPU receipt at
+`procedural/generated/reviews/20260906-134959-e8c9387c753741169e8ec28f1f9b2b33/report.json`
+passed all 55 Rust tests, six Node audit tests and 38 stages. Granulation tests
+cover periodicity, coverage range, deterministic output, zero-strength
+equivalence, unchanged texture byte size at fixed resolution and density
+rejection. Unity runtime and fresh on-disk engine reload were not exercised
+at this checkpoint; existing adapters consume the unchanged RGBA output.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

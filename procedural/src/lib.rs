@@ -1331,6 +1331,7 @@ mod tests {
             seed: 5,
             size: 64,
             strokes: vec![],
+            granulation: None,
         });
         let painted = compile(&r).unwrap();
         assert_eq!(painted.meshes.len(), 1);
