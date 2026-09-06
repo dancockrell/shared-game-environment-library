@@ -20,6 +20,9 @@ pub struct Granulation {
     pub cells: [u32; 2],
     pub strength: f32,
     pub color: [f32; 3],
+    /// Shading-only cavity depth in texture pixels, not physical displacement.
+    #[serde(default)]
+    pub relief_texels: f32,
 }
 impl Granulation {
     fn coverage(&self, uv: [f64; 2], seed: u32) -> f64 {
@@ -68,6 +71,9 @@ pub struct Texture {
     pub width: u32,
     pub height: u32,
     pub rgba: Vec<u8>,
+    /// Linear RGB tangent-space +Y normals, alpha 255; no sRGB conversion.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub normal_rgba: Option<Vec<u8>>,
 }
 impl Texture {
     pub fn mip_bytes(&self) -> u64 {
@@ -81,12 +87,14 @@ impl Texture {
             w = (w / 2).max(1);
             h = (h / 2).max(1);
         }
-        bytes
+        bytes * if self.normal_rgba.is_some() { 2 } else { 1 }
     }
 }
 pub fn build(base: [f32; 4], paint: &Paint) -> crate::Result<Texture> {
     if let Some(g) = &paint.granulation {
         if g.cells.iter().any(|c| !(4..=paint.size / 4).contains(c))
+            || !g.relief_texels.is_finite()
+            || !(0. ..=4.).contains(&g.relief_texels)
             || g.color
                 .iter()
                 .chain([g.strength].iter())
@@ -170,17 +178,20 @@ pub fn build(base: [f32; 4], paint: &Paint) -> crate::Result<Texture> {
     for stroke in &paint.strokes {
         draw_stroke(&mut rgba, size as usize, stroke, &mut work_left)?;
     }
+    let mut normal_rgba = None;
     if let Some(g) = &paint.granulation {
+        let mut heights = vec![0_f32; (size * size) as usize];
         for y in 0..size {
             for x in 0..size {
-                let mix = g.coverage(
+                let coverage = g.coverage(
                     [
                         (x as f64 + 0.5) / size as f64,
                         (y as f64 + 0.5) / size as f64,
                     ],
                     paint.seed,
-                ) as f32
-                    * g.strength;
+                ) as f32;
+                heights[(y * size + x) as usize] = -coverage * g.relief_texels;
+                let mix = coverage * g.strength;
                 for channel in 0..3 {
                     let i = ((y * size + x) * 4) as usize + channel;
                     let before = rgba[i] as f32 / 255.;
@@ -188,12 +199,36 @@ pub fn build(base: [f32; 4], paint: &Paint) -> crate::Result<Texture> {
                 }
             }
         }
+        if g.relief_texels > 0. {
+            normal_rgba = Some(normals_from_height(&heights, size));
+        }
     }
     Ok(Texture {
         width: size,
         height: size,
         rgba,
+        normal_rgba,
     })
+}
+fn normals_from_height(heights: &[f32], size: u32) -> Vec<u8> {
+    let size = size as usize;
+    let mut normals = Vec::with_capacity(size * size * 4);
+    for y in 0..size {
+        for x in 0..size {
+            let dx = (heights[y * size + (x + 1) % size]
+                - heights[y * size + (x + size - 1) % size])
+                * 0.5;
+            let dy = (heights[((y + 1) % size) * size + x]
+                - heights[((y + size - 1) % size) * size + x])
+                * 0.5;
+            let length = (dx * dx + dy * dy + 1.).sqrt();
+            for v in [-dx / length, -dy / length, 1. / length] {
+                normals.push(((v * 0.5 + 0.5) * 255.).round() as u8);
+            }
+            normals.push(255);
+        }
+    }
+    normals
 }
 fn draw_stroke(
     pixels: &mut [u8],
@@ -276,6 +311,47 @@ fn draw_stroke(
 mod tests {
     use super::*;
     #[test]
+    fn relief_has_normalized_direction_and_explicit_cost() {
+        let flat = normals_from_height(&[0.; 16], 4);
+        assert!(flat
+            .as_chunks::<4>()
+            .0
+            .iter()
+            .all(|p| *p == [128, 128, 255, 255]));
+        let mut ramp = vec![0.; 16];
+        for y in 0..4 {
+            for x in 0..4 {
+                ramp[y * 4 + x] = x as f32;
+            }
+        }
+        let slopes = normals_from_height(&ramp, 4);
+        assert!(slopes[(4 + 1) * 4] < 128); // +U height slope tilts normal toward -U.
+        assert!(slopes[4 * 4] > 128); // Wrapped derivative, not clamped border.
+        let mut p: Paint = serde_json::from_str(r#"{"color":[0,0,0],"strength":0,"seed":19,"granulation":{"cells":[12,7],"strength":0.5,"color":[0.1,0.1,0.1],"relief_texels":2}}"#).unwrap();
+        let textured = build([1.; 4], &p).unwrap();
+        let data = textured.normal_rgba.as_ref().unwrap();
+        assert_eq!(data.len(), 64 * 64 * 4);
+        for pixel in data.as_chunks::<4>().0 {
+            let n: Vec<_> = pixel[..3]
+                .iter()
+                .map(|v| *v as f32 / 255. * 2. - 1.)
+                .collect();
+            assert!((n.iter().map(|v| v * v).sum::<f32>().sqrt() - 1.).abs() < 0.014);
+            assert!(n[2] > 0.);
+            assert_eq!(pixel[3], 255);
+        }
+        assert_eq!(*data, build([1.; 4], &p).unwrap().normal_rgba.unwrap());
+        p.granulation.as_mut().unwrap().relief_texels = 0.;
+        let plain = build([1.; 4], &p).unwrap();
+        assert_eq!(textured.rgba, plain.rgba);
+        assert_eq!(textured.mip_bytes(), plain.mip_bytes() * 2);
+        assert!(plain.normal_rgba.is_none());
+        for invalid in [-1., 4.1, f32::NAN, f32::INFINITY] {
+            p.granulation.as_mut().unwrap().relief_texels = invalid;
+            assert!(build([1.; 4], &p).is_err());
+        }
+    }
+    #[test]
     fn granulation_is_periodic_bounded_and_optional() {
         let mut p: Paint =
             serde_json::from_str(r#"{"color":[0,0,0],"strength":0,"seed":19}"#).unwrap();
@@ -284,6 +360,7 @@ mod tests {
             cells: [12, 7],
             strength: 0.7,
             color: [0.2, 0.1, 0.05],
+            relief_texels: 0.,
         };
         for uv in [[0., 0.], [0.23, 0.78], [-0.12, 1.34]] {
             let a = g.coverage(uv, 19);

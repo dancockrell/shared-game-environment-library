@@ -214,6 +214,15 @@ func _run() -> void:
 			assert(painted.has_mipmaps())
 			assert(saved_material.get_meta("scene_forge_paint") == finish.paint)
 			assert(painted.get_data().slice(0, spec.paint_texture.rgba.size()) == PackedByteArray(spec.paint_texture.rgba))
+			if spec.paint_texture.has("normal_rgba"):
+				assert(saved_material.normal_enabled and saved_material.normal_texture != null)
+				var normal_image := saved_material.normal_texture.get_image()
+				assert(normal_image.has_mipmaps())
+				assert(normal_image.get_data().slice(0, spec.paint_texture.normal_rgba.size()) == PackedByteArray(spec.paint_texture.normal_rgba))
+				var tangents: PackedFloat32Array = display.multimesh.mesh.surface_get_arrays(0)[Mesh.ARRAY_TANGENT]
+				assert(tangents.size() == spec.positions.size() / 3 * 4)
+				for t in tangents:
+					assert(is_finite(t))
 		var surface := display.multimesh.mesh.surface_get_arrays(0)
 		var positions: PackedVector3Array = surface[Mesh.ARRAY_VERTEX]
 		var normals: PackedVector3Array = surface[Mesh.ARRAY_NORMAL]

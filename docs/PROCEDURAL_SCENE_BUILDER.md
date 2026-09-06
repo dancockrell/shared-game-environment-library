@@ -774,6 +774,52 @@ equivalence, unchanged texture byte size at fixed resolution and density
 rejection. Unity runtime and fresh on-disk engine reload were not exercised
 at this checkpoint; existing adapters consume the unchanged RGBA output.
 
+#### Surface-normal extension: CPU verified, native review pending
+
+`paint.granulation.relief_texels` is optional, defaults to zero, and accepts
+finite values in 0..4. It controls shading-only cavity depth in texture pixels,
+not metres and not displacement. The same periodic grain coverage supplies
+negative height; centered wrapped finite differences produce
+`normalize([-dH/dU_pixel, -dH/dV_pixel, 1])`. The compiler emits optional
+`paint_texture.normal_rgba`: linear +X/+Y/+Z tangent-space RGB8, alpha 255.
+Zero relief omits that payload and leaves the existing albedo unchanged.
+Changing texture resolution changes the physical apparent relief unless the
+author retunes this explicitly texel-based control.
+
+The canonical Godot adapter enables the normal texture, requests renormalized
+mipmaps and generates mesh tangents. This follows the documented requirements
+for [normal textures](https://docs.godotengine.org/en/4.7/classes/class_basematerial3d.html#class-basematerial3d-property-normal-texture),
+[ArrayMesh tangent generation](https://docs.godotengine.org/en/4.7/classes/class_arraymesh.html#class-arraymesh-method-regen-normal-maps)
+and [normal mipmaps](https://docs.godotengine.org/en/4.7/classes/class_image.html#class-image-method-generate-mipmaps).
+The Unity adapter uses a linear texture, the normal-map shader keyword and
+[RecalculateTangents](https://docs.unity3d.com/ScriptReference/Mesh.RecalculateTangents.html).
+Unity currently uses its automatic mip generation; identical cross-engine mip
+filtering and rendered orientation are not yet verified.
+
+Residency estimates include the additional full normal-map mip chain and
+16 tangent bytes per indexed vertex. The pastry experiment uses 1.5 texels of
+relief on the one shared sponge mesh. Against the preceding pigment-only
+fixture, positions, normals, UVs and triangle indices are byte-equivalent
+as JSON values. The new estimate is 1,486,532 bytes larger: 1,398,100 bytes
+for the 512-square RGBA normal mip chain plus 88,432 tangent bytes for 5,527
+vertices. No extra triangles. This remains an estimate, not measured GPU use.
+
+CPU receipt:
+`procedural/generated/reviews/20260906-135603-3260c0f9348b41f182f9fcd647c57048/report.json`.
+56 Rust tests, six Node audit tests and all 38 stages passed. Tests cover
+flat normals, known slope sign, wrap behavior, quantized unit-length tolerance,
+positive Z, deterministic bytes, unchanged albedo, omitted zero-relief map,
+invalid relief rejection, and normal/tangent budget accounting.
+An initial strict-lint failure in test chunk iteration was fixed without
+disabling the lint; its failed receipt is retained.
+
+**Native gate remains open:** adapter changes and new native assertions are
+prepared but have not run. The existing PID 30828 still has the earlier importer
+preloaded and still displays the pigment-only scene; it cannot prove these
+changes. Replacement of only that viewer was requested, not performed.
+No new normal-mapped render, native parse pass, saved-scene reload, Unity run,
+or final material-art approval is claimed at this checkpoint.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

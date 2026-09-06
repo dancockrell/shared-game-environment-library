@@ -45,6 +45,12 @@ static func build(data: Dictionary) -> Node3D:
 			material.albedo_texture = ImageTexture.create_from_image(painted)
 			material.albedo_color = Color.WHITE
 			material.set_meta("scene_forge_paint", finish.get("paint", {}))
+			if texture_data.has("normal_rgba"):
+				var normal_image := Image.create_from_data(int(texture_data.width), int(texture_data.height), false, Image.FORMAT_RGBA8, PackedByteArray(texture_data.normal_rgba))
+				assert(normal_image.generate_mipmaps(true) == OK)
+				material.normal_enabled = true
+				material.normal_texture = ImageTexture.create_from_image(normal_image)
+				mesh.regen_normal_maps()
 		mesh.surface_set_material(0, material)
 		var instances: Array = data.instances.filter(func(item): return int(item.mesh) == mesh_index)
 		var multi := MultiMesh.new()

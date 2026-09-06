@@ -9,7 +9,7 @@ using UnityEngine.Rendering;
 
 namespace SharedEnvironment.SceneForge {
     [Serializable] public sealed class MaterialData { public float roughness, metallic; }
-    [Serializable] public sealed class PaintTextureData { public int width, height; public int[] rgba; }
+    [Serializable] public sealed class PaintTextureData { public int width, height; public int[] rgba, normal_rgba; }
     [Serializable] public sealed class MeshData { public string name; public float[] positions, normals, uvs, color; public int[] indices; public MaterialData material; public PaintTextureData paint_texture; }
     [Serializable] public sealed class InstanceData { public int mesh; public float[] position, basis; public float yaw, scale; }
     [Serializable] public sealed class SceneData { public int version; public string coordinate_system, recipe_json; public MeshData[] meshes; public InstanceData[] instances; public long estimated_geometry_bytes; }
@@ -95,6 +95,15 @@ namespace SharedEnvironment.SceneForge {
                     material.color=Color.white;
                     material.mainTexture=texture;
                     if(material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap",texture);
+                    if(pixels.normal_rgba!=null) {
+                        var normal=new Texture2D(pixels.width,pixels.height,TextureFormat.RGBA32,true,true){name=source.name+" surface normals",wrapMode=TextureWrapMode.Repeat,filterMode=FilterMode.Trilinear};
+                        normal.LoadRawTextureData(Array.ConvertAll(pixels.normal_rgba,value=>checked((byte)value)));
+                        normal.Apply(true,false);
+                        mesh.RecalculateTangents();
+                        material.SetTexture("_BumpMap",normal);
+                        material.SetFloat("_BumpScale",1f);
+                        material.EnableKeyword("_NORMALMAP");
+                    }
                 }
                 materials[i]=material;
             }

@@ -47,6 +47,7 @@ namespace SharedEnvironment.SceneForge {
                     float roughness=source.material!=null?source.material.roughness:0.85f;
                     float metallic=source.material!=null?source.material.metallic:0f;
                     if(source.paint_texture!=null && (material.mainTexture==null || material.mainTexture.width!=source.paint_texture.width || material.mainTexture.height!=source.paint_texture.height)) throw new Exception("Paint texture missing or resized");
+                    if(source.paint_texture?.normal_rgba!=null && (!material.IsKeywordEnabled("_NORMALMAP") || material.GetTexture("_BumpMap")==null || filters[i].sharedMesh.tangents.Length!=filters[i].sharedMesh.vertexCount)) throw new Exception("Surface normals or tangents missing");
                     if(!Mathf.Approximately(material.GetFloat("_Metallic"),metallic)) throw new Exception("Metallic setting lost");
                     string smoothProperty=material.HasProperty("_Smoothness")?"_Smoothness":"_Glossiness";
                     if(!Mathf.Approximately(material.GetFloat(smoothProperty),1f-roughness)) throw new Exception("Roughness to smoothness conversion lost");

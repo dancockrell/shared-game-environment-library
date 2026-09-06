@@ -856,6 +856,10 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                         (m.positions.len() * 32 + m.indices.len() * 4) as u64;
                     if let Some(texture) = &m.paint_texture {
                         s.estimated_geometry_bytes += texture.mip_bytes();
+                        if texture.normal_rgba.is_some() {
+                            // Engine adapters generate one four-float tangent per vertex.
+                            s.estimated_geometry_bytes += (m.positions.len() * 16) as u64;
+                        }
                     }
                     if s.estimated_geometry_bytes > r.limits.gpu_geometry_bytes {
                         return Err("Geometry residency budget exceeded".into());
@@ -1340,7 +1344,26 @@ mod tests {
             painted.estimated_geometry_bytes - plain.estimated_geometry_bytes,
             21_844
         );
-        r.limits.gpu_geometry_bytes = painted.estimated_geometry_bytes - 1;
+        r.definitions
+            .get_mut("block")
+            .unwrap()
+            .material
+            .paint
+            .as_mut()
+            .unwrap()
+            .granulation = Some(paint::Granulation {
+            cells: [12, 7],
+            strength: 0.,
+            color: [0.; 3],
+            relief_texels: 1.,
+        });
+        let relieved = compile(&r).unwrap();
+        assert_eq!(relieved.meshes[0].positions, painted.meshes[0].positions);
+        assert_eq!(
+            relieved.estimated_geometry_bytes - painted.estimated_geometry_bytes,
+            21_844 + (relieved.meshes[0].positions.len() * 16) as u64
+        );
+        r.limits.gpu_geometry_bytes = relieved.estimated_geometry_bytes - 1;
         assert!(compile(&r).unwrap_err().contains("residency"));
     }
     #[test]

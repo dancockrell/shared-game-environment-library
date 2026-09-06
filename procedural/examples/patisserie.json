@@ -83,7 +83,7 @@
           "color": [0.55, 0.4, 0.22],
           "strength": 0.22,
           "seed": 43,
-          "granulation": {"cells": [128, 16], "strength": 0.5, "color": [0.25, 0.14, 0.065]},
+          "granulation": {"cells": [128, 16], "strength": 0.5, "color": [0.25, 0.14, 0.065], "relief_texels": 1.5},
           "size": 512,
           "strokes": [
             {
