@@ -2,13 +2,12 @@
   "schema_version": 1,
   "task_id": "zero-budget-cross-project-strategy",
   "agent": "codex-olympus",
-  "summary": "Publish cross-project reuse policy and discoverable existing Olympus source records without generation spending.",
-  "status": "completed",
+  "summary": "Record owner prohibition on paid production and second body rejection",
+  "status": "active",
   "claimed_at": "2026-09-06T01:15:00Z",
-  "updated_at": "2026-09-06T01:20:50.4050070Z",
+  "updated_at": "2026-09-06T01:30:47.457912+00:00",
   "paths": [
-    "docs/CROSS_PROJECT_ASSET_STRATEGY.md",
-    "README.md"
+    "docs/CROSS_PROJECT_ASSET_STRATEGY.md"
   ],
   "symbols": [],
   "coordination": {

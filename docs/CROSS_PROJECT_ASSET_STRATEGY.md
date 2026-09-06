@@ -10,6 +10,8 @@ Before work, search `catalog/resource-pack-ledger.json`, approved source/materia
 
 ## Cost boundary and verified Magnific route
 
+Owner clarification,2026-09-06: **Do not use paid work at all for ordinary production.** Limited paid capacity is reserved for emergencies in finishing work. Only a specific future owner authorization can permit that expense; agents must not self-declare an emergency or use a paid fallback. Reuse and visibly verified browser-unlimited generation remain the normal routes.
+
 Checked 2026-09-06: Magnific account reports unlimited mode, but the MCP connector reports `unlimitedAppliesHere: false`. Connector generations consume credits. Do not infer free operation from the account tier or from a model being called cheap/fast.
 
 The authenticated browser Image Generator explicitly displays **Unlimited generations** when **Google Nano Banana 2 Lite** is selected. That verifies a browser image-generation route; it does not establish free image-to-3D, rigging, upscaling, video or every model/setting. Recheck the submission panel immediately before each job. If it shows credits, unknown cost, or an upgrade, do not submit under the zero-budget policy.
@@ -68,7 +70,7 @@ In the Pirate Island asset-work checkout, `content/art/shared_source_collections
 | --- | --- | --- |
 | Pirate asset-work: `resource-packs/source/cc0/kenney/mini-dungeon/character-human.glb` | 465 triangles, 2 skins, 32 clips. Native four-angle review shows huge cube head and very short body; referenced `Textures/colormap.png` absent in extracted bundle. Adjacent `LICENSE-CC0.txt` present. | Reject as Olympus visual body. Rig/clip research only; repair dependency before palette review. Retargeting unproven. |
 | Same collection: `weapon-spear.glb`, `shield-round.glb`, `weapon-sword.glb` | Separate equipment sources; spear/shield each have one mesh/material. | Inspect sockets, scale and silhouette before reuse; no body regeneration required. |
-| Pirate asset-work: `resource-packs/source/cc0/kenney/animated-characters-protagonists/characterMedium.fbx` | Body plus separate idle/run/jump FBXs and CC0 license file exist. | Unreviewed alternative; do not assume proportions or clip compatibility. |
+| Pirate asset-work: `resource-packs/source/cc0/kenney/animated-characters-protagonists/characterMedium.fbx` | Body plus separate idle/run/jump FBXs and CC0 license file exist. | Native FBX review rejected for adult-body use: approximately3.3heads tall, oversized head and childlike torso. One mesh/58bones; clips not tested after silhouette failed. |
 | Shared: `assets/approved_cc0/PolyHaven/medieval-wood-1k/source_files/` | Existing map set with ledger/provenance. | First material candidate for board and equipment backs. |
 | Shared: `assets/approved_cc0/PolyHaven/metal-plate-02-1k/source_files/` | Existing map set with ledger/provenance. | Surface source; do not call it cast bronze without material review. |
 | Shared: `assets/approved_cc0/PolyHaven/rock-boulder-dry-1k/source_files/` | Existing map set with ledger/provenance. | Arena geology candidate; no new texture generation needed. |
@@ -84,3 +86,6 @@ No production-ready adult body family was established by this bounded audit. Tha
 1. **Material proof:** import one existing wood or rock set with exact hashes; correct color spaces and ARM channels; compare in native Godot at arena scale. No new geometry or generation. Validate material response under two light angles and record cost zero.
 2. **Body compatibility proof:** inspect the existing alternative body source and existing paid candidates before generating. Verify adult silhouette first, then rig and clip mapping. Stop if neither provides a defensible foundation; use intentional static pieces rather than force an unsuitable body.
 3. **Guided free image only for a demonstrated gap:** nominate one reusable reference/component with two intended consumers, use verified browser unlimited setting, one output then review. No automatic 3D conversion, upscaling or batch expansion. Save lineage in the originating manifest and contribute through the existing library intake.
+
+
+Olympus consumed the existing dry-rock maps in its runtime stage on2026-09-06:18outcrops, byte-identical source maps and a project-owned material Resource.113stage/material and45native-app checks pass. This is a material reuse example, not new shared geometry or a completed art-quality claim. Detailed runtime ancestry stays in the Olympus art manifest.
