@@ -16,6 +16,10 @@ It deliberately does not contain project lore, character identities, proprietary
 
 ## Use the right layer
 
+The [shared Rust procedural scene builder](docs/PROCEDURAL_SCENE_BUILDER.md)
+is in `procedural/`, with Godot and Unity editor adapters. It is an early,
+bounded geometry/composition implementation, not a completed world generator.
+
 See [model production](docs/MODEL_PRODUCTION.md) for the cross-game build order,
 DR Companion handoff review, provisional budgets, and reproducible model review.
 

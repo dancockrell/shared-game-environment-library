@@ -1,0 +1,135 @@
+# Scene Forge: shared procedural scene builder
+
+## Current authority and scope
+
+User direction, 6 September 2026: a Rust procedural generator, usable as Godot
+and Unity plugins, for item parts, items, rooms, buildings, landscape and towns.
+No neural network dependency, permanent server, paid services or unlicensed
+code. The corrected hardware target is **8 GB VRAM**, not installed disk size.
+The existing shared repository and catalog remain canonical. Character tooling
+has a separate owner; this work does not replace it or its asset/provenance data.
+
+`procedural/` is the common engine-neutral compiler and adapter package. It
+extends this library's procedural production workflow, not another world server.
+Original software in that directory is MIT licensed. Existing CC0-only art
+admission is unchanged; permissively licensed software dependencies are not art.
+
+## Implemented first slice
+
+- Rust library, command-line executable and C ABI dynamic library.
+- Reusable named mesh definitions; nested groups and repeated assemblies.
+- Boxes, solid gable roofs, lathed profiles and convex polygon extrusions.
+- CCW, right-handed, Y-up, metre-based portable mesh/instance output.
+- Deterministic output, shared meshes, explicit geometry/instance budgets,
+  pre-expansion count checks, finite-coordinate and geometry validation.
+- Godot editor add-on calls the local compiler on a worker thread and imports
+  shared MultiMeshes, with an undoable scene insertion. No network listener.
+- Unity editor package calls the same core through its C ABI and creates
+  shared-mesh objects. Unity execution remains unverified until tested in Unity.
+- A four-workshop construction fixture with complete walls, doorway openings,
+  roofs, shelves and repeated lathed vessels. This is a geometry/adapter test,
+  not art matching the approved Crossing reference.
+
+Not implemented yet: a general room/city constraint solver, arbitrary concave
+booleans, spline sweeps, terrain erosion, road networks, procedural PBR materials,
+automatic LOD/streaming, catalog asset imports, MUD graph adapter, SQLite cache,
+editor node graph, or production packaging. These are required later capabilities,
+not hidden behind placeholder APIs in the current build.
+
+## Architecture to extend, not fork
+
+1. **Evidence and recipes:** translate researched construction patterns and
+   room descriptions into typed, inspectable constraints. Every inferred feature
+   carries its origin and uncertainty. No scraping result becomes executable code.
+2. **Construction operators:** profiles, sweeps, extrusion, surface subdivision,
+   controlled deformation, cuts and junctions. Compose details and structural
+   members with reusable definitions; bound expansion rather than promising
+   literally unlimited complexity on finite hardware.
+3. **Assemblies:** sockets, support surfaces, joints, clearance volumes and
+   material slots. Prefer catalog instances to rebuilding unchanged geometry.
+4. **Spatial constraints:** rooms/buildings and landscape parcels use explicit
+   bounds, openings, circulation, drainage and adjacency. MUD topology is an input
+   constraint; ordinary worlds may use generated roads and parcels. Neither mode
+   silently changes the other mode's topology.
+5. **Compilation:** stable recipe/operator/source hashes, dependency graph,
+   deterministic seeds, incremental build, cancellation, per-job resource limits.
+6. **Local catalog/cache:** SQLite indexes the existing catalog, assets, hashes,
+   dependencies, compile receipts, quality reviews and local artifact paths.
+   The existing catalog remains provenance authority; SQLite is rebuildable.
+7. **Engine adapters:** convert coordinates, material slots and mesh/instance
+   buffers only. They do not implement a second geometry generator.
+
+## 8 GB VRAM contract
+
+Generation is CPU-side. The present compiler estimates vertex, index and
+instance buffer payload, defaulting to a 512 MiB geometry limit; this is NOT
+measured total VRAM. A hard safety ceiling prevents asking this prototype for
+more than 6 GiB of geometry, but users should not allocate that whole amount.
+
+The eventual residency controller must measure engine/device memory, account for
+textures, render targets, shadows, duplicates and driver overhead, and maintain
+headroom. Target a configurable 5–6 GB working set on an 8 GB card, with hysteresis
+for eviction and quality reduction. Never infer available VRAM from file sizes.
+Use mesh instancing, texture arrays/atlases where appropriate, hierarchical LOD,
+chunked terrain and distance/visibility-based unloading. Disk/cache size and CPU
+RAM have separate limits. No GPU performance or 8 GB compatibility claim is
+established by the small fixture.
+
+## Licensing and research
+
+Current core geometry is original first-principles code. serde/serde_json and
+their locked transitive dependencies require a distribution notice audit.
+Cargo.lock pins exact downloads. Do not copy code from a paper or repository
+merely because it is publicly readable. Record upstream revision, license,
+attribution and modifications for each adopted implementation.
+
+Current high-level godot-rust bindings use MPL; they have not been included.
+The Godot editor add-on uses the documented GDScript plugin interface instead.
+Unity uses its documented native-plugin C ABI. Future in-process Godot bindings
+must pass the same permissive-license review, not bypass it.
+
+References:
+- https://docs.godotengine.org/en/stable/tutorials/plugins/editor/making_plugins.html
+- https://docs.unity3d.com/6000.0/Documentation/Manual/plug-ins-native.html
+- https://github.com/godot-rust/gdext
+- https://github.com/rusqlite/rusqlite
+
+## Build and inspect
+
+Run `cargo test --manifest-path procedural/Cargo.toml`, then
+`cargo build --release --manifest-path procedural/Cargo.toml`.
+The Windows outputs are `scene-forge-cli.exe` and `scene_forge.dll` in
+`procedural/target/release/`.
+
+Compile `procedural/examples/workshop.json` into a **new** output filename:
+`scene-forge-cli.exe <recipe.json> <new-scene.json>`. Existing files are protected
+against overwrite. The CLI creates no server and requires no account.
+
+Godot: copy `procedural/godot/addons/scene_forge` into the target project's
+`addons/`, enable Scene Forge, choose the compiler path, open a scene, and choose
+the recipe with the dock button. The bundled Godot project is an adapter test.
+
+Unity: add the local `procedural/unity` package, place the release library in
+the project's `Assets/Plugins/x86_64/` with the appropriate editor platform
+settings, and open **Tools > Scene Forge**. Only the Windows native library is
+built on this machine so far; no cross-platform or Unity runtime pass is claimed.
+The discovered Unity 6000.0.5f1 folder contains installation data but no Unity.exe;
+the editor smoke test therefore could not launch. No installation repair or
+license activation was attempted.
+
+First local evidence: seven Rust unit tests passed; the release compiler emitted
+the four-workshop fixture (52 instances sharing eight meshes); Godot loaded it,
+packed/reinstantiated it and rendered it through the same adapter used by the
+editor plugin. The Godot plugin script also parsed during that test. This does
+not prove the interactive dock workflow, Unity import, or 8 GB GPU capacity.
+
+## Next acceptance targets
+
+- Property tests for winding, manifoldness, profile seam normals and UVs;
+  concave/self-intersecting input rejection; operator-specific allocation bounds.
+- Run the same compiled scene through both engine adapters and compare world
+  bounds, normals, instance transforms, sockets and captured views.
+- Add constrained room construction with exact MUD openings and native-kit
+  references, then buildings/streets/terrain; batch Crossing without hand recipes.
+- Measure resident memory and frame time on an 8 GB GPU at dense-city scale.
+- Package reproducible releases with complete permissive-dependency notices.

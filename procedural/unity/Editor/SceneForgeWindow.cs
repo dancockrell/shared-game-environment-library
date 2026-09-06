@@ -1,0 +1,79 @@
+using System;
+using System.IO;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+
+namespace SharedEnvironment.SceneForge {
+    [Serializable] public sealed class MeshData { public string name; public float[] positions, normals, uvs, color; public int[] indices; }
+    [Serializable] public sealed class InstanceData { public int mesh; public float[] position; public float yaw, scale; }
+    [Serializable] public sealed class SceneData { public int version; public string coordinate_system; public MeshData[] meshes; public InstanceData[] instances; public long estimated_geometry_bytes; }
+    [Serializable] public sealed class Response { public bool ok; public string error; public SceneData scene; }
+    public static class Native {
+        [DllImport("scene_forge", CallingConvention=CallingConvention.Cdecl)] private static extern IntPtr scene_forge_compile(byte[] input, UIntPtr length, out UIntPtr outputLength);
+        [DllImport("scene_forge", CallingConvention=CallingConvention.Cdecl)] private static extern void scene_forge_free(IntPtr output, UIntPtr length);
+        public static string Compile(string recipe) {
+            byte[] bytes=Encoding.UTF8.GetBytes(recipe);
+            if(bytes.Length>16*1024*1024) throw new ArgumentException("Recipe exceeds 16 MiB");
+            UIntPtr length; IntPtr pointer=scene_forge_compile(bytes,(UIntPtr)bytes.Length,out length);
+            if(pointer==IntPtr.Zero) throw new InvalidOperationException("Native compiler rejected the request");
+            try { int n=checked((int)length.ToUInt64()); byte[] result=new byte[n]; Marshal.Copy(pointer,result,0,n); return Encoding.UTF8.GetString(result); }
+            finally { scene_forge_free(pointer,length); }
+        }
+    }
+    public sealed class SceneForgeWindow : EditorWindow {
+        private Task<string> job;
+        private string status="Local Rust generation; no server";
+        [MenuItem("Tools/Scene Forge")]
+        private static void Open() { GetWindow<SceneForgeWindow>("Scene Forge"); }
+        private void OnGUI() {
+            EditorGUILayout.HelpBox(status,MessageType.Info);
+            using(new EditorGUI.DisabledScope(job!=null)) if(GUILayout.Button("Compile recipe into scene")) {
+                string path=EditorUtility.OpenFilePanel("Procedural recipe","","json");
+                if(!string.IsNullOrEmpty(path)) {
+                    job=Task.Run(()=>{if(new FileInfo(path).Length>16*1024*1024) throw new IOException("Recipe exceeds 16 MiB");return Native.Compile(File.ReadAllText(path));});
+                    status="Compiling…";
+                }
+            }
+        }
+        private void OnInspectorUpdate() {
+            if(job==null||!job.IsCompleted) return;
+            try {
+                Response response=JsonUtility.FromJson<Response>(job.GetAwaiter().GetResult());
+                if(!response.ok) throw new InvalidOperationException(response.error);
+                Import(response.scene);
+                status="Imported "+response.scene.instances.Length+" shared-mesh instances";
+            } catch(Exception error) {status=error.Message;Debug.LogException(error);} finally {job=null;Repaint();}
+        }
+        public static GameObject Import(SceneData data) {
+            if(data.version!=1||data.coordinate_system!="right-handed-y-up-ccw-metres") throw new InvalidDataException("Unsupported scene format");
+            var meshes=new Mesh[data.meshes.Length];var materials=new Material[data.meshes.Length];
+            Shader shader=Shader.Find("Universal Render Pipeline/Lit")??Shader.Find("Standard");
+            if(shader==null) throw new InvalidOperationException("No supported lit shader found");
+            for(int i=0;i<meshes.Length;i++) {
+                MeshData source=data.meshes[i];var vertices=new Vector3[source.positions.Length/3];var normals=new Vector3[vertices.Length];var uv=new Vector2[vertices.Length];
+                for(int j=0;j<vertices.Length;j++) {
+                    vertices[j]=new Vector3(source.positions[j*3],source.positions[j*3+1],-source.positions[j*3+2]);
+                    normals[j]=new Vector3(source.normals[j*3],source.normals[j*3+1],-source.normals[j*3+2]);
+                    uv[j]=new Vector2(source.uvs[j*2],source.uvs[j*2+1]);
+                }
+                // Reflect Z into Unity's left-handed space; CCW becomes Unity's CW.
+                var mesh=new Mesh{name=source.name,indexFormat=IndexFormat.UInt32};
+                mesh.vertices=vertices;mesh.normals=normals;mesh.uv=uv;mesh.triangles=source.indices;mesh.RecalculateBounds();meshes[i]=mesh;
+                var material=new Material(shader){name=source.name,enableInstancing=true};material.color=new Color(source.color[0],source.color[1],source.color[2],source.color[3]);materials[i]=material;
+            }
+            var root=new GameObject("Scene Forge");Undo.RegisterCreatedObjectUndo(root,"Import procedural scene");
+            foreach(InstanceData instance in data.instances) {
+                var item=new GameObject(data.meshes[instance.mesh].name);item.transform.SetParent(root.transform,false);
+                item.transform.localPosition=new Vector3(instance.position[0],instance.position[1],-instance.position[2]);
+                item.transform.localRotation=Quaternion.Euler(0,-instance.yaw*Mathf.Rad2Deg,0);item.transform.localScale=Vector3.one*instance.scale;
+                item.AddComponent<MeshFilter>().sharedMesh=meshes[instance.mesh];item.AddComponent<MeshRenderer>().sharedMaterial=materials[instance.mesh];
+            }
+            Selection.activeGameObject=root;
+            return root;
+        }
+    }
+}

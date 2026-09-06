@@ -1,1 +1,9 @@
 tools/.godot/
+procedural/target/
+procedural/generated/
+procedural/godot/.godot/
+procedural/unity-test/Library/
+procedural/unity-test/Logs/
+procedural/unity-test/Temp/
+procedural/unity-test/obj/
+procedural/unity-test/Assets/Plugins/
