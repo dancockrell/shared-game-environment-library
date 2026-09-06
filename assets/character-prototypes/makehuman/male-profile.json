@@ -10,9 +10,27 @@
         "surface": 0
       }
     ],
+    "Formal bottom": [
+      {
+        "mesh": "Skeleton3D/FormalBottom",
+        "surface": 0
+      }
+    ],
+    "Formal top": [
+      {
+        "mesh": "Skeleton3D/FormalTop",
+        "surface": 0
+      }
+    ],
     "Hair": [
       {
         "mesh": "Skeleton3D/Hair",
+        "surface": 0
+      }
+    ],
+    "Hat": [
+      {
+        "mesh": "Skeleton3D/Hat",
         "surface": 0
       }
     ]
@@ -23,6 +41,10 @@
       "Skeleton3D/Outfit01::Broad nose",
       "Skeleton3D/Body02::Broad nose",
       "Skeleton3D/Outfit02::Broad nose",
+      "Skeleton3D/Body03::Broad nose",
+      "Skeleton3D/FormalTop::Broad nose",
+      "Skeleton3D/FormalBottom::Broad nose",
+      "Skeleton3D/Hat::Broad nose",
       "Skeleton3D/Hair::Broad nose",
       "Skeleton3D/Eyes::Broad nose",
       "Skeleton3D/Shoes::Broad nose"
@@ -32,6 +54,10 @@
       "Skeleton3D/Outfit01::Full lips",
       "Skeleton3D/Body02::Full lips",
       "Skeleton3D/Outfit02::Full lips",
+      "Skeleton3D/Body03::Full lips",
+      "Skeleton3D/FormalTop::Full lips",
+      "Skeleton3D/FormalBottom::Full lips",
+      "Skeleton3D/Hat::Full lips",
       "Skeleton3D/Hair::Full lips",
       "Skeleton3D/Eyes::Full lips",
       "Skeleton3D/Shoes::Full lips"
@@ -41,6 +67,10 @@
       "Skeleton3D/Outfit01::Lean",
       "Skeleton3D/Body02::Lean",
       "Skeleton3D/Outfit02::Lean",
+      "Skeleton3D/Body03::Lean",
+      "Skeleton3D/FormalTop::Lean",
+      "Skeleton3D/FormalBottom::Lean",
+      "Skeleton3D/Hat::Lean",
       "Skeleton3D/Hair::Lean",
       "Skeleton3D/Eyes::Lean",
       "Skeleton3D/Shoes::Lean"
@@ -50,6 +80,10 @@
       "Skeleton3D/Outfit01::Muscular",
       "Skeleton3D/Body02::Muscular",
       "Skeleton3D/Outfit02::Muscular",
+      "Skeleton3D/Body03::Muscular",
+      "Skeleton3D/FormalTop::Muscular",
+      "Skeleton3D/FormalBottom::Muscular",
+      "Skeleton3D/Hat::Muscular",
       "Skeleton3D/Hair::Muscular",
       "Skeleton3D/Eyes::Muscular",
       "Skeleton3D/Shoes::Muscular"
@@ -59,6 +93,10 @@
       "Skeleton3D/Outfit01::Narrow chin",
       "Skeleton3D/Body02::Narrow chin",
       "Skeleton3D/Outfit02::Narrow chin",
+      "Skeleton3D/Body03::Narrow chin",
+      "Skeleton3D/FormalTop::Narrow chin",
+      "Skeleton3D/FormalBottom::Narrow chin",
+      "Skeleton3D/Hat::Narrow chin",
       "Skeleton3D/Hair::Narrow chin",
       "Skeleton3D/Eyes::Narrow chin",
       "Skeleton3D/Shoes::Narrow chin"
@@ -68,6 +106,10 @@
       "Skeleton3D/Outfit01::Oval face",
       "Skeleton3D/Body02::Oval face",
       "Skeleton3D/Outfit02::Oval face",
+      "Skeleton3D/Body03::Oval face",
+      "Skeleton3D/FormalTop::Oval face",
+      "Skeleton3D/FormalBottom::Oval face",
+      "Skeleton3D/Hat::Oval face",
       "Skeleton3D/Hair::Oval face",
       "Skeleton3D/Eyes::Oval face",
       "Skeleton3D/Shoes::Oval face"
@@ -77,6 +119,10 @@
       "Skeleton3D/Outfit01::Pointed ears",
       "Skeleton3D/Body02::Pointed ears",
       "Skeleton3D/Outfit02::Pointed ears",
+      "Skeleton3D/Body03::Pointed ears",
+      "Skeleton3D/FormalTop::Pointed ears",
+      "Skeleton3D/FormalBottom::Pointed ears",
+      "Skeleton3D/Hat::Pointed ears",
       "Skeleton3D/Hair::Pointed ears",
       "Skeleton3D/Eyes::Pointed ears",
       "Skeleton3D/Shoes::Pointed ears"
@@ -86,6 +132,10 @@
       "Skeleton3D/Outfit01::Square face",
       "Skeleton3D/Body02::Square face",
       "Skeleton3D/Outfit02::Square face",
+      "Skeleton3D/Body03::Square face",
+      "Skeleton3D/FormalTop::Square face",
+      "Skeleton3D/FormalBottom::Square face",
+      "Skeleton3D/Hat::Square face",
       "Skeleton3D/Hair::Square face",
       "Skeleton3D/Eyes::Square face",
       "Skeleton3D/Shoes::Square face"
@@ -107,8 +157,30 @@
           "Skeleton3D/Outfit02",
           "Skeleton3D/Body02"
         ]
+      },
+      "Formal separates": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Body03",
+          "Skeleton3D/FormalTop",
+          "Skeleton3D/FormalBottom"
+        ]
+      }
+    },
+    "Headwear": {
+      "Bare head": {
+        "hides": [],
+        "meshes": []
+      },
+      "Felt hat": {
+        "hides": [
+          "Skeleton3D/Hair"
+        ],
+        "meshes": [
+          "Skeleton3D/Hat"
+        ]
       }
     }
   },
-  "sourceSha256": "eb2ce20ac6e9f14eee8ba0bca4848866bd2f516b6cfc229fbb367f76a40388ca"
+  "sourceSha256": "26ff3a769f2fccff32ef6760ca5f5704779ef00c9ce6f0c5029b35b09cce3ff1"
 }

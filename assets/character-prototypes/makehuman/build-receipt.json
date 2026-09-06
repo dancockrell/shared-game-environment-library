@@ -1,24 +1,24 @@
 {
   "bones": 163,
-  "compilerSha256": "80ddfdecf3e4a7d2ad8bcddca0f52c48ded5873e047a187150992daacfd219e4",
+  "compilerSha256": "f6606c07cfa13b9e1fd14ba4181948d8c6b6955928781d3d4e4b06da62c10b0c",
   "coreManifestSha256": "b433552d36cfaaee461336b77035faeae7342c2cd8be1fe906f0a7931bf063b3",
   "engine": "4.7.2-stable (official)",
   "files": [
     {
       "path": "female-source.glb",
-      "sha256": "e1f58c5af17ff98c124ec1aa8607c5bcfc3204e67c3dc01692daee791ec69874"
+      "sha256": "87b74990668604ff4a1d37d268cb1e6415668c7d73230363d21561c8b0faad86"
     },
     {
       "path": "female-profile.json",
-      "sha256": "a2fce3480e0e9300cdbf298668fbf53ff92bad2507f91965de4815725b47a08d"
+      "sha256": "a40e22ef4263ec4cb3c658055ed733a5ad2bc8327e3384d34fcd71aa293e2141"
     },
     {
       "path": "male-source.glb",
-      "sha256": "eb2ce20ac6e9f14eee8ba0bca4848866bd2f516b6cfc229fbb367f76a40388ca"
+      "sha256": "26ff3a769f2fccff32ef6760ca5f5704779ef00c9ce6f0c5029b35b09cce3ff1"
     },
     {
       "path": "male-profile.json",
-      "sha256": "9d8bd2c192ff9c697cdb1fe9d27429a9e4aa855571f6d194662f7241dc3c4cbd"
+      "sha256": "14e6d87cf74d6eb0492bf954708f8e95670d21d42f11bd3ae3f659a4271fbec0"
     }
   ],
   "license": "CC0-1.0",
@@ -39,6 +39,6 @@
   ],
   "schemaVersion": 1,
   "status": "development-source-assembly-not-approved-game-art",
-  "systemManifestSha256": "a85829a5b92f805254611e3c9c9e7467f278761ba7c039b897bdb9abbc25ac53",
+  "systemManifestSha256": "ca6a6c0d8e830ae2d3eeb87a32b7fcdf36a728ba22649fce70409249bb479ca9",
   "textureMaxDimension": 1024
 }

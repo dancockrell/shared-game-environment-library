@@ -29,7 +29,8 @@ func run() -> void:
 			return
 		var actor := packed.instantiate() as Node3D
 		editor.stage.add_child(actor)
-		var appearance: Dictionary = actor.get_meta("appearance")
+		var is_batch := actor.name == "CharacterBatch"
+		var appearance: Dictionary = actor.get_child(0).get_meta("appearance") if is_batch else actor.get_meta("appearance")
 		check(actor.find_child("Skeleton3D",true,false) != null,"standalone actor has rig")
 		for mesh in actor.find_children("*","MeshInstance3D",true,false):
 			check(mesh.mesh != null and mesh.get_active_material(0) != null,"standalone geometry and material: "+str(mesh.name))
@@ -37,6 +38,13 @@ func run() -> void:
 		editor.camera.position = Vector3(0,appearance.height*.6,appearance.height*3)
 		editor.camera.look_at(Vector3(0,appearance.height*.5,0))
 		editor.status.text = "Standalone exported character.\nNo source GLB or wardrobe profile loaded."
+		if is_batch:
+			for i in actor.get_child_count():
+				actor.get_child(i).position = Vector3((i%3-1)*1.4,(1-i/3)*2.1,0)
+			editor.camera.size = 4.8
+			editor.camera.position = Vector3(0,2,8)
+			editor.camera.look_at(Vector3(0,2,0))
+			editor.status.text = "Standalone NPC batch: %d actors.\nReview layout only; no population simulation." % actor.get_child_count()
 		if DisplayServer.get_name() != "headless":
 			for i in 8:
 				await process_frame
@@ -121,6 +129,25 @@ func run() -> void:
 		editor.save_recipe(args[1]+".json")
 		editor.load_recipe(args[1]+".json")
 		check(editor.make_recipe() == first_variation,"variation provenance roundtrip")
+		var population: PackedScene = editor.build_population("population-test",6)
+		check(population != null and editor.make_recipe() == first_variation,"batch creation preserves edited character")
+		var batch: Node3D = population.instantiate()
+		check(batch.get_child_count() == 6,"batch contains requested number of actors")
+		var unique_shapes := {}
+		for i in batch.get_child_count():
+			var actor := batch.get_child(i)
+			check(actor.get_meta("variation_id") == "population-test:"+str(i),"batch actor has stable variation ID "+str(i))
+			check(actor.get_meta("appearance").name.is_empty(),"batch leaves narrative identity to consumer "+str(i))
+			unique_shapes[JSON.stringify(actor.get_meta("appearance").outfit.morphs)] = true
+		check(unique_shapes.size() == 6,"batch actors have distinct generated morphology")
+		check(editor.build_population("population-test",65) == null and editor.make_recipe() == first_variation,"oversized batch rejected without changing character")
+		batch.free()
+		editor.export_population(args[1]+"-batch.scn","population-test",6)
+		var batch_resource := ResourceLoader.load(args[1]+"-batch.scn","PackedScene",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+		check(batch_resource != null and ResourceLoader.get_dependencies(args[1]+"-batch.scn").is_empty(),"batch file is self-contained")
+		var loaded_batch := batch_resource.instantiate()
+		check(loaded_batch.get_child_count() == 6,"batch actors survive file roundtrip")
+		loaded_batch.free()
 		editor.apply_recipe(unvaried)
 		var prepared_before: Dictionary = editor.make_recipe()
 		editor.open_prepared_body("unknown")
@@ -264,5 +291,22 @@ func run() -> void:
 					await process_frame
 				RenderingServer.force_draw(false)
 				check(root.get_texture().get_image().save_png(args[1]+"-ears.png") == OK,"render pointed ears")
+				editor.outfit.selections.Clothes = "Formal separates"
+				editor.outfit.selections.Headwear = "Felt hat"
+				editor.outfit.colors["Formal top"] = "ac8654ff"
+				editor.outfit.colors["Formal bottom"] = "605850ff"
+				editor.outfit.apply()
+				check(editor.parts["Skeleton3D/Body03"].visible and editor.parts["Skeleton3D/FormalTop"].visible and editor.parts["Skeleton3D/FormalBottom"].visible and not editor.parts["Skeleton3D/Body01"].visible,"formal clothes select their fitted masked body")
+				check(editor.parts["Skeleton3D/Hat"].visible and not editor.parts["Skeleton3D/Hair"].visible,"headwear applies hair exclusion")
+				check(editor.parts["Skeleton3D/FormalTop"].get_active_material(0).albedo_color != editor.parts["Skeleton3D/FormalBottom"].get_active_material(0).albedo_color,"separate garments have independent dyes")
+				editor.refresh_controls()
+				editor.frame_model()
+				for i in 5:
+					await process_frame
+				RenderingServer.force_draw(false)
+				check(root.get_texture().get_image().save_png(args[1]+"-formal.png") == OK,"render formal outfit and hat")
+				editor.outfit.selections.Headwear = "Bare head"
+				editor.outfit.apply()
+				check(not editor.parts["Skeleton3D/Hat"].visible and editor.parts["Skeleton3D/Hair"].visible,"removing headwear restores hair")
 	print("Workshop failures: ",failures)
 	quit(0 if failures == 0 else 1)

@@ -18,6 +18,7 @@ var source_height := 1.0
 var target_height := 1.7
 var title_edit: LineEdit
 var variation_seed := ""
+var batch_count := 6
 var outfit = preload("res://character-outfit.gd").new()
 
 func _ready() -> void:
@@ -239,6 +240,14 @@ func refresh_controls() -> void:
 		seed_edit.text = variation_seed
 		controls.add_child(seed_edit)
 		button(controls,"Create variation",func(): create_variation(seed_edit.text))
+		var count_input := SpinBox.new()
+		count_input.min_value = 1
+		count_input.max_value = 64
+		count_input.value = batch_count
+		count_input.prefix = "NPC count: "
+		count_input.value_changed.connect(func(v): batch_count = int(v))
+		controls.add_child(count_input)
+		button(controls,"Export NPC batch",func(): file_dialog(true,"*.scn",func(path): export_population(path,seed_edit.text,batch_count)))
 		for slot in outfit.profile.slots:
 			var label := Label.new()
 			label.text = slot
@@ -431,6 +440,52 @@ func set_export_owner(node: Node, owner_node: Node) -> void:
 	node.owner = owner_node
 	for child in node.get_children():
 		set_export_owner(child,owner_node)
+
+func build_population(seed_text: String, count: int) -> PackedScene:
+	if model == null or outfit.profile.is_empty() or seed_text.strip_edges().is_empty() or count < 1 or count > 64:
+		return null
+	var previous := make_recipe()
+	var camera_transform := camera.transform
+	var camera_size := camera.size
+	var batch := Node3D.new()
+	batch.name = "CharacterBatch"
+	batch.set_meta("art_status","workshop-batch-requires-consumer-approval")
+	batch.set_meta("seed",seed_text)
+	for i in count:
+		var seed_value := seed_text+":"+str(i)
+		create_variation(seed_value)
+		# Batch IDs are not narrative identities; never clone a named hero's name.
+		title_edit.text = ""
+		var packed := build_character()
+		if packed == null or variation_seed != seed_value:
+			batch.free()
+			apply_recipe(previous)
+			camera.transform = camera_transform
+			camera.size = camera_size
+			return null
+		var actor := packed.instantiate() as Node3D
+		actor.name = "NPC_%03d" % i
+		actor.set_meta("variation_id",seed_value)
+		batch.add_child(actor)
+		set_export_owner(actor,batch)
+	var result := PackedScene.new()
+	var error := result.pack(batch)
+	batch.free()
+	apply_recipe(previous)
+	camera.transform = camera_transform
+	camera.size = camera_size
+	return result if error == OK else null
+
+func export_population(path: String, seed_text: String, count: int) -> void:
+	if not path.is_absolute_path() or path.get_extension().to_lower() != "scn":
+		status.text = "Choose an absolute .scn output path."
+		return
+	var packed := build_population(seed_text,count)
+	if packed == null:
+		status.text = "A prepared body, seed and count of 1–64 are required."
+		return
+	var error := ResourceSaver.save(packed,path,ResourceSaver.FLAG_BUNDLE_RESOURCES)
+	status.text = "%d NPC appearances exported. Current character unchanged." % count if error == OK else "NPC export failed."
 
 func export_character(path: String) -> void:
 	if not path.is_absolute_path() or path.get_extension().to_lower() != "scn":

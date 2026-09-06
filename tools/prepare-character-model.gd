@@ -142,7 +142,35 @@ func weights_for(ref_data: Dictionary) -> Array:
 		weights[i] /= total
 	return [bones,weights]
 
-func mesh_from_obj(path: String, fit_path: String, deleted: Dictionary = {}) -> ArrayMesh:
+func connected_vertices(path: String, seed_vertex: int) -> Dictionary:
+	var neighbors := {}
+	for line in FileAccess.get_file_as_string(path).split("\n"):
+		var fields := line.strip_edges().split(" ",false)
+		if fields.is_empty() or fields[0] != "f":
+			continue
+		var first := int(fields[1].split("/")[0])-1
+		for field in fields.slice(1):
+			var v := int(field.split("/")[0])-1
+			if not neighbors.has(v):
+				neighbors[v] = []
+			if not neighbors.has(first):
+				neighbors[first] = []
+			neighbors[v].append(first)
+			neighbors[first].append(v)
+	var selected := {}
+	var queue: Array[int] = [seed_vertex]
+	while not queue.is_empty():
+		var v: int = queue.pop_back()
+		if selected.has(v):
+			continue
+		selected[v] = true
+		for neighbor in neighbors.get(v,[]):
+			if not selected.has(neighbor):
+				queue.append(neighbor)
+	return selected
+
+func mesh_from_obj(path: String, fit_path: String, deleted: Dictionary = {}, component_seed: int = -1) -> ArrayMesh:
+	var selected_component := connected_vertices(path,component_seed) if component_seed >= 0 else {}
 	var data := proxy_data(fit_path)
 	if data.refs.size() != read_vertices(path).size():
 		fail("Fitting table count does not match source geometry: "+path)
@@ -171,6 +199,8 @@ func mesh_from_obj(path: String, fit_path: String, deleted: Dictionary = {}) -> 
 		elif fields[0] == "vt" and fields.size() >= 3:
 			uvs.append(Vector2(float(fields[1]),1.0-float(fields[2])))
 		elif fields[0] == "f":
+			if not selected_component.is_empty() and not selected_component.has(int(fields[1].split("/")[0])-1):
+				continue
 			# Source OBJ is counterclockwise; Godot uses clockwise front faces.
 			for i in range(2,fields.size()-1):
 				var hidden := not deleted.is_empty()
@@ -251,11 +281,12 @@ func mesh_from_obj(path: String, fit_path: String, deleted: Dictionary = {}) -> 
 	arrays[Mesh.ARRAY_INDEX] = indices
 	result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,blend_arrays)
 	return result
-func add_part(parent: Node3D, part_name: String, obj_path: String, material_path: String, deleted: Dictionary = {}) -> void:
+func add_part(parent: Node3D, part_name: String, obj_path: String, material_path: String, deleted: Dictionary = {}, component_seed: int = -1, fitting_path: String = "") -> void:
 	var instance := MeshInstance3D.new()
 	instance.name = part_name
 	var extension := ".proxy" if obj_path.begins_with("proxymeshes/") else ".mhclo"
-	instance.mesh = mesh_from_obj(source.path_join(obj_path),source.path_join(obj_path.get_basename()+extension),deleted)
+	var fit_path := obj_path.get_basename()+extension if fitting_path.is_empty() else fitting_path
+	instance.mesh = mesh_from_obj(source.path_join(obj_path),source.path_join(fit_path),deleted,component_seed)
 	if instance.mesh == null:
 		instance.free()
 		return
@@ -320,6 +351,21 @@ func build(sex: String) -> void:
 		add_part(character,"Body"+number,"proxymeshes/%s_generic/%s_generic.obj" % [sex,sex],"skins/young_caucasian_%s/young_caucasian_%s.mhmat" % [sex,sex],deleted)
 		add_part(character,"Outfit"+number,"clothes/%s/%s.obj" % [outfit_name,outfit_name],"clothes/%s/%s.mhmat" % [outfit_name,outfit_name])
 	var hair_name := "ponytail01" if sex == "female" else "short01"
+	var formal: String = sex+"_elegantsuit01"
+	var formal_path := "clothes/"+formal+"/"+formal
+	var top_seed := 430 if sex == "female" else 7262
+	var bottom_seed := 240 if sex == "female" else 309
+	var top_vertices := connected_vertices(source.path_join(formal_path+".obj"),top_seed)
+	var bottom_vertices := connected_vertices(source.path_join(formal_path+".obj"),bottom_seed)
+	if top_vertices.has(bottom_seed) or top_vertices.size()+bottom_vertices.size() != read_vertices(source.path_join(formal_path+".obj")).size():
+		fail("Formal clothing components do not partition the source mesh")
+	var formal_mask: Dictionary = proxy_data(source.path_join(formal_path+".mhclo")).delete
+	formal_mask.merge(proxy_data(source.path_join("clothes/shoes01/shoes01.mhclo")).delete)
+	add_part(character,"Body03","proxymeshes/%s_generic/%s_generic.obj" % [sex,sex],"skins/young_caucasian_%s/young_caucasian_%s.mhmat" % [sex,sex],formal_mask)
+	# Seeds identify disconnected, inspected components of the pinned source OBJ.
+	add_part(character,"FormalTop",formal_path+".obj",formal_path+".mhmat",{},top_seed)
+	add_part(character,"FormalBottom",formal_path+".obj",formal_path+".mhmat",{},bottom_seed)
+	add_part(character,"Hat","clothes/fedora01/fedora.obj","clothes/fedora01/fedora.mhmat",{},-1,"clothes/fedora01/fedora01.mhclo")
 	add_part(character,"Hair","hair/%s/%s.obj" % [hair_name,hair_name],"hair/%s/%s.mhmat" % [hair_name,hair_name])
 	add_part(character,"Eyes","eyes/low-poly/low-poly.obj","eyes/materials/brown.mhmat")
 	add_part(character,"Shoes","clothes/shoes01/shoes01.obj","clothes/shoes01/shoes01.mhmat")
@@ -337,6 +383,11 @@ func build(sex: String) -> void:
 	var profile := {"schemaVersion":1,"sourceSha256":FileAccess.get_sha256(model_path),
 		"slots":{"Clothes":{"Casual 01":{"meshes":["Skeleton3D/Outfit01","Skeleton3D/Body01"],"hides":[]},"Casual 02":{"meshes":["Skeleton3D/Outfit02","Skeleton3D/Body02"],"hides":[]}}},
 		"morphs":{"Lean":[],"Muscular":[]},"dyes":{"Clothing":[{"mesh":"Skeleton3D/Outfit01","surface":0},{"mesh":"Skeleton3D/Outfit02","surface":0}],"Hair":[{"mesh":"Skeleton3D/Hair","surface":0}]}}
+	profile.slots.Clothes["Formal separates"] = {"meshes":["Skeleton3D/Body03","Skeleton3D/FormalTop","Skeleton3D/FormalBottom"],"hides":[]}
+	profile.slots.Headwear = {"Bare head":{"meshes":[],"hides":[]},"Felt hat":{"meshes":["Skeleton3D/Hat"],"hides":["Skeleton3D/Hair"]}}
+	profile.dyes["Formal top"] = [{"mesh":"Skeleton3D/FormalTop","surface":0}]
+	profile.dyes["Formal bottom"] = [{"mesh":"Skeleton3D/FormalBottom","surface":0}]
+	profile.dyes.Hat = [{"mesh":"Skeleton3D/Hat","surface":0}]
 	for shape in shape_names:
 		profile.morphs[shape] = []
 	for mesh in skeleton.get_children():

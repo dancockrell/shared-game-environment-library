@@ -10,6 +10,36 @@
   "coreRigAndTargetsIncluded": false,
   "files": [
     {
+      "path": "clothes/fedora01/fedora_diffuse.png",
+      "bytes": 7418240,
+      "sha256": "5bd5e7dbf74f630327f8b3d45cd3e475e85088a8f9cf7f9719872a9fc0b0ae7f"
+    },
+    {
+      "path": "clothes/fedora01/fedora_normal.png",
+      "bytes": 158434,
+      "sha256": "b0566987c8a0739e04ee15838d07660570c6d73623b4555fe5adcafb86e655f7"
+    },
+    {
+      "path": "clothes/fedora01/fedora.mhmat",
+      "bytes": 1394,
+      "sha256": "8d51b0a5d6d6e813d2af195261ad0a53e99bf4a52f91987b74b32941308820c5"
+    },
+    {
+      "path": "clothes/fedora01/fedora.obj",
+      "bytes": 47959,
+      "sha256": "09653260c082e2039f11b41615d6b59a7609d134aae3e2bfcf95da3ed555303c"
+    },
+    {
+      "path": "clothes/fedora01/fedora01.mhclo",
+      "bytes": 43570,
+      "sha256": "c3af725d316d7003d2d00fc3d79750edc431f71af9ef539051217a3d308d3b15"
+    },
+    {
+      "path": "clothes/fedora01/fedora01.thumb",
+      "bytes": 27659,
+      "sha256": "7ef63f274160042c7ab081358e674b0a8fe415f4654d8113debaebffad35c062"
+    },
+    {
       "path": "clothes/female_casualsuit01/female_casualsuit01_ao.png",
       "bytes": 2153148,
       "sha256": "f97a31fb02b5f36802a08bfe22bffb1961240d4ecb20059540eec6516d753424"
@@ -80,6 +110,41 @@
       "sha256": "2a1e6d7c47961d3e8a3471ae7322d920f0265d91a54c2d43d518392414f1ad4c"
     },
     {
+      "path": "clothes/female_elegantsuit01/female_elegantsuit01_ao.png",
+      "bytes": 1350953,
+      "sha256": "0f89546c63ab16e2c1ba0556da7e07264b98b58e6200b043491f92f796b87673"
+    },
+    {
+      "path": "clothes/female_elegantsuit01/female_elegantsuit01_diffuse.png",
+      "bytes": 1996561,
+      "sha256": "ebe6f2afcbaadbe56d5cee6e00bab45e97ce482f0be0e34491d16ca5f98b38ac"
+    },
+    {
+      "path": "clothes/female_elegantsuit01/female_elegantsuit01_normal.png",
+      "bytes": 1549042,
+      "sha256": "ae3650bce6678cd67d025ab70e68b22683176aeaabc06d8e5b2129af99c762e9"
+    },
+    {
+      "path": "clothes/female_elegantsuit01/female_elegantsuit01.mhclo",
+      "bytes": 151008,
+      "sha256": "8ed657dbc49466e6a485993cfdcfd7b6ac30a0f44408dfd38de7a649477d8928"
+    },
+    {
+      "path": "clothes/female_elegantsuit01/female_elegantsuit01.mhmat",
+      "bytes": 1408,
+      "sha256": "a0b1708efbff3c4ad96f8e7d8cc27fb1652719549455ce94b89bcf6294cfbed0"
+    },
+    {
+      "path": "clothes/female_elegantsuit01/female_elegantsuit01.obj",
+      "bytes": 174924,
+      "sha256": "3b46cef6d63968954dc00c39ede649d76c05e5d36fe9f9c677349c88fd424de9"
+    },
+    {
+      "path": "clothes/female_elegantsuit01/female_elegantsuit01.thumb",
+      "bytes": 50008,
+      "sha256": "ea5a3491d544888a7187ace16da98f093b498a19220b19a8c317f78fbf2697c6"
+    },
+    {
       "path": "clothes/male_casualsuit01/male_casualsuit01_ao.png",
       "bytes": 785596,
       "sha256": "9402d75d71318ef3ad90ee59f8b8688effefd13b3ec56423330e005bed5cd6c0"
@@ -148,6 +213,31 @@
       "path": "clothes/male_casualsuit02/male_casualsuit02.thumb",
       "bytes": 37906,
       "sha256": "e994394780be666443e70349b7f9e55704895e699054a45b4113037fdbab8e68"
+    },
+    {
+      "path": "clothes/male_elegantsuit01/male_elegantsuit01_diffuse.png",
+      "bytes": 1945326,
+      "sha256": "eba3c9b662a35f145f28c8932fe96c01db258080daf1a1c09807def5497e3420"
+    },
+    {
+      "path": "clothes/male_elegantsuit01/male_elegantsuit01.mhclo",
+      "bytes": 515810,
+      "sha256": "6e725b0adac1a07173a14e15207d0b0125d5510455ef6dee756b5fa1c51cccef"
+    },
+    {
+      "path": "clothes/male_elegantsuit01/male_elegantsuit01.mhmat",
+      "bytes": 1293,
+      "sha256": "787bc0744174301c9ac0e33da4669bf37df9ac572ce950989f1bc6e71e938adf"
+    },
+    {
+      "path": "clothes/male_elegantsuit01/male_elegantsuit01.obj",
+      "bytes": 633330,
+      "sha256": "3f6dfc8c10de6160b1e23aad6b4b201b7651914bf3ea5bc8a8aba03e0c0298ea"
+    },
+    {
+      "path": "clothes/male_elegantsuit01/male_elegantsuit01.thumb",
+      "bytes": 36659,
+      "sha256": "8e3d5053b45c8bf55a8d452ce944ef7128c41bf4318e3f4de6752f25aaf972a3"
     },
     {
       "path": "clothes/shoes01/shoes01_diffuse.png",

@@ -14,6 +14,8 @@ $prefixes = @(
     'proxymeshes/female_generic/', 'proxymeshes/male_generic/',
     'clothes/female_casualsuit01/', 'clothes/female_casualsuit02/',
     'clothes/male_casualsuit01/', 'clothes/male_casualsuit02/',
+    'clothes/female_elegantsuit01/', 'clothes/male_elegantsuit01/',
+    'clothes/fedora01/',
     'clothes/shoes01/', 'hair/ponytail01/', 'hair/short01/',
     'eyes/low-poly/', 'eyes/materials/',
     'skins/young_caucasian_female/', 'skins/young_caucasian_male/'
@@ -62,7 +64,12 @@ try {
     $manifestPath = Join-Path $destination 'source-manifest.json'
     $manifestText = ($manifest | ConvertTo-Json -Depth 8) + [Environment]::NewLine
     if ((Test-Path -LiteralPath $manifestPath) -and [IO.File]::ReadAllText($manifestPath) -ne $manifestText) {
-        throw 'Existing manifest differs; review rather than overwrite.'
+        $previous = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+        if ($previous.archiveSha256 -ne $manifest.archiveSha256) { throw 'Source archive changed.' }
+        foreach ($old in $previous.files) {
+            $retained = @($records | Where-Object { $_.path -ceq $old.path -and $_.sha256 -ceq $old.sha256 -and $_.bytes -eq $old.bytes })
+            if ($retained.Count -ne 1) { throw "Source selection removed or changed: $($old.path)" }
+        }
     }
     [IO.File]::WriteAllText($manifestPath, $manifestText, [Text.UTF8Encoding]::new($false))
     Write-Output "Verified and staged $($records.Count) source files. No paid generation."
