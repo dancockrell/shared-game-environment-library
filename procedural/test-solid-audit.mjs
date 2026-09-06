@@ -48,6 +48,8 @@ test('room closure is enforced from retained source, not guessed from mesh names
   const d=tetra();d.indices.splice(0,3);
   const scene={version:2,meshes:[d],recipe_json:JSON.stringify({definitions:{tetra:{shape:{kind:'room'}}}})};
   assert.deepEqual(auditScene(scene).failed_required_meshes,['tetra']);
+  scene.recipe_json=JSON.stringify({definitions:{tetra:{shape:{kind:'porous_box'}}}});
+  assert.deepEqual(auditScene(scene).failed_required_meshes,['tetra']);
   scene.recipe_json='';
   assert.deepEqual(auditScene(scene).failed_required_meshes,[]);
 });

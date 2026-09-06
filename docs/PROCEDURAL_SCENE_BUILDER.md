@@ -629,14 +629,72 @@ downloaded or licensed into this repository. The older Procedural Bread Making
 and Realistic Modeling of Porous Materials PDFs were located but their full-text
 fetches failed; their methods are not recorded as read.
 
-Our next experiment, not implemented: a bounded cavity field intersecting a host
+The selected experiment was a bounded cavity field intersecting a host
 surface, compiled to the existing portable mesh format. Start with a small crumb
 coupon, not a city-scale volume. Define pore spacing and radii in metres; preserve
 seed, bounds and source parameters. Validate neighboring-cell coverage against
 brute force, then closed extracted boundaries, outward normals, budgets and native
 close-up appearance. Reject invisible painted-dot substitutes and claims of
 porosity from color alone. Keep the existing lathe/sweep path for smooth pastry.
-This is a research decision, not a new shipped operator or a final-art gate.
+The first implementation and its limitations are recorded below; neither the
+paper nor this selection establishes a final-art gate.
+
+#### First implementation of the bounded coupon
+
+The above proposed experiment now has an original Rust implementation in
+`procedural/src/porous.rs`, reached by the existing compiler through
+`porous_box`. `porous-materials.json` is its current caller/fixture. The cake
+still uses its prior lathe; the coupon is not automatically admitted as cake art.
+Parameters are host `size`, pore `spacing`, minimum/maximum `radii`, sampling
+`step` (all metres) and integer `seed`. A deterministic cell hash places spherical
+cavities; subtracting their local field from the host creates actual voids.
+The 27-cell search is compared against a larger brute-force neighborhood.
+
+This implementation uses a **truncated local field**, not an unlimited exact
+distance function. The maximum radius is 0.45 spacing, and queried distances
+are capped at half the spacing, making omitted cells irrelevant to that field.
+Minimum radius is two requested grid steps. This does not guarantee every thin
+wall or pore intersection is resolved. The padded grid is capped at 262,144
+samples before allocation; emitted vertices obey the compiler budget. Extraction
+uses six consistently tiled tetrahedra per cell and shared edge intersections.
+Exact zero endpoints reuse their grid coordinate. Triangle orientation uses
+inside/outside tetrahedron classification; shading normals use field differences.
+
+Initial extraction failed the independent connectivity audit. The general suite
+had not required closure for this new shape, so `porous_box` is now a required
+closed shape alongside `room`; a fixture failure stops the checker. This change
+is tested with a deliberately open mesh. Do not infer success from the initial
+green runner or call open geometry a finished porous solid. Surface extraction
+is an approximation and may produce separate closed cavities or fragments.
+UVs are diagnostic planar coordinates, not production-ready porous texturing.
+
+An explicit optional `surface_offset` shifts the level set in metres; magnitude
+is limited to one tenth of the sampling step. Positive values expand material
+and shrink cavities. The coupon declares +0.000001 m (one micrometre) rather than
+silently welding away the point-contact ambiguity found with zero offset. This
+is an authored geometric change, not a proof that arbitrary offsets guarantee
+manifold extraction. No generic topology repair is claimed; new recipes must
+pass the independent closure gate. The zero-offset failed receipt remains in
+`procedural/generated/reviews/20260906-133154-6b2c3d5551e342c8a81d7001f4452b8d/`.
+
+The explicit-offset coupon passed the strict audit: 85,240 triangles, 42,598
+exact-position vertices, five components and zero reported connectivity defects.
+Do not describe five components as a single connected solid or assume which are
+cavity shells without containment analysis. Native import checks and capture
+passed in the existing PID 30828; the reviewed image is
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/porous-coupon.png`.
+Visible cavities confirm geometric structure, but coarse/polygonal cavity edges,
+low pore density and uniform material make it unsuitable as cake crumb. The
+recipe is an extraction coupon, not approved food art. No topology-cleanup,
+final LOD, Unity execution, or measured 8 GB VRAM qualification is implied.
+
+Final CPU receipt for this checkpoint:
+`procedural/generated/reviews/20260906-133547-7c455e1648fb43559419bde6155da01f/report.json`.
+53 Rust tests, six Node audit tests, strict clippy, formatting, release compilation
+and deterministic fixture/audit workflow passed. New tests explicitly exercise
+grid and vertex-budget rejection and excessive surface offsets, in addition to
+neighbor lookup and seed checks. Native evidence above is for the same geometry;
+no additional Godot process was required.
 
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.

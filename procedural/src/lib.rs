@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 mod arch;
 mod paint;
+mod porous;
 mod room;
 mod rounded_box;
 mod sweep;
@@ -55,6 +56,9 @@ pub struct LatheFluting {
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Shape {
+    PorousBox {
+        porous: porous::PorousBox,
+    },
     LatheSpline {
         profile: Vec<[[f32; 2]; 4]>,
         tolerance: f32,
@@ -381,6 +385,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         paint_texture: None,
     };
     match &d.shape {
+        Shape::PorousBox { porous } => porous.build(&mut m, max_vertices)?,
         Shape::LatheSpline {
             profile,
             tolerance,

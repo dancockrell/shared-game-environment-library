@@ -82,8 +82,9 @@ export function auditScene(scene) {
   if (![1,2].includes(scene.version) || !Array.isArray(scene.meshes)) throw new Error('Unsupported compiled scene');
   const meshes=scene.meshes.map(auditMesh);
   const recipe=scene.recipe_json ? JSON.parse(scene.recipe_json) : null;
-  const failed=meshes.filter(m=>recipe?.definitions?.[m.name]?.shape?.kind==='room' && !m.closed_oriented_position_graph).map(m=>m.name);
-  return {scope:'read-only exact-position connectivity audit; not solid admission', required_closed_shapes:['room'], failed_required_meshes:failed, meshes};
+  const required=['room','porous_box'];
+  const failed=meshes.filter(m=>required.includes(recipe?.definitions?.[m.name]?.shape?.kind) && !m.closed_oriented_position_graph).map(m=>m.name);
+  return {scope:'read-only exact-position connectivity audit; not solid admission', required_closed_shapes:required, failed_required_meshes:failed, meshes};
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
