@@ -5,7 +5,7 @@
   "summary": "Build shared character construction; reject failed bodice fitting, read complete contact papers and current garment methods, inspect author code and benchmark pinned Newton before replacing the construction solver",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T13:10:00Z",
+  "updated_at": "2026-09-06T13:09:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -53,6 +53,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Committed and pushed f66771d: Newton sewing and actual static GLB review export; local HEAD and remote branch both verified at f66771df14c55239ddaafaccd709dd18a9d5b976",
+      "Rejected optional Newton RUN_TO_RUN mode: study 20260906T130636581Z-vbd hit sampled GPU guard at 11676 MiB total from 2530 MiB baseline; owned job terminated after 15.16 s, no fit produced. Restored default implementation; post-check no Python jobs, original two Godot processes retained, whole GPU 2125 MiB. Do not retry same setting without bounded allocation plan; repeated simulation remains nondeterministic",
       "Measured-panel Newton sewing replaces the rejected handwritten bodice route; legacy two scripts retired with history and failed artifacts retained. Actual source-space FEM rest, seam-contact exclusions, complete graph coloring and per-substep dressing supports exercised; recognizable bodice but residual strain, seams and penetration remain unapproved",
       "20260906T130209559Z-vbd: 300 frames, 15.31 seconds, peak sampled process tree 468.87 MiB and whole GPU 2920 MiB; no new Godot process or paid tool. Worst seam gap 8.069 mm, mean 0.354 mm; CPU diagnostic inspected; 2 of 8549 distance samples penetrate deeper than 1 mm, minimum -1.487 mm",
       "18 actual pattern/body/fit/GLB tests passed: portable review reload preserves geometry, transforms, metric UVs, materials and provenance; repeated GLB bytes identical for fixed simulation input. Simulation itself is not deterministic; earlier identical-settings repeats differed up to 32.312 mm",
