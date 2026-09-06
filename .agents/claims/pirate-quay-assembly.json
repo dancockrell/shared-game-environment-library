@@ -17,7 +17,7 @@
     "notes": "No duplicate generator. Shared terrain assembly reads Pirate Island-owned geography. Previous isolated quay is superseded in place."
   },
   "completion": {
-    "commit": null,
+    "commit": "3d4f738",
     "checks": [
       "209 saved instances and continuous island mesh generated with zero credits",
       "Independent source catalog and assembly reload passed",
