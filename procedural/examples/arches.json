@@ -15,7 +15,20 @@
         0.48,
         0.32,
         1
-      ]
+      ],
+      "material": {
+        "roughness": 0.9,
+        "metallic": 0,
+        "paint": {
+          "color": [
+            0.7,
+            0.56,
+            0.38
+          ],
+          "strength": 0.35,
+          "seed": 37
+        }
+      }
     },
     "column": {
       "shape": {
@@ -49,7 +62,20 @@
         0.48,
         0.32,
         1
-      ]
+      ],
+      "material": {
+        "roughness": 0.9,
+        "metallic": 0,
+        "paint": {
+          "color": [
+            0.7,
+            0.56,
+            0.38
+          ],
+          "strength": 0.35,
+          "seed": 37
+        }
+      }
     },
     "arch2": {
       "shape": {
@@ -65,7 +91,20 @@
         0.48,
         0.32,
         1
-      ]
+      ],
+      "material": {
+        "roughness": 0.9,
+        "metallic": 0,
+        "paint": {
+          "color": [
+            0.7,
+            0.56,
+            0.38
+          ],
+          "strength": 0.35,
+          "seed": 37
+        }
+      }
     }
   },
   "root": {

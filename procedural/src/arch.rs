@@ -1,6 +1,18 @@
 //! Elliptical structural band; clear opening dimensions, no filled-in doorway.
 use crate::{finite, quad, Mesh, Result, V3};
 
+fn textured_quad(m: &mut Mesh, p: [V3; 4], uv: [[f32; 2]; 4]) -> Result<()> {
+    let start = m.positions.len();
+    quad(m, p[0], p[1], p[2], p[3])?;
+    if m.positions.len() != start + 6 {
+        return Err("Arch surface collapses at output precision".into());
+    }
+    for (offset, corner) in [0, 1, 2, 0, 2, 3].into_iter().enumerate() {
+        m.uvs[start + offset] = uv[corner];
+    }
+    Ok(())
+}
+
 pub(super) fn build(
     m: &mut Mesh,
     width: f32,
@@ -48,7 +60,26 @@ pub(super) fn build(
         let sign = if outer { 1. } else { -1. };
         [(sign * x / length) as f32, (sign * y / length) as f32, 0.]
     };
+    // Normalized sampled arc length on the band's centerline. Shared ring
+    // coordinates avoid per-triangle texture resets and angular stretching.
+    let mut arc = vec![0_f64];
     for i in 0..segments {
+        let center = |j| {
+            let inner = point(j, false, false);
+            let outer = point(j, true, false);
+            [
+                (inner[0] as f64 + outer[0] as f64) / 2.,
+                (inner[1] as f64 + outer[1] as f64) / 2.,
+            ]
+        };
+        let p = center(i);
+        let q = center(i + 1);
+        arc.push(arc.last().unwrap() + (q[0] - p[0]).hypot(q[1] - p[1]));
+    }
+    let total = *arc.last().unwrap();
+    for i in 0..segments {
+        let u0 = (arc[i as usize] / total) as f32;
+        let u1 = (arc[i as usize + 1] / total) as f32;
         let inner = [
             point(i, false, false),
             point(i + 1, false, false),
@@ -61,14 +92,27 @@ pub(super) fn build(
             point(i + 1, true, true),
             point(i, true, true),
         ];
-        quad(m, inner[0], inner[1], outer[1], outer[0])?;
-        quad(m, inner[3], outer[3], outer[2], inner[2])?;
+        textured_quad(
+            m,
+            [inner[0], inner[1], outer[1], outer[0]],
+            [[u0, 0.], [u1, 0.], [u1, 1.], [u0, 1.]],
+        )?;
+        textured_quad(
+            m,
+            [inner[3], outer[3], outer[2], inner[2]],
+            [[u0, 0.], [u0, 1.], [u1, 1.], [u1, 0.]],
+        )?;
         for (points, is_outer) in [
             (outer, true),
             ([inner[0], inner[3], inner[2], inner[1]], false),
         ] {
             let start = m.positions.len();
-            quad(m, points[0], points[1], points[2], points[3])?;
+            let uv = if is_outer {
+                [[u0, 0.], [u1, 0.], [u1, 1.], [u0, 1.]]
+            } else {
+                [[u0, 0.], [u0, 1.], [u1, 1.], [u1, 0.]]
+            };
+            textured_quad(m, points, uv)?;
             if m.positions.len() != start + 6 {
                 return Err("Arch surface collapses at output precision".into());
             }
@@ -78,19 +122,25 @@ pub(super) fn build(
         }
     }
     // Both feet terminate at y=0, with a downward-facing cap.
-    quad(
+    textured_quad(
         m,
-        point(0, false, false),
-        point(0, true, false),
-        point(0, true, true),
-        point(0, false, true),
+        [
+            point(0, false, false),
+            point(0, true, false),
+            point(0, true, true),
+            point(0, false, true),
+        ],
+        [[0., 0.], [1., 0.], [1., 1.], [0., 1.]],
     )?;
-    quad(
+    textured_quad(
         m,
-        point(segments, false, false),
-        point(segments, false, true),
-        point(segments, true, true),
-        point(segments, true, false),
+        [
+            point(segments, false, false),
+            point(segments, false, true),
+            point(segments, true, true),
+            point(segments, true, false),
+        ],
+        [[0., 0.], [1., 0.], [1., 1.], [0., 1.]],
     )?;
     if m.positions.len() != segments as usize * 24 + 12 {
         return Err("Arch band collapses at output precision".into());
@@ -113,6 +163,29 @@ mod tests {
             color: [1.; 4],
             material: MaterialSettings::default(),
         }
+    }
+    #[test]
+    fn band_uvs_are_continuous_and_follow_arc_length() {
+        let m = mesh("uv", &definition(), 1000).unwrap();
+        assert!(m
+            .uvs
+            .iter()
+            .flatten()
+            .all(|v| v.is_finite() && (0. ..=1.).contains(v)));
+        assert_eq!(m.uvs[0][0], 0.);
+        assert_eq!(m.uvs[23 * 24 + 1][0], 1.);
+        for i in 0..23 {
+            // Every surface band reuses the adjacent segment's U coordinate.
+            for face in 0..4 {
+                let current = &m.uvs[i * 24 + face * 6..i * 24 + face * 6 + 6];
+                let next = &m.uvs[(i + 1) * 24 + face * 6..(i + 1) * 24 + face * 6 + 6];
+                let end = current.iter().map(|uv| uv[0]).fold(0., f32::max);
+                let start = next.iter().map(|uv| uv[0]).fold(1., f32::min);
+                assert_eq!(end, start);
+            }
+        }
+        // Elliptical arc length is deliberately not uniform angular spacing.
+        assert!((m.uvs[1][0] - 1. / 24.).abs() > 0.001);
     }
     #[test]
     fn invalid_arches_are_rejected() {

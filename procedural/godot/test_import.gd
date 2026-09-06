@@ -62,9 +62,11 @@ func _run() -> void:
 		var surface := display.multimesh.mesh.surface_get_arrays(0)
 		var positions: PackedVector3Array = surface[Mesh.ARRAY_VERTEX]
 		var normals: PackedVector3Array = surface[Mesh.ARRAY_NORMAL]
+		var uvs: PackedVector2Array = surface[Mesh.ARRAY_TEX_UV]
 		var indices: PackedInt32Array = surface[Mesh.ARRAY_INDEX]
 		assert(positions.size() * 3 == spec.positions.size())
 		assert(normals.size() == positions.size())
+		assert(uvs.size() == positions.size())
 		for vertex in positions.size():
 			var offset := vertex * 3
 			var expected_position := Vector3(spec.positions[offset], spec.positions[offset+1], spec.positions[offset+2])
@@ -73,6 +75,8 @@ func _run() -> void:
 			# Godot stores octahedrally encoded normals: allow storage quantization,
 			# not smoothing loss or sign/mirroring errors.
 			assert(normals[vertex].distance_to(expected_normal) < 0.001)
+			var expected_uv := Vector2(spec.uvs[vertex*2], spec.uvs[vertex*2+1])
+			assert(uvs[vertex].distance_to(expected_uv) < 0.001)
 		assert(indices.size() == spec.indices.size())
 		for index in range(0, indices.size(), 3):
 			assert(indices[index] == spec.indices[index])
@@ -108,10 +112,21 @@ func _run() -> void:
 		root.size = Vector2i(1280, 800)
 		var camera := Camera3D.new()
 		camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-		camera.size = 46
 		root.add_child(camera)
-		camera.position = Vector3(37, 25, 35)
-		camera.look_at(Vector3(15, 1, 0))
+		var total_bounds: AABB = scene.get_child(0).multimesh.custom_aabb
+		for child in scene.get_children():
+			total_bounds = total_bounds.merge(child.multimesh.custom_aabb)
+		var center := total_bounds.get_center()
+		camera.position = center + Vector3(1, 1, 1).normalized() * maxf(10.0, total_bounds.size.length() * 2.0)
+		camera.look_at(center)
+		var half_width := 0.0
+		var half_height := 0.0
+		for corner in 8:
+			var relative := total_bounds.get_endpoint(corner) - center
+			half_width = maxf(half_width, absf(relative.dot(camera.basis.x)))
+			half_height = maxf(half_height, absf(relative.dot(camera.basis.y)))
+		camera.size = maxf(1.0, maxf(half_height * 2.0, half_width * 2.0 / (1280.0 / 800.0)) * 1.2)
+		camera.far = maxf(100.0, total_bounds.size.length() * 4.0)
 		camera.current = true
 		var sun := DirectionalLight3D.new()
 		sun.rotation_degrees = Vector3(-45, -35, 0)

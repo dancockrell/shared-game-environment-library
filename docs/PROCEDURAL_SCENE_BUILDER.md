@@ -96,8 +96,11 @@ sharp front, rear and foot caps. Vertex allocation is checked before constructio
 `24*segments+12`. Tests cover bounds, unit normals, outward winding, closed seams,
 unfilled central opening vertices, invalid dimensions/subdivisions and budget
 rejection. Extremely small unrepresentable bands fail rather than disappear.
-UVs are currently the shared triangle-local mapping; painted arch surfaces need
-a dedicated continuous mapping before texture admission.
+UVs now follow normalized sampled arc length along the band's centerline, with
+cross-band/depth coordinates on each surface. Adjacent segments share coordinates,
+so paint no longer restarts on every triangle. Front, back, inner and outer bands
+are separate overlapping UV islands, not a unique atlas; their edge seams remain
+an artistic consideration. Foot caps each receive a complete quad mapping.
 
 `procedural/examples/arches.json` composes circular, shallow and tall arch bands
 on shared rounded columns with measured spring-line placement. It is a reusable
@@ -105,6 +108,16 @@ geometry/integration fixture, not masonry engineering, a game doorway binding,
 or final painterly art. No new MUD exit is inferred from an opening.
 
 ![Circular, shallow and tall procedural arches in Godot](verification/scene-forge-arches.png)
+
+The updated arch fixture adds a subtle underpainting layer to exercise this
+mapping. Tests verify UV ranges, adjacency continuity and nonuniform U increments
+on ellipses. Godot's general roundtrip test now compares imported UVs as well as
+positions/normals/indices, allowing storage quantization.
+
+Review framing now derives an orthographic camera from projected instance bounds
+at a fixed isometric orientation, instead of assuming the original workshop's
+size and location. This makes small/new fixtures legible without hand-editing a
+camera. It is a diagnostic framing rule, not production scene composition.
 
 The actual render confirms open centers and distinct curved silhouettes. Column
 transitions and uniform finishes remain construction quality. The complete runner
