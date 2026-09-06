@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Bake one shared mesh from an existing reference.blend into a portable GLB.
+"""Bake shared meshes from an existing reference.blend into a portable GLB.
 
 Blender --background --threads 2 --python-exit-code 1 --python bake_asset.py
-  -- reference.blend mesh_name fresh_output_directory
-Original authoring file is never modified. Pilot export, not engine parity.
+  -- reference.blend mesh_name_or_--all fresh_output_directory
+Original authoring file is never modified. Export is not engine parity.
 """
 import hashlib
 import json
@@ -23,31 +23,22 @@ def world_bounds(obj):
     return [[f(p[i] for p in points) for i in range(3)] for f in (min, max)]
 
 
-def main():
-    source, mesh_name, destination = sys.argv[sys.argv.index("--") + 1:]
-    source, destination = Path(source).resolve(), Path(destination).resolve()
-    if source.stat().st_size > 128 * 1024 * 1024:
-        raise ValueError("Authoring file exceeds 128 MiB")
-    destination.mkdir(parents=True, exist_ok=False)
-    bpy.ops.wm.open_mainfile(filepath=str(source))
+def bake_mesh(obj, destination):
+    """Mutate only this shared mesh's export UV/material, once per assembly."""
+    destination.mkdir(exist_ok=False)
     scene = bpy.context.scene
-    candidates = [o for o in scene.objects if o.type == "MESH" and o.data.name == mesh_name]
-    if not candidates:
-        raise ValueError("No instance of requested source mesh")
-    obj = candidates[0]
     mesh = obj.data
+    mesh_name = mesh.name
     if len(mesh.vertices) > 100000 or len(mesh.materials) != 1:
         raise ValueError("Pilot requires one material and at most 100000 vertices")
     original = mesh.materials[0]
     source_profile = original.get("scene_forge_reference_profile", "{}")
-    source_recipe = scene["scene_forge_recipe_json"]
     source_vertices = [tuple(v.co) for v in mesh.vertices]
     source_triangles = len(mesh.polygons)
     # Blender Z-up -> glTF Y-up. Preserve directed triangle corners, allowing
     # exporter vertex splitting but not winding changes or changed surfaces.
     expected_triangles = [[(mesh.vertices[i].co.x, mesh.vertices[i].co.z, -mesh.vertices[i].co.y)
                            for i in polygon.vertices] for polygon in mesh.polygons]
-    source_bounds = world_bounds(obj)
     # Keep original UV sampling explicit before selecting a new non-overlapping
     # export layout; otherwise albedo would silently change under a new unwrap.
     old_uv = mesh.uv_layers.active.name
@@ -136,25 +127,84 @@ def main():
     mesh.materials[0] = material
     assert source_vertices == [tuple(v.co) for v in mesh.vertices]
     assert source_triangles == len(mesh.polygons)
-    obj["scene_forge_recipe_json"] = source_recipe
-    obj["scene_forge_source_mesh"] = mesh_name
+    return {"triangles": expected_triangles, "profile": source_profile,
+            "coat": bsdf.inputs["Coat Weight"].default_value,
+            "coat_roughness": bsdf.inputs["Coat Roughness"].default_value}
+
+
+def main():
+    source, selection, destination = sys.argv[sys.argv.index("--") + 1:]
+    source, destination = Path(source).resolve(), Path(destination).resolve()
+    if source.stat().st_size > 128 * 1024 * 1024:
+        raise ValueError("Authoring file exceeds 128 MiB")
+    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    destination.mkdir(parents=True, exist_ok=False)
+    bpy.ops.wm.open_mainfile(filepath=str(source))
+    scene = bpy.context.scene
+    source_recipe = scene["scene_forge_recipe_json"]
+    candidates = sorted([o for o in scene.objects if o.type == "MESH" and
+                         (selection == "--all" or o.data.name == selection)], key=lambda o: o.name)
+    if selection != "--all":
+        candidates = candidates[:1]
+    unique = {o.data.name: o for o in candidates}
+    if not candidates or len(candidates) > 1000 or len(unique) > 32:
+        raise ValueError("Export requires 1..1000 instances and at most 32 unique meshes")
+    if sum(len(o.data.vertices) for o in unique.values()) > 500000:
+        raise ValueError("Assembly exceeds 500000 unique vertices")
+    # 3 RGBA8 512 maps and complete mip chains, conservative uncompressed
+    # estimate only: not measured VRAM and excludes engine render targets.
+    texture_bytes = len(unique) * 3 * sum(4 * (512 >> i) ** 2 for i in range(10))
+    snapshots = {}
+    for index, obj in enumerate(candidates):
+        obj["scene_forge_export_id"] = index
+        obj["scene_forge_source_mesh"] = obj.data.name
+        snapshots[index] = {"bounds": world_bounds(obj), "mesh": obj.data.name,
+                            "matrix": [v for row in obj.matrix_world for v in row]}
+    # Keep editable source on an explicit assembly root, not an arbitrary prop
+    # that an artist might remove. Flatten placement hierarchy without moving it.
+    root = bpy.data.objects.new("SceneForgeAssembly", None)
+    scene.collection.objects.link(root)
+    root["scene_forge_recipe_json"] = source_recipe
+    for obj in candidates:
+        transform = obj.matrix_world.copy()
+        obj.parent = root
+        obj.matrix_world = transform
+    baked = {}
+    for index, (name, obj) in enumerate(sorted(unique.items())):
+        baked[name] = bake_mesh(obj, destination / ("mesh-%03d" % index))
+        print("SCENE_FORGE_MESH_BAKED", name, index + 1, len(unique), flush=True)
+    bpy.ops.object.select_all(action="DESELECT")
+    for obj in candidates:
+        obj.select_set(True)
+    root.select_set(True)
     glb = destination / "asset.glb"
     bpy.ops.export_scene.gltf(filepath=str(glb), export_format="GLB", use_selection=True,
                               export_extras=True, export_texcoords=True, export_normals=True,
                               export_tangents=True, export_cameras=False, export_lights=False)
     raw = glb.read_bytes()
     document, binary = glb_geometry.read(raw)
-    geometry_receipt = glb_geometry.compare(document, binary, expected_triangles)
-    assert len(document["meshes"]) == 1
-    exported = document["materials"][0]
-    assert "baseColorTexture" in exported["pbrMetallicRoughness"]
-    assert "metallicRoughnessTexture" in exported["pbrMetallicRoughness"]
-    assert "normalTexture" in exported
-    assert exported["extras"]["scene_forge_reference_profile"] == source_profile
-    if bsdf.inputs["Coat Weight"].default_value > 0:
-        coat = exported["extensions"]["KHR_materials_clearcoat"]
-        assert abs(coat["clearcoatFactor"] - bsdf.inputs["Coat Weight"].default_value) < 0.000001
-        assert abs(coat["clearcoatRoughnessFactor"] - bsdf.inputs["Coat Roughness"].default_value) < 0.000001
+    assert len(document["meshes"]) == len(unique)
+    assert {m["name"] for m in document["meshes"]} == set(unique)
+    mesh_nodes = [n for n in document["nodes"] if "mesh" in n]
+    assert len(mesh_nodes) == len(snapshots)
+    assert {n["extras"]["scene_forge_export_id"] for n in mesh_nodes} == set(snapshots)
+    for node in mesh_nodes:
+        expected = snapshots[node["extras"]["scene_forge_export_id"]]
+        assert document["meshes"][node["mesh"]]["name"] == expected["mesh"]
+    geometry_receipt = {}
+    for index, mesh in enumerate(document["meshes"]):
+        expected = baked[mesh["name"]]
+        geometry_receipt[mesh["name"]] = glb_geometry.compare(document, binary, expected["triangles"], index)
+        assert len(mesh["primitives"]) == 1
+        exported = document["materials"][mesh["primitives"][0]["material"]]
+        assert "baseColorTexture" in exported["pbrMetallicRoughness"]
+        assert "metallicRoughnessTexture" in exported["pbrMetallicRoughness"]
+        assert "normalTexture" in exported
+        assert exported["extras"]["scene_forge_reference_profile"] == expected["profile"]
+        if expected["coat"] > 0:
+            coat = exported["extensions"]["KHR_materials_clearcoat"]
+            assert abs(coat["clearcoatFactor"] - expected["coat"]) < 0.000001
+            assert abs(coat["clearcoatRoughnessFactor"] - expected["coat_roughness"]) < 0.000001
     assert any(n.get("extras", {}).get("scene_forge_recipe_json") == source_recipe for n in document["nodes"])
     for image in document["images"]:
         assert "bufferView" in image and "uri" not in image
@@ -162,12 +212,21 @@ def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(glb))
     imported = [o for o in bpy.context.scene.objects if o.type == "MESH"]
-    assert len(imported) == 1
-    imported[0].data.calc_loop_triangles()
-    assert len(imported[0].data.loop_triangles) == source_triangles
-    assert imported[0]["scene_forge_recipe_json"] == source_recipe
-    restored_bounds = world_bounds(imported[0])
-    assert max(abs(a - b) for x, y in zip(source_bounds, restored_bounds) for a, b in zip(x, y)) < 0.000001
+    assert len(imported) == len(snapshots)
+    assert len({o.data.as_pointer() for o in imported}) == len(unique)
+    assert {o["scene_forge_export_id"] for o in imported} == set(snapshots)
+    assert any(o.get("scene_forge_recipe_json") == source_recipe for o in bpy.context.scene.objects)
+    all_bounds = []
+    for obj in imported:
+        expected = snapshots[obj["scene_forge_export_id"]]
+        assert obj["scene_forge_source_mesh"] == expected["mesh"]
+        obj.data.calc_loop_triangles()
+        assert len(obj.data.loop_triangles) == len(baked[expected["mesh"]]["triangles"])
+        bounds = world_bounds(obj)
+        all_bounds.append(bounds)
+        assert max(abs(a - b) for x, y in zip(expected["bounds"], bounds) for a, b in zip(x, y)) < 0.000001
+        assert max(abs(a - b) for a, b in zip(expected["matrix"], [v for row in obj.matrix_world for v in row])) < 0.000001
+    restored_bounds = [[f(b[j][i] for b in all_bounds) for i in range(3)] for j, f in enumerate((min, max))]
     # Inspect the actual reimported portable file, not the richer source graph.
     scene = bpy.context.scene
     center = (Vector(restored_bounds[0]) + Vector(restored_bounds[1])) / 2
@@ -200,13 +259,16 @@ def main():
     scene.view_settings.view_transform = "AgX"
     scene.render.filepath = str(destination / "reimport.png")
     bpy.ops.render.render(write_still=True)
-    receipt = {"source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
-               "glb_sha256": hashlib.sha256(raw).hexdigest(), "mesh": mesh_name,
-               "texture_size": 512, "triangles": source_triangles, "bytes": len(raw),
+    assert source_hash == hashlib.sha256(source.read_bytes()).hexdigest()
+    receipt = {"source_sha256": source_hash,
+               "glb_sha256": hashlib.sha256(raw).hexdigest(), "selection": selection,
+               "unique_meshes": len(unique), "instances": len(snapshots),
+               "texture_size": 512, "texture_mip_bytes_estimate": texture_bytes,
+               "unique_triangles": sum(len(v["triangles"]) for v in baked.values()), "bytes": len(raw),
                "world_bounds": restored_bounds,
                "geometry_audit": geometry_receipt,
                "device": "CPU", "threads": 2, "native_reimport": "passed",
-               "limitations": ["single shared-mesh pilot", "subsurface and independent coat IOR omitted", "engine parity not tested",
+               "limitations": ["fixed 512 texture size per unique mesh", "subsurface and independent coat IOR omitted", "engine parity not tested",
                                "UV packing not formally overlap-certified"]}
     (destination / "receipt.json").write_text(json.dumps(receipt, indent=2), encoding="utf8")
     print("SCENE_FORGE_BAKED_ASSET_PASS", json.dumps(receipt))

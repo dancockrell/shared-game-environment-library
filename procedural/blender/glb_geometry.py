@@ -75,12 +75,16 @@ def signature(triangle):
     return min(corners, corners[1:] + corners[:1], corners[2:] + corners[:2])
 
 
-def compare(document, binary, expected):
+def compare(document, binary, expected, mesh_index=None):
     """Expected triangles use glTF local coordinates, before node transforms."""
-    if len(document["meshes"]) != 1:
+    if mesh_index is None and len(document["meshes"]) != 1:
         raise ValueError("Single-mesh audit requires exactly one mesh")
+    if mesh_index is None:
+        mesh_index = 0
+    if type(mesh_index) is not int or not 0 <= mesh_index < len(document["meshes"]):
+        raise ValueError("Invalid mesh index")
     actual = Counter()
-    for primitive in document["meshes"][0]["primitives"]:
+    for primitive in document["meshes"][mesh_index]["primitives"]:
         if primitive.get("mode", 4) != 4 or primitive.get("extensions") or primitive.get("targets"):
             raise ValueError("Expected ordinary uncompressed triangles")
         positions = accessor(document, binary, primitive["attributes"]["POSITION"], "POSITION")

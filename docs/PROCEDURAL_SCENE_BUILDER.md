@@ -1019,15 +1019,16 @@ No Godot process change, paid service, remote push or Actions run occurred.
 #### Portable Blender bake checkpoint
 
 `procedural/blender/bake_asset.py` now consumes the existing saved Blender
-reference, one shared-mesh name, and a fresh output directory. This is an
+reference, one shared-mesh name (or `--all` for the assembly), and a fresh output directory. This is an
 export stage of the canonical generator, not a second geometry generator.
 It makes a separate bake UV layer, explicitly preserves original albedo UV
 sampling, and uses Blender Smart UV Project rather than baking over potentially
 overlapping original caps. Geometry positions and triangle count are unchanged.
 UV packing is not formally overlap-certified.
 
-The bounded pilot accepts a 128 MiB authoring file, one opaque Principled
-material, and at most 100,000 vertices. It bakes 512-square base color,
+The bounded exporter accepts a 128 MiB authoring file, one opaque Principled
+material per mesh, at most 100,000 vertices per mesh, 500,000 unique vertices
+per assembly, 32 unique meshes and 1,000 instances. It bakes 512-square base color,
 roughness and tangent-space normal textures on CPU/two threads. Emission
 rerouting extracts unlit color/roughness; normal baking retains the authored
 bump response. Transparent/transmissive inputs are rejected. It exports embedded
@@ -1068,7 +1069,7 @@ Runs used hidden BelowNormal processes with a 3 GiB sampled working-set and
 Those watchdogs are launch controls, not a built-in hard reservation or VRAM
 measurement. Seven material-profile tests and Python syntax checks passed.
 Rust is unchanged; its full suite was not rerun for this Python-only checkpoint.
-Whole-scene batched export, automatic texture-resolution/LOD budgets, engine
+Whole-assembly export is implemented in the checkpoint below; automatic texture-resolution/LOD budgets, engine
 import checks, and higher-quality pastry/fruit construction remain unfinished.
 No Godot process replacement, paid generation, remote push or Actions run.
 
@@ -1100,6 +1101,47 @@ Sampled process RAM peak 585,330,688 bytes; wall time 14.14 seconds, hidden
 BelowNormal CPU/two threads under the existing 3 GiB/150-second launch guard.
 The render remains unapproved food art; this checkpoint changes export
 assurance, not artistic quality. No Godot restart, remote Actions or paid work.
+
+#### Shared-mesh assembly bake
+
+The same `bake_asset.py` path now accepts `--all` in place of a mesh name.
+It unwraps and bakes each unique mesh once, then exports every selected
+placement together. No repeated external Blender launch is needed per mesh.
+Source geometry is unchanged; per-mesh texture directories are generated with
+numeric names so authored mesh names cannot escape the output directory.
+The original reference file hash is checked again at completion.
+
+The complete authoring recipe is stored once on an explicit
+`SceneForgeAssembly` root. Export placement hierarchy is flattened under this
+root while retaining each world transform; original recipe hierarchy remains
+recoverable from the metadata. Each object retains source-mesh identity and a
+batch export ID. Original source-instance metadata also remains on objects.
+
+Binary checks now cover every unique mesh, the full mesh-name set, all instance
+IDs and their mesh references, embedded textures and per-mesh material profiles.
+Native reimport checks every placement matrix and bound within 1e-6, triangle
+counts, shared mesh resource count and source-recipe preservation. This is still
+not Godot/Unity validation or certification of untested Blender source graphs.
+
+Actual evidence: `baked-assembly-003` under the existing review root exported,
+reimported and rendered the complete pie/plate: 61 instances sharing 11 meshes,
+71,376 unique triangles, 5,377,360-byte GLB. All oriented triangle audits passed.
+The final background run took 18.16 seconds with sampled process RAM peak
+683,245,568 bytes, CPU/two threads, same 3 GiB/150-second watchdog. Earlier
+pre-root assembly runs 001 and 002 produced byte-identical GLBs. The new root
+intentionally changes the final file; that final rooted output is not yet
+repeat-determinism certified.
+
+Fixed 512-square maps currently imply 46,137,300 bytes for three uncompressed
+RGBA8 maps per unique mesh including complete mip chains. This estimate excludes
+mesh data, engine allocation overhead, render targets and driver memory; it is
+not measured VRAM. Uniform resolution and the dense source tessellation still
+need adaptive budgeting before broad runtime admission.
+Eight binary-audit tests and seven material-profile tests pass; Python syntax
+checks pass. Actual reimported assembly render inspected: layout, pastry grain
+and wet highlights survive, but pastry remains too pink/regular and the filling
+still reads as an arrangement of small lumps. No final-art approval, paid work,
+Godot process replacement, remote push or Actions run.
 
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.

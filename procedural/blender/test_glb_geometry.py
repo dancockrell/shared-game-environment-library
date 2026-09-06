@@ -64,6 +64,16 @@ class GeometryAuditTests(unittest.TestCase):
         self.doc["bufferViews"][1]["byteOffset"] = 48
         self.assertEqual(audit.compare(self.doc, self.binary, [self.triangle])["triangles"], 1)
 
+    def test_explicit_batch_mesh_selection(self):
+        self.doc["meshes"].append(self.doc["meshes"][0])
+        with self.assertRaises(ValueError):
+            audit.compare(self.doc, self.binary, [self.triangle])
+        for index in (0, 1):
+            self.assertEqual(audit.compare(self.doc, self.binary, [self.triangle], index)["triangles"], 1)
+        for index in (-1, 2, True):
+            with self.assertRaises(ValueError):
+                audit.compare(self.doc, self.binary, [self.triangle], index)
+
 
 if __name__ == "__main__":
     unittest.main()
