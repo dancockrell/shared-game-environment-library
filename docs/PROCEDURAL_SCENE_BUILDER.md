@@ -14,7 +14,58 @@ extends this library's procedural production workflow, not another world server.
 Original software in that directory is MIT licensed. Existing CC0-only art
 admission is unchanged; permissively licensed software dependencies are not art.
 
-## Implemented first slice
+## Visual target: high-end stylized, not blocky
+
+User clarification, 6 September 2026: aim for contemporary high-end studio
+cartoon/stylized 3D, not photorealism, voxel forms, or intentionally crude
+low-poly art. This refines the presentation target without authorizing room
+expansion. Existing boxes and bare shells are construction/test geometry, not
+finished assets or proof that the target has been reached.
+
+The tool must support an explicit separation between structural geometry and
+finished appearance. Preserve measured footprints, sockets and apertures while
+adding expressive silhouettes, curved profiles, shaped rooflines, layered trim,
+controlled bevels and authored asymmetry. Detail has three scales: readable
+overall massing, construction-level parts, and restrained surface detail. Random
+noise or polygon count alone is not a quality measure. Do not randomly distort
+contact surfaces, opening clearance or architectural joins.
+
+Materials should give wood, stone, metal, plaster, cloth and water distinct
+responses without requiring photographic textures. Lighting must retain depth,
+contact shadows and readable silhouettes. Validate at gameplay distance and
+closer camera views; an orthographic thumbnail alone cannot certify quality.
+The approved reference remains a quality anchor, not an exact reconstruction
+claim. This target requires additional geometry/material operators and visual
+iteration; those capabilities are not implemented merely by documenting them.
+
+The 8 GB VRAM target is a residency constraint, not a reason to flatten every
+shape. Prefer shared meshes/materials, local detail budgets, culling and future
+LOD/streaming. Measure actual engine residency and frame time before claiming
+the budget is met. No paid generation or neural inference dependency is added.
+
+## Implemented tool checkpoint
+
+Latest priority: build and harden the shared tool, not additional Crossing room
+content. Tool validation is a separate gate from room/art admission.
+
+### Numerical and workload regression checkpoint
+
+The triangle builder now computes cross products and normalization in f64 before
+emitting f32 normals. A reproduced regression previously emitted only 12 of 36
+box vertices for dimensions `[1e-20, 1, 1]`: its absolute area cutoff silently
+discarded four faces. Tests now retain every box face at thin, tiny and large
+scales and require finite unit normals. Exact zero-area lathe pole triangles
+remain intentionally omitted. Box dimensions that underflow when halved are
+rejected rather than accepted as a collapsed slab. This is numerical correctness,
+not a claim that engines can visually resolve microscopic geometry.
+
+Empty repeated subtrees are pruned before expansion. Otherwise nested repeats
+could pass the zero-instance budget and still perform billions of empty steps.
+The regression uses two nested `u32::MAX` repeats over an empty group and requires
+an empty, zero-byte scene. No new dependency or GPU allocation is introduced.
+
+These checks do not certify arbitrary mesh topology, Unity behavior, GPU memory,
+or final art quality. Engine-render and saved-package checks remain independent.
 
 - Rust library, command-line executable and C ABI dynamic library.
 - Reusable named mesh definitions; nested groups and repeated assemblies.

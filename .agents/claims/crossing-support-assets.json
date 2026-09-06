@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Active shared Rust scene builder: measured room shells with bounded apertures, reusable geometry and Godot/Unity adapters for an 8 GB VRAM target; characters remain separately owned",
+  "summary": "Tool-only priority: harden shared Rust Scene Forge geometry, bounded workloads and engine exports; room expansion paused and characters separately owned",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T06:13:07.162Z",
@@ -23,6 +23,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Thin-box missing-face regression reproduced before fix; f64 normalization and scale-extreme regression passed",
+      "Empty repeat workload pruning and collapsed box rejection added; shared tool work remains active",
       "Aperture metadata: Rust tests and Godot shared metadata reload, translation, rotation, scale and invalid-index checks passed; Unity consumer pending",
       "Room operator: 11 Rust tests, clippy with warnings denied and release build passed",
       "Four-room Godot import, pack/reinstantiate and actual render inspection passed; 4 instances share 1 mesh",

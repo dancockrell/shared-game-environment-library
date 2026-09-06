@@ -124,23 +124,22 @@ fn finite(v: &[f32]) -> Result<()> {
         Err("Non-finite or excessive coordinate".into())
     }
 }
-fn sub(a: V3, b: V3) -> V3 {
-    [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
-}
-fn cross(a: V3, b: V3) -> V3 {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
 fn triangle(m: &mut Mesh, a: V3, b: V3, c: V3) -> Result<()> {
-    let n = cross(sub(b, a), sub(c, a));
-    let length = (n.iter().map(|x| x * x).sum::<f32>()).sqrt();
-    if length < 1e-8 {
+    // Compute in f64: a world-unit area epsilon deletes valid thin faces,
+    // while f32 squared cross products overflow for large legal dimensions.
+    let u: [f64; 3] = std::array::from_fn(|i| b[i] as f64 - a[i] as f64);
+    let v: [f64; 3] = std::array::from_fn(|i| c[i] as f64 - a[i] as f64);
+    let n = [
+        u[1] * v[2] - u[2] * v[1],
+        u[2] * v[0] - u[0] * v[2],
+        u[0] * v[1] - u[1] * v[0],
+    ];
+    let length = n.iter().map(|x| x * x).sum::<f64>().sqrt();
+    // Exact degeneracies at lathe poles intentionally contribute no triangle.
+    if length == 0. {
         return Ok(());
     }
-    let normal = [n[0] / length, n[1] / length, n[2] / length];
+    let normal = n.map(|x| (x / length) as f32);
     let start = u32::try_from(m.positions.len()).map_err(|_| "Index overflow")?;
     m.positions.extend([a, b, c]);
     m.normals.extend([normal; 3]);
@@ -223,6 +222,9 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                 return Err("Vertex budget exceeded".into());
             }
             let [x, y, z] = [size[0] / 2., size[1] / 2., size[2] / 2.];
+            if [x, y, z].contains(&0.) {
+                return Err("Box dimensions collapse at output precision".into());
+            }
             let v = [
                 [-x, -y, -z],
                 [x, -y, -z],
@@ -443,6 +445,12 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
             }
             Assembly::Repeat { count, step, child } => {
                 finite(step)?;
+                // Empty subtrees have no instances to emit. Without pruning,
+                // nested repeats can do billions of iterations despite passing
+                // the instance budget with a count of zero.
+                if instance_count(child, 0, r.limits.max_instances)? == 0 {
+                    return Ok(());
+                }
                 for i in 0..*count {
                     let p = [
                         offset[0] + step[0] * i as f32,
@@ -556,8 +564,31 @@ mod tests {
         assert!(compile(&r).unwrap_err().contains("residency"));
     }
     #[test]
+    fn box_faces_survive_scale_extremes() {
+        for size in [[1e-20, 1., 1.], [1e6; 3], [1e-20; 3]] {
+            let m = mesh(
+                "scale-regression",
+                &Definition {
+                    shape: Shape::Box { size },
+                    color: [1.; 4],
+                },
+                36,
+            )
+            .unwrap();
+            assert_eq!(m.positions.len(), 36, "Missing faces for {size:?}");
+            for n in &m.normals {
+                assert!(n.iter().all(|v| v.is_finite()));
+                assert!((n.iter().map(|v| v * v).sum::<f32>() - 1.).abs() < 1e-6);
+            }
+        }
+    }
+    #[test]
     fn invalid_geometry() {
         let mut r = recipe();
+        r.definitions.get_mut("block").unwrap().shape = Shape::Box {
+            size: [f32::from_bits(1), 1., 1.],
+        };
+        assert!(compile(&r).unwrap_err().contains("output precision"));
         r.definitions.get_mut("block").unwrap().shape = Shape::Box {
             size: [f32::NAN, 1., 1.],
         };
@@ -604,6 +635,23 @@ mod tests {
             assert_eq!(v["ok"], true);
             scene_forge_free(p, n);
         }
+    }
+    #[test]
+    fn huge_empty_repeats_are_pruned() {
+        let mut r = recipe();
+        r.root = Assembly::Repeat {
+            count: u32::MAX,
+            step: [0.; 3],
+            child: Box::new(Assembly::Repeat {
+                count: u32::MAX,
+                step: [0.; 3],
+                child: Box::new(Assembly::Group { children: vec![] }),
+            }),
+        };
+        let s = compile(&r).unwrap();
+        assert!(s.instances.is_empty());
+        assert!(s.meshes.is_empty());
+        assert_eq!(s.estimated_geometry_bytes, 0);
     }
     #[test]
     fn room_batch_reuses_mesh_and_enforces_vertex_budget() {
