@@ -89,3 +89,10 @@ No production-ready adult body family was established by this bounded audit. Tha
 
 
 Olympus consumed the existing dry-rock maps in its runtime stage on2026-09-06:18outcrops, byte-identical source maps and a project-owned material Resource.113stage/material and45native-app checks pass. This is a material reuse example, not new shared geometry or a completed art-quality claim. Detailed runtime ancestry stays in the Olympus art manifest.
+
+
+## Available browser-unlimited ornament
+
+Owl-and-olive floor inlay,2026-09-06: one1024x1024 PNG generated in the authenticated Magnific browser using Google Nano Banana2Lite / Thinking Fast /1:1. The submission button explicitly showed Generate Unlimited. No connector generation, model conversion, or paid operation was used.
+
+Source creation: https://www.magnific.com/app/creation/79AMrYCJAL . Original PNG, exact prompt, hash and runtime transformations are maintained in [Olympus ornaments](https://github.com/dancockrell/board-game-cabinet/tree/main/assets/olympus_arena/ornaments) and that project's art manifest. Original bytes are unchanged. Godot uses a circular UV mask and stone tint on a flat plane. This is a reusable classical owl motif / modeling reference for inlays, plaques or shields, not a body, rig, normal map or CC0 source. Projects must review literal use and rights before their own admission. Do not regenerate this motif merely because it was made in another task.
