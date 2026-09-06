@@ -73,6 +73,18 @@
         "mesh": "Skeleton3D/Hat",
         "surface": 0
       }
+    ],
+    "Tabard": [
+      {
+        "mesh": "Skeleton3D/Tabard",
+        "surface": 0
+      }
+    ],
+    "Tabard border": [
+      {
+        "mesh": "Skeleton3D/Tabard",
+        "surface": 1
+      }
     ]
   },
   "measurement": {
@@ -817,7 +829,8 @@
       "Skeleton3D/Lashes04::Broad jaw",
       "Skeleton3D/Shoes::Broad jaw",
       "Skeleton3D/ShortCloak::Broad jaw",
-      "Skeleton3D/LongCloak::Broad jaw"
+      "Skeleton3D/LongCloak::Broad jaw",
+      "Skeleton3D/Tabard::Broad jaw"
     ],
     "Broad nose": [
       "Skeleton3D/Body01::Broad nose",
@@ -836,7 +849,8 @@
       "Skeleton3D/Lashes04::Broad nose",
       "Skeleton3D/Shoes::Broad nose",
       "Skeleton3D/ShortCloak::Broad nose",
-      "Skeleton3D/LongCloak::Broad nose"
+      "Skeleton3D/LongCloak::Broad nose",
+      "Skeleton3D/Tabard::Broad nose"
     ],
     "Defined cheekbones": [
       "Skeleton3D/Body01::Defined cheekbones",
@@ -855,7 +869,8 @@
       "Skeleton3D/Lashes04::Defined cheekbones",
       "Skeleton3D/Shoes::Defined cheekbones",
       "Skeleton3D/ShortCloak::Defined cheekbones",
-      "Skeleton3D/LongCloak::Defined cheekbones"
+      "Skeleton3D/LongCloak::Defined cheekbones",
+      "Skeleton3D/Tabard::Defined cheekbones"
     ],
     "Full cheeks": [
       "Skeleton3D/Body01::Full cheeks",
@@ -874,7 +889,8 @@
       "Skeleton3D/Lashes04::Full cheeks",
       "Skeleton3D/Shoes::Full cheeks",
       "Skeleton3D/ShortCloak::Full cheeks",
-      "Skeleton3D/LongCloak::Full cheeks"
+      "Skeleton3D/LongCloak::Full cheeks",
+      "Skeleton3D/Tabard::Full cheeks"
     ],
     "Full lips": [
       "Skeleton3D/Body01::Full lips",
@@ -893,7 +909,8 @@
       "Skeleton3D/Lashes04::Full lips",
       "Skeleton3D/Shoes::Full lips",
       "Skeleton3D/ShortCloak::Full lips",
-      "Skeleton3D/LongCloak::Full lips"
+      "Skeleton3D/LongCloak::Full lips",
+      "Skeleton3D/Tabard::Full lips"
     ],
     "Larger eyes": [
       "Skeleton3D/Body01::Larger eyes",
@@ -912,7 +929,8 @@
       "Skeleton3D/Lashes04::Larger eyes",
       "Skeleton3D/Shoes::Larger eyes",
       "Skeleton3D/ShortCloak::Larger eyes",
-      "Skeleton3D/LongCloak::Larger eyes"
+      "Skeleton3D/LongCloak::Larger eyes",
+      "Skeleton3D/Tabard::Larger eyes"
     ],
     "Lean": [
       "Skeleton3D/Body01::Lean",
@@ -931,7 +949,8 @@
       "Skeleton3D/Lashes04::Lean",
       "Skeleton3D/Shoes::Lean",
       "Skeleton3D/ShortCloak::Lean",
-      "Skeleton3D/LongCloak::Lean"
+      "Skeleton3D/LongCloak::Lean",
+      "Skeleton3D/Tabard::Lean"
     ],
     "Muscular": [
       "Skeleton3D/Body01::Muscular",
@@ -950,7 +969,8 @@
       "Skeleton3D/Lashes04::Muscular",
       "Skeleton3D/Shoes::Muscular",
       "Skeleton3D/ShortCloak::Muscular",
-      "Skeleton3D/LongCloak::Muscular"
+      "Skeleton3D/LongCloak::Muscular",
+      "Skeleton3D/Tabard::Muscular"
     ],
     "Narrow chin": [
       "Skeleton3D/Body01::Narrow chin",
@@ -969,7 +989,8 @@
       "Skeleton3D/Lashes04::Narrow chin",
       "Skeleton3D/Shoes::Narrow chin",
       "Skeleton3D/ShortCloak::Narrow chin",
-      "Skeleton3D/LongCloak::Narrow chin"
+      "Skeleton3D/LongCloak::Narrow chin",
+      "Skeleton3D/Tabard::Narrow chin"
     ],
     "Oval face": [
       "Skeleton3D/Body01::Oval face",
@@ -988,7 +1009,8 @@
       "Skeleton3D/Lashes04::Oval face",
       "Skeleton3D/Shoes::Oval face",
       "Skeleton3D/ShortCloak::Oval face",
-      "Skeleton3D/LongCloak::Oval face"
+      "Skeleton3D/LongCloak::Oval face",
+      "Skeleton3D/Tabard::Oval face"
     ],
     "Pointed ears": [
       "Skeleton3D/Body01::Pointed ears",
@@ -1007,7 +1029,8 @@
       "Skeleton3D/Lashes04::Pointed ears",
       "Skeleton3D/Shoes::Pointed ears",
       "Skeleton3D/ShortCloak::Pointed ears",
-      "Skeleton3D/LongCloak::Pointed ears"
+      "Skeleton3D/LongCloak::Pointed ears",
+      "Skeleton3D/Tabard::Pointed ears"
     ],
     "Square face": [
       "Skeleton3D/Body01::Square face",
@@ -1026,7 +1049,8 @@
       "Skeleton3D/Lashes04::Square face",
       "Skeleton3D/Shoes::Square face",
       "Skeleton3D/ShortCloak::Square face",
-      "Skeleton3D/LongCloak::Square face"
+      "Skeleton3D/LongCloak::Square face",
+      "Skeleton3D/Tabard::Square face"
     ]
   },
   "schemaVersion": 1,
@@ -1122,6 +1146,12 @@
         "hides": [],
         "meshes": []
       },
+      "Open-sided tabard": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Tabard"
+        ]
+      },
       "Short travelling cloak": {
         "hides": [],
         "meshes": [
@@ -1130,7 +1160,7 @@
       }
     }
   },
-  "sourceSha256": "f9029585c1df60c1beaa9235af0951da30c6b17101f2c1901eff95486bd4aacc",
+  "sourceSha256": "30a870c9a80f5ad87dcd07231176b92b056c9e0fb27246bb9855c737572b79f3",
   "variationCaps": {
     "Broad jaw": 0.55,
     "Defined cheekbones": 0.22,

@@ -305,40 +305,52 @@ func add_part(parent: Node3D, part_name: String, obj_path: String, material_path
 	instance.skin = skin
 	instance.skeleton = NodePath("..")
 
-func cloak_drop(t: float, length: float) -> float:
-	return .035*minf(t/.16,1.0)+maxf(0,t-.16)/.84*(length-.035)
+func garment_drop(t: float, length: float, tabard: bool = false) -> float:
+	var shoulder_drop := .105 if tabard else .035
+	return shoulder_drop*minf(t/.16,1.0)+maxf(0,t-.16)/.84*(length-shoulder_drop)
 
-func cloak_panel_present(row: int, column: int, rings: int, segments: int, length: float) -> bool:
+func garment_panel_present(row: int, column: int, rings: int, segments: int, length: float, tabard: bool = false) -> bool:
+	if tabard:
+		column = posmod(column,segments)
 	if row < 0 or row >= rings or column < 0 or column >= segments:
 		return false
-	var angle := lerpf(25,335,(float(column)+.5)/segments)
-	var drop := cloak_drop((float(row)+.5)/rings,length)
+	var angle := lerpf(0 if tabard else 25,360 if tabard else 335,(float(column)+.5)/segments)
+	var drop := garment_drop((float(row)+.5)/rings,length,tabard)
 	# Sewn side vents provide arm clearance; no skin polygons are hidden.
 	var side := (angle > 55 and angle < 125) or (angle > 235 and angle < 305)
-	return not (side and drop > .09 and drop < .45)
+	return not (side and drop > .09 and (tabard or drop < .45))
 
-func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) -> void:
-	# Authored radial cloth pattern, not a replacement body mesh. Open front,
-	# shoulder yoke and widening folded hem. Fit deltas use the existing proxy.
+func add_overgarment(parent: Node3D, part_name: String, sex: String, length: float, tabard: bool = false) -> void:
+	# One radial cloth constructor: cloak with open front and vented sides, or
+	# tabard with connected shoulders and sides open down to the hem.
 	var fit := proxy_data(source.path_join("proxymeshes/%s_generic/%s_generic.proxy" % [sex,sex]))
 	var base_points := fitted(fit,body)
 	var variants: Array[PackedVector3Array] = [base_points]
 	for variant in body_variants:
 		variants.append(fitted(fit,variant))
 	var anchor := skeleton.get_bone_global_rest(skeleton.find_bone("neck02")).origin
-	var rings := 18
-	var segments := 48
+	var rings := 28 if tabard else 18
+	var segments := 64 if tabard else 48
 	var pattern := PackedVector3Array()
 	var nearest: Array[int] = []
 	for row in rings+1:
 		var t := float(row)/rings
 		var shoulder := minf(t/.16,1.0)
-		var width := lerpf(.080,.255,shoulder)+maxf(0,t-.16)*.12
-		var depth := lerpf(.09,.155,shoulder)+maxf(0,t-.16)*.12
+		var width := lerpf(.080,.255,shoulder)+maxf(0,t-.16)*(.025 if tabard else .12)
+		var depth := lerpf(.09,.155,shoulder)+maxf(0,t-.16)*(.055 if tabard else .12)
+		if tabard:
+			# Gentle waist suppression; leave ease instead of skin-tight body tracing.
+			depth -= .025*exp(-pow((t-.48)/.18,2))
+			var ring_y := anchor.y-.018-garment_drop(t,length,true)
+			# Sample the torso, excluding outstretched arms. Retain garment ease
+			# at chest and hips rather than hiding skin to conceal intersections.
+			for point in base_points:
+				if absf(point.y-ring_y) < .025 and absf(point.x) < .20:
+					depth = maxf(depth,absf(point.z-anchor.z)+.035)
 		for column in segments+1:
-			var angle := lerpf(deg_to_rad(25),deg_to_rad(335),float(column)/segments)
-			var fold := sin(angle*12.0)*.013*pow(t,.7)
-			var drop := cloak_drop(t,length)
+			var angle := lerpf(0 if tabard else deg_to_rad(25),TAU if tabard else deg_to_rad(335),float(column)/segments)
+			var fold := sin(angle*12.0)*(.008 if tabard else .013)*pow(t,.7)
+			var drop := garment_drop(t,length,tabard)
 			var point := Vector3(sin(angle)*(width+fold),anchor.y-.018-drop,anchor.z+cos(angle)*(depth+fold)-.025*t)
 			pattern.append(point)
 			var best := 0
@@ -357,7 +369,9 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 		var pattern_normals := PackedVector3Array()
 		for row in rings+1:
 			for column in segments+1:
-				var across := fitted_pattern[row*(segments+1)+mini(column+1,segments)]-fitted_pattern[row*(segments+1)+maxi(column-1,0)]
+				var next_column := posmod(column+1,segments) if tabard else mini(column+1,segments)
+				var previous_column := posmod(column-1,segments) if tabard else maxi(column-1,0)
+				var across := fitted_pattern[row*(segments+1)+next_column]-fitted_pattern[row*(segments+1)+previous_column]
 				var down := fitted_pattern[mini(row+1,rings)*(segments+1)+column]-fitted_pattern[maxi(row-1,0)*(segments+1)+column]
 				# Match Godot's clockwise front-face convention for this grid.
 				pattern_normals.append(across.cross(down).normalized())
@@ -369,11 +383,11 @@ func add_cloak(parent: Node3D, part_name: String, sex: String, length: float) ->
 			panels.append(surface)
 		for row in rings:
 			for column in segments:
-				if not cloak_panel_present(row,column,rings,segments,length):
+				if not garment_panel_present(row,column,rings,segments,length,tabard):
 					continue
 				var border := false
 				for offset in [Vector2i(-1,0),Vector2i(1,0),Vector2i(0,-1),Vector2i(0,1)]:
-					if not cloak_panel_present(row+offset.x,column+offset.y,rings,segments,length):
+					if not garment_panel_present(row+offset.x,column+offset.y,rings,segments,length,tabard):
 						border = true
 				var surface := panels[1 if border else 0]
 				var a := row*(segments+1)+column
@@ -538,8 +552,9 @@ func build(sex: String) -> void:
 		var lash_path: String = "eyelashes/eyelashes"+number+"/eyelashes"+number
 		add_part(character,"Lashes"+number,lash_path+".obj",lash_path+".mhmat")
 	add_part(character,"Shoes","clothes/shoes01/shoes01.obj","clothes/shoes01/shoes01.mhmat")
-	add_cloak(character,"ShortCloak",sex,.52)
-	add_cloak(character,"LongCloak",sex,1.05)
+	add_overgarment(character,"ShortCloak",sex,.52)
+	add_overgarment(character,"LongCloak",sex,1.05)
+	add_overgarment(character,"Tabard",sex,.80,true)
 	if failure:
 		character.free()
 		return
@@ -560,6 +575,9 @@ func build(sex: String) -> void:
 	profile.dyes["Formal bottom"] = [{"mesh":"Skeleton3D/FormalBottom","surface":0}]
 	profile.dyes.Hat = [{"mesh":"Skeleton3D/Hat","surface":0}]
 	profile.slots.Outerwear = {"No cloak":{"meshes":[],"hides":[]},"Short travelling cloak":{"meshes":["Skeleton3D/ShortCloak"],"hides":[]},"Long travelling cloak":{"meshes":["Skeleton3D/LongCloak"],"hides":[]}}
+	profile.slots.Outerwear["Open-sided tabard"] = {"meshes":["Skeleton3D/Tabard"],"hides":[]}
+	profile.dyes.Tabard = [{"mesh":"Skeleton3D/Tabard","surface":0}]
+	profile.dyes["Tabard border"] = [{"mesh":"Skeleton3D/Tabard","surface":1}]
 	profile.dyes.Cloak = [{"mesh":"Skeleton3D/ShortCloak","surface":0},{"mesh":"Skeleton3D/LongCloak","surface":0}]
 	profile.dyes["Cloak border"] = [{"mesh":"Skeleton3D/ShortCloak","surface":1},{"mesh":"Skeleton3D/LongCloak","surface":1}]
 	profile.slots.Eyebrows = {"Brow 01":{"meshes":["Skeleton3D/Brows001"],"hides":[]},"Brow 05":{"meshes":["Skeleton3D/Brows005"],"hides":[]},"No eyebrows":{"meshes":[],"hides":[]}}

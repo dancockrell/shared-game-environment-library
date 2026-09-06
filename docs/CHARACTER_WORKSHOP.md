@@ -123,6 +123,12 @@ Dyes multiply a copied standard material's original albedo color and retain its 
 
 ### Fitted brows and lashes — 2026-09-06 checkpoint
 
+Period overgarment construction now also includes **Open-sided tabard** in the existing Outerwear slot. It uses the same constructor as the travelling cloaks, not a separate fitting/export pipeline. Its cut closes the front, connects the shoulders around a neck opening, and leaves both sides open to the hem. Cloth and edging have independent dye surfaces. Torso-depth samples provide chest/hip ease; twelve fitted shape targets and the shared skeleton remain attached. Source body polygons are not hidden by this overgarment.
+
+This is an original construction prototype, not a finished faction costume. Initial review rejected flat shoulders, oversized edging and chest intersections; shoulder drop, finer border sampling and body-derived depth were revised. Front, side and back review captures are named `*-review-tabard-*.png`. The underlayers in these fixtures are still modern source clothes, not proposed period ensembles. The tabard is rigidly weighted to the torso: it needs fastening, fabric treatment, movement/leg clearance, body-extreme testing and faction-specific detailing before runtime art admission. Its presence does not complete a historical wardrobe.
+
+The revised female front no longer shows the observed chest poke-through. The male formal jacket still intersects the tabard's back shoulder edges: that combination fails visual admission. Both rendered workshop suites pass the mechanical selection, linked-shape, seam-normal, triangle-winding and selected-garment export checks; those tests do not certify layer collision or animation quality.
+
 Both prepared body profiles now expose **Eyebrows** (Brow 01, Brow 05, none) and **Eyelashes** (Lashes 01, Lashes 04, none), with separate dye channels. The four source parts use their original fitting tables, transferred skin weights and all twelve linked morphology controls. The ZIP subset now contains 125 original files; the separate core manifest contains 25. This supersedes the smaller extraction counts in the historical checkpoints below.
 
 Profiles can provide `variationChoices` to restrict automatic appearance generation to an explicit nonempty subset of each slot's choices. Manual choices remain available: ordinary seeded humanoids get brows and lashes, but an artist can remove either. Invalid, duplicate or unknown choices reject atomically.

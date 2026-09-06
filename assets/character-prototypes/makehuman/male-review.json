@@ -11,7 +11,9 @@
       "Formal bottom": "ffffffff",
       "Formal top": "ffffffff",
       "Hair": "ffffffff",
-      "Hat": "ffffffff"
+      "Hat": "ffffffff",
+      "Tabard": "ffffffff",
+      "Tabard border": "ffffffff"
     },
     "morphs": {
       "Broad jaw": 0.0,
@@ -27,7 +29,7 @@
       "Pointed ears": 0.0,
       "Square face": 0.0
     },
-    "profileSha256": "c41658b886347bd90beaa1d9fa29560f710270c79470fa0685eface62b38cb14",
+    "profileSha256": "3a6a23a6769b1a32d27e3e95915163f7f8b7e5e6e7f9c03b0ab3b08117acb5d8",
     "slots": {
       "Clothes": "Casual 01",
       "Eyebrows": "Brow 01",
@@ -53,7 +55,8 @@
     "Skeleton3D/Outfit01": true,
     "Skeleton3D/Outfit02": false,
     "Skeleton3D/Shoes": true,
-    "Skeleton3D/ShortCloak": false
+    "Skeleton3D/ShortCloak": false,
+    "Skeleton3D/Tabard": false
   },
   "schemaVersion": 1,
   "shapes": {
@@ -260,9 +263,21 @@
     "Skeleton3D/ShortCloak::Narrow chin": 0.0,
     "Skeleton3D/ShortCloak::Oval face": 0.0,
     "Skeleton3D/ShortCloak::Pointed ears": 0.0,
-    "Skeleton3D/ShortCloak::Square face": 0.0
+    "Skeleton3D/ShortCloak::Square face": 0.0,
+    "Skeleton3D/Tabard::Broad jaw": 0.0,
+    "Skeleton3D/Tabard::Broad nose": 0.0,
+    "Skeleton3D/Tabard::Defined cheekbones": 0.0,
+    "Skeleton3D/Tabard::Full cheeks": 0.0,
+    "Skeleton3D/Tabard::Full lips": 0.0,
+    "Skeleton3D/Tabard::Larger eyes": 0.0,
+    "Skeleton3D/Tabard::Lean": 0.0,
+    "Skeleton3D/Tabard::Muscular": 0.0,
+    "Skeleton3D/Tabard::Narrow chin": 0.0,
+    "Skeleton3D/Tabard::Oval face": 0.0,
+    "Skeleton3D/Tabard::Pointed ears": 0.0,
+    "Skeleton3D/Tabard::Square face": 0.0
   },
   "sourceFilename": "male-source.glb",
-  "sourceSha256": "6e478745d9431e6663aed4eb375590cada46297232a3647f60a559d593df220f",
+  "sourceSha256": "54916cda4f418a7dceef8c93e8b4024c8eb987158cccf3245ee5b4a38f81754d",
   "variationSeed": ""
 }

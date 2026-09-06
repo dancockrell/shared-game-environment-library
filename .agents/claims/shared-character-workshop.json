@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Fit brows and lashes, preserve source transparency and shadow rules, and verify appearance exports",
+  "summary": "Extend the existing fitted cloth constructor with an open-sided period tabard and review both body builds",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T07:36:00Z",
+  "updated_at": "2026-09-06T07:44:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -34,6 +34,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Open-sided tabard built through existing overgarment constructor; both rendered workshop suites passed, with front/side/back images and selected-garment export checks",
+      "Visual review revised flat shoulders, large trim and female chest intersection; male formal-jacket shoulder overlap remains rejected for art admission; rigid torso weighting is not cloth animation",
       "Fitted two brow and two lash styles per body with twelve linked controls; both rendered workshop suites and fresh standalone reloads passed with zero failures",
       "Thirty synthetic wardrobe assertions passed, including generation-choice and shadow-override validation; all 125 system and 25 core source hashes and compiler/output receipt hashes passed",
       "Actual brow/lash close-ups inspected: soft transparency improves hard dotted cutouts; hair edges and lash density still require art refinement; not approved game characters",

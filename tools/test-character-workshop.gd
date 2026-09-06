@@ -320,14 +320,17 @@ func run() -> void:
 				editor.outfit.selections.Headwear = "Bare head"
 				editor.outfit.apply()
 				check(not editor.parts["Skeleton3D/Hat"].visible and editor.parts["Skeleton3D/Hair"].visible,"removing headwear restores hair")
-				for cut in ["Short travelling cloak","Long travelling cloak"]:
+				for cut in ["Short travelling cloak","Long travelling cloak","Open-sided tabard"]:
 					editor.outfit.selections.Outerwear = cut
 					editor.outfit.colors.Cloak = "668dadff"
 					editor.outfit.apply()
 					editor.refresh_controls()
 					var long_cut: bool = cut.begins_with("Long")
-					check(editor.parts["Skeleton3D/LongCloak"].visible == long_cut and editor.parts["Skeleton3D/ShortCloak"].visible != long_cut,"cloak selection is exclusive: "+cut)
-					var cloak: MeshInstance3D = editor.parts["Skeleton3D/LongCloak" if long_cut else "Skeleton3D/ShortCloak"]
+					var tabard_cut: bool = cut == "Open-sided tabard"
+					var garment_name := "Tabard" if tabard_cut else ("LongCloak" if long_cut else "ShortCloak")
+					for candidate in ["Tabard","LongCloak","ShortCloak"]:
+						check(editor.parts["Skeleton3D/"+candidate].visible == (candidate == garment_name),"outer garment selection is exclusive: "+cut+" / "+candidate)
+					var cloak: MeshInstance3D = editor.parts["Skeleton3D/"+garment_name]
 					check(cloak.mesh.get_blend_shape_count() == editor.outfit.profile.morphs.size() and cloak.skin.get_bind_count() == 163,"cloak retains linked fit shapes and rig: "+cut)
 					check(cloak.mesh.get_surface_count() == 2,"cloak has separately constructed border: "+cut)
 					var cloth_arrays: Array = cloak.mesh.surface_get_arrays(0)
@@ -358,23 +361,24 @@ func run() -> void:
 								orientation_ok = false
 					check(orientation_ok,"cloak normals agree with triangle winding: "+cut)
 					var cloth_color: Color = cloak.get_active_material(0).albedo_color
-					editor.outfit.colors["Cloak border"] = "eddcc0ff"
+					editor.outfit.colors["Tabard border" if tabard_cut else "Cloak border"] = "eddcc0ff"
 					editor.outfit.apply()
 					check(cloak.get_active_material(0).albedo_color == cloth_color and cloak.get_active_material(1).albedo_color != cloth_color,"border dye leaves cloak cloth unchanged: "+cut)
-					if long_cut:
+					if long_cut or tabard_cut:
 						editor.export_character(args[1]+".scn")
 						var saved := ResourceLoader.load(args[1]+".scn","PackedScene",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
 						var instance := saved.instantiate() if saved != null else null
-						var exported_cloak := instance.find_child("LongCloak",true,false) as MeshInstance3D if instance != null else null
+						var exported_cloak := instance.find_child(garment_name,true,false) as MeshInstance3D if instance != null else null
 						check(exported_cloak != null and exported_cloak.visible and exported_cloak.mesh.get_surface_count() == 2,"cloaked export retains selected garment and border")
 						if instance != null:
 							instance.free()
-					for angle in [0.65,2.8]:
+					for angle in ([0.65,1.57,2.8] if tabard_cut else [0.65,2.8]):
 						editor.pivot.rotation.y = angle
 						for i in 5:
 							await process_frame
 						RenderingServer.force_draw(false)
-						check(root.get_texture().get_image().save_png(args[1]+("-long" if long_cut else "-short")+("-front.png" if angle < 1 else "-back.png")) == OK,"render cloak: "+cut)
+						var view_name := "front" if angle < 1 else ("side" if angle < 2 else "back")
+						check(root.get_texture().get_image().save_png(args[1]+("-tabard" if tabard_cut else ("-long" if long_cut else "-short"))+"-"+view_name+".png") == OK,"render outer garment: "+cut+" / "+view_name)
 				editor.outfit.selections.Outerwear = "No cloak"
 				editor.outfit.apply()
 				check(not editor.parts["Skeleton3D/LongCloak"].visible and not editor.parts["Skeleton3D/ShortCloak"].visible,"removing outerwear hides both cuts")
