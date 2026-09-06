@@ -2,7 +2,7 @@
 extends RefCounted
 ## Sole Godot adapter for the engine-neutral mesh format. Meshes are shared via MultiMesh.
 static func build(data: Dictionary) -> Node3D:
-	assert(data.get("version") in [1, 2] and data.get("coordinate_system") == "right-handed-y-up-ccw-metres", "Unsupported scene format")
+	assert(data.get("version") in [1, 2, 1.0, 2.0] and data.get("coordinate_system") == "right-handed-y-up-ccw-metres", "Unsupported scene format")
 	var root := Node3D.new()
 	root.name = "SceneForge"
 	root.set_meta("scene_forge_recipe_json", str(data.get("recipe_json", "")))

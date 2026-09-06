@@ -171,5 +171,10 @@ func _run() -> void:
 		assert(root.get_texture().get_image().save_png(OS.get_cmdline_user_args()[1]) == OK)
 	print("Scene Forge Godot import passed: ", count, " instances, ", scene.get_child_count(), " shared meshes")
 	print("Spatial checks: ", "unavailable-data guards only (dummy renderer)" if DisplayServer.get_name() == "headless" else "graphics-backed transforms and bounds verified")
+	if "--keep-open" in OS.get_cmdline_user_args() and DisplayServer.get_name() != "headless":
+		root.title = "Scene Forge — procedural teapot review (work in progress)"
+		# User-requested review reuses this process; normal automated tests still exit.
+		Engine.max_fps = 12
+		return
 	scene.queue_free()
 	quit()
