@@ -5,7 +5,7 @@
   "summary": "Build shared character construction; reject failed bodice fitting, read complete contact papers and current garment methods, inspect author code and benchmark pinned Newton before replacing the construction solver",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T12:22:09Z",
+  "updated_at": "2026-09-06T12:33:35Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -52,6 +52,9 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Measured bodice-input checkpoint: actual female libigl surface arm distance, neck-via-nape route, local wrist section and authored armscye measured; 20 CPU measurement tests passed; wrist/body paths visually inspected; same YAML and geometry on two runs, approximately 1.1 seconds each",
+      "Measured source-body inputs executed through pinned GarmentCode at 1 cm: 3063 vertices, 5486 triangles and 220 seam pairs; source-frame placement and original rest geometry verified; 14 actual pattern/body tests passed; cut and body-placement images inspected; all ten output hashes repeat; approximately 2.3 seconds CPU, no engine/GPU launch or paid tool",
+      "Current measurement approximations and original body/tool/landmark hashes retained in YAML and pattern receipt; construction-only, unsewn panels; complete fitting, final period cut, male calibration and full generator quality still unfinished",
       "Surface-landmark and front-profile checkpoint: 15 CPU tests passed; actual female body front/side paths inspected; corrected rejected waist/wrist seeds; selected-section projection preserves original vertex identity; front/back tape and curved bust lengths measured without closing chords",
       "Actual body-landmarks-03 and -04 geometry/provenance and PNG outputs identical except elapsed time; approximately 0.65 s CPU-only; no new engine or GPU job; full measurement preset, sewn fit and final art remain unfinished",
       "Paper-grounded circumference study executed using Trimesh/SciPy: five analytic tests passed, actual female front/side landmark plot inspected and misplaced initial waist corrected; provisional bands recorded with every sampled tape and range-boundary warning; no full body preset or fitted costume claimed",

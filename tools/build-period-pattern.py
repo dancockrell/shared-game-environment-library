@@ -1,7 +1,8 @@
 """Offline tailoring entry point; use unchanged GarmentCode, not another solver.
 
 Produces curved panels/stitches for the existing wardrobe construction pipeline.
-No game engine, GPU, network, author GUI or body mesh is loaded.
+No game engine, GPU, network or author GUI is loaded. Optional compiler body JSON
+anchors separated panels in the source body's frame for construction review.
 """
 import argparse
 import hashlib
@@ -73,7 +74,7 @@ def validate_pattern(spec):
             "dartStitches": sum(s[0]["panel"] == s[1]["panel"] for s in stitches)}
 
 
-def mesh_panels(directory, resolution_cm):
+def mesh_panels(directory, resolution_cm, fitting_body=None):
     """Use the author's constrained triangulation and matched edge sampling.
 
     Do not call BoxMesh.load(): its subsequent weld collapses separated seams
@@ -88,12 +89,17 @@ def mesh_panels(directory, resolution_cm):
     mesh.gen_panel_meshes()
     data = {"schemaVersion": 1, "units": "metres", "resolutionMetres": resolution_cm / 100,
             "state": "unsewn-flat-rest-panels-not-fitted", "panels": {}, "stitches": []}
+    translation = np.zeros(3)
+    if fitting_body:
+        translation[1] = np.min(np.asarray(fitting_body["vertices"])[:, 1])
+        data["sourceBodySha256"] = fitting_body["fileSha256"]
+        data["patternToBodyTranslationMetres"] = translation.tolist()
     fig, axes = plt.subplots(2, 2, figsize=(10, 11), layout="constrained")
     for axis, (name, panel) in zip(axes.flat, sorted(mesh.panels.items())):
         points = np.asarray(panel.panel_vertices, dtype=float) / 100
         faces = np.asarray(panel.panel_faces, dtype=int)
         bounds = [list(map(int, e.vertex_range)) for e in panel.edges]
-        placed = np.asarray(panel.rot_trans_panel(panel.panel_vertices)) / 100
+        placed = np.asarray(panel.rot_trans_panel(panel.panel_vertices)) / 100 + translation
         data["panels"][name] = {
             "restXY": points.tolist(), "placedXYZ": placed.tolist(),
             "triangles": faces.tolist(), "boundaryEdges": bounds,
@@ -114,7 +120,43 @@ def mesh_panels(directory, resolution_cm):
     (directory / "panel-mesh.json").write_text(json.dumps(data, indent=2, allow_nan=False))
     fig.savefig(directory / "triangulated-panels.png", dpi=130)
     plt.close(fig)
+    if fitting_body:
+        vertices = np.asarray(fitting_body["vertices"])
+        faces = np.asarray(fitting_body["triangles"])
+        fig, axes = plt.subplots(1, 2, figsize=(11, 7), layout="constrained")
+        all_y = np.concatenate([np.asarray(panel["placedXYZ"])[:, 1] for panel in data["panels"].values()])
+        for axis, horizontal, label in zip(axes, (0, 2), ("front", "side")):
+            axis.triplot(vertices[:, horizontal], vertices[:, 1], faces, color="#a5aaa9", linewidth=.12, alpha=.5)
+            for i, (name, panel) in enumerate(data["panels"].items()):
+                points, triangles = np.asarray(panel["placedXYZ"]), np.asarray(panel["triangles"])
+                axis.triplot(points[:, horizontal], points[:, 1], triangles, color=f"C{i}", linewidth=.25, alpha=.65, label=name)
+            axis.set_ylim(float(all_y.min())-.05, float(all_y.max())+.06)
+            axis.set_xlim(-.38, .4)
+            axis.set_aspect("equal")
+            axis.set_title(f"{label}: actual body and separated panels")
+            axis.legend(fontsize=7)
+        fig.suptitle("Construction placement only — unsewn, not a fitted garment")
+        fig.savefig(directory / "body-panel-placement.png", dpi=130)
+        plt.close(fig)
     return metrics
+
+
+def load_fitting_body(path, provenance, body):
+    import numpy as np
+    if not isinstance(provenance, dict) or provenance.get("bodySha256") != digest(path):
+        raise ValueError("Fitting body must match the measurement input's body hash")
+    data = json.loads(path.read_text())
+    if data.get("units") != "metres" or data.get("upAxis") != "Y" or data.get("winding") != "counterclockwise":
+        raise ValueError("Expected compiler fitting body in metres/Y-up/CCW")
+    points, faces = np.asarray(data["vertices"]), np.asarray(data["triangles"])
+    if points.ndim != 2 or points.shape[1] != 3 or not np.isfinite(points).all() or not 1 <= len(points) <= 100000:
+        raise ValueError("Invalid or oversized fitting body vertices")
+    if faces.ndim != 2 or faces.shape[1] != 3 or faces.dtype.kind not in "iu" or not 1 <= len(faces) <= 100000 or faces.min() < 0 or faces.max() >= len(points):
+        raise ValueError("Invalid or oversized fitting body triangles")
+    if not math.isclose(float(np.ptp(points[:, 1])) * 100, body["height"], abs_tol=1e-5):
+        raise ValueError("Body height differs from construction measurements")
+    data["fileSha256"] = digest(path)
+    return data
 
 
 def validate_mesh(data):
@@ -183,10 +225,15 @@ def build(args):
 
     body_path = (source / "assets/bodies/mean_female.yaml"
                  if args.upstream_fixture else args.body.resolve())
+    body_input = yaml.safe_load(body_path.read_text())
+    # Preserve caller measurement evidence without upgrading it to fit approval.
+    body_provenance = body_input.get("measurement_provenance")
+    json.dumps(body_provenance, allow_nan=False)
     body = BodyParameters(str(body_path))
     if any(not isinstance(v, (int, float)) or not math.isfinite(v)
            for v in body.params.values()):
         raise ValueError("Body measurements must be finite numbers in centimetres/degrees")
+    fitting_body = load_fitting_body(args.fitting_body, body_provenance, body) if args.fitting_body else None
     design_path = source / "assets/design_params/default.yaml"
     design = yaml.safe_load(design_path.read_text())["design"]
     design["sleeve"]["sleeveless"]["v"] = True
@@ -218,12 +265,14 @@ def build(args):
                     output_width=1400, background_color="#f2ede3")
     body.save(args.output)
     (args.output / "design.json").write_text(json.dumps(design, indent=2, allow_nan=False))
-    mesh_metrics = mesh_panels(args.output, args.resolution_cm)
+    mesh_metrics = mesh_panels(args.output, args.resolution_cm, fitting_body)
     outputs = {p.name: digest(p) for p in args.output.iterdir() if p.is_file()}
     receipt = {
         "schemaVersion": 1, "upstreamCommit": COMMIT,
         "archiveSha256": ARCHIVE_SHA256, "verifiedSourceFiles": verified,
         "builderSha256": digest(__file__), "bodyInputSha256": digest(body_path),
+        "bodyInputProvenance": body_provenance,
+        "fittingBodySha256": fitting_body["fileSha256"] if fitting_body else None,
         "baseDesignSha256": digest(design_path), "outputs": outputs,
         "measurementAuthority": "upstream-numeric-fixture-not-Beatrix" if args.upstream_fixture
                                 else "caller-supplied-not-independently-measured",
@@ -246,6 +295,7 @@ if __name__ == "__main__":
     parser.add_argument("--archive", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--resolution-cm", type=float, default=2.0)
+    parser.add_argument("--fitting-body", type=Path, help="Optional hash-bound compiler body JSON for source-frame placement/review")
     authority = parser.add_mutually_exclusive_group(required=True)
     authority.add_argument("--body", type=Path)
     authority.add_argument("--upstream-fixture", action="store_true")

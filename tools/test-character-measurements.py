@@ -143,6 +143,47 @@ class MeasurementTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 measure.front_surface_tape(mesh, x, y, z)
 
+    def test_geodesic_crosses_faces_not_mesh_edges(self):
+        # A folded 1x2 sheet unfolds to a rectangle; corner distance is sqrt(5).
+        points = [[0,0,0], [1,0,0], [0,1,0], [1,1,0], [0,1,1], [1,1,1]]
+        faces = [[0,1,2], [1,3,2], [2,3,4], [3,5,4]]
+        mesh = trimesh.Trimesh(points, faces, process=False)
+        result = measure.surface_distance(mesh, [points[0], points[5]])
+        self.assertAlmostEqual(result["lengthMetres"], math.sqrt(5), places=8)
+        self.assertGreater(result["lengthMetres"], np.linalg.norm(np.array(points[5]) - points[0]))
+        mesh.apply_scale(2)
+        self.assertAlmostEqual(measure.surface_distance(mesh, [mesh.vertices[0], mesh.vertices[5]])["lengthMetres"], 2*math.sqrt(5), places=8)
+
+    def test_geodesic_requires_surface_vertex_endpoints(self):
+        mesh = cylinder(.1)
+        for points in ([[0,0,0], [.1,0,0]], [[float("nan"),0,0], [.1,0,0]],
+                       [mesh.vertices[0].tolist(), mesh.vertices[0].tolist()]):
+            with self.assertRaises(ValueError):
+                measure.surface_distance(mesh, points)
+
+    def test_local_section_does_not_select_larger_body_part(self):
+        small, large = cylinder(.05), cylinder(.2)
+        large.apply_translation([1, 0, 0])
+        mesh = trimesh.util.concatenate([small, large])
+        result = measure.local_section_loop(mesh, [.05, .01, 0], [0, 1, 0])
+        self.assertEqual(result["closedLoopCount"], 2)
+        self.assertAlmostEqual(result["lengthMetres"], 128*.05*math.sin(math.pi/64), places=8)
+        self.assertLess(result["landmarkDistanceMetres"], 1e-8)
+
+    def test_local_section_invalid_and_remote_landmark(self):
+        for origin, normal in [([4,0,0], [0,1,0]), ([.1,0,0], [0,0,0]), ([float("nan"),0,0],[0,1,0])]:
+            with self.assertRaises(ValueError):
+                measure.local_section_loop(cylinder(.1), origin, normal)
+
+    def test_bodice_refuses_missing_or_boundary_data(self):
+        with self.assertRaisesRegex(ValueError, "requires"):
+            measure.bodice_measurements(cylinder(.1), {}, {}, {}, {}, {})
+        names = ("shoulder_left", "neck_left", "neck_right", "nape", "wrist_left", "elbow_left",
+                 "armpit_left", "waist_side_left", "hip_side_left")
+        with self.assertRaisesRegex(ValueError, "boundary"):
+            measure.bodice_measurements(cylinder(.1), dict.fromkeys(names),
+                {name: {"atSearchBoundary": True} for name in ("bust", "waist", "hips")}, {}, {}, {})
+
 
 if __name__ == "__main__":
     unittest.main()

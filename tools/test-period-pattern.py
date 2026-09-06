@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 import sys
+import tempfile
 import unittest
 
 sys.dont_write_bytecode = True
@@ -22,6 +23,42 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_placement_matches_author_transform_and_body_origin(self):
+        import numpy as np
+        from scipy.spatial.transform import Rotation
+        offset = np.asarray(MESH.get("patternToBodyTranslationMetres", [0, 0, 0]))
+        for name, panel in MESH["panels"].items():
+            rest = np.asarray(panel["restXY"])
+            local = np.column_stack([rest, np.zeros(len(rest))])
+            specification = SPEC["pattern"]["panels"][name]
+            expected = Rotation.from_euler("xyz", specification["rotation"], degrees=True).apply(local)
+            expected += np.asarray(specification["translation"]) / 100 + offset
+            np.testing.assert_allclose(expected, panel["placedXYZ"], atol=1e-9, rtol=0)
+        receipt = json.loads((REVIEW / "receipt.json").read_text())
+        if receipt.get("fittingBodySha256"):
+            self.assertEqual(MESH["sourceBodySha256"], receipt["fittingBodySha256"])
+            self.assertEqual(receipt["bodyInputProvenance"]["bodySha256"], MESH["sourceBodySha256"])
+            self.assertTrue((REVIEW / "body-panel-placement.png").is_file())
+        if BODY_PATH and "sourceBodySha256" in MESH:
+            body = json.loads(BODY_PATH.read_text())
+            self.assertEqual(offset.tolist(), [0, min(p[1] for p in body["vertices"]), 0])
+
+    def test_fitting_input_rejects_wrong_hash_height_and_indices(self):
+        body = {"units": "metres", "upAxis": "Y", "winding": "counterclockwise",
+                "vertices": [[0,0,0], [1,1,0], [0,1,1]], "triangles": [[0,1,2]]}
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "body.json"
+            path.write_text(json.dumps(body))
+            with self.assertRaisesRegex(ValueError, "hash"):
+                builder.load_fitting_body(path, {"bodySha256": "wrong"}, {"height":100})
+            provenance = {"bodySha256": builder.digest(path)}
+            with self.assertRaisesRegex(ValueError, "height"):
+                builder.load_fitting_body(path, provenance, {"height":200})
+            body["triangles"] = [[0.0,1.0,2.0]]
+            path.write_text(json.dumps(body))
+            with self.assertRaisesRegex(ValueError, "triangles"):
+                builder.load_fitting_body(path, {"bodySha256": builder.digest(path)}, {"height":100})
+
     @unittest.skipUnless(BODY_PATH, "No fitting body requested")
     def test_actual_body_collider(self):
         import numpy as np

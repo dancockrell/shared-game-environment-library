@@ -1,11 +1,12 @@
 """Offline body-section measurement following GarmentCodeData section 3.3.
 
 Trimesh owns plane/mesh intersection; SciPy owns convex hull construction.
-User-authored Y landmarks are not automatically anatomical truth. This outputs
-an auditable partial measurement study, never a filled-in GarmentCode body preset.
+User-authored landmarks are not automatically anatomical truth. Optional bodice
+export supplies a measured construction study, not an approved general body preset.
 """
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import math
 import os
@@ -198,6 +199,110 @@ def front_surface_tape(mesh, x, lower_y, front_z):
             "shoulderZMetres": float(front_z), "method": "authored-X body section clipped at lower Y and shoulder Z"}
 
 
+def surface_distance(mesh, coordinates):
+    """libigl exact triangular-surface distance through explicit vertex waypoints."""
+    import igl
+    coordinates = np.asarray(coordinates, dtype=float)
+    if coordinates.ndim != 2 or coordinates.shape[1] != 3 or not 2 <= len(coordinates) <= 4 or not np.isfinite(coordinates).all():
+        raise ValueError("Expected two to four finite surface waypoints")
+    distances, indices = cKDTree(mesh.vertices).query(coordinates)
+    if max(distances) > 1e-7:
+        raise ValueError("Geodesic endpoints must be actual source vertices")
+    total, lengths = 0.0, []
+    for a, b in zip(indices[:-1], indices[1:]):
+        if a == b:
+            raise ValueError("Repeated surface waypoint")
+        length = float(igl.exact_geodesic(np.asarray(mesh.vertices), np.asarray(mesh.faces, dtype=np.int64),
+                       VS=np.array([a], dtype=np.int64), VT=np.array([b], dtype=np.int64))[0])
+        chord = float(np.linalg.norm(mesh.vertices[a] - mesh.vertices[b]))
+        if not math.isfinite(length) or length < chord - 1e-7 or length > 10 * max(mesh.extents):
+            raise ValueError("Invalid or disconnected surface-distance result")
+        lengths.append(length)
+        total += length
+    return {"lengthMetres": total, "segmentLengthsMetres": lengths, "mergedMeshVertices": indices.tolist(),
+            "waypointXYZ": coordinates.tolist(), "method": "libigl.exact_geodesic vertex waypoints",
+            "libiglVersion": importlib.metadata.version("libigl")}
+
+
+def local_section_loop(mesh, origin, normal):
+    """Select the closed surface section nearest an explicit local landmark.
+
+    An oblique wrist plane can also cross legs. Largest-loop selection is wrong
+    here: use the loop actually passing through the wrist and reject a distant one.
+    """
+    origin, normal = np.array(origin, dtype=float), np.array(normal, dtype=float)
+    if origin.shape != (3,) or normal.shape != (3,) or not np.isfinite([origin, normal]).all() or np.linalg.norm(normal) < 1e-8:
+        raise ValueError("Invalid local section plane")
+    normal /= np.linalg.norm(normal)
+    section = mesh.section(plane_origin=origin, plane_normal=normal)
+    if section is None:
+        raise ValueError("Local plane misses body")
+    choices = []
+    for loop in section.discrete:
+        if len(loop) < 4 or not np.allclose(loop[0], loop[-1], rtol=0, atol=1e-8):
+            continue
+        # nearest_on_ring supports either planar 2D or embedded 3D polylines.
+        nearest, _, _ = nearest_on_ring(loop[:-1], origin)
+        choices.append((float(np.linalg.norm(nearest - origin)), loop))
+    if not choices:
+        raise ValueError("No closed local section")
+    distance, loop = min(choices, key=lambda pair: pair[0])
+    if distance > .005:
+        raise ValueError("No local loop within 5 mm of the landmark")
+    return {"lengthMetres": float(np.linalg.norm(np.diff(loop, axis=0), axis=1).sum()),
+            "pathXYZ": loop.tolist(), "originXYZ": origin.tolist(), "normalXYZ": normal.tolist(),
+            "landmarkDistanceMetres": distance, "closedLoopCount": len(choices),
+            "method": "local oblique surface section, nearest loop, not convex hull"}
+
+
+def bodice_measurements(mesh, landmarks, bands, dimensions, partitions, profiles):
+    """Bounded sleeveless-bodice inputs with explicit methods, not a full body preset."""
+    required = ("shoulder_left", "neck_left", "neck_right", "nape", "wrist_left", "elbow_left",
+                "armpit_left", "waist_side_left", "hip_side_left")
+    if any(name not in landmarks for name in required) or any(name not in bands for name in ("bust", "waist", "hips")):
+        raise ValueError("Bodice export requires reviewed torso, neck and arm landmarks")
+    if any(band["atSearchBoundary"] for band in bands.values()):
+        raise ValueError("Resolve measurement search-boundary warnings before bodice export")
+    xyz = {name: np.asarray(marker.get("sourceVertexXYZ", marker["xyz"])) for name, marker in landmarks.items()}
+    arm = surface_distance(mesh, [xyz["shoulder_left"], xyz["wrist_left"]])
+    # The measured route behind the neck is an explicit approximation to the
+    # author's topology-specific neck edge path, not that same copied path.
+    neck = surface_distance(mesh, [xyz["neck_left"], xyz["nape"], xyz["neck_right"]])
+    wrist = local_section_loop(mesh, xyz["wrist_left"], xyz["wrist_left"] - xyz["elbow_left"])
+    arm_vector = xyz["wrist_left"] - xyz["shoulder_left"]
+    hip_vector = np.asarray(landmarks["hip_side_left"]["xyz"]) - landmarks["waist_side_left"]["xyz"]
+    body = {"height": float(mesh.extents[1]) * 100,
+            "head_l": dimensions["headLengthMetres"] * 100,
+            "waist_line": dimensions["napeToWaistVerticalMetres"] * 100,
+            "hips_line": dimensions["hipLineMetres"] * 100,
+            "shoulder_w": dimensions["shoulderWidthMetres"] * 100,
+            "shoulder_incl": (dimensions["shoulderInclinationDegrees_left"] + dimensions["shoulderInclinationDegrees_right"]) / 2,
+            "bust_points": dimensions["bustPointDistanceMetres"] * 100,
+            "bum_points": dimensions["bumPointDistanceMetres"] * 100,
+            "vert_bust_line": dimensions["verticalBustLineMetres"] * 100,
+            "waist_over_bust_line": profiles["waistOverBust"]["lengthMetres"] * 100,
+            "bust_line": profiles["bustLine"]["lengthMetres"] * 100,
+            "back_width": partitions["bust"]["backMetres"] * 100,
+            "waist_back_width": partitions["waist"]["backMetres"] * 100,
+            "hip_back_width": partitions["hips"]["backMetres"] * 100,
+            "arm_length": arm["lengthMetres"] * 100,
+            "neck_w": neck["lengthMetres"] * 100,
+            "wrist": wrist["lengthMetres"] * 100,
+            "armscye_depth": float(np.linalg.norm(xyz["shoulder_left"] - xyz["armpit_left"])) * 100,
+            "arm_pose_angle": float(np.degrees(np.arcsin(abs(arm_vector[0]) / np.linalg.norm(arm_vector)))),
+            "hip_inclination": float(np.degrees(np.arcsin(abs(hip_vector[0]) / np.linalg.norm(hip_vector))))}
+    body.update({name: bands[name]["selected"]["circumferenceMetres"] * 100 for name in ("bust", "waist", "hips")})
+    angular = {"arm_pose_angle", "hip_inclination", "shoulder_incl"}
+    if not all(math.isfinite(value) and (0 <= value < 90 if key in angular else value > 0) for key, value in body.items()):
+        raise ValueError("Invalid bodice measurement")
+    return {"body": body, "armGeodesic": arm, "neckViaNapeGeodesic": neck, "wristSection": wrist,
+            "status": "measured-source-body-bodice-input-study-not-fit-approved",
+            "methodDifferences": ["Neck width uses two surface geodesics via nape, not author template edge path",
+                                  "Wrist uses oblique section through landmark, not author template edge path",
+                                  "Front profile uses authored bust X, not least-squares template plane",
+                                  "Waist line uses nape-to-waist vertical distance"]}
+
+
 def section_tape(mesh, y):
     if not math.isfinite(y):
         raise ValueError("Nonfinite measurement plane")
@@ -269,6 +374,7 @@ def main(args):
         if name in bands and prefix + "_side_left" in landmarks and prefix + "_side_right" in landmarks:
             partitions[name] = tape_partition(bands[name]["selected"]["tapeXZ"],
                 landmarks[prefix + "_side_left"]["xyz"], landmarks[prefix + "_side_right"]["xyz"])
+    bodice = bodice_measurements(mesh, landmarks, bands, dimensions, partitions, profiles) if args.export_bodice_measurements else None
     args.output.mkdir(parents=True)
     fig, axes = plt.subplots(1, 2, figsize=(10, 7), layout="constrained")
     # Actual body triangles in orthographic XY and ZY; no generated/reference image.
@@ -290,6 +396,9 @@ def main(args):
         for number, profile in enumerate(profiles.values()):
             path = np.asarray(profile["pathXYZ"])
             ax.plot(path[:, horizontal], path[:, 1], color=("#9b3434", "#503494")[number], linewidth=1.5)
+        if bodice:
+            wrist = np.asarray(bodice["wristSection"]["pathXYZ"])
+            ax.plot(wrist[:, horizontal], wrist[:, 1], color="#127962", linewidth=1.5)
     if landmarks:
         fig.suptitle("Surface landmarks (numbered): inspect their anatomical placement", fontsize=12)
     fig.savefig(args.output / "measurement-levels.png", dpi=130)
@@ -303,9 +412,19 @@ def main(args):
               "landmarks": landmarks, "frontBackTapes": partitions,
               "landmarkDimensions": dimensions,
               "frontSurfaceProfiles": profiles,
+              "bodiceConstruction": bodice,
               "landmarkFileSha256": hashlib.sha256(args.landmarks.read_bytes()).hexdigest() if args.landmarks else None,
               "elapsedSeconds": time.perf_counter() - start}
     (args.output / "measurements.json").write_text(json.dumps(result, indent=2, allow_nan=False))
+    if bodice:
+        import yaml
+        provenance = {"status": bodice["status"], "bodySha256": body_hash,
+                      "measurementToolSha256": result["toolSha256"],
+                      "landmarkFileSha256": result["landmarkFileSha256"],
+                      "methodDifferences": bodice["methodDifferences"],
+                      "measurementUnits": "centimetres-and-degrees",
+                      "purpose": "sleeveless-bodice-cut-study-not-general-body-or-fit-approval"}
+        (args.output / "bodice-body.yaml").write_text(yaml.safe_dump({"body": bodice["body"], "measurement_provenance": provenance}, sort_keys=True))
     print(json.dumps({"heightCm": result["bodyHeightMetres"] * 100,
                       "bands": {n: {"cm": b["selected"]["circumferenceMetres"] * 100,
                                      "y": b["selected"]["yMetres"], "boundary": b["atSearchBoundary"]}
@@ -318,4 +437,5 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--band", action="append", required=True, help="name:seed-Y-metres:min|max")
     parser.add_argument("--landmarks", type=Path, help="Explicit body-hash-bound surface landmark seeds")
+    parser.add_argument("--export-bodice-measurements", action="store_true", help="Export measured-input study for the current sleeveless bodice constructor; requires full landmarks")
     main(parser.parse_args())
