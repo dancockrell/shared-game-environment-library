@@ -86,6 +86,42 @@ def material(spec, profiles):
             links.new(pigment_noise.outputs["Fac"], contrast.inputs[0])
             links.new(contrast.outputs[0], pigment.inputs["Fac"])
             links.new(pigment.outputs["Color"], shader.inputs["Base Color"])
+    tint = profile.get("directional_tint")
+    if tint:
+        geometry = nodes.new("ShaderNodeNewGeometry")
+        transform = nodes.new("ShaderNodeVectorTransform")
+        transform.vector_type = "NORMAL"
+        transform.convert_from, transform.convert_to = "WORLD", "OBJECT"
+        links.new(geometry.outputs["Normal"], transform.inputs[0])
+        normal = nodes.new("ShaderNodeVectorMath")
+        normal.operation = "NORMALIZE"
+        links.new(transform.outputs[0], normal.inputs[0])
+        dot = nodes.new("ShaderNodeVectorMath")
+        dot.operation = "DOT_PRODUCT"
+        dot.inputs[1].default_value = Vector(tint["axis"]).normalized()
+        links.new(normal.outputs[0], dot.inputs[0])
+        positive = nodes.new("ShaderNodeMath")
+        positive.operation = "MAXIMUM"
+        positive.inputs[1].default_value = 0
+        links.new(dot.outputs["Value"], positive.inputs[0])
+        falloff = nodes.new("ShaderNodeMath")
+        falloff.operation = "POWER"
+        falloff.inputs[1].default_value = tint["sharpness"]
+        links.new(positive.outputs[0], falloff.inputs[0])
+        strength = nodes.new("ShaderNodeMath")
+        strength.operation = "MULTIPLY"
+        strength.inputs[1].default_value = tint["strength"]
+        links.new(falloff.outputs[0], strength.inputs[0])
+        mix = nodes.new("ShaderNodeMixRGB")
+        mix.name = "SceneForge directional tint"
+        mix.inputs[2].default_value = [linear(v) for v in tint["color"]] + [1]
+        base = shader.inputs["Base Color"]
+        if base.is_linked:
+            links.new(base.links[0].from_socket, mix.inputs[1])
+        else:
+            mix.inputs[1].default_value = base.default_value
+        links.new(strength.outputs[0], mix.inputs[0])
+        links.new(mix.outputs[0], base)
     result["scene_forge_reference_profile"] = json.dumps(profile, sort_keys=True)
     result["scene_forge_original_material"] = json.dumps(finish)
     return result

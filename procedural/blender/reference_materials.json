@@ -13,6 +13,7 @@
       "principled": {"Subsurface Weight": 0.08, "Subsurface Scale": 0.003, "Roughness": 0.55}
     },
     "baked_pastry": {
+      "directional_tint": {"axis": [0, 0, 1], "color": [0.24, 0.11, 0.018], "strength": 0.65, "sharpness": 2},
       "principled": {"Coat Weight": 0.025, "Coat Roughness": 0.3, "Subsurface Weight": 0, "Subsurface Scale": 0.001},
       "noise": {"coordinates": "object", "scale": 180, "detail": 3, "strength": 0.055, "distance": 0.00015, "roughness": [0.55, 0.78],
         "pigment_scale": 60, "pigment_contrast": 2.5,

@@ -25,7 +25,7 @@ def validate(data):
     if not isinstance(data["assignments"], dict) or len(data["assignments"]) > 64:
         raise ValueError("Assignment count outside budget")
     for name, profile in data["profiles"].items():
-        if not isinstance(name, str) or not name or not isinstance(profile, dict) or set(profile) - {"principled", "noise"}:
+        if not isinstance(name, str) or not name or not isinstance(profile, dict) or set(profile) - {"principled", "noise", "directional_tint"}:
             raise ValueError("Unknown profile structure")
         if not isinstance(profile.get("principled", {}), dict):
             raise ValueError("Expected Principled input mapping")
@@ -33,6 +33,19 @@ def validate(data):
             if key not in RANGES:
                 raise ValueError("Unsupported Principled input")
             number(value, *RANGES[key])
+        tint = profile.get("directional_tint")
+        if tint is not None:
+            if not isinstance(tint, dict) or set(tint) != {"axis", "color", "strength", "sharpness"}:
+                raise ValueError("Invalid directional tint")
+            for key in ("axis", "color"):
+                if not isinstance(tint[key], list) or len(tint[key]) != 3:
+                    raise ValueError("Expected directional tint vector")
+                for v in tint[key]:
+                    number(v, -1 if key == "axis" else 0, 1)
+            if sum(v * v for v in tint["axis"]) < 0.000001:
+                raise ValueError("Directional tint axis is zero")
+            number(tint["strength"], 0, 1)
+            number(tint["sharpness"], 0.1, 8)
         noise = profile.get("noise")
         if noise is not None:
             if not isinstance(noise, dict):

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Separate broad pigment variation from fine surface grain in reusable Blender profiles; inspect and bake revised pastry color treatment",
+  "summary": "Add object-space directional surface tint to reusable profiles and validate shape-aware pastry coloration through actual Blender export",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

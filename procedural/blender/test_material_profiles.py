@@ -81,6 +81,14 @@ class Profiles(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate(self.data)
 
+    def test_directional_tint_contract(self):
+        for key, value in [("axis", [0, 0, 0]), ("axis", [0, 1]), ("color", [1, -1, 0]),
+                           ("strength", 1.1), ("sharpness", 0), ("sharpness", float("nan"))]:
+            data = copy.deepcopy(self.data)
+            data["profiles"]["baked_pastry"]["directional_tint"][key] = value
+            with self.assertRaises(ValueError):
+                validate(data)
+
 
 if __name__ == "__main__":
     unittest.main()

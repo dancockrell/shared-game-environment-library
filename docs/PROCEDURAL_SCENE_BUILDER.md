@@ -1173,6 +1173,36 @@ these are not VRAM measurements. Nine profile tests, eight binary-geometry
 tests and Python syntax checks passed. No Rust changes or full Rust rerun;
 no Godot restart, paid service, remote push or Actions run.
 
+#### Directional surface tint
+
+Profiles now support an optional `directional_tint` with axis, sRGB color,
+strength (0..1) and sharpness (0.1..8). The finite nonzero axis is normalized;
+the renderer transforms shading normals from world to object space, normalizes,
+then uses `strength * max(dot(normal, axis), 0)^sharpness` to mix the tint over
+existing pigment. The axis uses Blender local Z-up coordinates, not source
+recipe Y-up. This object-relative baked coloration follows later placements,
+not a global weather direction. No camera or scene light enters the mask.
+Implementation follows Blender's documented
+[normal-space conversion](https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/transform.html).
+
+This is a slope/direction mask only: it does NOT detect occluded recesses,
+curvature, thin edges, heat transfer or actual exposure. Broader weathering and
+convincing browning still require those missing controls. Current pastry uses
+local +Z, strength 0.65 and sharpness 2; unchanged geometry/fruit/noise provide
+the comparison. Actual render shows only a modest change, not the substantial
+artistic improvement still required. No final-art approval.
+
+Evidence under the existing review root: `blender-directional-001` reference
+render and saved-scene check passed in 24.20 s with sampled RAM 1,149,054,976
+bytes. `baked-directional-001` complete export/reimport/render passed in 18.14 s
+with sampled RAM 699,596,800 bytes; 61 instances, 11 unique meshes, all 71,376
+unique triangles unchanged. Profile metadata and embedded textures survive.
+Actual exported render inspected. Ten profile tests and eight geometry-audit
+tests pass; Python syntax check passes. These checks do not certify arbitrary
+nonuniform/negative-scale source graphs, quantitative image parity or engine
+appearance. Hidden CPU/two-thread runs use the existing resource watchdog;
+no VRAM certification, Godot restart, paid generation, push or Actions run.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository
