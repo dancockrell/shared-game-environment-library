@@ -368,7 +368,15 @@ func catalog_specs() -> Array:
 		["bucket", "neutral_prop"], ["sack-stack", "neutral_prop"],
 		["fishing-rack", "neutral_prop"], ["mooring-cleat", "neutral_prop"],
 		["driftwood", "neutral_prop"], ["basalt-outcrop", "geology"],
-		["beach-slope", "terrain"], ["stone-culvert", "architecture"]
+		["beach-slope", "terrain"], ["stone-culvert", "architecture"],
+		["fishmonger", "architecture"], ["chandlery", "architecture"],
+		["stone-cottage", "architecture"], ["guard-barracks", "architecture"],
+		["oak-tree", "flora"], ["willow-tree", "flora"],
+		["cypress-tree", "flora"], ["flower-planter", "flora"],
+		["hitching-post", "neutral_prop"], ["capstan", "neutral_prop"],
+		["dock-ladder", "neutral_prop"], ["hand-pump", "neutral_prop"],
+		["rain-barrel", "neutral_prop"], ["grindstone", "neutral_prop"],
+		["log-bench", "neutral_prop"], ["canvas-shelter", "architecture"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -435,10 +443,10 @@ func sloped_block(parent: Node3D, width: float, depth: float, high: float, low: 
 func catalog_model(id: String) -> Node3D:
 	rng.seed = 5012026+id.hash() # Independent of build order and unrelated recipes.
 	var g := node_group(id,Vector3.ZERO)
-	if id in ["bakery","smithy","warehouse","townhouse","meeting-hall","stable","tollhouse","boathouse","granary","bell-hall"]:
-		var dimensions: Dictionary = {"bakery":Vector3(5.2,3.3,4.6),"smithy":Vector3(6.0,3.4,5.0),"warehouse":Vector3(7.5,4.6,7.0),"townhouse":Vector3(4.1,6.1,5.1),"meeting-hall":Vector3(8.2,5.2,6.1),"stable":Vector3(8.2,3.2,4.4),"tollhouse":Vector3(3.6,3.1,3.8),"boathouse":Vector3(6.5,3.7,8.0),"granary":Vector3(6.8,5.5,5.8),"bell-hall":Vector3(5.1,4.4,7.3)}
+	if id in ["bakery","smithy","warehouse","townhouse","meeting-hall","stable","tollhouse","boathouse","granary","bell-hall","fishmonger","chandlery","stone-cottage","guard-barracks"]:
+		var dimensions: Dictionary = {"bakery":Vector3(5.2,3.3,4.6),"smithy":Vector3(6.0,3.4,5.0),"warehouse":Vector3(7.5,4.6,7.0),"townhouse":Vector3(4.1,6.1,5.1),"meeting-hall":Vector3(8.2,5.2,6.1),"stable":Vector3(8.2,3.2,4.4),"tollhouse":Vector3(3.6,3.1,3.8),"boathouse":Vector3(6.5,3.7,8.0),"granary":Vector3(6.8,5.5,5.8),"bell-hall":Vector3(5.1,4.4,7.3),"fishmonger":Vector3(6,3.6,5.4),"chandlery":Vector3(5.0,4.8,5.6),"stone-cottage":Vector3(4.8,3.1,5.0),"guard-barracks":Vector3(10.4,4.4,5.2)}
 		var d: Vector3 = dimensions[id]
-		var building := house("EnclosedShell",Vector3.ZERO,d.x,d.z,d.y,2.4 if id == "meeting-hall" else 1.9,"roof" if id in ["bakery","townhouse","tollhouse"] else "slate",false,"plaster",id != "boathouse",3.5 if id == "boathouse" else (2.2 if id in ["warehouse","stable"] else 1.3),2.5,false,false)
+		var building := house("EnclosedShell",Vector3.ZERO,d.x,d.z,d.y,2.4 if id == "meeting-hall" else 1.9,"roof" if id in ["bakery","townhouse","tollhouse","stone-cottage"] else "slate",false,"stone8" if id == "stone-cottage" else "plaster",id != "boathouse",3.5 if id == "boathouse" else (2.2 if id in ["warehouse","stable"] else 1.3),2.5,id == "stone-cottage",false)
 		building.reparent(g,false)
 		framed_elevations(building,d.x,d.z,d.y)
 		stairs(Vector3(0,0,d.z/2+0.2),2.4,0.315,0.85,building,false)
@@ -521,6 +529,38 @@ func catalog_model(id: String) -> Node3D:
 			piece(bell,Vector3(0,0.85,0),Vector3.ONE,"gold",turret)
 			beam(Vector3(0,0.9,0),Vector3(0,1.6,0),0.06,"iron",turret)
 			banner(Vector3(-1.85,3.7,d.z/2+0.32),0.6,1.8,g)
+		elif id == "fishmonger":
+			var counter := catalog_model("fish-stall")
+			counter.reparent(g,false)
+			counter.position = Vector3(-2.9,0,d.z/2+1.5)
+			var rack := catalog_model("fishing-rack")
+			rack.reparent(g,false)
+			rack.position = Vector3(d.x/2+0.7,0,0)
+			rack.rotation.y = PI/2
+		elif id == "chandlery":
+			var stock := catalog_model("cargo-stack")
+			stock.reparent(g,false)
+			stock.position = Vector3(-2.2,0,d.z/2+0.8)
+			for i in 4:
+				var candle_x := 1.45+i*0.15
+				cylinder(Vector3(candle_x,1.15,d.z/2+0.85),0.065,0.6+i*0.09,"sand",g)
+			crate(g,Vector3(1.7,0,d.z/2+0.8),Vector3(1.2,0.85,0.7))
+			beam(Vector3(-1.5,3.2,d.z/2),Vector3(-1.5,3.2,d.z/2+1),0.08,"iron",g)
+			ring(Vector3(-1.5,2.85,d.z/2+0.9),0.3,0.045,"gold",g,true)
+		elif id == "stone-cottage":
+			wall(0.75,5.3,0.7,Vector3(d.x/2-0.5,0,-1.5),g)
+			block(Vector3(d.x/2-0.5,5.4,-1.5),Vector3(0.95,0.2,0.9),"stone9",g)
+			for x in [-1.6,1.6]:
+				var planter := catalog_model("flower-planter")
+				planter.reparent(g,false)
+				planter.position = Vector3(x,0,d.z/2+0.65)
+		elif id == "guard-barracks":
+			for x in [-3.8,3.8]:
+				banner(Vector3(x,3.5,d.z/2+0.35),0.8,2.2,g)
+			var shelter := node_group("EntryShelter",Vector3(0,0,d.z/2+0.7),0,g)
+			for x in [-1.5,1.5]:
+				beam(Vector3(x,0,0.75),Vector3(x,2.8,0.75),0.16,"oak",shelter)
+			roof(3.5,1.8,2.8,1,"slate",shelter)
 	elif id in ["watchtower","gatehouse"]:
 		for x in ([-3.0,3.0] if id == "gatehouse" else [0.0]):
 			var tower := node_group("Tower",Vector3(x,0,0),0,g)
@@ -932,6 +972,88 @@ func catalog_model(id: String) -> Node3D:
 			segment.rotation.x = -PI/2
 		attachment(g,"water_a",Vector3(0,0.25,-0.9))
 		attachment(g,"water_b",Vector3(0,0.25,0.9))
+	elif id in ["oak-tree","willow-tree"]:
+		tree(Vector3.ZERO,6.2,g,"willow" if id == "willow-tree" else "oak")
+	elif id == "cypress-tree":
+		cylinder(Vector3(0,2.5,0),0.14,5,"oak",g,20)
+		for level in 16:
+			var y := 1.0+level*0.28
+			var radius := 0.85*(1-level/18.0)
+			for i in 9:
+				var a := i*TAU/9+level*0.6
+				ellipsoid(Vector3(cos(a)*radius*0.6,y,sin(a)*radius*0.6),Vector3(radius*0.48,0.38,radius*0.48),shade("leaf"),g)
+	elif id == "flower-planter":
+		crate(g,Vector3.ZERO,Vector3(1.0,0.5,0.6))
+		block(Vector3(0,0.525,0),Vector3(0.9,0.02,0.5),"soil",g)
+		for x in [-0.3,0.0,0.3]:
+			shrub(Vector3(x,0.54,0),0.32,g,true)
+	elif id == "hitching-post":
+		for x in [-1.2,1.2]:
+			cylinder(Vector3(x,0.65,0),0.13,1.3,"oak",g,16)
+			cylinder(Vector3(x,1.32,0),0.15,0.06,"iron",g,16)
+		beam(Vector3(-1.3,1.05,0),Vector3(1.3,1.05,0),0.14,"oak_light",g)
+		for x in [-0.8,0.8]:
+			ring(Vector3(x,0.99,0.1),0.085,0.02,"iron",g,true)
+			attachment(g,"tether_l" if x < 0 else "tether_r",Vector3(x,0.95,0.1))
+	elif id == "capstan":
+		cylinder(Vector3(0,0.07,0),0.65,0.14,"oak",g,24)
+		cylinder(Vector3(0,0.55,0),0.32,0.95,"oak_light",g,20)
+		for y in [0.18,0.85]:
+			ring(Vector3(0,y,0),0.35,0.055,"iron",g)
+		for i in 4:
+			var a := i*TAU/4
+			beam(Vector3.ZERO+Vector3(0,0.95,0),Vector3(cos(a)*1.3,0.95,sin(a)*1.3),0.1,"oak",g)
+		attachment(g,"rope",Vector3(0.35,0.45,0))
+	elif id == "dock-ladder":
+		for x in [-0.4,0.4]:
+			beam(Vector3(x,0,0),Vector3(x,2.8,0.5),0.075,"oak",g)
+		for i in 10:
+			var y := 0.15+i*0.27
+			beam(Vector3(-0.4,y,y/2.8*0.5),Vector3(0.4,y,y/2.8*0.5),0.06,"oak_light",g)
+		attachment(g,"upper",Vector3(0,2.8,0.5))
+		attachment(g,"lower",Vector3.ZERO)
+	elif id == "hand-pump":
+		block(Vector3(0,0.08,0),Vector3(0.7,0.16,0.7),"stone8",g)
+		cylinder(Vector3(0,0.7,0),0.12,1.2,"iron",g,20)
+		var spout := cylinder(Vector3(0,1.08,0.25),0.065,0.5,"iron",g,16)
+		spout.rotation.x = PI/2
+		beam(Vector3(0,1.5,0),Vector3(0,1.65,-0.6),0.065,"iron",g)
+		beam(Vector3(0,1.65,-0.6),Vector3(0,1.25,-0.75),0.065,"oak",g)
+		attachment(g,"water",Vector3(0,1.05,0.5))
+	elif id == "rain-barrel":
+		barrel(g,Vector3.ZERO,1.25)
+		# Removable top cover rather than an invented open liquid volume.
+		var tap := cylinder(Vector3(0,0.28,0.49),0.035,0.16,"iron",g,12)
+		tap.rotation.x = PI/2
+		beam(Vector3(-0.08,0.35,0.49),Vector3(0.08,0.35,0.49),0.035,"iron",g)
+		attachment(g,"tap",Vector3(0,0.26,0.57))
+	elif id == "grindstone":
+		for x in [-0.38,0.38]:
+			for z in [-0.4,0.4]:
+				beam(Vector3(x,0,z),Vector3(x,0.7,0),0.1,"oak",g)
+		var wheel := cylinder(Vector3(0,0.9,0),0.47,0.22,"stone8",g,40)
+		wheel.rotation.z = PI/2
+		beam(Vector3(-0.65,0.9,0),Vector3(0.65,0.9,0),0.08,"iron",g)
+		beam(Vector3(0.65,0.9,0),Vector3(0.65,0.7,0.22),0.05,"iron",g)
+		beam(Vector3(0.65,0.7,0.22),Vector3(0.85,0.7,0.22),0.06,"oak_light",g)
+	elif id == "log-bench":
+		for x in [-0.8,0.8]:
+			cylinder(Vector3(x,0.17,0),0.19,0.34,"oak",g,16)
+		var seat := cylinder(Vector3(0,0.39,0),0.22,2.3,"oak_light",g,20)
+		seat.rotation.z = PI/2
+		attachment(g,"seat",Vector3(0,0.61,0))
+	elif id == "canvas-shelter":
+		for x in [-1.5,1.5]:
+			for z in [-1.5,1.5]:
+				beam(Vector3(x,0,z),Vector3(x,2.3,z),0.1,"oak",g)
+		for z in [-1.5,1.5]:
+			beam(Vector3(0,0,z),Vector3(0,3.1,z),0.1,"oak",g)
+		for side in [-1,1]:
+			for i in 15:
+				var x: float = side*(i+0.5)*1.7/15
+				var panel := block(Vector3(x,3.1-absf(x)*0.5,0),Vector3(1.7/15+0.005,0.03,3.5),"cloth",g)
+				panel.rotation.z = -side*atan(0.5)
+		attachment(g,"sheltered",Vector3.ZERO)
 	else:
 		assert(false,"Unknown catalog recipe: "+id)
 	return g
@@ -971,8 +1093,8 @@ func rock(pos: Vector3, size: Vector3, parent: Node3D = root) -> MeshInstance3D:
 	n.rotation.y = rng.randf()*TAU
 	return n
 
-func tree(pos: Vector3, height: float) -> void:
-	var g := node_group("OakTree",pos)
+func tree(pos: Vector3, height: float, parent: Node3D = root, form: String = "oak") -> void:
+	var g := node_group("WillowTree" if form == "willow" else "OakTree",pos,0,parent)
 	beam(Vector3.ZERO,Vector3(0.15,height*0.62,0),0.36,"oak",g)
 	if not meshes.has("leaves"):
 		var s := SphereMesh.new()
@@ -987,9 +1109,13 @@ func tree(pos: Vector3, height: float) -> void:
 		beam(Vector3(0,height*0.35,0),end,0.13,"oak",g)
 		for k in 4:
 			var tip := end+Vector3(rng.randf_range(-0.65,0.65),rng.randf_range(0.1,0.7),rng.randf_range(-0.65,0.65))
+			if form == "willow":
+				tip = end+Vector3(cos(a)*0.6,-height*0.36,sin(a)*0.6)
 			beam(end,tip,0.045,"oak_light",g)
 			for leaf_index in 25:
 				var offset := Vector3(rng.randf_range(-0.6,0.6),rng.randf_range(-0.3,0.5),rng.randf_range(-0.6,0.6))
+				if form == "willow":
+					offset = (end-tip)*(leaf_index/25.0)+Vector3(rng.randf_range(-0.13,0.13),0,rng.randf_range(-0.13,0.13))
 				var leaf := piece(meshes.leaves,tip+offset,Vector3(0.14,0.035,0.09)*rng.randf_range(0.7,1.3),shade("leaf"),g)
 				leaf.rotation = Vector3(rng.randf_range(-0.8,0.8),rng.randf()*TAU,rng.randf_range(-0.8,0.8))
 

@@ -751,8 +751,18 @@ func build() -> void:
 	if args.size() == 2 and args[1] == "--assemble-catalog":
 		await assemble_catalog()
 		return
+	if args.size() == 4 and args[1] == "--assemble-catalog":
+		assert(args[2].is_absolute_path() and args[3].is_absolute_path())
+		var recipe: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(args[2]))
+		recipe["sourceRecipeSha256"] = FileAccess.get_sha256(args[2])
+		await assemble_catalog(recipe,args[3])
+		return
 	if args.size() == 2 and args[1] == "--inspect-catalog":
 		inspect_catalog()
+		return
+	if args.size() == 3 and args[1] == "--inspect-catalog":
+		assert(args[2].is_absolute_path())
+		inspect_catalog(args[2])
 		return
 	if args.size() == 2 and args[1] == "--inspect":
 		await inspect_saved_scene()
@@ -1078,6 +1088,9 @@ func build_catalog() -> void:
 	if specs.size() > 40:
 		assert(sheet.get_region(Rect2i(0,5600,2560,sheet_height-5600)).save_png(folder.path_join("assembly-pieces.png")) == OK)
 		assert(rear_sheet.get_region(Rect2i(0,5600,2560,sheet_height-5600)).save_png(folder.path_join("assembly-pieces-rear.png")) == OK)
+	if specs.size() > 60:
+		assert(sheet.get_region(Rect2i(0,8400,2560,sheet_height-8400)).save_png(folder.path_join("landscape-and-trade.png")) == OK)
+		assert(rear_sheet.get_region(Rect2i(0,8400,2560,sheet_height-8400)).save_png(folder.path_join("landscape-and-trade-rear.png")) == OK)
 	var report := FileAccess.open(folder.path_join("build-report.json"),FileAccess.WRITE)
 	report.store_string(JSON.stringify({"generator":"tools/build-river-port.gd --catalog","recipeSource":"tools/river-port-kit.gd","engine":Engine.get_version_info().string,"serviceCreditsConsumed":0,"materialSources":kit.material_sources,"assets":entries,"native":"catalog-native.scn","exportNote":"Native contains shared triplanar textures; standalone GLBs are geometry/material-color interchange only, not visual-equivalent exports.","scope":"Neutral Crossing supply candidates; no canonical room assignments or new MUD links."},"\t")+"\n")
 	report.close()
@@ -1108,8 +1121,10 @@ func connect_sockets(moving: Node3D, moving_name: String, fixed: Node3D, fixed_n
 	assert(error < 0.0001,"Connection failed")
 	return error
 
-func assemble_catalog() -> void:
+func assemble_catalog(recipe: Dictionary = {}, destination: String = "") -> void:
 	var folder := output_dir.path_join("catalog")
+	var result_dir := folder if destination.is_empty() else destination
+	assert(DirAccess.make_dir_recursive_absolute(result_dir) == OK)
 	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("build-report.json")))
 	var source := (load(folder.path_join(report.native)) as PackedScene).instantiate() as Node3D
 	var records: Dictionary = {}
@@ -1120,18 +1135,18 @@ func assemble_catalog() -> void:
 	kit.setup_palette()
 	var stage := catalog_stage()
 	var assembly := Node3D.new()
-	assembly.name = "WorkshopQuay_AssemblyTest_NotMudMap"
+	assembly.name = recipe.get("sceneName","WorkshopQuay_AssemblyTest_NotMudMap")
 	kit.root.add_child(assembly)
 	for x in range(-4,5):
-		for z in range(-2,3):
+		for z in range(-2,4):
 			saved_instance(source,records,"cobble-plaza",Vector3(x*4,0,z*4),assembly)
 	var buildings: Array[Node3D] = []
-	for item in [["smithy",-10.0],["warehouse",0.0],["bell-hall",10.0]]:
-		buildings.append(saved_instance(source,records,item[0],Vector3(item[1],0.22,4),assembly))
+	for item in recipe.get("buildings",[["smithy",-10.0,4.0],["warehouse",0.0,4.0],["bell-hall",10.0,4.0]]):
+		buildings.append(saved_instance(source,records,item[0],Vector3(item[1],0.22,item[2]),assembly))
 	for i in buildings.size():
 		for j in range(i+1,buildings.size()):
 			assert(not (buildings[i].global_transform*bounds_of(buildings[i])).intersects(buildings[j].global_transform*bounds_of(buildings[j])),"Building envelopes overlap")
-	for item in [["workbench",-11.5,-1.4],["anvil",-8.5,-1.7],["tool-rack",-13.5,0.0],["forge-hearth",-14.4,3.6],["woodpile",-14.5,5.8],["bucket",-12.5,-1.4],["produce-stall",13.5,-3.2],["fish-stall",-13.5,-4.5],["cargo-stack",3.5,-1.8],["sack-stack",-3.5,-1.8],["handcart",5.0,-4.5],["notice-board",8.0,-5.5],["stone-bench",9.5,-3.0],["street-lantern",-5.5,-5.5],["street-lantern",5.5,-5.5]]:
+	for item in recipe.get("props",[["workbench",-11.5,-1.4],["anvil",-8.5,-1.7],["tool-rack",-13.5,0.0],["forge-hearth",-14.4,3.6],["woodpile",-14.5,5.8],["bucket",-12.5,-1.4],["produce-stall",13.5,-3.2],["fish-stall",-13.5,-4.5],["cargo-stack",3.5,-1.8],["sack-stack",-3.5,-1.8],["handcart",5.0,-4.5],["notice-board",8.0,-5.5],["stone-bench",9.5,-3.0],["street-lantern",-5.5,-5.5],["street-lantern",5.5,-5.5]]):
 		saved_instance(source,records,item[0],Vector3(item[1],0.22,item[2]),assembly)
 	for x in [-16,-12,-8,-4,4,8,12,16]:
 		saved_instance(source,records,"quay-wall",Vector3(x,-1.23,-10),assembly)
@@ -1141,12 +1156,19 @@ func assemble_catalog() -> void:
 	var low_pier := saved_instance(source,records,"pier-section",Vector3.ZERO,assembly)
 	join_errors.append(connect_sockets(low_pier,"join_a",ramp,"lower"))
 	var deck_y := (low_pier.find_child("join_a",true,false) as Node3D).global_position.y
+	var capstan := saved_instance(source,records,"capstan",low_pier.position+Vector3(0,1.145,-0.65),assembly)
+	assert(absf(capstan.position.y-deck_y) < 0.001)
 	var cleat := saved_instance(source,records,"mooring-cleat",low_pier.position+Vector3(-0.9,1.145,0),assembly)
 	assert(absf(cleat.position.y-deck_y) < 0.001)
 	saved_instance(source,records,"rope-coil",low_pier.position+Vector3(0.6,1.145,0),assembly)
 	saved_instance(source,records,"cargo-crane",Vector3(-3.4,0.22,-7.3),assembly)
+	for item in [["oak-tree",-14.0,11.2],["willow-tree",14.0,11.2],["cypress-tree",-4.5,11.7],["cypress-tree",4.5,11.7],["flower-planter",8.3,0.4],["flower-planter",11.7,0.4],["grindstone",-9.0,-0.7]]:
+		var landscape := saved_instance(source,records,item[0],Vector3(item[1],0.22,item[2]),assembly)
+		if str(item[0]).ends_with("tree"):
+			for building in buildings:
+				assert(not (landscape.global_transform*bounds_of(landscape)).intersects(building.global_transform*bounds_of(building)),"Canopy intersects a building envelope")
 	kit.block(Vector3(0,-1.9,-4),Vector3(55,0.2,45),"soil",kit.root)
-	kit.block(Vector3(0,-0.7,0),Vector3(36,1.4,20),"stone5",kit.root)
+	kit.block(Vector3(0,-0.7,2),Vector3(36,1.4,24),"stone5",kit.root)
 	kit.mat("water").roughness = 0.82
 	kit.mat("water").metallic = 0.0
 	kit.mat("water").metallic_specular = 0.15
@@ -1157,7 +1179,16 @@ func assemble_catalog() -> void:
 	for frame in 32:
 		await process_frame
 	RenderingServer.force_draw(false)
-	assert(root.get_texture().get_image().save_png(folder.path_join("assembly-workshop-quay.png")) == OK)
+	assert(root.get_texture().get_image().save_png(result_dir.path_join("assembly-workshop-quay.png")) == OK)
+	if not recipe.is_empty():
+		camera.position = Vector3(-30,32,42)
+		camera.look_at(Vector3(0,0,-2))
+		for frame in 32:
+			await process_frame
+		RenderingServer.force_draw(false)
+		assert(root.get_texture().get_image().save_png(result_dir.path_join("assembly-rear.png")) == OK)
+		camera.position = Vector3(30,32,-42)
+		camera.look_at(Vector3(0,0,-2))
 	var placements: Array = []
 	for child in assembly.get_children():
 		placements.append({"assetId":child.get_meta("asset_id"),"position":vector_array(child.position),"rotation":vector_array(child.rotation)})
@@ -1165,24 +1196,26 @@ func assemble_catalog() -> void:
 	assign_owners(kit.root,kit.root)
 	var packed := PackedScene.new()
 	assert(packed.pack(kit.root) == OK)
-	assert(ResourceSaver.save(packed,folder.path_join("assembly-workshop-quay.scn")) == OK)
-	var check := (load(folder.path_join("assembly-workshop-quay.scn")) as PackedScene).instantiate()
+	assert(ResourceSaver.save(packed,result_dir.path_join("assembly-workshop-quay.scn")) == OK)
+	var check := (load(result_dir.path_join("assembly-workshop-quay.scn")) as PackedScene).instantiate()
 	assert(collect_meshes(check).size() == collect_meshes(kit.root).size())
 	check.free()
-	var evidence := FileAccess.open(folder.path_join("assembly-check.json"),FileAccess.WRITE)
-	evidence.store_string(JSON.stringify({"scope":"Reusable asset composition and socket test only; not The Crossing topology","sourceCatalogSha256":FileAccess.get_sha256(folder.path_join(report.native)),"placements":placements,"socketJoinErrorsMeters":join_errors,"buildingEnvelopeOverlap":false,"sourceGeometryRegenerated":false,"nativeReloadMeshCount":collect_meshes(kit.root).size()},"\t")+"\n")
+	var evidence := FileAccess.open(result_dir.path_join("assembly-check.json"),FileAccess.WRITE)
+	evidence.store_string(JSON.stringify({"sceneName":str(assembly.name),"scope":recipe.get("scope","Reusable asset composition and socket test only; not The Crossing topology"),"sourceRecipeSha256":recipe.get("sourceRecipeSha256",null),"serviceCreditsConsumed":0,"sourceCatalogSha256":FileAccess.get_sha256(folder.path_join(report.native)),"placements":placements,"socketJoinErrorsMeters":join_errors,"buildingEnvelopeOverlap":false,"sourceGeometryRegenerated":false,"nativeReloadMeshCount":collect_meshes(kit.root).size()},"\t")+"\n")
 	evidence.close()
 	source.free()
 	print("PASS saved-catalog assembly: ",placements.size()," instances, exact socket joins, separate building envelopes, native reload")
 	quit()
 
-func inspect_catalog() -> void:
+func inspect_catalog(assembly_directory: String = "") -> void:
 	kit.root.free()
 	var folder := output_dir.path_join("catalog")
 	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("build-report.json")))
 	var loaded := (load(folder.path_join(report.native)) as PackedScene).instantiate()
 	root.add_child(loaded)
-	assert(report.assets.size() == kit.catalog_specs().size())
+	# A consumer verifies its saved catalog, even while new recipes are authored.
+	if assembly_directory.is_empty():
+		assert(report.assets.size() == kit.catalog_specs().size())
 	assert(report.serviceCreditsConsumed == 0)
 	var ids: Dictionary = {}
 	for entry in report.assets:
@@ -1216,14 +1249,17 @@ func inspect_catalog() -> void:
 				assert(not corridor.intersects(model.global_transform.affine_inverse()*mesh.global_transform*mesh.mesh.get_aabb()),"Culvert opening blocked")
 		print("PASS independent native bounds, sockets and GLB hash: ",entry.assetId)
 	loaded.free()
+	var catalog_path := folder.path_join(report.native)
+	if not assembly_directory.is_empty():
+		folder = assembly_directory
 	if FileAccess.file_exists(folder.path_join("assembly-check.json")):
 		var evidence: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("assembly-check.json")))
-		assert(evidence.sourceCatalogSha256 == FileAccess.get_sha256(folder.path_join(report.native)),"Assembly must be rebuilt after catalog changes")
+		assert(evidence.sourceCatalogSha256 == FileAccess.get_sha256(catalog_path),"Assembly must be rebuilt after catalog changes")
 		var saved := (load(folder.path_join("assembly-workshop-quay.scn")) as PackedScene).instantiate()
 		assert(collect_meshes(saved).size() == evidence.nativeReloadMeshCount)
 		assert(saved.find_children("*","Camera3D",true,false).size() == 1)
 		assert(saved.find_children("*","WorldEnvironment",true,false).size() == 1)
-		var placed := saved.get_node("WorkshopQuay_AssemblyTest_NotMudMap")
+		var placed := saved.get_node(NodePath(evidence.get("sceneName","WorkshopQuay_AssemblyTest_NotMudMap")))
 		assert(placed.get_child_count() == evidence.placements.size())
 		saved.free()
 		print("PASS independent assembly reload: source hash, instance count, mesh count, camera and environment")
