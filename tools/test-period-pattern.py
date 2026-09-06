@@ -32,6 +32,22 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_seam_path_detects_body_between_clear_endpoints(self):
+        import numpy as np
+        import trimesh
+        # Analytic collider fixture only, not a character construction method.
+        body = trimesh.creation.box(extents=[2,2,2])
+        points = np.array([[-2.,0,0],[2.,0,0],[-2.,2,0],[2.,2,0],[2.,3,0],[2.001,3,0]])
+        pairs = np.array([[0,1],[2,3],[4,5]])
+        result = fitter.seam_body_obstructions(points,pairs,body.vertices,body.faces)
+        self.assertEqual(result["openPairsSampled"],2)
+        self.assertEqual(len(result["obstructedPairs"]),1)
+        row = result["obstructedPairs"][0]
+        self.assertEqual(row["vertexIndices"],[0,1])
+        self.assertAlmostEqual(row["minimumSampledDistanceMetres"],-1)
+        self.assertAlmostEqual(row["segmentFraction"],.5)
+        self.assertEqual(fitter.seam_body_obstructions(points,np.array([[4,5]]),body.vertices,body.faces)["obstructedPairs"],[])
+
     def test_sewn_orientation_is_consistent_and_repair_is_idempotent(self):
         import networkx as nx
         import numpy as np
@@ -297,6 +313,7 @@ class ActualPatternTests(unittest.TestCase):
         gaps = np.linalg.norm(points[pairs[:,0]]-points[pairs[:,1]],axis=1)
         self.assertAlmostEqual(float(gaps.max()),result["history"][-1]["maxSeamGapMetres"],places=7)
         self.assertLess(gaps.mean(),.001)  # Demonstrated seam closure, not art/fit approval.
+        self.assertLess(gaps.max(),.002)  # An average must not conceal a locally open sleeve.
 
     @unittest.skipUnless(FIT_PATH,"No actual sewing result requested")
     def test_full_surface_body_contact_evidence(self):

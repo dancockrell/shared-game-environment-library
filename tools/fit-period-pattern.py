@@ -176,6 +176,39 @@ def seam_diagnostics(data, offsets, positions):
     return sorted(rows,key=lambda row:(-row["maxGapMetres"],row["seamIndex"]))
 
 
+def seam_body_obstructions(points, pairs, body_vertices, body_faces):
+    """Sample open stitch paths, not just cloth vertices, against the body.
+
+    A spring spanning the body cannot close along its current straight path.
+    This diagnoses placement; it does not disable contact or prove that every
+    unsampled segment is clear. Small closed seams are deliberately excluded.
+    """
+    import numpy as np
+    import igl
+    lengths = np.linalg.norm(points[pairs[:,0]]-points[pairs[:,1]],axis=1)
+    selected = np.flatnonzero(lengths > .002)
+    fractions = np.linspace(0,1,17)
+    rows = []
+    # Bound distance-query storage independently of garment size.
+    for start in range(0,len(selected),64):
+        ids = selected[start:start+64]
+        endpoints = points[pairs[ids]]
+        queries = endpoints[:,0,None,:]*(1-fractions[None,:,None])+endpoints[:,1,None,:]*fractions[None,:,None]
+        distances,_,_,_ = igl.signed_distance(queries.reshape(-1,3),body_vertices,body_faces)
+        distances = distances.reshape(-1,len(fractions))
+        if not np.isfinite(distances).all():
+            raise ValueError("Nonfinite stitch-path body query")
+        for index,values in zip(ids,distances):
+            deepest = int(np.argmin(values))
+            if values[deepest] < -.001:
+                rows.append({"vertexIndices":pairs[index].tolist(),"gapMetres":float(lengths[index]),
+                    "minimumSampledDistanceMetres":float(values[deepest]),
+                    "segmentFraction":float(fractions[deepest])})
+    return {"openPairsSampled":len(selected),"samplesPerPair":len(fractions),
+            "obstructedPairs":sorted(rows,key=lambda row:row["minimumSampledDistanceMetres"]),
+            "scope":"17 samples on seams wider than 2 mm; obstruction threshold 1 mm; not continuous collision certification"}
+
+
 def solve(args):
     global wp
     import numpy as np
@@ -424,7 +457,8 @@ def review(args):
         "minimumSampledBodyDistanceMetres":float(signed.min()),
         "bodyPenetrationSamplesOver1mm":int(np.count_nonzero(signed < -.001)),
         "sampleCount":len(queries), "sampling":"cloth vertices and triangle centroids; not continuous triangle/body or self-intersection certification",
-        "seams":result["history"][-1],"seamDetails":seam_diagnostics(data,offsets,points)}
+        "seams":result["history"][-1],"seamDetails":seam_diagnostics(data,offsets,points),
+        "seamBodyObstructions":seam_body_obstructions(points,pairs,np.asarray(source.vertices),np.asarray(source.faces,dtype=np.int64))}
     if "bodySdfDistancesMetres" in result:
         metrics["bodySdfAudit"] = audit_body_field(result,queries,signed)
     args.output.mkdir(parents=True)
