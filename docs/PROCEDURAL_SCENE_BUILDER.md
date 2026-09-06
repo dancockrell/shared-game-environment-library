@@ -1016,6 +1016,61 @@ Visual review finds smaller-scale mottling instead of stretched streaks,
 but pastry is still too pink and regular; this remains unapproved reference art.
 No Godot process change, paid service, remote push or Actions run occurred.
 
+#### Portable Blender bake checkpoint
+
+`procedural/blender/bake_asset.py` now consumes the existing saved Blender
+reference, one shared-mesh name, and a fresh output directory. This is an
+export stage of the canonical generator, not a second geometry generator.
+It makes a separate bake UV layer, explicitly preserves original albedo UV
+sampling, and uses Blender Smart UV Project rather than baking over potentially
+overlapping original caps. Geometry positions and triangle count are unchanged.
+UV packing is not formally overlap-certified.
+
+The bounded pilot accepts a 128 MiB authoring file, one opaque Principled
+material, and at most 100,000 vertices. It bakes 512-square base color,
+roughness and tangent-space normal textures on CPU/two threads. Emission
+rerouting extracts unlit color/roughness; normal baking retains the authored
+bump response. Transparent/transmissive inputs are rejected. It exports embedded
+GLB textures, original recipe and material-profile metadata. Clearcoat strength
+and roughness are checked in KHR_materials_clearcoat. Subsurface scattering and
+independent coat IOR are explicitly recorded as export losses; no lighting is baked.
+See the [official glTF exporter material documentation](https://docs.blender.org/manual/en/4.0/addons/import_export/scene_gltf2.html).
+
+Usage (inside a bounded hidden Blender process):
+
+```text
+blender --background --factory-startup --threads 2 --python-exit-code 1 --python procedural/blender/bake_asset.py -- reference.blend pie.crust NEW_OUTPUT_DIRECTORY
+```
+
+Every successful run inspects GLB structure/embedded textures/metadata, then
+reimports the actual GLB with Blender, checks triangle count and world bounds
+within one micrometre, and renders that imported asset. This is not a Godot or
+Unity parity test, nor exhaustive per-triangle geometry verification.
+
+Evidence under the existing review root
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/`:
+
+- `baked-crust-002`: 19,392 triangles, 1,236,876-byte GLB; successful bake,
+  reload and render in 12.17 seconds; sampled peak process RAM 568,545,280 bytes.
+  First and second crust exports have identical GLB SHA-256. Visible grain
+  survives, but the regular bowl shape and pinkish finish are not approved art.
+- `baked-fruit-002`: 4,320 triangles, 804,024-byte GLB; successful bake,
+  reload, clearcoat check and render in 8.09 seconds; sampled peak process RAM
+  549,158,912 bytes. Wet highlight survives the portable material. Fruit shape
+  remains a small lathed lump, not a convincing finished filling treatment.
+- `baked-fruit-001` inspection image was blank because the default camera near
+  plane clipped the tiny asset. Camera clipping now scales with measured bounds;
+  corrected actual render inspected. Earlier image is rejected evidence.
+
+Runs used hidden BelowNormal processes with a 3 GiB sampled working-set and
+150-second wall-time watchdog, terminating only their own process on excess.
+Those watchdogs are launch controls, not a built-in hard reservation or VRAM
+measurement. Seven material-profile tests and Python syntax checks passed.
+Rust is unchanged; its full suite was not rerun for this Python-only checkpoint.
+Whole-scene batched export, automatic texture-resolution/LOD budgets, engine
+import checks, and higher-quality pastry/fruit construction remain unfinished.
+No Godot process replacement, paid generation, remote push or Actions run.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository
