@@ -1,0 +1,1014 @@
+{
+	"buildingEnvelopeOverlap": false,
+	"nativeReloadMeshCount": 14412,
+	"placements": [
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-16.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-16.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-16.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-16.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-16.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-12.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-12.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-12.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-12.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-12.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-8.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-8.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-8.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-8.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-8.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-4.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-4.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-4.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-4.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				-4.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				0.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				0.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				0.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				0.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				4.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				4.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				4.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				4.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				4.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				8.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				8.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				8.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				8.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				8.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				12.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				12.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				12.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				12.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				12.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				16.0,
+				0.0,
+				-8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				16.0,
+				0.0,
+				-4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				16.0,
+				0.0,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				16.0,
+				0.0,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cobble-plaza",
+			"position": [
+				16.0,
+				0.0,
+				8.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.smithy",
+			"position": [
+				-10.0,
+				0.219999998807907,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.warehouse",
+			"position": [
+				0.0,
+				0.219999998807907,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.bell-hall",
+			"position": [
+				10.0,
+				0.219999998807907,
+				4.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.workbench",
+			"position": [
+				-11.5,
+				0.219999998807907,
+				-1.39999997615814
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.anvil",
+			"position": [
+				-8.5,
+				0.219999998807907,
+				-1.70000004768372
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.tool-rack",
+			"position": [
+				-13.5,
+				0.219999998807907,
+				0.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.forge-hearth",
+			"position": [
+				-14.3999996185303,
+				0.219999998807907,
+				3.59999990463257
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.woodpile",
+			"position": [
+				-14.5,
+				0.219999998807907,
+				5.80000019073486
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.bucket",
+			"position": [
+				-12.5,
+				0.219999998807907,
+				-1.39999997615814
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.produce-stall",
+			"position": [
+				13.5,
+				0.219999998807907,
+				-3.20000004768372
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.fish-stall",
+			"position": [
+				-13.5,
+				0.219999998807907,
+				-4.5
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cargo-stack",
+			"position": [
+				3.5,
+				0.219999998807907,
+				-1.79999995231628
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.sack-stack",
+			"position": [
+				-3.5,
+				0.219999998807907,
+				-1.79999995231628
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.handcart",
+			"position": [
+				5.0,
+				0.219999998807907,
+				-4.5
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.notice-board",
+			"position": [
+				8.0,
+				0.219999998807907,
+				-5.5
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.stone-bench",
+			"position": [
+				9.5,
+				0.219999998807907,
+				-3.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.street-lantern",
+			"position": [
+				-5.5,
+				0.219999998807907,
+				-5.5
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.street-lantern",
+			"position": [
+				5.5,
+				0.219999998807907,
+				-5.5
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.quay-wall",
+			"position": [
+				-16.0,
+				-1.23000001907349,
+				-10.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.quay-wall",
+			"position": [
+				-12.0,
+				-1.23000001907349,
+				-10.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.quay-wall",
+			"position": [
+				-8.0,
+				-1.23000001907349,
+				-10.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.quay-wall",
+			"position": [
+				-4.0,
+				-1.23000001907349,
+				-10.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.quay-wall",
+			"position": [
+				4.0,
+				-1.23000001907349,
+				-10.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.quay-wall",
+			"position": [
+				8.0,
+				-1.23000001907349,
+				-10.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.quay-wall",
+			"position": [
+				12.0,
+				-1.23000001907349,
+				-10.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.quay-wall",
+			"position": [
+				16.0,
+				-1.23000001907349,
+				-10.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.pier-section",
+			"position": [
+				0.0,
+				-0.925000011920929,
+				-12.0
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.dock-ramp",
+			"position": [
+				-0.000000228733355811528,
+				-0.730000019073486,
+				-15.9809875488281
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.pier-section",
+			"position": [
+				-0.000000695885262302909,
+				-1.72500002384186,
+				-19.9599990844727
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.mooring-cleat",
+			"position": [
+				-0.900000691413879,
+				-0.580000042915344,
+				-19.9599990844727
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.rope-coil",
+			"position": [
+				0.599999308586121,
+				-0.580000042915344,
+				-19.9599990844727
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"assetId": "painted-river-port.cargo-crane",
+			"position": [
+				-3.40000009536743,
+				0.219999998807907,
+				-7.30000019073486
+			],
+			"rotation": [
+				0.0,
+				0.0,
+				0.0
+			]
+		}
+	],
+	"scope": "Reusable asset composition and socket test only; not The Crossing topology",
+	"socketJoinErrorsMeters": [
+		0.0,
+		0.0
+	],
+	"sourceCatalogSha256": "2c34f8a33902e40cb6e7f89b6571b22b7eabc514dc3944b8d699451f2f4842a7",
+	"sourceGeometryRegenerated": false
+}

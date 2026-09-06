@@ -12,7 +12,7 @@ These are actual Godot captures of constructed 3D geometry, not generated concep
 
 ### Reusable supply batch — 6 September 2026
 
-The existing kit now builds **40 independent model candidates**, not one
+The existing kit now builds **60 independent model candidates**, not one
 monolithic scene. This is a first Crossing supply batch, not the complete
 Crossing and not a set of canonically placed landmarks. The user accepted
 the first batch's building treatment as "good enough buildings" on 6 September;
@@ -45,6 +45,52 @@ The older polish notes below describe future improvement opportunities, not
 a blocker to further production at the now-accepted building level. New models
 have been inspected against that working standard; named-place selection,
 collision and runtime performance remain consumer review tasks.
+
+The third batch adds twenty assembly ingredients: cobbled plaza and street,
+dirt path, grass verge, straight curb, curb corner, quay corner, dock ramp,
+workbench, anvil, tool rack, forge hearth, bucket, sack stack, fishing rack,
+mooring cleat, driftwood, basalt outcrop, beach slope and stone culvert.
+See the [assembly-pieces sheet](catalog/assembly-pieces.png) and
+[reverse views](catalog/assembly-pieces-rear.png). Tile connectors describe
+physical presentation alignment, not legal exits. Terrain pieces use a 4 m
+assembly module here; this is not a new universal room size.
+
+### Saved-model assembly proof
+
+The [workshop/quay composition](catalog/assembly-workshop-quay.png) places
+77 instances loaded from the saved catalog, including three complete buildings,
+modular paving, workshop/market props and a connected pier-ramp-landing chain.
+This is **not a map of The Crossing** and creates no authoritative MUD routes.
+The scene is an assembly/scale test, not a finished district or performance gate.
+
+The same builder now supports:
+
+```text
+godot --path tools --rendering-method forward_plus --script res://build-river-port.gd -- <absolute-repository-path> --assemble-catalog
+```
+
+It resolves stable asset IDs through the existing report, duplicates saved
+native model subtrees without regenerating their geometry, and aligns named
+connection points. Orientation is explicit in the assembly; socket alignment
+only translates the already oriented instance. This does not infer rotations,
+compatibility, collision freedom or game connectivity. Unknown IDs/sockets fail.
+
+The [editable assembly](catalog/assembly-workshop-quay.scn) includes its camera,
+lighting, foundation and water. The [assembly check](catalog/assembly-check.json)
+records placements, source-catalog hash, connection errors and mesh count.
+`--inspect-catalog` independently reloads it, verifies the dependency hash,
+instance/mesh counts and camera/environment, and rejects a stale assembly after
+the source catalog changes. Rebuild the assembly after rebuilding the catalog.
+
+Third-batch checks: 60 GLB mesh/bounds roundtrips and native socket/hash checks
+passed; all prior 40 GLBs remained unchanged. Gate, footbridge and culvert
+clearance checks passed. Assembly connection residuals were below 0.1 mm and
+the three building envelopes did not intersect. All eight source resource packs
+passed. Front/rear model sheets and the assembled capture were visually reviewed.
+The sack, driftwood, path treatment and water glare were revised during review.
+No credits were used. General prop collision, dense-city performance and actual
+Crossing room integration remain untested; the simple terrain is modular base
+geometry rather than a finished natural shoreline.
 
 Rebuild and independently inspect using the existing builder:
 
