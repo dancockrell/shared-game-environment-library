@@ -31,6 +31,8 @@ The existing MakeHuman casual/formal suits and fedora are source-fitting prototy
 
 ## Production order
 
+Pirate Island's factions intentionally have clashing aesthetics. Shared construction does not imply shared dress: Michael, colonials, pirates, fox people, elves and Cthulhu require separate silhouette, garment-cut, material and equipment decisions. Michael retains his approved 1870s steampunk direction. A generic reusable cloak is a construction component, not an approved faction outfit. Do not flatten these identities into one historical costume set or transfer DragonRealms' era ceiling onto Pirate Island.
+
 1. Historical shared garments: fitted base layers, tunics, shirts, breeches, hose, skirts, robes, belts, boots, cloaks and appropriate headwear. Separate torso/leg/outer layers; derive explicit body masks and exclusion rules, not arbitrary overlapping outfits.
 2. Distinct humanoid anatomy: actual head/face, stature, limb proportions and species features for the sourced races. Pointed human ears alone do not complete an elf or other race.
 3. Creature families from assessed records: quadrupeds, avians, reptiles, arthropods, serpentine bodies, constructs and noncorporeal forms, with separate topology/rig requirements. Do not substitute primitive blobs for finished monsters.

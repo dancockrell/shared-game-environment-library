@@ -1,0 +1,4 @@
+interface:
+  display_name: "Character Art Production"
+  short_description: "Distinct characters, fitted bodies and period wardrobes"
+  default_prompt: "Use $character-art-production to build and visually verify character or wardrobe assets with the shared tools."
