@@ -2,26 +2,40 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Build embeddable Godot character workshop for real GLB assets and validated appearance presets",
-  "status": "blocked",
+  "summary": "Shared character workshop and fitted CC0 body/wardrobe source preparation",
+  "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T10:16:00Z",
+  "updated_at": "2026-09-06T11:52:00Z",
   "paths": [
     "tools/character-workshop.gd",
     "tools/character-workshop.tscn",
     "tools/test-character-workshop.gd",
     "docs/CHARACTER_WORKSHOP.md",
     "tools/character-outfit.gd",
-    "tools/test-character-outfit.gd"
+    "tools/test-character-outfit.gd",
+    "tools/prepare-character-assets.ps1",
+    "tools/prepare-character-model.gd",
+    "assets/character-prototypes/makehuman/",
+    "assets/character-sources/makehuman-system/",
+    "assets/character-sources/makehuman-core/",
+    ".gitattributes"
   ],
   "symbols": [],
   "coordination": {
     "depends_on": [],
     "conflicts_with": [],
-    "notes": "Own character tooling only; DR Companion owns scenery. No paid generation. Resume asset completion when official MakeHuman assets are locally available: direct HTTPS unavailable, in-app download unverified, Chrome reports ERR_BLOCKED_BY_CLIENT. Do not bypass browser protection."
+    "notes": "Own shared character tooling; DR Companion owns scenery. Free source assets obtained and staged. No paid generation. Broader builder remains unfinished: period wardrobe, face and creature construction, fit coverage and game integration."
   },
   "completion": {
     "commit": null,
-    "checks": ["test-character-outfit.gd: 15 mechanical checks passed", "test-character-workshop.gd: 17 headless checks passed", "Rendered editor visually inspected", "JSON full-precision save fixes measured-height roundtrip", "Dressed humanoid deformation and game integration not_run: no usable body asset acquired", "git diff --check passed", "git push failed: github.com:443 unavailable", "No generation credits used; no source models redistributed"]
+    "checks": [
+      "System archive hash and 87 source hashes verified; repeat extraction passed",
+      "Core assets acquired by immutable upstream Git blob IDs with CC0 license",
+      "Female and male real-asset rendered tests: 29 checks each passed",
+      "Synthetic outfit suite: 15 checks passed",
+      "Inspected rest and lean upper-arm pose renders; corrected source fitting and normal packing defects",
+      "Reduced derivative GLBs from about 43 MB to about 11 MB each",
+      "Game integration and full pose/shape matrix: not_run"
+    ]
   }
 }

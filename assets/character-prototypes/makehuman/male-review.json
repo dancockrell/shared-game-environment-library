@@ -1,0 +1,46 @@
+{
+  "height": 1.769091010093689,
+  "name": "",
+  "outfit": {
+    "dyes": {
+      "Clothing": "ffffffff",
+      "Hair": "ffffffff"
+    },
+    "morphs": {
+      "Lean": 0.0,
+      "Muscular": 0.0
+    },
+    "profileSha256": "36b7f012d5159b1f65e2f5ff3bcf03c56b6a665828b08b13343710e344667ce9",
+    "slots": {
+      "Clothes": "Casual 01"
+    }
+  },
+  "parts": {
+    "Skeleton3D/Body01": true,
+    "Skeleton3D/Body02": false,
+    "Skeleton3D/Eyes": true,
+    "Skeleton3D/Hair": true,
+    "Skeleton3D/Outfit01": true,
+    "Skeleton3D/Outfit02": false,
+    "Skeleton3D/Shoes": true
+  },
+  "schemaVersion": 1,
+  "shapes": {
+    "Skeleton3D/Body01::Lean": 0.0,
+    "Skeleton3D/Body01::Muscular": 0.0,
+    "Skeleton3D/Body02::Lean": 0.0,
+    "Skeleton3D/Body02::Muscular": 0.0,
+    "Skeleton3D/Eyes::Lean": 0.0,
+    "Skeleton3D/Eyes::Muscular": 0.0,
+    "Skeleton3D/Hair::Lean": 0.0,
+    "Skeleton3D/Hair::Muscular": 0.0,
+    "Skeleton3D/Outfit01::Lean": 0.0,
+    "Skeleton3D/Outfit01::Muscular": 0.0,
+    "Skeleton3D/Outfit02::Lean": 0.0,
+    "Skeleton3D/Outfit02::Muscular": 0.0,
+    "Skeleton3D/Shoes::Lean": 0.0,
+    "Skeleton3D/Shoes::Muscular": 0.0
+  },
+  "sourceFilename": "male-source.glb",
+  "sourceSha256": "e7d733079b264b02b7870a39f50b033cb3c392434c24940d0d8eadbcae8768d5"
+}

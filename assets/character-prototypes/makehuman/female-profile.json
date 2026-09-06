@@ -1,0 +1,60 @@
+{
+  "dyes": {
+    "Clothing": [
+      {
+        "mesh": "Skeleton3D/Outfit01",
+        "surface": 0
+      },
+      {
+        "mesh": "Skeleton3D/Outfit02",
+        "surface": 0
+      }
+    ],
+    "Hair": [
+      {
+        "mesh": "Skeleton3D/Hair",
+        "surface": 0
+      }
+    ]
+  },
+  "morphs": {
+    "Lean": [
+      "Skeleton3D/Body01::Lean",
+      "Skeleton3D/Outfit01::Lean",
+      "Skeleton3D/Body02::Lean",
+      "Skeleton3D/Outfit02::Lean",
+      "Skeleton3D/Hair::Lean",
+      "Skeleton3D/Eyes::Lean",
+      "Skeleton3D/Shoes::Lean"
+    ],
+    "Muscular": [
+      "Skeleton3D/Body01::Muscular",
+      "Skeleton3D/Outfit01::Muscular",
+      "Skeleton3D/Body02::Muscular",
+      "Skeleton3D/Outfit02::Muscular",
+      "Skeleton3D/Hair::Muscular",
+      "Skeleton3D/Eyes::Muscular",
+      "Skeleton3D/Shoes::Muscular"
+    ]
+  },
+  "schemaVersion": 1,
+  "slots": {
+    "Clothes": {
+      "Casual 01": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Outfit01",
+          "Skeleton3D/Body01"
+        ]
+      },
+      "Casual 02": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Outfit02",
+          "Skeleton3D/Body02"
+        ]
+      }
+    }
+  },
+  "sourceSha256": "48c8d3ccebdd448a49455694b2de43f949b7232599e2bc521cc86f07fccf3aae"
+}

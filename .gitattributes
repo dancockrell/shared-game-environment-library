@@ -15,3 +15,8 @@
 # Exact upstream license captures preserve publisher formatting; do not flag their
 # embedded CR/trailing whitespace as authored source whitespace.
 licenses/upstream/** -whitespace
+
+# Preserve the pinned upstream source bytes and original license formatting.
+assets/character-sources/** -text -whitespace
+assets/character-prototypes/makehuman/** -text
+tools/prepare-character-model.gd text eol=lf

@@ -83,6 +83,9 @@ func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.size() == 1:
 		status.text = import_model(args[0])
+	elif args.size() == 2 and args[1].ends_with("-profile.json"):
+		status.text = import_model(args[0])
+		load_outfit_profile(args[1])
 
 func button(parent: Node, text: String, action: Callable) -> void:
 	var control := Button.new()
@@ -210,8 +213,11 @@ func refresh_controls() -> void:
 		for control in outfit.morphs:
 			slider(control,0,1,outfit.morphs[control],func(v): outfit.morphs[control] = v; outfit.apply())
 		for channel in outfit.colors:
+			var label := Label.new()
+			label.text = channel
+			controls.add_child(label)
 			var picker := ColorPickerButton.new()
-			picker.text = channel
+			picker.custom_minimum_size.y = 32
 			picker.edit_alpha = false
 			picker.color = Color.html(outfit.colors[channel])
 			controls.add_child(picker)

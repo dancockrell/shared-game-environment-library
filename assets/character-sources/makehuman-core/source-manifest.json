@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/makehumancommunity/makehuman",
+  "retrieved": "2026-09-06",
+  "license": "CC0-1.0",
+  "licenseEvidence": "LICENSE.ASSETS.md and original per-file CC0 declarations. Assets only; no application code copied.",
+  "status": "source-candidate-not-runtime-approved",
+  "files": [
+    {
+      "path": "rigs/default.mhskel",
+      "sourcePath": "makehuman/data/rigs/default.mhskel",
+      "gitBlobSha": "b02cbecae00143856410d7561adf006d83bf9b3e",
+      "sha256": "99f179bce0aa850b45d4191a1d0d234c5851f881c057439470ded3bddf729a24",
+      "bytes": 117790
+    },
+    {
+      "path": "rigs/default_weights.mhw",
+      "sourcePath": "makehuman/data/rigs/default_weights.mhw",
+      "gitBlobSha": "66185806afacf87749be8e5cf6dbf66496b2a6b0",
+      "sha256": "0f3641d651ae3d00ad6b4ccee43142edb109d3bd909d27d9e4139ef1beed8625",
+      "bytes": 897521
+    },
+    {
+      "path": "targets/macrodetails/caucasian-female-young.target",
+      "sourcePath": "makehuman/data/targets/macrodetails/caucasian-female-young.target",
+      "gitBlobSha": "9d1f0cbeedc9a6a51abe33f1ebb5fa7c5a7edbf1",
+      "sha256": "118379f6e8ba9266247fdb8788a20e1df40a239f97ced0b9905bcbcc74f6e820",
+      "bytes": 420559
+    },
+    {
+      "path": "targets/macrodetails/caucasian-male-young.target",
+      "sourcePath": "makehuman/data/targets/macrodetails/caucasian-male-young.target",
+      "gitBlobSha": "c3b82f92c5ced85599199cd184b0faf3b3fc6881",
+      "sha256": "70e228ba7164737dae664454394536fc5935fa48d333c1a97d77e2dc6eacc5f5",
+      "bytes": 396479
+    },
+    {
+      "path": "targets/macrodetails/universal-female-young-averagemuscle-minweight.target",
+      "sourcePath": "makehuman/data/targets/macrodetails/universal-female-young-averagemuscle-minweight.target",
+      "gitBlobSha": "7b4dfc290b1228f48f00e7b121ffe8932a7bbb75",
+      "sha256": "e53a4afc87ac2703460a59e8290b1111478aeee5c02ece6735328c1f8c62eb63",
+      "bytes": 147131
+    },
+    {
+      "path": "targets/macrodetails/universal-female-young-maxmuscle-averageweight.target",
+      "sourcePath": "makehuman/data/targets/macrodetails/universal-female-young-maxmuscle-averageweight.target",
+      "gitBlobSha": "91ca14d335389e4e4a964132fc6580ada688cb64",
+      "sha256": "2e56b09b44a8497b927585447fdaac5ea7293521d1f3a3df1059495873c53f4e",
+      "bytes": 138225
+    },
+    {
+      "path": "targets/macrodetails/universal-male-young-averagemuscle-minweight.target",
+      "sourcePath": "makehuman/data/targets/macrodetails/universal-male-young-averagemuscle-minweight.target",
+      "gitBlobSha": "0a53c15a2d6cf23120c786d95b36d7a618c61acf",
+      "sha256": "fac0d53b7051f4d1f06230d0b419e916eb5bae5ce67c031a9998fdde05229755",
+      "bytes": 147071
+    },
+    {
+      "path": "targets/macrodetails/universal-male-young-maxmuscle-averageweight.target",
+      "sourcePath": "makehuman/data/targets/macrodetails/universal-male-young-maxmuscle-averageweight.target",
+      "gitBlobSha": "b7c039c7f463fe1f1721b9ab269c7248d9c4f2f7",
+      "sha256": "c171ff9cc95e96273beb3e3b1969a01988c2d4982ebc6fe04bf81cf72ee3b295",
+      "bytes": 147110
+    },
+    {
+      "path": "base.obj",
+      "sourcePath": "makehuman/data/base.obj",
+      "gitBlobSha": "d26635e9326e3cca30778fd7b9c00062b03cce09",
+      "sha256": "8e761e6624b8f54536409135d1636da63b32486a90d4897f84e121d144f6fb4c",
+      "bytes": 1749303
+    },
+    {
+      "path": "LICENSE.ASSETS.md",
+      "sourcePath": "LICENSE.ASSETS.md",
+      "gitBlobSha": "f3ede1fc3318f8d794e2cb51924186c62f02f71a",
+      "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c",
+      "bytes": 6962
+    }
+  ]
+}

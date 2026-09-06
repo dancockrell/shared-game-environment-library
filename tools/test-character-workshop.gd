@@ -76,10 +76,70 @@ func run() -> void:
 	dressed.outfit.slots["Fixture part"] = "Shown"
 	editor.apply_recipe(dressed)
 	editor.status.text = "Test fixture only—not approved character art.\n"+result
+	if args.size() == 3:
+		editor.import_model(args[0])
+		editor.load_outfit_profile(args[2])
+		check(not editor.outfit.profile.is_empty(),"load authored source profile")
+		var body_mesh: MeshInstance3D = editor.parts["Skeleton3D/Body01"]
+		var garment: MeshInstance3D = editor.parts["Skeleton3D/Outfit01"]
+		for part in [body_mesh,garment]:
+			var deltas: PackedVector3Array = part.mesh.surface_get_blend_shape_arrays(0)[0][Mesh.ARRAY_VERTEX]
+			var original: PackedVector3Array = part.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+			var largest := 0.0
+			for i in deltas.size():
+				var delta := deltas[i]
+				if part.mesh.blend_shape_mode == Mesh.BLEND_SHAPE_MODE_NORMALIZED:
+					delta -= original[i]
+				largest = maxf(largest,delta.length())
+			check(largest > .001,"nonzero fitted body target: "+str(part.name))
+			check(part.skin != null and part.skin.get_bind_count() == 163,"source skin retained: "+str(part.name))
+		editor.outfit.morphs.Lean = 1.0
+		editor.outfit.apply()
+		check(is_equal_approx(body_mesh.get_blend_shape_value(0),1.0) and is_equal_approx(garment.get_blend_shape_value(0),1.0),"real body and outfit share target weight")
+		editor.outfit.selections.Clothes = "Casual 02"
+		editor.outfit.apply()
+		check(not body_mesh.visible and editor.parts["Skeleton3D/Body02"].visible and not garment.visible,"real outfit swaps its masked body")
+		editor.save_recipe(args[1]+".json")
+		var fitted_recipe: Dictionary = editor.make_recipe()
+		editor.load_recipe(args[1]+".json")
+		check(editor.make_recipe() == fitted_recipe,"fitted wardrobe recipe roundtrip")
+		editor.outfit.morphs.Lean = 0.0
+		editor.outfit.selections.Clothes = "Casual 01"
+		editor.outfit.apply()
+		editor.save_recipe(args[1]+".json")
+		editor.refresh_controls()
+		editor.status.text = "Source assembly review—not approved art.\nFitted source meshes; linked body shapes."
 	if DisplayServer.get_name() != "headless":
 		for i in 8:
 			await process_frame
 		RenderingServer.force_draw(false)
 		check(root.get_texture().get_image().save_png(args[1]+".png") == OK,"render workshop")
+		if args.size() == 3:
+			var rig: Skeleton3D = editor.model.find_child("Skeleton3D",true,false)
+			var arm := -1
+			for i in rig.get_bone_count():
+				if rig.get_bone_name(i).replace(".","_") == "upperarm01_L":
+					arm = i
+			check(arm >= 0,"imported upper arm bone available")
+			if arm >= 0:
+				var garment: MeshInstance3D = editor.parts["Skeleton3D/Outfit01"]
+				var rest := garment.bake_mesh_from_current_skeleton_pose()
+				rig.set_bone_pose_rotation(arm,Quaternion(Vector3.FORWARD,.6))
+				for i in 8:
+					await process_frame
+				var posed := garment.bake_mesh_from_current_skeleton_pose()
+				var before_points: PackedVector3Array = rest.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+				var after_points: PackedVector3Array = posed.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+				var moved := 0.0
+				for i in before_points.size():
+					moved = maxf(moved,before_points[i].distance_to(after_points[i]))
+				check(moved > .01,"garment vertices move with arm bone")
+				editor.outfit.morphs.Lean = 1.0
+				editor.outfit.apply()
+				editor.refresh_controls()
+				for i in 8:
+					await process_frame
+				RenderingServer.force_draw(false)
+				check(root.get_texture().get_image().save_png(args[1]+"-posed.png") == OK,"render lean posed garment")
 	print("Workshop failures: ",failures)
 	quit(0 if failures == 0 else 1)

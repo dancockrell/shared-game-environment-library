@@ -1,0 +1,38 @@
+{
+  "bones": 163,
+  "compilerSha256": "083a3b910f302bbc1aae16d34bb3d8da8692790e68b8b25f16810bcc0454c47d",
+  "coreManifestSha256": "cee8002ad1f138a5f0abd9383f825d4dbc5d7f23ba668d4a9958edc4eeb55587",
+  "engine": "4.7.2-stable (official)",
+  "files": [
+    {
+      "path": "female-source.glb",
+      "sha256": "48c8d3ccebdd448a49455694b2de43f949b7232599e2bc521cc86f07fccf3aae"
+    },
+    {
+      "path": "female-profile.json",
+      "sha256": "10ca3d87f39da32eba6477f8a299f4dac0f9534bb827f44d6f5030cff5d92879"
+    },
+    {
+      "path": "male-source.glb",
+      "sha256": "e7d733079b264b02b7870a39f50b033cb3c392434c24940d0d8eadbcae8768d5"
+    },
+    {
+      "path": "male-profile.json",
+      "sha256": "0836d8b744389ae69882e9896d1fefb00001aab88acb51d6a153a31f3aed1b86"
+    }
+  ],
+  "license": "CC0-1.0",
+  "limitations": [
+    "Global-axis rest frames, not source bone-roll conventions",
+    "Modern sample wardrobe, not period art",
+    "Not a complete character builder or production crowd asset"
+  ],
+  "linkedMorphs": [
+    "Lean",
+    "Muscular"
+  ],
+  "schemaVersion": 1,
+  "status": "development-source-assembly-not-approved-game-art",
+  "systemManifestSha256": "a85829a5b92f805254611e3c9c9e7467f278761ba7c039b897bdb9abbc25ac53",
+  "textureMaxDimension": 1024
+}
