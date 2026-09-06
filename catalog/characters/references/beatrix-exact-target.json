@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "beatrix-exact-target",
+  "image": "beatrix-exact-target.png",
+  "sha256": "24b16abca558a402f110389696bd69a7ba8b3b3622170a0a20dab0461322182d",
+  "source": "User supplied attachment codex-clipboard-695f1b51-e3cc-4212-9c68-050bdb6ec9b9.png, 2026-09-06",
+  "authority": "User explicitly requires matching this exact image and continuing implementation and research until it does",
+  "role": "Exact visual target and comparison reference; not a generated 3D asset",
+  "license": "User-supplied reference; no blanket license asserted for redistribution or unrelated derivative assets",
+  "admission": "reference-only, not a finished character or runtime asset",
+  "fixedVisibleFeatures": [
+    "Adult woman's facial identity, expression, proportions and silhouette",
+    "Dark piled/tied hair with irregular loose face-framing strands",
+    "Ivory structured cropped bodice, narrow shoulder straps, shaped neckline, dark channels, centre-front fasteners and pointed waist",
+    "Dark fitted period-cut breeches, front fastening flap, belts, pale stockings with garters and tall boots",
+    "Diagonal dark equipment strap, forearm guards, pistol in extended hand and lowered sword in other hand",
+    "Reference pose, camera, light, surface wear and overall rendered appearance"
+  ],
+  "unseenAreas": "Reconstruct consistently; do not claim that one image proves unseen back/side details",
+  "completionRule": "Technical tests, another plausible character, a modern costume, a color swap, a generic body or a reference image displayed instead of a render do not satisfy this target"
+}

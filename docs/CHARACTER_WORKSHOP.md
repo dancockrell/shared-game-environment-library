@@ -6,6 +6,62 @@ Reusable production instructions live in `.agents/skills/character-art-productio
 
 This is not a finished character generator. Imports and regression tests are working; garment construction, general creature topology, production skinning and final art remain incomplete. The historical checkpoints below are evidence, not a competing current design.
 
+### Exact character target — user clarification, 6 September 2026
+
+`catalog/characters/references/beatrix-exact-target.png` is the user-supplied exact visual target, with its hash and authority recorded in the adjacent JSON. The user explicitly requires continued work/research until the generated result matches this image. Treat likeness, body proportions, loose-strand hairstyle, structured ivory bodice, dark fitted breeches, stockings/garters, boots, equipment, pose and rendered appearance as comparison requirements—not optional inspiration. This target supplements the full reusable-generator goal; it does not replace creature families, variation, engine integration or budget requirements. Unseen surfaces need consistent reconstruction, not invented claims of reference verification. No current 3D result matches it.
+
+The first wearable four-panel bodice trial is rejected: severe edge distortion and sampled body intersections accompany obvious visible clipping and a wrong, loose silhouette. The illustration calls for structured shaping, not a free-hanging cloth rectangle. [The Met's eighteenth-century stays record](https://www.metmuseum.org/art/collection/search/82434) supports researching panel structure and boning; historical objects inform construction, while the user's illustration remains the appearance authority. The speculative interior edge-flipping addition was removed: it reduced some sampled intersections but substantially worsened edge distortion. A successful triangulation test did not establish a better garment.
+
+### Paper-and-author-code review: replacement decision
+
+The user explicitly requires reading the papers and mining established implementations before inventing more algorithms. This section supersedes the earlier screening list below as the next-work decision. Research is not art completion.
+
+| Primary source and actual reading | Mechanism relevant to the observed failure | Adoption decision |
+|---|---|---|
+| [AVBD, SIGGRAPH 2025, complete 12-page paper](https://graphics.cs.utah.edu/research/projects/avbd/Augmented_VBD-SIGGRAPH25.pdf), especially sections 3–4 and 6 | Primal local solves plus dual updates, stiffness ramping, warm starts and controlled correction of old constraint error; local propagation still needs iterations | Benchmark maintained implementations for mixed stiffness. Do not paste the paper equations into another home-made solver. Stable motion is not accurate fit or collision safety. |
+| [OGC, SIGGRAPH 2025, complete 21-page paper](https://graphics.cs.utah.edu/research/projects/ogc/Offset_Geometric_Contact-SIGGRAPH2025.pdf), especially sections 3.7, 4, 5.1.3 and 6 | Vertex–facet and edge–edge contacts; per-vertex displacement limits tied to a previously feasible state. Its animated-body example explicitly permits body–cloth penetration while preventing cloth self-intersection | Require an intersection-free initial state and independent intersection checks. Nearest-face projection is not this method. Verify actual library behavior, contact-buffer capacity and body motion; do not inherit the headline guarantee. |
+| [DressWild, February 2026 preprint](https://arxiv.org/html/2602.16502v1), main methods, experiments and conclusion, sections 3–7 | Separates canonical pattern construction, appearance and simulation. PBD repairs rough initialization; CIPC performs subsequent layered fitting and pose transition | Adopt the separation of responsibilities. Its learned chain is not our budgeted implementation: training used an H100 and local inference memory has not been established. No paid canonicalization or weights acquired. |
+| [Image2Garment, January 2026 preprint](https://arxiv.org/html/2601.09658v1), main methods/evaluation and supplement sections 9–12 | Fabric attributes map to directional mechanical parameters, not merely weave-colored textures; multilayer outfits and heavy trims remain failure cases | Treat mechanical cloth and visual materials separately. Preserve physical units and measured presets. Its CLO3D/Marvelous Designer simulation is not a free backend we have installed. |
+| [GarmentCode author bodice implementation](https://github.com/maria-korosteleva/GarmentCode/blob/d449629979028123a5c4dc9e732a2ec19b7fce31/assets/garment_programs/bodice.py), full source file read | Fitted front/back panels use bust/waist measurements, shoulder inclination, side/bottom darts and named stitch interfaces. Sleeve placement includes a documented pose-range heuristic | Use the existing pattern library for construction, adapting a period cut to the approved image. Do not invent another approximate chest-quarter polygon. Full GarmentCode paper review is not yet claimed; the large PDF reader failed. |
+| [Newton VBD implementation](https://github.com/newton-physics/newton/blob/6d2ece7c314248960a249ebc46b0dafbb5a89232/newton/_src/solvers/vbd/solver_vbd.py), solver contract/contact excerpts, complete official hanging example, cloth-mesh builder and conservative-bound kernels inspected | Ready-made FEM cloth, bending, area-based mesh masses, self-contact and graph-colored local solves. Contact arrays have finite capacity; solver documentation warns that excess pairs can be dropped | First executable replacement candidate for the offline fitting stage; not an additional game editor or runtime simulation owner. Baseline executed below. Full solver audit and wearable-body validation remain open. |
+
+Additional release check: [DiffAvatar](https://github.com/facebookresearch/DiffAvatar) has MIT-licensed repository material, but the inspected recursive tree contains documentation and OBJ examples, not an executable optimization implementation. Its paper abstract and overview were screened; a full-paper/code reproduction is not claimed. A repository named after a paper is not evidence that the algorithm is released.
+
+#### What changes in our implementation
+
+1. Keep the existing character editor, identity/wardrobe contract, licensed body topology and Godot/Unity delivery path. Replace the failed fitting responsibility, not the whole application.
+2. Construct a measured, shaped bodice pattern through the established pattern library. Explicitly convert its centimetre-based examples into the builder's metres. Darts, seams, shoulder slope, neckline and pointed hem are structural decisions; decorative channels cannot compensate for a wrong cut.
+3. Preserve each panel's material coordinates, rest geometry and stitch identities. Newton's `add_cloth_mesh` derives rest elements from the supplied mesh: do not give it an already distorted drape and silently redefine that distortion as the rest shape. Its source assigns one third of each triangle's area times areal density to each incident vertex; our old unit-mass-per-vertex shortcut must not control the production garment.
+4. Establish feasible placement and seam exclusions, then test contact during pose changes. Use explicit Godot Y-up to solver-coordinate conversion and back. Evaluate closures, armholes and belt/accessory contact, not just torso vertices. Do not claim Newton's implementation is mathematically identical to every OGC equation: inspect margins, truncation thresholds and contact filters in the pinned source.
+5. Fit the existing approved character, not a generic mannequin as the finished deliverable. Compare silhouette, face, hair, cut and materials at the reference camera; inspect the back and movement separately. A paper benchmark, collision count or attractive reference displayed in a viewport is not generated character art.
+
+Our current raw fitting body and four-panel fixture provide a repeatable failure case. `tools/build-period-bodice.gd` is a review command, not selectable wardrobe production. Its successful process exit means the study was built and measured, not admitted:
+
+| Rejected local study | Maximum absolute relative edge-length error | Worst sampled signed separation | Negative vertex/centroid samples |
+|---|---:|---:|---:|
+| `bodice-fit-01` | 0.877828 | −14.73 mm | 27 / 748 |
+| `bodice-fit-02`, speculative triangle flips | 1.486950 | −12.15 mm | 12 / 748 |
+
+The metric key is historically named `maxRelativeEdgeStretch`; it includes compression error as well as extension. These are sparse near-surface samples, not a proof of all triangle intersections or penetration depth inside a closed solid. Both studies fail visually and numerically; neither is promoted.
+
+#### Executed upstream baseline and reproducibility
+
+The isolated local research environment uses Newton commit `6d2ece7c314248960a249ebc46b0dafbb5a89232` (package `1.7.0.dev0`, Apache-2.0), Warp `1.17.0` and NumPy `2.4.3`. The initially resolved NumPy `2.5.2` installation lacked `numpy/linalg/_linalg.py` and failed import; pinning `2.4.3` restored import. This was an observed local package failure, not a claim about every installation of that version.
+
+`tools/benchmark-character-physics.ps1` invokes the installed author's unchanged `cloth_hanging` example with its default 64 × 32 grid, `--solver vbd --device cuda:0 --viewer null --num-frames 300 --test`. It saves version/source information, upstream-example and runner hashes, process results, logs and sampled memory. It contains no cloth solver. Repeat with the pinned core package in an isolated environment (first two commands install local open-source dependencies; no service/API charges):
+
+```powershell
+uv venv ./artifacts/character-iterations/research-20260906/newton-env --python 3.13
+uv pip install --python ./artifacts/character-iterations/research-20260906/newton-env/Scripts/python.exe "newton @ https://github.com/newton-physics/newton/archive/6d2ece7c314248960a249ebc46b0dafbb5a89232.zip" warp-lang==1.17.0 numpy==2.4.3
+./tools/benchmark-character-physics.ps1 -Python ./artifacts/character-iterations/research-20260906/newton-env/Scripts/python.exe -Solver vbd -Frames 300
+```
+
+Verified receipt `artifacts/character-iterations/20260906T111354095Z-vbd/receipt.json`: exit 0, 300 frames, 7.059 seconds wall time including initialization and monitoring, with cached kernels. Sampled peak whole-device memory was 2698 MiB; sampled Python process-tree working set was 413.48 MiB. Independent reductions of the saved samples match both reported maxima. Earlier runs passed the upstream example but had invalid/absent peak reductions; do not use them for memory claims. The first cold run took 59.67 seconds including compilation.
+
+Timeout negative test `20260906T111626934Z-vbd` requested 3600 frames with a 10-second limit, terminated after 10.495 seconds, retained a failed receipt and left no Python process. The runner terminates its own process tree rather than leaving a background simulation.
+
+This is on a 12 GB RTX 4070, not an 8 GB device. GPU samples include other applications, can miss peaks, and do not enforce an allocation cap. No garment render, calibrated fabric, full-body fit, benchmark-equivalent speedup, Unity execution or 8 GB certification is established by this test. The original paper's performance numbers belong to its authors' setups, not ours. No paid services were used.
+
 | Area | Implemented method | Actual limit |
 |---|---|---|
 | Body and face | Licensed MakeHuman topology, twelve linked normalized blend shapes, deterministic bounded parameter sampling | A humanoid construction base, not a new species-topology generator; skeleton centers do not yet refit to body changes |

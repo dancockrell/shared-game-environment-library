@@ -1,6 +1,6 @@
 extends RefCounted
 ## Original straight-edge pattern compiler and XPBD constraint baseline.
-## Metric fabric coordinates survive placement/refinement. No body contact or drape claim.
+## Metric fabric coordinates survive placement/refinement and cloth construction.
 
 static func number(value: Variant) -> bool:
 	return (value is float or value is int) and is_finite(float(value))
