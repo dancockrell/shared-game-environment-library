@@ -147,6 +147,8 @@ def solve(args):
         raise ValueError("Preserve previous fitting studies; choose a new directory")
     if not 1 <= args.frames <= 600:
         raise ValueError("Use one to 600 frames for this bounded study")
+    if args.device == "cpu":
+        raise ValueError("Full-surface fitting requires CUDA for the bounded body SDF; CPU review remains available")
     data, body, offsets, rest, placed, faces, pairs = read_inputs(args)
     supports = shoulder_supports(data,body,offsets,placed)
     args.output.mkdir(parents=True)
@@ -171,6 +173,9 @@ def solve(args):
         initial_lengths = np.asarray(builder.spring_rest_length, dtype=np.float32)
         collider = newton.Mesh(np.asarray(body["vertices"], dtype=np.float32),
                                np.asarray(body["triangles"], dtype=np.int32).ravel(), compute_inertia=False)
+        print("Building bounded 128-voxel body SDF",flush=True)
+        collider.build_sdf(device=args.device,max_resolution=128,texture_format="float32")
+        print(f"Body SDF ready after {time.perf_counter()-start:.3f}s",flush=True)
         builder.add_shape_mesh(-1, mesh=collider)
         # Include seam neighbours in graph coloring as well as FEM/bending neighbours.
         graph = set(tuple(sorted((int(a), int(b)))) for tri in faces for a in tri for b in tri if a != b)
@@ -182,6 +187,7 @@ def solve(args):
         graph.update(map(tuple, pairs.tolist()))
         builder.set_coloring(newton.utils.color_graph(len(rest), wp.array(np.asarray(sorted(graph), dtype=np.int32), dtype=wp.int32, device="cpu")))
         vertex_filter, edge_filter = seam_filters(faces, builder.edge_indices, pairs, len(rest))
+        print(f"Finalizing model after {time.perf_counter()-start:.3f}s",flush=True)
         model = builder.finalize(device=args.device)
         model.soft_contact_ke = 50000
         model.soft_contact_kd = 10
@@ -192,7 +198,8 @@ def solve(args):
             particle_external_vertex_contact_filtering_map=vertex_filter,
             particle_external_edge_contact_filtering_map=edge_filter)
         state0, state1 = model.state(), model.state()
-        pipeline = newton.CollisionPipeline(model)
+        # Built-in Macklin edge/face SDF optimization; not vertex-only contact.
+        pipeline = newton.CollisionPipeline(model,enable_rigid_soft_full_surface_contact=True)
         contacts, control = pipeline.contacts(), model.control()
         @wp.kernel
         def advance_supports(q:wp.array(dtype=wp.vec3), qd:wp.array(dtype=wp.vec3), ids:wp.array(dtype=wp.int32),
@@ -225,7 +232,9 @@ def solve(args):
                 state0, state1 = state1, state0
                 wp.launch(increment_step,dim=1,inputs=[step_index])
         # Warm compile before capture, then reset initial states for the recorded run.
+        print(f"Compiling first simulation frame after {time.perf_counter()-start:.3f}s",flush=True)
         frame()
+        print(f"First simulation frame ready after {time.perf_counter()-start:.3f}s",flush=True)
         state0.particle_q.assign(placed.astype(np.float32))
         state1.particle_q.assign(placed.astype(np.float32))
         state0.particle_qd.zero_()
@@ -254,6 +263,13 @@ def solve(args):
                 gap = np.linalg.norm(positions[pairs[:,0]] - positions[pairs[:,1]], axis=1)
                 item = {"frame": number+1, "maxSeamGapMetres": float(gap.max()),
                         "meanSeamGapMetres": float(gap.mean()), "restLengthFraction": fraction}
+                count = int(contacts.soft_contact_count.numpy()[0])
+                if count > contacts.soft_contact_max:
+                    raise ValueError("Body contact buffer overflow; reject incomplete contact solve")
+                indices = contacts.soft_contact_indices.numpy()[:count]
+                item["bodyContacts"] = {"total":count,"vertices":int(np.sum(indices[:,1]<0)),
+                                        "edges":int(np.sum((indices[:,1]>=0)&(indices[:,2]<0))),
+                                        "faces":int(np.sum(indices[:,2]>=0))}
                 history.append(item)
                 print(json.dumps(item), flush=True)
         wp.synchronize()
@@ -269,6 +285,9 @@ def solve(args):
             "releasedSupportMassesKg":{str(i):float(released_masses[i]) for i in supports},
             "sewingRamp":"900 substeps; support positions and velocities plus seam lengths updated every substep",
             "selfContactEnabled":True, "seamContactExclusions":"incident primitives at sewn topology only",
+            "bodyContactMethod":"Newton full-surface rigid-soft SDF contacts plus original vertex contacts",
+            "bodySdfMaxResolution":128,"bodySdfTextureFormat":"float32",
+            "bodyContactCapacity":contacts.soft_contact_max,
             "parameters":{"density":.25,"triKe":1000,"triKa":1000,"triKd":1,"bendKe":.001,
                           "seamKe":5000,"seamKd":1,"bodyContactKe":50000,"particleRadiusMetres":.002},
             "history":history, "elapsedSeconds":time.perf_counter()-start,

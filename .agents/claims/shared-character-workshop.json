@@ -5,7 +5,7 @@
   "summary": "Replace rejected rigid male overgarment with anatomically measured period tailoring and cloth drape through existing shared generator; preserve tested bodice fitting and research established coat construction",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T13:45:00Z",
+  "updated_at": "2026-09-06T14:02:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -53,6 +53,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Full-surface contact: read complete Macklin 2020 paper and pinned Newton source; integrated upstream mesh SDF edge/face contacts. Run 20260906T135821151Z-vbd: 300 frames in 18.18 s, sampled 485.42 MiB process / 2995 MiB whole GPU. Actual CPU render inspected, still rejected. 20 sampled penetrations over 1 mm versus previous 95, but mean seam gap 3.499 mm fails unchanged gate. 21/22 actual pattern/body/contact/export tests pass, one seam test fails. 22 measurement tests pass; default 18/22 pass/four skipped. No paid calls or new engine window; goal remains active.",
+      "Bounded contact startup diagnostics: initial wrong ShapeConfig API failed before simulation; corrected Mesh.build_sdf. 60-second cold timeout stopped only owned process tree; unbuffered logs and stage timings added. One-frame diagnostic succeeded in 48.46 s with 42.503 s contact-kernel loading; next complete run finished in 18.18 s within 120-second allowance. Existing RAM/VRAM guards retained, no 8 GB certification.",
       "Male coat checkpoint: existing GarmentCode composition generates 12 panels/36 stitches with fitted torso, set-in sleeves, waist-seamed skirts and open front. Authored male planes and corrected horizontal sleeve angle exercised; 22 measurement tests passed. Male pattern suite 19 passed/two skipped; baseline 18 passed/three skipped of 21, all ten baseline output hashes unchanged.",
       "Actual male drape 20260906T134056316Z-vbd inspected front/three-quarter/back: sleeve placement improved, skirts still penetrate body. Mean seam gap 1.659 mm fails unchanged 1 mm gate; 95/10388 samples deeper than 1 mm and worst seam 58.813 mm. Rejected construction study, not runtime coat replacement. 300 frames in 14.63 s, sampled 475.59 MiB process and 2858 MiB whole GPU; no new Godot window or paid tool.",
       "Tailored cut, triangle-surface supports and frame-90 support release: 20 pattern/body/fit/export tests passed; study 20260906T132132438Z-vbd completed 300 frames in 16.10 s, sampled 491.22 MiB process working set and 3012 MiB whole GPU. Actual CPU diagnostic inspected and remains unapproved; one sampled body penetration deeper than 1 mm, worst seam gap 6.110 mm. Male rigid overgarment remains rejected and unfixed; no new Godot window or paid work.",

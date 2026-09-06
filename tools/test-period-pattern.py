@@ -177,6 +177,24 @@ class ActualPatternTests(unittest.TestCase):
         self.assertAlmostEqual(float(gaps.max()),result["history"][-1]["maxSeamGapMetres"],places=7)
         self.assertLess(gaps.mean(),.001)  # Demonstrated seam closure, not art/fit approval.
 
+    @unittest.skipUnless(FIT_PATH,"No actual sewing result requested")
+    def test_full_surface_body_contact_evidence(self):
+        result = json.loads(FIT_PATH.read_text())
+        self.assertEqual(result["bodyContactMethod"],
+                         "Newton full-surface rigid-soft SDF contacts plus original vertex contacts")
+        self.assertEqual(result["bodySdfMaxResolution"],128)
+        self.assertEqual(result["bodySdfTextureFormat"],"float32")
+        capacity = result["bodyContactCapacity"]
+        self.assertGreater(capacity,0)
+        for item in result["history"]:
+            counts = item["bodyContacts"]
+            self.assertTrue(all(isinstance(value,int) and value>=0 for value in counts.values()))
+            self.assertLessEqual(counts["total"],capacity)
+            self.assertEqual(counts["total"],counts["vertices"]+counts["edges"]+counts["faces"])
+        # Exercise the upstream feature on this actual body, not just a flag.
+        for kind in ("vertices","edges","faces"):
+            self.assertGreater(max(item["bodyContacts"][kind] for item in result["history"]),0)
+
     def test_seam_contact_filters_follow_joined_topology(self):
         vertex, edge = fitter.seam_filters([[0,1,2],[3,4,5],[6,7,8]],
             [[-1,-1,0,1],[-1,-1,3,4],[-1,-1,6,7]], [(0,3),(3,6)],9)

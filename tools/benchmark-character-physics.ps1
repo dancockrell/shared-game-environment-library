@@ -33,7 +33,7 @@ if ($Device -eq 'cuda:0' -and ($null -eq $baselineGpu -or $baselineGpu -gt 5000)
 if ($isFitting) {
     $patternPath = (Resolve-Path -LiteralPath $PatternMesh).Path
     $bodyPath = (Resolve-Path -LiteralPath $FittingBody).Path
-    $arguments = @('-X','utf8',(Join-Path $PSScriptRoot 'fit-period-pattern.py'),'--panels',$patternPath,'--body',$bodyPath,'--output',(Join-Path $output 'fitting'),'--frames',"$Frames",'--device',$Device)
+    $arguments = @('-u','-X','utf8',(Join-Path $PSScriptRoot 'fit-period-pattern.py'),'--panels',$patternPath,'--body',$bodyPath,'--output',(Join-Path $output 'fitting'),'--frames',"$Frames",'--device',$Device)
 } else {
     $arguments = @('-X','utf8','-m','newton.examples','cloth_hanging','--viewer','null','--solver',$Solver,'--device',$Device,'--num-frames',"$Frames",'--test')
 }
