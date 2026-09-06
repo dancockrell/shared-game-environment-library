@@ -32,6 +32,36 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_surface_audit_detects_crossings_and_keeps_scope_separate(self):
+        import numpy as np
+        import ipctk
+        original = ipctk.get_num_threads()
+        face = np.array([[0,1,2]])
+        body = np.array([[-2.,-2,0],[2,-2,0],[0,2,0]])
+        cloth = np.array([[-.5,0,-1],[.5,0,1],[0,1,1]])
+        self.assertTrue(fitter.audit_body_surface_intersections(cloth,face,body,face)["bodySurfaceIntersection"])
+        cloth[:,2] += 3
+        self.assertFalse(fitter.audit_body_surface_intersections(cloth,face,body,face)["bodySurfaceIntersection"])
+        # Two mutually crossing garment triangles alone must not be reported
+        # as a body crossing when the body is elsewhere.
+        cloth = np.concatenate([body,np.array([[-.5,0,-1],[.5,0,1],[0,1,1]])])
+        self.assertFalse(fitter.audit_body_surface_intersections(cloth,np.array([[0,1,2],[3,4,5]]),body+[0,0,5],face)["bodySurfaceIntersection"])
+        self.assertEqual(ipctk.get_num_threads(),original)
+
+    def test_fabric_contract_is_bounded_and_copied(self):
+        value = fitter.fabric_parameters({})
+        self.assertEqual(value["bendKe"],.001)
+        data = {"fabric":dict(value)}
+        fitter.fabric_parameters(data)["bendKe"] = .5
+        self.assertEqual(data["fabric"],value)
+        for key in value:
+            for bad in (True,None,float("nan"),float("inf"),-1):
+                with self.assertRaises(ValueError):
+                    fitter.fabric_parameters({"fabric":{**value,key:bad}})
+        for bad in ({},None,{**value,"unknown":1}):
+            with self.assertRaises(ValueError):
+                fitter.fabric_parameters({"fabric":bad})
+
     def test_seam_path_detects_body_between_clear_endpoints(self):
         import numpy as np
         import trimesh
@@ -288,6 +318,8 @@ class ActualPatternTests(unittest.TestCase):
         self.assertEqual(result["sourcePanelsSha256"],builder.digest(REVIEW/"panel-mesh.json"))
         self.assertEqual(result["sourceBodySha256"],builder.digest(BODY_PATH))
         self.assertEqual(result["toolSha256"],builder.digest(fitter.__file__))
+        for name,value in fitter.fabric_parameters(data).items():
+            self.assertEqual(result["parameters"][name],value)
         self.assertEqual(points.shape,placed.shape)
         self.assertTrue(np.isfinite(points).all())
         np.testing.assert_array_equal(result["triangles"],faces)

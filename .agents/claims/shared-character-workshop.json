@@ -5,7 +5,7 @@
   "summary": "Replace rejected rigid male overgarment with anatomically measured period tailoring and cloth drape through existing shared generator; preserve tested bodice fitting and research established coat construction",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T15:41:00Z",
+  "updated_at": "2026-09-06T15:48:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",

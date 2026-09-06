@@ -117,7 +117,7 @@ def orient_sewn_faces(data):
             "flippedTriangles":int(flipped.sum()),"frontAxis":"+Z"}
 
 
-def mesh_panels(directory, resolution_cm, fitting_body=None):
+def mesh_panels(directory, resolution_cm, fitting_body=None, fabric=None):
     """Use the author's constrained triangulation and matched edge sampling.
 
     Do not call BoxMesh.load(): its subsequent weld collapses separated seams
@@ -160,6 +160,8 @@ def mesh_panels(directory, resolution_cm, fitting_body=None):
                                  "edgeIds": [stitch.edge_1, stitch.edge_2]})
         if len(left) != len(right):
             raise ValueError("Unmatched seam vertex counts")
+    if fabric is not None:
+        data["fabric"] = fabric
     data["sewnOrientation"] = orient_sewn_faces(data)
     metrics = validate_mesh(data)
     (directory / "panel-mesh.json").write_text(json.dumps(data, indent=2, allow_nan=False))
@@ -492,7 +494,7 @@ def build(args):
                     output_width=1400, background_color="#f2ede3")
     body.save(args.output)
     (args.output / "design.json").write_text(json.dumps(design, indent=2, allow_nan=False))
-    mesh_metrics = mesh_panels(args.output, args.resolution_cm, fitting_body)
+    mesh_metrics = mesh_panels(args.output, args.resolution_cm, fitting_body, style.get("fabric") if style else None)
     outputs = {p.name: digest(p) for p in args.output.iterdir() if p.is_file()}
     receipt = {
         "schemaVersion": 1, "upstreamCommit": COMMIT,

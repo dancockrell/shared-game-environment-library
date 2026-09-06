@@ -93,7 +93,7 @@ $exitCode = $process.ExitCode
 [System.IO.File]::WriteAllText($stdout,$outTask.GetAwaiter().GetResult())
 [System.IO.File]::WriteAllText($stderr,$errTask.GetAwaiter().GetResult())
 $packageCode = 'import importlib.metadata as m,json,hashlib; d=m.distribution("newton"); p=d.locate_file("newton/examples/cloth/example_cloth_hanging.py"); print(json.dumps({"newton":d.version,"warp":m.version("warp-lang"),"numpy":m.version("numpy"),"source":json.loads(d.read_text("direct_url.json") or "{}"),"upstreamExampleSha256":hashlib.sha256(p.read_bytes()).hexdigest()}))'
-if ($ReviewResult) { $packageCode = 'import importlib.metadata as m,json; print(json.dumps({n:m.version(n) for n in ("pyrender","pyglet","PyOpenGL","numpy","trimesh")}))' }
+if ($ReviewResult) { $packageCode = 'import importlib.metadata as m,json; print(json.dumps({n:m.version(n) for n in ("pyrender","pyglet","PyOpenGL","numpy","trimesh","ipctk")}))' }
 $packageOutput = & $pythonPath -X utf8 -c $packageCode
 $packageInfo = if ($LASTEXITCODE -eq 0) { $packageOutput | ConvertFrom-Json } else { $null }
 if ($isFitting -and $packageInfo) { $packageInfo.PSObject.Properties.Remove('upstreamExampleSha256') }

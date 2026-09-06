@@ -21,9 +21,25 @@ def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def fabric_parameters(data):
+    """One validated material contract for this offline shell solver."""
+    import math
+    defaults = {"density":.25,"triKe":1000,"triKa":1000,"triKd":1,"bendKe":.001}
+    value = data.get("fabric",defaults)
+    bounds = {"density":(.05,2),"triKe":(100,10000),"triKa":(100,10000),"triKd":(0,10),"bendKe":(.00001,1)}
+    if not isinstance(value,dict) or set(value) != set(defaults):
+        raise ValueError("Fabric must specify exactly density, triKe, triKa, triKd and bendKe")
+    for name,(low,high) in bounds.items():
+        v = value[name]
+        if isinstance(v,bool) or not isinstance(v,(int,float)) or not math.isfinite(v) or not low <= v <= high:
+            raise ValueError(f"Invalid fabric parameter {name}")
+    return dict(value)
+
+
 def read_inputs(args):
     import numpy as np
     panel_data = json.loads(args.panels.read_text())
+    fabric_parameters(panel_data)
     body = json.loads(args.body.read_text())
     if panel_data.get("units") != "metres" or panel_data.get("sourceBodySha256") != digest(args.body):
         raise ValueError("Use body-anchored panels matching this exact fitting body")
@@ -284,6 +300,7 @@ def solve(args):
     if args.device == "cpu":
         raise ValueError("Full-surface fitting requires CUDA for the bounded body SDF; CPU review remains available")
     data, body, offsets, rest, placed, faces, pairs = read_inputs(args)
+    fabric = fabric_parameters(data)
     supports = dressing_supports(data,body,offsets,placed)
     args.output.mkdir(parents=True)
     start = time.perf_counter()
@@ -294,8 +311,8 @@ def solve(args):
             xy = np.asarray(panel["restXY"])
             builder.add_cloth_mesh(pos=wp.vec3(0,0,0), rot=wp.quat_identity(), scale=1,
                 vel=wp.vec3(0,0,0), vertices=np.column_stack([xy, np.zeros(len(xy))]).tolist(),
-                indices=np.asarray(panel["triangles"]).ravel().tolist(), density=.25,
-                tri_ke=1000, tri_ka=1000, tri_kd=1, edge_ke=.001, edge_kd=0,
+                indices=np.asarray(panel["triangles"]).ravel().tolist(), density=fabric["density"],
+                tri_ke=fabric["triKe"], tri_ka=fabric["triKa"], tri_kd=fabric["triKd"], edge_ke=fabric["bendKe"], edge_kd=0,
                 particle_radius=.002, validate_mesh=True, label=name)
         # Placement changes only positions, never the FEM rest matrices or areas.
         builder.particle_q[:] = placed.tolist()
@@ -444,7 +461,7 @@ def solve(args):
             "bodyContactCapacity":contacts.soft_contact_max,
             "bodySdfDistancesMetres":field_distances.tolist(),
             "bodySdfSampleOrder":"cloth vertices followed by triangle centroids",
-            "parameters":{"density":.25,"triKe":1000,"triKa":1000,"triKd":1,"bendKe":.001,
+            "parameters":{**fabric,
                           "seamKe":50000,"seamKd":1,"bodyContactKe":50000,"particleRadiusMetres":.002},
             "history":history, "elapsedSeconds":time.perf_counter()-start,
             "versions": {name:importlib.metadata.version(name) for name in ("newton","warp-lang","numpy","trimesh","scipy")}}
@@ -493,6 +510,29 @@ def audit_body_field(result, queries, signed):
             "sourceDistanceMetres":float(signed[i]),"sdfDistanceMetres":float(field[i])} for i in worst]}
 
 
+def audit_body_surface_intersections(points, faces, body_vertices, body_faces):
+    """Author IPC Toolkit triangle-surface audit; no sampled-distance substitute."""
+    import numpy as np
+    import ipctk
+    previous_threads = ipctk.get_num_threads()
+    ipctk.set_num_threads(1)
+    try:
+        vertices = np.asfortranarray(np.concatenate([points,body_vertices]),dtype=np.float64)
+        triangles = np.asarray(np.concatenate([faces,np.asarray(body_faces)+len(points)]),dtype=np.int32)
+        edges = np.unique(np.sort(np.concatenate([triangles[:,[0,1]],triangles[:,[1,2]],triangles[:,[2,0]]]),axis=1),axis=0)
+        mesh = ipctk.CollisionMesh(vertices,edges,triangles)
+        # This audit answers garment/body contact only. Same-layer self-contact
+        # needs seam-equivalent adjacency and is not silently certified here.
+        split = len(points)
+        mesh.can_collide = ipctk.CollisionFilter(lambda a,b: (a < split) != (b < split))
+        intersects = bool(ipctk.has_intersections(mesh,vertices))
+        return {"library":"IPC Toolkit","version":importlib.metadata.version("ipctk"),
+            "bodySurfaceIntersection":intersects,"threads":1,
+            "scope":"static garment/body triangle-surface crossings; no self-intersection, containment, thickness or trajectory certification"}
+    finally:
+        ipctk.set_num_threads(previous_threads)
+
+
 def review(args):
     import numpy as np
     import trimesh
@@ -522,7 +562,8 @@ def review(args):
         "bodyPenetrationSamplesOver1mm":int(np.count_nonzero(signed < -.001)),
         "sampleCount":len(queries), "sampling":"cloth vertices and triangle centroids; not continuous triangle/body or self-intersection certification",
         "seams":result["history"][-1],"seamDetails":seam_diagnostics(data,offsets,points),
-        "seamBodyObstructions":seam_body_obstructions(points,pairs,np.asarray(source.vertices),np.asarray(source.faces,dtype=np.int64))}
+        "seamBodyObstructions":seam_body_obstructions(points,pairs,np.asarray(source.vertices),np.asarray(source.faces,dtype=np.int64)),
+        "bodySurfaceAudit":audit_body_surface_intersections(points,faces,np.asarray(source.vertices),np.asarray(source.faces,dtype=np.int64))}
     if "bodySdfDistancesMetres" in result:
         metrics["bodySdfAudit"] = audit_body_field(result,queries,signed)
     args.output.mkdir(parents=True)
