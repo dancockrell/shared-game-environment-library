@@ -146,6 +146,21 @@ class ActualPatternTests(unittest.TestCase):
             self.skipTest("Default upstream cut")
         self.assertEqual(style["status"],"construction-study-not-approved-garment")
         if style.get("coat"):
+            from shapely import Polygon, union_all
+            skirts = receipt["cutMeasurements"]["skirtPlacement"]
+            self.assertEqual(len(skirts),4)
+            shapes = {}
+            for name,evidence in skirts.items():
+                panel = MESH["panels"][name]
+                points = np.asarray(panel["placedXYZ"])
+                self.assertGreaterEqual((points[:,0]*evidence["bodySide"]).min(),.005-1e-10)
+                np.testing.assert_array_equal(evidence["translationBeforeCm"][1:],evidence["translationAfterCm"][1:])
+                shapes[name] = union_all([Polygon(t[:,:2]) for t in points[np.asarray(panel["triangles"])]])
+            for location in ("f","b"):
+                self.assertEqual(shapes["left_"+location+"skirt"].intersection(shapes["right_"+location+"skirt"]).area,0)
+            before = copy.deepcopy(SPEC)
+            builder.separate_skirt_placements(SimpleNamespace(pattern=before["pattern"]))
+            self.assertEqual(before,SPEC)  # Already separated: no repeated drift.
             placements = receipt["cutMeasurements"]["sleevePlacement"]
             for evidence in placements.values():
                 before,after = (np.asarray(evidence[k]) for k in ("armholeBeforeCm","armholeAfterCm"))

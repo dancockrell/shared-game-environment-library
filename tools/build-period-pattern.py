@@ -290,6 +290,32 @@ def align_sleeves(garment, pattern, pose):
     return evidence
 
 
+def separate_skirt_placements(pattern, gap_cm=1.0):
+    """Keep flared quarters from overlapping coplanarly before sewing.
+
+    Translation only, in the same serialized placement stage as sleeve alignment.
+    The torso determines each quarter's side; no cut vertices or seams change.
+    """
+    import numpy as np
+    from scipy.spatial.transform import Rotation
+    evidence = {}
+    for name,panel in pattern.pattern["panels"].items():
+        if "skirt" not in name:
+            continue
+        def world(p):
+            return Rotation.from_euler("xyz",p["rotation"],degrees=True).apply(
+                np.column_stack([p["vertices"],np.zeros(len(p["vertices"]))]))+p["translation"]
+        torso = pattern.pattern["panels"][name.replace("skirt","torso")]
+        sign = 1 if world(torso)[:,0].mean()>0 else -1
+        old = np.asarray(panel["translation"],dtype=float)
+        minimum = float((world(panel)[:,0]*sign).min())
+        displacement = sign*max(0.0,gap_cm/2-minimum)
+        panel["translation"] = (old+np.array([displacement,0,0])).tolist()
+        evidence[name] = {"translationBeforeCm":old.tolist(),"translationAfterCm":panel["translation"],
+                          "bodySide":sign,"minimumSignedXBeforeCm":minimum,"centerGapCm":gap_cm}
+    return evidence
+
+
 def assemble_coat(garment, controls):
     """Compose existing shaped bodice/sleeve and skirt panels, with an open front.
 
@@ -398,6 +424,7 @@ def build(args):
     pattern = garment.assembly()
     if style and style.get("coat"):
         cut_measurements["sleevePlacement"] = align_sleeves(garment,pattern,body_provenance["armPose"])
+        cut_measurements["skirtPlacement"] = separate_skirt_placements(pattern)
     # Upstream collects subcomponents through a set. Canonicalize containers,
     # never the directed panel edges or the two sides of an individual seam.
     pattern.pattern["panels"] = dict(sorted(pattern.pattern["panels"].items()))
