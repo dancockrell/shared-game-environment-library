@@ -864,6 +864,33 @@ run `20260906-135952-ca2e36dc07204b7d80414b59caa1461e` also passed before
 the Unity albedo repair and additional native byte-comparison assertion.
 No native engine pass is inferred from either CPU receipt.
 
+#### User-directed wet cherry finish
+
+The user clarified that cherry glaze is wet: reducing plastic appearance must
+not flatten every material to matte. The existing fruit material now uses
+roughness 0.16 instead of 0.7, richer red albedo and a subtle seeded dark-red
+64-square painted underlayer. This is a single-surface glossy approximation,
+not a separate transparent glaze layer or subsurface fruit simulation.
+Cream, sponge, crust, camera, placement and fruit geometry remain unchanged.
+
+For this review the pastry caller explicitly sets sponge relief_texels to zero.
+The pending normal-map engine experiment is not silently shown through the old
+importer; its compiler and adapter implementation remain available for later
+validation. This supersedes the fixture's earlier enabled 1.5-texel setting,
+not the retained historical CPU evidence.
+
+Actual render:
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pastry-wet-cherries.png`.
+Reviewed bright localized cherry highlights and richer red against the matte
+cake; overall pastry art still needs work. Existing PID 30828 passed native
+import and spatial checks for 80 instances and 17 shared meshes, sequence
+`pastry-wet-cherries-001`. No engine restart and no normal-map validation claim.
+CPU receipt:
+`procedural/generated/reviews/20260906-140940-773dbec951164aca8b56551780666515/report.json`;
+all 38 stages, 57 Rust tests and six mesh-audit tests passed.
+This art checkpoint is committed locally without a push or Actions dispatch,
+respecting the user's request to limit GitHub Actions usage.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

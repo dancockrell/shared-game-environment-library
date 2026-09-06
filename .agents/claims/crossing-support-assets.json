@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Unify normal mip filtering in the Rust material generator so both engine adapters upload identical normalized levels; leave pending native viewer replacement untouched",
+  "summary": "Refine cherry glaze in the pastry recipe and inspect in the existing viewer; keep unverified normal relief off and do not trigger remote Actions for the art iteration",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

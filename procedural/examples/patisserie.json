@@ -83,7 +83,7 @@
           "color": [0.55, 0.4, 0.22],
           "strength": 0.22,
           "seed": 43,
-          "granulation": {"cells": [128, 16], "strength": 0.5, "color": [0.25, 0.14, 0.065], "relief_texels": 1.5},
+          "granulation": {"cells": [128, 16], "strength": 0.5, "color": [0.25, 0.14, 0.065], "relief_texels": 0},
           "size": 512,
           "strokes": [
             {
@@ -783,9 +783,15 @@
           ]
         ]
       },
-      "color": [0.25, 0.025, 0.05, 1],
+      "color": [0.34, 0.012, 0.026, 1],
       "material": {
-        "roughness": 0.7
+        "roughness": 0.16,
+        "paint": {
+          "color": [0.13, 0.008, 0.02],
+          "strength": 0.32,
+          "seed": 97,
+          "size": 64
+        }
       }
     },
     "pie.crust": {
