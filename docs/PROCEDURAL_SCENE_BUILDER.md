@@ -45,6 +45,41 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Exact vertex reuse without shape simplification
+
+The compiler now indexes each named mesh by the complete bitwise position,
+normal and UV tuple. First occurrence determines stable output order; triangle
+order stays unchanged. Different normals, UV seams and signed zeros remain
+distinct. This is not decimation, remeshing, topology repair or cross-part welding.
+Materials, paint pixels, bounds, apertures and assembly instances are unchanged.
+
+Each mesh exports `source_vertex_count` separately from its stored vertex count.
+The existing `max_vertices` construction cap continues to charge the original
+count, including across definitions: compression must not authorize larger
+temporary construction workloads. Residency estimates use the indexed buffers.
+The indexing map and temporary arrays consume CPU memory not represented by that
+residency estimate. Godot's inspector exposes `source_vertices` with a legacy
+fallback; this adapter addition has not yet been engine-executed.
+
+Measured painted-teapot comparison, before/after indexing:
+
+| Quantity | Before | After |
+| --- | ---: | ---: |
+| Stored vertices | 337,104 | 59,061 |
+| Triangles | 112,368 | 112,368 |
+| Estimated geometry, instances and texture mip bytes | 13,534,292 | 4,636,916 |
+| Serialized scene JSON bytes | 35,131,362 | 10,313,845 |
+
+An independent comparison of nine saved fixtures verified 427,584 triangle
+corners: identical position/normal/UV values, in the same order, with unchanged
+instances and mesh metadata. The Rust regression additionally compares float
+bits and tests indexing idempotence. These are exact payload savings, not
+measured VRAM, rendering speed or artistic improvement. No new Godot process
+was launched; the displayed teapot remains the earlier graphics-backed render.
+Final CPU receipt: `procedural/generated/reviews/20260906-115257-1a4408baae2e49db94f5dbaf20449ad7/report.json`
+(37 tests, format, strict clippy, release build and nine deterministic fixtures
+passed, including the explicit cross-definition construction-budget regression).
+
 ### Procedural painted underlayer
 
 Materials can include `"paint":{"color":[0.45,0.6,0.42],"strength":0.35,"seed":42}`.

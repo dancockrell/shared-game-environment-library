@@ -30,6 +30,7 @@ static func build(data: Dictionary) -> Node3D:
 		arrays[Mesh.ARRAY_INDEX] = indices
 		var mesh := ArrayMesh.new()
 		mesh.resource_name = spec.name
+		mesh.set_meta("scene_forge_source_vertices", int(spec.get("source_vertex_count", vertices.size())))
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		var material := StandardMaterial3D.new()
 		material.albedo_color = Color(spec.color[0], spec.color[1], spec.color[2], spec.color[3])
@@ -96,6 +97,7 @@ static func describe_instance(display: MultiMeshInstance3D, instance_index: int)
 		"bounds": {"min": vector.call(bounds.position), "max": vector.call(bounds.end)},
 		"bounds_kind": "world_axis_aligned_mesh_envelope_not_collision",
 		"vertices": mesh.surface_get_array_len(0),
+		"source_vertices": mesh.get_meta("scene_forge_source_vertices", mesh.surface_get_array_len(0)),
 		"indices": mesh.surface_get_array_index_len(0),
 		"material": {"roughness": material.roughness, "metallic": material.metallic, "color": [material.albedo_color.r, material.albedo_color.g, material.albedo_color.b, material.albedo_color.a]},
 		"aperture_count": display.get_meta("scene_forge_apertures", []).size(),

@@ -185,6 +185,8 @@ impl Default for Limits {
 #[derive(Clone, Debug, Serialize)]
 pub struct Mesh {
     pub name: String,
+    /// Construction workload before exact vertex reuse; not triangle count.
+    pub source_vertex_count: usize,
     pub apertures: Vec<room::Aperture>,
     #[serde(serialize_with = "flat3")]
     pub positions: Vec<V3>,
@@ -315,6 +317,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
     }
     let mut m = Mesh {
         name: name.into(),
+        source_vertex_count: 0,
         apertures: vec![],
         positions: vec![],
         normals: vec![],
@@ -635,6 +638,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         return Err("Empty or degenerate mesh".into());
     }
     m.bounds = Bounds::from_points(m.positions.iter().copied());
+    m.source_vertex_count = m.positions.len();
     m.paint_texture = d
         .material
         .paint
@@ -642,6 +646,35 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         .map(|settings| paint::build(d.color, settings))
         .transpose()?;
     Ok(m)
+}
+/// Exact attribute indexing, not simplification. First occurrence determines
+/// output order. Bitwise keys retain signed zero, shading splits and UV seams.
+fn index_vertices(m: &mut Mesh) {
+    let positions = std::mem::take(&mut m.positions);
+    let normals = std::mem::take(&mut m.normals);
+    let uvs = std::mem::take(&mut m.uvs);
+    let mut vertices: BTreeMap<[u32; 8], u32> = BTreeMap::new();
+    let mut remap = Vec::with_capacity(positions.len());
+    for i in 0..positions.len() {
+        let p = positions[i];
+        let n = normals[i];
+        let uv = uvs[i];
+        let key = [p[0], p[1], p[2], n[0], n[1], n[2], uv[0], uv[1]].map(f32::to_bits);
+        let next = m.positions.len() as u32;
+        let index = *vertices.entry(key).or_insert_with(|| {
+            m.positions.push(p);
+            m.normals.push(n);
+            m.uvs.push(uv);
+            next
+        });
+        remap.push(index);
+    }
+    for index in &mut m.indices {
+        *index = remap[*index as usize];
+    }
+    m.positions.shrink_to_fit();
+    m.normals.shrink_to_fit();
+    m.uvs.shrink_to_fit();
 }
 fn instance_count(node: &Assembly, depth: usize, limit: usize) -> Result<usize> {
     if depth > 32 {
@@ -730,8 +763,13 @@ pub fn compile(recipe: &Recipe) -> Result<Scene> {
                         .definitions
                         .get(name)
                         .ok_or_else(|| format!("Unknown mesh {name}"))?;
-                    let used = s.meshes.iter().map(|m| m.positions.len()).sum::<usize>();
-                    let m = mesh(name, d, r.limits.max_vertices.saturating_sub(used))?;
+                    let used = s
+                        .meshes
+                        .iter()
+                        .map(|m| m.source_vertex_count)
+                        .sum::<usize>();
+                    let mut m = mesh(name, d, r.limits.max_vertices.saturating_sub(used))?;
+                    index_vertices(&mut m);
                     s.estimated_geometry_bytes +=
                         (m.positions.len() * 32 + m.indices.len() * 4) as u64;
                     if let Some(texture) = &m.paint_texture {
@@ -872,6 +910,66 @@ pub unsafe extern "C" fn scene_forge_free(ptr: *mut u8, len: usize) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn exact_indexing_preserves_every_fixture_triangle_and_attribute() {
+        let fixtures = [
+            include_str!("../examples/arches.json"),
+            include_str!("../examples/lathe-shading.json"),
+            include_str!("../examples/materials.json"),
+            include_str!("../examples/painted-surfaces.json"),
+            include_str!("../examples/rooms.json"),
+            include_str!("../examples/rounded-stock.json"),
+            include_str!("../examples/teapot.json"),
+            include_str!("../examples/transformed-assemblies.json"),
+            include_str!("../examples/workshop.json"),
+        ];
+        for text in fixtures {
+            let recipe: Recipe = serde_json::from_str(text).unwrap();
+            for (name, d) in &recipe.definitions {
+                let source = mesh(name, d, 1_000_000).unwrap();
+                let mut indexed = source.clone();
+                index_vertices(&mut indexed);
+                assert_eq!(source.indices.len(), indexed.indices.len());
+                assert_eq!(source.bounds, indexed.bounds);
+                assert_eq!(source.material, indexed.material);
+                assert_eq!(source.color, indexed.color);
+                assert_eq!(indexed.source_vertex_count, source.positions.len());
+                assert!(indexed.positions.len() <= source.positions.len());
+                let attributes = |m: &Mesh, i: u32| {
+                    let j = i as usize;
+                    [
+                        m.positions[j][0],
+                        m.positions[j][1],
+                        m.positions[j][2],
+                        m.normals[j][0],
+                        m.normals[j][1],
+                        m.normals[j][2],
+                        m.uvs[j][0],
+                        m.uvs[j][1],
+                    ]
+                    .map(f32::to_bits)
+                };
+                for (&a, &b) in source.indices.iter().zip(&indexed.indices) {
+                    assert_eq!(
+                        attributes(&source, a),
+                        attributes(&indexed, b),
+                        "{name}: changed triangle corner"
+                    );
+                }
+                let distinct: std::collections::BTreeSet<_> = (0..indexed.positions.len() as u32)
+                    .map(|i| attributes(&indexed, i))
+                    .collect();
+                assert_eq!(distinct.len(), indexed.positions.len());
+                let before = serde_json::to_vec(&indexed).unwrap();
+                index_vertices(&mut indexed);
+                assert_eq!(
+                    before,
+                    serde_json::to_vec(&indexed).unwrap(),
+                    "Indexing must be idempotent"
+                );
+            }
+        }
+    }
     fn recipe() -> Recipe {
         serde_json::from_str(r#"{"version":1,"definitions":{"block":{"shape":{"kind":"box","size":[2,2,2]},"color":[0.6,0.5,0.4,1]}},"root":{"kind":"repeat","count":1000,"step":[3,0,0],"child":{"kind":"part","mesh":"block"}}}"#).unwrap()
     }
@@ -880,7 +978,9 @@ mod tests {
         let s = compile(&recipe()).unwrap();
         assert_eq!(s.instances.len(), 1000);
         assert_eq!(s.meshes.len(), 1);
-        assert_eq!(s.meshes[0].positions.len(), 36);
+        assert_eq!(s.meshes[0].source_vertex_count, 36);
+        assert_eq!(s.meshes[0].positions.len(), 30);
+        assert_eq!(s.meshes[0].indices.len(), 36);
         assert!(s.estimated_geometry_bytes < 70_000);
     }
     #[test]
@@ -1055,6 +1155,31 @@ mod tests {
         r.limits.max_vertices = 100;
         r.limits.gpu_geometry_bytes = 100;
         assert!(compile(&r).unwrap_err().contains("residency"));
+    }
+    #[test]
+    fn indexing_does_not_relax_construction_work_budget() {
+        let mut r: Recipe = serde_json::from_str(r#"{"version":1,"definitions":{"a":{"shape":{"kind":"box","size":[1,1,1]},"color":[1,1,1,1]},"b":{"shape":{"kind":"box","size":[1,1,1]},"color":[1,1,1,1]}},"root":{"kind":"group","children":[{"kind":"part","mesh":"a"},{"kind":"part","mesh":"b"}]}}"#).unwrap();
+        // Both meshes compress to 30 vertices, but each needs 36 during construction.
+        r.limits.max_vertices = 71;
+        assert!(compile(&r).unwrap_err().contains("Vertex budget"));
+        r.limits.max_vertices = 72;
+        let scene = compile(&r).unwrap();
+        assert_eq!(
+            scene
+                .meshes
+                .iter()
+                .map(|m| m.source_vertex_count)
+                .sum::<usize>(),
+            72
+        );
+        assert_eq!(
+            scene
+                .meshes
+                .iter()
+                .map(|m| m.positions.len())
+                .sum::<usize>(),
+            60
+        );
     }
     #[test]
     fn box_faces_survive_scale_extremes() {
