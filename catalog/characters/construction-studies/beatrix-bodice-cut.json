@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "beatrix-bodice-cut",
+  "status": "construction-study-not-approved-garment",
+  "referenceSha256": "24b16abca558a402f110389696bd69a7ba8b3b3622170a0a20dab0461322182d",
+  "intent": "Narrower shoulder straps and pointed centre-front hem, shaped from the existing darted bodice block. Back is a proposed reconstruction, not visible-reference proof. Boning, closures and edge finishing remain unfinished.",
+  "parameters": {
+    "neckWidth": 0.85,
+    "frontNeckDepth": 0.52,
+    "backNeckDepth": 0.15,
+    "frontHemDropCm": 4
+  }
+}

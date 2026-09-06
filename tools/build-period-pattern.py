@@ -205,6 +205,50 @@ def validate_mesh(data):
             "matchedSeamVertexPairs": pairs, "flatFabricAreaSquareMetres": total_area}
 
 
+def apply_cut_style(design, style):
+    """Bounded tailoring inputs over the author's existing shaped-panel system."""
+    if not isinstance(style, dict) or style.get("schemaVersion") != 1:
+        raise ValueError("Cut style must use schemaVersion 1")
+    limits = {"neckWidth":(-.5,1), "frontNeckDepth":(.3,1),
+              "backNeckDepth":(0,1), "frontHemDropCm":(0,6)}
+    values = style.get("parameters")
+    if not isinstance(values,dict) or set(values) != set(limits):
+        raise ValueError("Cut style must supply exactly the supported tailoring parameters")
+    for name,(low,high) in limits.items():
+        value = values[name]
+        if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value) or not low <= value <= high:
+            raise ValueError(f"Invalid cut parameter {name}")
+    # Pinned author's assembly pivot subtracts integer coordinates. Until that
+    # upstream contract changes, fractional-centimetre hem drops would shift
+    # the assembled placement. Reject them instead of silently changing fit.
+    if values["frontHemDropCm"] != int(values["frontHemDropCm"]):
+        raise ValueError("Front hem drop currently requires whole centimetres")
+    for key,name in (("width","neckWidth"),("fc_depth","frontNeckDepth"),("bc_depth","backNeckDepth")):
+        design["collar"][key]["v"] = values[name]
+    return values["frontHemDropCm"]
+
+
+def shape_front_hem(garment, drop_cm):
+    """Lower the shared centre-front/hem endpoint, retaining library seam identities.
+
+    Darts, side seams, shoulder fit and every existing curve remain owned by
+    GarmentCode. This is a cut adjustment before triangulation, not mesh warping.
+    """
+    measurements = {}
+    for side in ("right","left"):
+        panel = getattr(garment,side).ftorso
+        inside = panel.interfaces["inside"].edges
+        endpoint = min((point for edge in inside for point in (edge.start,edge.end)),key=lambda p:p[1])
+        before = list(endpoint)
+        before_world = panel.point_to_3D(endpoint).tolist()
+        endpoint[1] -= drop_cm
+        measurements[side] = {"centreFrontBeforeCm":before,"centreFrontAfterCm":list(endpoint),
+                              "centreFrontBeforePlacementCm":before_world,
+                              "centreFrontAfterPlacementCm":panel.point_to_3D(endpoint).tolist(),
+                              "shoulderSeamLengthCm":panel.interfaces["shoulder"].edges.length()}
+    return measurements
+
+
 def build(args):
     start = time.perf_counter()
     if not math.isfinite(args.resolution_cm) or not 0.75 <= args.resolution_cm <= 3:
@@ -240,7 +284,10 @@ def build(args):
     design["collar"]["component"]["style"]["v"] = None
     design["collar"]["f_collar"]["v"] = "SquareNeckHalf"
     design["collar"]["b_collar"]["v"] = "SquareNeckHalf"
+    style = json.loads(args.cut_style.read_text()) if args.cut_style else None
+    hem_drop = apply_cut_style(design,style) if style is not None else 0
     garment = FittedShirt(body, design)
+    cut_measurements = shape_front_hem(garment,hem_drop)
     pattern = garment.assembly()
     # Upstream collects subcomponents through a set. Canonicalize containers,
     # never the directed panel edges or the two sides of an individual seam.
@@ -272,6 +319,8 @@ def build(args):
         "archiveSha256": ARCHIVE_SHA256, "verifiedSourceFiles": verified,
         "builderSha256": digest(__file__), "bodyInputSha256": digest(body_path),
         "bodyInputProvenance": body_provenance,
+        "cutStyle":style, "cutStyleSha256":digest(args.cut_style) if args.cut_style else None,
+        "cutMeasurements":cut_measurements,
         "fittingBodySha256": fitting_body["fileSha256"] if fitting_body else None,
         "baseDesignSha256": digest(design_path), "outputs": outputs,
         "measurementAuthority": "upstream-numeric-fixture-not-Beatrix" if args.upstream_fixture
@@ -295,6 +344,7 @@ if __name__ == "__main__":
     parser.add_argument("--archive", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--resolution-cm", type=float, default=2.0)
+    parser.add_argument("--cut-style", type=Path, help="Validated tailoring style over the upstream bodice block")
     parser.add_argument("--fitting-body", type=Path, help="Optional hash-bound compiler body JSON for source-frame placement/review")
     authority = parser.add_mutually_exclusive_group(required=True)
     authority.add_argument("--body", type=Path)

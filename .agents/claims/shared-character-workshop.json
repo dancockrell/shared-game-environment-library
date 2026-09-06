@@ -5,7 +5,7 @@
   "summary": "Build shared character construction; reject failed bodice fitting, read complete contact papers and current garment methods, inspect author code and benchmark pinned Newton before replacing the construction solver",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T13:09:00Z",
+  "updated_at": "2026-09-06T13:40:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -53,6 +53,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Tailored cut, triangle-surface supports and frame-90 support release: 20 pattern/body/fit/export tests passed; study 20260906T132132438Z-vbd completed 300 frames in 16.10 s, sampled 491.22 MiB process working set and 3012 MiB whole GPU. Actual CPU diagnostic inspected and remains unapproved; one sampled body penetration deeper than 1 mm, worst seam gap 6.110 mm. Male rigid overgarment remains rejected and unfixed; no new Godot window or paid work.",
+      "Read GarmentCodeData dressing/release and limitations, Dress Anyone preprint fitting methods, and B-Spline FEM 2025 membrane/bending methods. Adopted existing Trimesh 4.11.3 surface projection and temporary support release; B-Spline FEM and pattern optimization not implemented. Baseline cut output hashes unchanged; narrow period cut preserves author seams and shared endpoints.",
       "Committed and pushed f66771d: Newton sewing and actual static GLB review export; local HEAD and remote branch both verified at f66771df14c55239ddaafaccd709dd18a9d5b976",
       "Rejected optional Newton RUN_TO_RUN mode: study 20260906T130636581Z-vbd hit sampled GPU guard at 11676 MiB total from 2530 MiB baseline; owned job terminated after 15.16 s, no fit produced. Restored default implementation; post-check no Python jobs, original two Godot processes retained, whole GPU 2125 MiB. Do not retry same setting without bounded allocation plan; repeated simulation remains nondeterministic",
       "Measured-panel Newton sewing replaces the rejected handwritten bodice route; legacy two scripts retired with history and failed artifacts retained. Actual source-space FEM rest, seam-contact exclusions, complete graph coloring and per-substep dressing supports exercised; recognizable bodice but residual strain, seams and penetration remain unapproved",

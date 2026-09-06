@@ -32,6 +32,51 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_cut_style_validation_is_atomic(self):
+        design = {"collar":{key:{"v":0} for key in ("width","fc_depth","bc_depth")}}
+        style = {"schemaVersion":1,"parameters":{"neckWidth":.85,"frontNeckDepth":.52,
+                                                 "backNeckDepth":.15,"frontHemDropCm":4}}
+        self.assertEqual(builder.apply_cut_style(design,style),4)
+        self.assertEqual([design["collar"][key]["v"] for key in ("width","fc_depth","bc_depth")],[.85,.52,.15])
+        for key in style["parameters"]:
+            for value in (True,float("nan"),float("inf"),-100,100,"1"):
+                bad = copy.deepcopy(style)
+                bad["parameters"][key] = value
+                before = copy.deepcopy(design)
+                with self.assertRaises(ValueError):
+                    builder.apply_cut_style(design,bad)
+                self.assertEqual(design,before)
+        for bad in (None,{}, {"schemaVersion":2,"parameters":style["parameters"]},
+                    {"schemaVersion":1,"parameters":{**style["parameters"],"frontHemDropCm":3.5}},
+                    {"schemaVersion":1,"parameters":{**style["parameters"],"unknown":1}}):
+            with self.assertRaises(ValueError):
+                builder.apply_cut_style(design,bad)
+
+    def test_actual_cut_matches_recorded_tailoring(self):
+        import numpy as np
+        from scipy.spatial.transform import Rotation
+        receipt = json.loads((REVIEW/"receipt.json").read_text())
+        style = receipt.get("cutStyle")
+        if style is None:
+            self.skipTest("Default upstream cut")
+        self.assertEqual(style["status"],"construction-study-not-approved-garment")
+        self.assertEqual(style["referenceSha256"],builder.digest(Path(__file__).parent.parent/"catalog/characters/references/beatrix-exact-target.png"))
+        for side in ("right","left"):
+            info = receipt["cutMeasurements"][side]
+            before,after = info["centreFrontBeforeCm"],info["centreFrontAfterCm"]
+            self.assertAlmostEqual(before[1]-after[1],style["parameters"]["frontHemDropCm"])
+            self.assertEqual(before[0],after[0])
+            panel = SPEC["pattern"]["panels"][side+"_ftorso"]
+            local = np.column_stack([np.asarray(panel["vertices"]),np.zeros(len(panel["vertices"]))])
+            placed = Rotation.from_euler("xyz",panel["rotation"],degrees=True).apply(local)+panel["translation"]
+            self.assertLess(np.linalg.norm(placed-info["centreFrontAfterPlacementCm"],axis=1).min(),1e-8)
+            self.assertAlmostEqual(info["centreFrontBeforePlacementCm"][1]-info["centreFrontAfterPlacementCm"][1],
+                                   style["parameters"]["frontHemDropCm"])
+            self.assertGreater(info["shoulderSeamLengthCm"],1)
+            self.assertLess(info["shoulderSeamLengthCm"],2.5)
+        self.assertAlmostEqual(receipt["cutMeasurements"]["left"]["shoulderSeamLengthCm"],
+                               receipt["cutMeasurements"]["right"]["shoulderSeamLengthCm"])
+
     @unittest.skipUnless(FIT_PATH and BODY_PATH,"No actual sewing result requested")
     def test_portable_review_preserves_actual_geometry_and_materials(self):
         import numpy as np
@@ -76,8 +121,23 @@ class ActualPatternTests(unittest.TestCase):
         np.testing.assert_array_equal(result["triangles"],faces)
         self.assertGreater(np.max(np.linalg.norm(points-placed,axis=1)),.1)
         self.assertTrue(result["selfContactEnabled"])
-        for index,support in result["temporaryShoulderSupports"].items():
-            np.testing.assert_allclose(points[int(index)],support["targetXYZ"],atol=2e-7,rtol=0)
+        if result.get("supportsReleased"):
+            self.assertEqual(result["supportReleaseAfterFrame"],90)
+            masses = result["releasedSupportMassesKg"]
+            self.assertEqual(len(masses),8)
+            self.assertTrue(all(value>0 for value in masses.values()))
+            area = .5*np.linalg.norm(np.cross(rest[faces[:,1]]-rest[faces[:,0]],
+                                              rest[faces[:,2]]-rest[faces[:,0]]),axis=1)
+            expected_mass = np.zeros(len(rest))
+            for corner in range(3):
+                np.add.at(expected_mass,faces[:,corner],area*result["parameters"]["density"]/3)
+            for index,mass in masses.items():
+                self.assertAlmostEqual(mass,expected_mass[int(index)],delta=1e-10)
+            displacement = [np.linalg.norm(points[int(index)]-support["targetXYZ"]) for index,support in result["temporaryShoulderSupports"].items()]
+            self.assertGreater(max(displacement),.001)
+        else:
+            for index,support in result["temporaryShoulderSupports"].items():
+                np.testing.assert_allclose(points[int(index)],support["targetXYZ"],atol=2e-7,rtol=0)
         gaps = np.linalg.norm(points[pairs[:,0]]-points[pairs[:,1]],axis=1)
         self.assertAlmostEqual(float(gaps.max()),result["history"][-1]["maxSeamGapMetres"],places=7)
         self.assertLess(gaps.mean(),.001)  # Demonstrated seam closure, not art/fit approval.
@@ -102,9 +162,16 @@ class ActualPatternTests(unittest.TestCase):
         supports = fitter.shoulder_supports(data,body,offsets,placed)
         self.assertEqual(len(supports),8)
         for support in supports.values():
-            vertex = np.asarray(body["vertices"][support["bodyVertex"]])
-            self.assertAlmostEqual(np.linalg.norm(np.asarray(support["targetXYZ"])-vertex),.003,places=9)
-            self.assertGreater(vertex[1],.45)
+            weights = np.asarray(support["barycentric"])
+            triangle = np.asarray(body["vertices"])[body["triangles"][support["bodyTriangle"]]]
+            surface = weights @ triangle
+            np.testing.assert_allclose(surface,support["surfaceXYZ"],atol=1e-10)
+            self.assertAlmostEqual(weights.sum(),1)
+            self.assertTrue(np.all(weights >= -1e-9))
+            self.assertAlmostEqual(np.linalg.norm(np.asarray(support["targetXYZ"])-surface),.003,places=9)
+            self.assertGreater(surface[1],.45)
+            nearest_vertex_distance = np.linalg.norm(np.asarray(body["vertices"])-support["queryXYZ"],axis=1).min()
+            self.assertLessEqual(np.linalg.norm(surface-support["queryXYZ"]),nearest_vertex_distance+1e-10)
 
     def test_placement_matches_author_transform_and_body_origin(self):
         import numpy as np

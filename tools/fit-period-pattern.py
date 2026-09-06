@@ -96,14 +96,18 @@ def shoulder_supports(data, body, offsets, placed):
     """Temporary dressing supports at the high front/back joining seams.
 
     This selector is for the current sleeveless bodice only. Targets are actual
-    body surface vertices plus 3 mm along their area-weighted outward normals.
+    body triangle surfaces plus 3 mm along barycentrically interpolated normals.
+    Nearest-vertex snapping visibly overstretched narrow shoulder straps.
     """
     import numpy as np
+    import trimesh
     vertices, triangles = np.asarray(body["vertices"]), np.asarray(body["triangles"])
     face_normals = np.cross(vertices[triangles[:,1]]-vertices[triangles[:,0]],vertices[triangles[:,2]]-vertices[triangles[:,0]])
     normals = np.zeros_like(vertices)
     for column in range(3):
         np.add.at(normals,triangles[:,column],face_normals)
+    normals /= np.maximum(np.linalg.norm(normals,axis=1,keepdims=True),1e-12)
+    surface = trimesh.Trimesh(vertices,triangles,process=False)
     threshold = placed[:,1].min() + .8*np.ptp(placed[:,1])
     supports = {}
     for seam in data["stitches"]:
@@ -115,12 +119,20 @@ def shoulder_supports(data, body, offsets, placed):
             continue
         for pair in (pairs[0],pairs[-1]):
             midpoint = placed[list(pair)].mean(axis=0)
-            nearest = int(np.argmin(np.linalg.norm(vertices-midpoint,axis=1)))
-            if np.linalg.norm(vertices[nearest]-midpoint) > .04 or np.linalg.norm(normals[nearest]) < 1e-10:
+            # Existing Ericson point/triangle method in Trimesh. One query at a
+            # time bounds temporary arrays to this <=100k-triangle body; this
+            # exhaustive method is not a per-frame or whole-garment collider.
+            closest, distance, ids = trimesh.proximity.closest_point_naive(surface,[midpoint])
+            triangle = int(ids[0])
+            barycentric = trimesh.triangles.points_to_barycentric(vertices[triangles[[triangle]]],closest)[0]
+            normal = barycentric @ normals[triangles[triangle]]
+            if distance[0] > .04 or np.linalg.norm(normal) < 1e-10:
                 raise ValueError("Shoulder support is not near a usable body surface")
-            target = vertices[nearest]+.003*normals[nearest]/np.linalg.norm(normals[nearest])
+            target = closest[0]+.003*normal/np.linalg.norm(normal)
             for index in pair:
-                supports[index] = {"targetXYZ":target.tolist(),"bodyVertex":nearest}
+                supports[index] = {"targetXYZ":target.tolist(),"bodyTriangle":triangle,
+                                   "barycentric":barycentric.tolist(),"surfaceXYZ":closest[0].tolist(),
+                                   "queryXYZ":midpoint.tolist()}
     if len(supports) != 8:
         raise ValueError("Expected eight endpoint supports across two bodice shoulder seams")
     return supports
@@ -151,6 +163,7 @@ def solve(args):
                 particle_radius=.002, validate_mesh=True, label=name)
         # Placement changes only positions, never the FEM rest matrices or areas.
         builder.particle_q[:] = placed.tolist()
+        released_masses = np.asarray(builder.particle_mass,dtype=np.float32).copy()
         for index in supports:
             builder.particle_mass[index] = 0.0
         for a, b in pairs:
@@ -185,9 +198,10 @@ def solve(args):
         def advance_supports(q:wp.array(dtype=wp.vec3), qd:wp.array(dtype=wp.vec3), ids:wp.array(dtype=wp.int32),
                              starts:wp.array(dtype=wp.vec3), ends:wp.array(dtype=wp.vec3), step:wp.array(dtype=wp.int32)):
             i = wp.tid()
-            t = wp.min(1.0,float(step[0]+1)/900.0)
-            q[ids[i]] = starts[i]*(1.0-t)+ends[i]*t
-            qd[ids[i]] = (ends[i]-starts[i])/1.5 if step[0]<900 else wp.vec3(0.0,0.0,0.0)
+            if step[0]<900:
+                t = float(step[0]+1)/900.0
+                q[ids[i]] = starts[i]*(1.0-t)+ends[i]*t
+                qd[ids[i]] = (ends[i]-starts[i])/1.5
         @wp.kernel
         def advance_seams(lengths:wp.array(dtype=float), starts:wp.array(dtype=float), step:wp.array(dtype=wp.int32)):
             i = wp.tid()
@@ -226,6 +240,8 @@ def solve(args):
         for number in range(args.frames):
             fraction = max(0, 1 - (number+1)/90)
             if number == 90:
+                model.particle_mass.assign(released_masses)
+                model.particle_inv_mass.assign(1.0/released_masses)
                 model.gravity.assign(np.tile(np.array([0,-9.81,0],dtype=np.float32),(len(model.gravity),1)))
             if graph_run:
                 wp.capture_launch(graph_run)
@@ -247,14 +263,16 @@ def solve(args):
             "panelOffsets": offsets, "sourceBodySha256": digest(args.body), "sourcePanelsSha256": digest(args.panels),
             "toolSha256": digest(__file__), "solver":"Newton SolverVBD", "device": args.device,
             "frames":args.frames, "substeps":10, "iterations":10, "dt":1/600,
-            "gravitySchedule":"zero during 90-frame sewing; -9.81 Y during supported settling",
+            "gravitySchedule":"zero during 90-frame sewing; -9.81 Y after support release",
             "temporaryShoulderSupports":supports,
+            "supportsReleased":args.frames>90, "supportReleaseAfterFrame":90,
+            "releasedSupportMassesKg":{str(i):float(released_masses[i]) for i in supports},
             "sewingRamp":"900 substeps; support positions and velocities plus seam lengths updated every substep",
             "selfContactEnabled":True, "seamContactExclusions":"incident primitives at sewn topology only",
             "parameters":{"density":.25,"triKe":1000,"triKa":1000,"triKd":1,"bendKe":.001,
                           "seamKe":5000,"seamKd":1,"bodyContactKe":50000,"particleRadiusMetres":.002},
             "history":history, "elapsedSeconds":time.perf_counter()-start,
-            "versions": {name:importlib.metadata.version(name) for name in ("newton","warp-lang","numpy")}}
+            "versions": {name:importlib.metadata.version(name) for name in ("newton","warp-lang","numpy","trimesh")}}
         (args.output/"fit.json").write_text(json.dumps(result, allow_nan=False))
         print(f"Saved {args.output / 'fit.json'}", flush=True)
 
@@ -336,7 +354,7 @@ def review(args):
         "status":"unapproved-static-fitting-study-not-a-rigged-character",
         "units":"metres", "upAxis":"Y", "simulationSha256":digest(args.review_only),
         "sourceBodySha256":digest(args.body), "sourcePanelsSha256":digest(args.panels),
-        "reviewToolSha256":digest(__file__), "temporarySupportsRetained":True,
+        "reviewToolSha256":digest(__file__), "temporarySupportsRetained":not result.get("supportsReleased",False),
     })
     metrics["outputs"] = {name:digest(args.output/name) for name in ("sewing-review.png","sewing-review.glb")}
     (args.output/"review.json").write_text(json.dumps(metrics,indent=2,allow_nan=False))
