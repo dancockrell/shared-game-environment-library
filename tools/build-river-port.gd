@@ -956,11 +956,12 @@ func build_catalog() -> void:
 	caption.add_theme_constant_override("shadow_offset_x",2)
 	caption.add_theme_constant_override("shadow_offset_y",2)
 	overlay.add_child(caption)
-	var sheet := Image.create_empty(2560,3360,false,Image.FORMAT_RGBA8)
-	sheet.fill(Color("20282d"))
-	var rear_sheet := Image.create_empty(2560,3360,false,Image.FORMAT_RGBA8)
-	rear_sheet.fill(Color("20282d"))
 	var specs := kit.catalog_specs()
+	var sheet_height := ceili(specs.size()/4.0)*560
+	var sheet := Image.create_empty(2560,sheet_height,false,Image.FORMAT_RGBA8)
+	sheet.fill(Color("20282d"))
+	var rear_sheet := Image.create_empty(2560,sheet_height,false,Image.FORMAT_RGBA8)
+	rear_sheet.fill(Color("20282d"))
 	for index in specs.size():
 		var id: String = specs[index][0]
 		caption.text = "%02d  %s" % [index+1,id.replace("-"," ").capitalize()]
@@ -1047,6 +1048,7 @@ func build_catalog() -> void:
 			material.normal_texture = retained[key][1]
 			material.normal_enabled = retained[key][2]
 		entries.append({"assetId":"painted-river-port."+id,"domain":specs[index][1],"assetKind":"model","nativeNode":str(asset.name),"geometryGlb":id+".glb","sha256":FileAccess.get_sha256(file),"scaleMeters":1,"forwardAxis":"-Z","pivotPolicy":"bottom-center of measured visual envelope","bounds":{"min":vector_array(bounds.position),"size":vector_array(bounds.size)},"sockets":sockets,"meshInstances":meshes.size(),"triangles":triangles,"materialSlots":materials,"collisionPolicy":"not supplied; visual envelope is not navigation","lodPolicy":"full authored geometry; no decimation","thumbnailPolicy":"fixed three-quarter front and rear; fitted to measured bounds","selectionHook":"assetId","statusHook":"consumer-owned","provenanceId":"local-river-port-kit","licenseStatus":"project-authored geometry; material source licenses listed separately","admissionStatus":"candidate","reviewStatus":"needs visual polish and consumer semantic review"})
+		entries[-1]["buildingStandard"] = "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate"
 		asset.visible = false
 		print("PASS ",id,": ",meshes.size()," meshes; ",triangles," triangles; GLB bounds/mesh roundtrip")
 	# Store all assets at local origin, hidden by default; consumers instantiate
@@ -1061,6 +1063,9 @@ func build_catalog() -> void:
 	reloaded.free()
 	assert(sheet.save_png(folder.path_join("contact-sheet.png")) == OK)
 	assert(rear_sheet.save_png(folder.path_join("contact-sheet-rear.png")) == OK)
+	if specs.size() > 24:
+		assert(sheet.get_region(Rect2i(0,3360,2560,sheet_height-3360)).save_png(folder.path_join("expansion-sheet.png")) == OK)
+		assert(rear_sheet.get_region(Rect2i(0,3360,2560,sheet_height-3360)).save_png(folder.path_join("expansion-sheet-rear.png")) == OK)
 	var report := FileAccess.open(folder.path_join("build-report.json"),FileAccess.WRITE)
 	report.store_string(JSON.stringify({"generator":"tools/build-river-port.gd --catalog","recipeSource":"tools/river-port-kit.gd","engine":Engine.get_version_info().string,"serviceCreditsConsumed":0,"materialSources":kit.material_sources,"assets":entries,"native":"catalog-native.scn","exportNote":"Native contains shared triplanar textures; standalone GLBs are geometry/material-color interchange only, not visual-equivalent exports.","scope":"Neutral Crossing supply candidates; no canonical room assignments or new MUD links."},"\t")+"\n")
 	report.close()

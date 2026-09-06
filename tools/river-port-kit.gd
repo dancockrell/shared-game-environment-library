@@ -350,7 +350,15 @@ func catalog_specs() -> Array:
 		["street-lantern", "neutral_prop"], ["signpost", "neutral_prop"],
 		["hedge-run", "flora"], ["vine-bower", "flora"],
 		["quay-wall", "architecture"], ["pier-section", "architecture"],
-		["landing-stairs", "architecture"], ["mooring-post", "neutral_prop"]
+		["landing-stairs", "architecture"], ["mooring-post", "neutral_prop"],
+		["tollhouse", "architecture"], ["boathouse", "architecture"],
+		["granary", "architecture"], ["bell-hall", "architecture"],
+		["courtyard-wall", "architecture"], ["timber-gate", "architecture"],
+		["notice-board", "neutral_prop"], ["trestle-table", "neutral_prop"],
+		["stool", "neutral_prop"], ["woodpile", "neutral_prop"],
+		["water-trough", "neutral_prop"], ["cargo-crane", "neutral_prop"],
+		["rope-coil", "neutral_prop"], ["timber-footbridge", "architecture"],
+		["reed-bank", "flora"], ["rock-shelf", "geology"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -405,10 +413,10 @@ func framed_elevations(g: Node3D, width: float, depth: float, height: float) -> 
 func catalog_model(id: String) -> Node3D:
 	rng.seed = 5012026+id.hash() # Independent of build order and unrelated recipes.
 	var g := node_group(id,Vector3.ZERO)
-	if id in ["bakery","smithy","warehouse","townhouse","meeting-hall","stable"]:
-		var dimensions: Dictionary = {"bakery":Vector3(5.2,3.3,4.6),"smithy":Vector3(6.0,3.4,5.0),"warehouse":Vector3(7.5,4.6,7.0),"townhouse":Vector3(4.1,6.1,5.1),"meeting-hall":Vector3(8.2,5.2,6.1),"stable":Vector3(8.2,3.2,4.4)}
+	if id in ["bakery","smithy","warehouse","townhouse","meeting-hall","stable","tollhouse","boathouse","granary","bell-hall"]:
+		var dimensions: Dictionary = {"bakery":Vector3(5.2,3.3,4.6),"smithy":Vector3(6.0,3.4,5.0),"warehouse":Vector3(7.5,4.6,7.0),"townhouse":Vector3(4.1,6.1,5.1),"meeting-hall":Vector3(8.2,5.2,6.1),"stable":Vector3(8.2,3.2,4.4),"tollhouse":Vector3(3.6,3.1,3.8),"boathouse":Vector3(6.5,3.7,8.0),"granary":Vector3(6.8,5.5,5.8),"bell-hall":Vector3(5.1,4.4,7.3)}
 		var d: Vector3 = dimensions[id]
-		var building := house("EnclosedShell",Vector3.ZERO,d.x,d.z,d.y,2.4 if id == "meeting-hall" else 1.9,"roof" if id in ["bakery","townhouse"] else "slate",false,"plaster",true,2.2 if id in ["warehouse","stable"] else 1.3,2.5,false,false)
+		var building := house("EnclosedShell",Vector3.ZERO,d.x,d.z,d.y,2.4 if id == "meeting-hall" else 1.9,"roof" if id in ["bakery","townhouse","tollhouse"] else "slate",false,"plaster",id != "boathouse",3.5 if id == "boathouse" else (2.2 if id in ["warehouse","stable"] else 1.3),2.5,false,false)
 		building.reparent(g,false)
 		framed_elevations(building,d.x,d.z,d.y)
 		stairs(Vector3(0,0,d.z/2+0.2),2.4,0.315,0.85,building,false)
@@ -451,6 +459,46 @@ func catalog_model(id: String) -> Node3D:
 			for x in [-3.8,-1.8]:
 				beam(Vector3(x,0,d.z/2+1.5),Vector3(x,1.1,d.z/2+1.5),0.12,"oak",g)
 			beam(Vector3(-3.8,0.95,d.z/2+1.5),Vector3(-1.8,0.95,d.z/2+1.5),0.13,"oak",g)
+		elif id == "tollhouse":
+			var porch := node_group("SideServicePorch",Vector3(d.x/2+0.85,0,0),0,g)
+			for z in [-1.2,1.2]:
+				beam(Vector3(0.65,0,z),Vector3(0.65,2.7,z),0.13,"oak",porch)
+			roof(1.9,2.9,2.7,0.65,"roof",porch)
+			block(Vector3(0,1.0,0),Vector3(1.6,0.13,1.3),"oak_light",porch)
+			attachment(g,"service",Vector3(d.x/2+1.9,0,0))
+		elif id == "boathouse":
+			# Wide closed double door, boat slip apron and gable winch.
+			for x in [-1.65,1.65]:
+				beam(Vector3(x,0.05,d.z/2+0.5),Vector3(x,0.05,d.z/2+3.8),0.15,"oak",g)
+			for i in 20:
+				block(Vector3(0,0.02,d.z/2+0.5+i*0.17),Vector3(3.8,0.12,0.15),shade("wood"),g)
+			block(Vector3(0,1.25,d.z/2+0.19),Vector3(0.06,2.5,0.08),"iron",g)
+			ring(Vector3(0,3.25,d.z/2+0.35),0.28,0.055,"iron",g,true)
+			attachment(g,"slip",Vector3(0,0,d.z/2+3.8))
+		elif id == "granary":
+			for z in [-1.6,0.0,1.6]:
+				var vent := node_group("RoofVent",Vector3(0,d.y+1.55,z),0,g)
+				block(Vector3(0,0.3,0),Vector3(0.85,0.6,0.7),"oak",vent)
+				for y in [0.1,0.25,0.4,0.55]:
+					block(Vector3(0,y,0.39),Vector3(0.75,0.06,0.1),"oak_light",vent)
+				roof(1.15,0.95,0.6,0.4,"slate",vent)
+			for x in [-2.4,2.4]:
+				barrel(g,Vector3(x,0,d.z/2+0.8),1.2)
+		elif id == "bell-hall":
+			var turret := node_group("BellTurret",Vector3(0,d.y+1.6,1.8),0,g)
+			block(Vector3(0,0.05,0),Vector3(1.6,0.15,1.6),"oak",turret)
+			for x in [-0.65,0.65]:
+				for z in [-0.65,0.65]:
+					beam(Vector3(x,0,z),Vector3(x,1.6,z),0.13,"oak",turret)
+			roof(1.9,1.9,1.6,0.9,"slate",turret)
+			var bell := CylinderMesh.new()
+			bell.top_radius = 0.18
+			bell.bottom_radius = 0.44
+			bell.height = 0.65
+			bell.radial_segments = 32
+			piece(bell,Vector3(0,0.85,0),Vector3.ONE,"gold",turret)
+			beam(Vector3(0,0.9,0),Vector3(0,1.6,0),0.06,"iron",turret)
+			banner(Vector3(-1.85,3.7,d.z/2+0.32),0.6,1.8,g)
 	elif id in ["watchtower","gatehouse"]:
 		for x in ([-3.0,3.0] if id == "gatehouse" else [0.0]):
 			var tower := node_group("Tower",Vector3(x,0,0),0,g)
@@ -601,6 +649,99 @@ func catalog_model(id: String) -> Node3D:
 		stairs(Vector3(0,0,-1.5),2.4,1.44,3.0,g,true)
 		attachment(g,"upper",Vector3(0,1.44,-1.5))
 		attachment(g,"lower",Vector3(0,0,1.5))
+	elif id == "courtyard-wall":
+		wall(4,1.8,0.4,Vector3.ZERO,g)
+		for x in [-2.05,2.05]:
+			wall(0.6,2.15,0.6,Vector3(x,0,0),g)
+			block(Vector3(x,2.22,0),Vector3(0.75,0.15,0.75),"stone9",g)
+		for i in 10:
+			block(Vector3((i-4.5)*0.4,1.86,0),Vector3(0.39,0.18,0.55),shade("stone"),g)
+		attachment(g,"join_a",Vector3(-2.35,0,0))
+		attachment(g,"join_b",Vector3(2.35,0,0))
+	elif id == "timber-gate":
+		for x in [-1.65,1.65]:
+			block(Vector3(x,1.15,0),Vector3(0.24,2.3,0.3),"oak",g)
+		for i in 18:
+			block(Vector3((i-8.5)*0.17,0.9,0),Vector3(0.15,1.65,0.09),shade("wood"),g)
+		for side in [-1,1]:
+			for y in [0.4,1.4]:
+				block(Vector3(side*0.8,y,0.08),Vector3(1.45,0.1,0.07),"iron",g)
+			beam(Vector3(side*1.5,0.3,0.12),Vector3(side*0.08,1.5,0.12),0.09,"oak_light",g)
+		attachment(g,"hinge_l",Vector3(-1.5,0,0))
+		attachment(g,"hinge_r",Vector3(1.5,0,0))
+	elif id == "notice-board":
+		for x in [-1.1,1.1]:
+			beam(Vector3(x,0,0),Vector3(x,2.6,0),0.13,"oak",g)
+		crate(g,Vector3(0,1.2,0),Vector3(2.2,1.1,0.14))
+		roof(2.7,0.75,2.65,0.4,"slate",g)
+		for x in [-0.65,0.0,0.65]:
+			block(Vector3(x,1.75,0.14),Vector3(0.45,0.62,0.015),"sand",g)
+		attachment(g,"notice",Vector3(0,1.75,0.17))
+	elif id in ["trestle-table","stool"]:
+		var width := 2.8 if id == "trestle-table" else 0.55
+		var depth := 0.85 if id == "trestle-table" else 0.55
+		var height := 0.82 if id == "trestle-table" else 0.48
+		for x in [-width*0.35,width*0.35]:
+			for side in [-1,1]:
+				beam(Vector3(x,0,side*depth*0.45),Vector3(x,height,side*depth*0.2),0.1,"oak",g)
+		beam(Vector3(-width*0.35,height*0.45,0),Vector3(width*0.35,height*0.45,0),0.1,"oak",g)
+		for i in 5:
+			block(Vector3(0,height,(i-2)*depth/5),Vector3(width,0.09,depth/5-0.012),shade("wood"),g)
+		attachment(g,"surface",Vector3(0,height+0.045,0))
+	elif id == "woodpile":
+		for row in 4:
+			for i in 5-row:
+				var pos := Vector3((i-(4-row)/2.0)*0.32,0.16+row*0.28,0)
+				var log := cylinder(pos,0.155,1.8,"oak",g,16)
+				log.rotation.x = PI/2
+				for z in [-0.91,0.91]:
+					var end := cylinder(pos+Vector3(0,0,z),0.135,0.012,"oak_light",g,16)
+					end.rotation.x = PI/2
+	elif id == "water-trough":
+		block(Vector3(0,0.12,0),Vector3(2.4,0.24,0.8),"stone5",g)
+		for z in [-0.38,0.38]:
+			block(Vector3(0,0.4,z),Vector3(2.4,0.55,0.16),"stone8",g)
+		for x in [-1.15,1.15]:
+			block(Vector3(x,0.4,0),Vector3(0.17,0.55,0.8),"stone8",g)
+		block(Vector3(0,0.42,0),Vector3(2.2,0.035,0.6),"water",g)
+		attachment(g,"water",Vector3(0,0.44,0))
+	elif id == "cargo-crane":
+		block(Vector3(0,0.2,0),Vector3(1.7,0.4,1.7),"stone7",g)
+		beam(Vector3(0,0.4,0),Vector3(0,4.2,0),0.32,"oak",g)
+		beam(Vector3(0,3.9,0),Vector3(0,3.9,2.8),0.25,"oak",g)
+		beam(Vector3(0,1.4,0),Vector3(0,3.9,2.5),0.2,"oak_light",g)
+		for y in [0.7,1.1,3.6]:
+			ring(Vector3(0,y,0),0.22,0.035,"iron",g)
+		ring(Vector3(0,3.6,2.6),0.22,0.04,"iron",g,true)
+		beam(Vector3(0,1.0,2.6),Vector3(0,3.6,2.6),0.03,"sand",g)
+		ring(Vector3(0,0.9,2.6),0.13,0.035,"iron",g,true)
+		attachment(g,"load",Vector3(0,0.72,2.6))
+	elif id == "rope-coil":
+		for i in 7:
+			ring(Vector3(0,0.028,0),0.18+i*0.055,0.026,"sand",g)
+		beam(Vector3(0.5,0.028,0),Vector3(0.95,0.028,0.2),0.045,"sand",g)
+	elif id == "timber-footbridge":
+		for x in [-1.3,1.3]:
+			block(Vector3(x,0.45,0),Vector3(0.18,0.3,5.0),"oak",g)
+			for z in [-2.35,0.0,2.35]:
+				beam(Vector3(x,0,z),Vector3(x,1.65,z),0.13,"oak",g)
+			for y in [0.95,1.6]:
+				beam(Vector3(x,y,-2.4),Vector3(x,y,2.4),0.09,"oak_light",g)
+		for i in 30:
+			block(Vector3(0,0.63,(i-14.5)*0.165),Vector3(2.8,0.12,0.15),shade("wood"),g)
+		attachment(g,"route_a",Vector3(0,0.69,-2.475))
+		attachment(g,"route_b",Vector3(0,0.69,2.475))
+	elif id == "reed-bank":
+		piece(solid_polygon(PackedVector2Array([Vector2(-1.5,-0.5),Vector2(1.2,-0.8),Vector2(1.55,0.5),Vector2(0.4,0.85),Vector2(-1.3,0.65)]),0.12),Vector3.ZERO,Vector3.ONE,"soil",g)
+		for i in 65:
+			var pos := Vector3(rng.randf_range(-1.2,1.2),0.12,rng.randf_range(-0.45,0.45))
+			var tip := pos+Vector3(rng.randf_range(-0.15,0.15),rng.randf_range(0.6,1.25),0.07)
+			beam(pos,tip,0.018,"reed",g)
+			if i%3 == 0:
+				ellipsoid(tip,Vector3(0.035,0.12,0.035),"oak",g)
+	elif id == "rock-shelf":
+		for i in 12:
+			rock(Vector3(rng.randf_range(-1.4,1.4),0,rng.randf_range(-0.9,0.9)),Vector3(rng.randf_range(0.7,1.5),rng.randf_range(0.35,0.8),rng.randf_range(0.6,1.2)),g)
 	else:
 		assert(false,"Unknown catalog recipe: "+id)
 	return g

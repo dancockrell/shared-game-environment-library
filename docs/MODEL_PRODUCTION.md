@@ -9,6 +9,14 @@ paths are the migration keys; directory similarity is not identity.
 
 ## Current scope and cost constraint
 
+**User acceptance, 6 September 2026:** "good enough buildings. keep building
+like this" approves the first catalog batch's building treatment as the
+working production standard. Continue expanding at that level. Earlier notes
+calling those buildings insufficient are historical review findings, not a
+requirement to redesign them before making more content. This is visual
+direction approval, not automatic runtime, lore, licensing or performance
+admission. The illustration remains inspiration; do not restart exact matching.
+
 Build a substantial reusable library for The Crossing, not a sequence of
 single-building demonstration fixes. Work in batches across architecture,
 street furniture, market equipment, waterfront construction and terrain.
