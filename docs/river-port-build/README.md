@@ -61,6 +61,15 @@ interchange, collision authoring, consumer admission and actual room placement
 remain outstanding. This checkpoint broadens the library; it does not lower
 the approved finish standard or retire the remaining city work.
 
+Verification at this checkpoint: all 24 standalone GLBs passed export/import
+mesh-count and bounds checks; independent native reload checked every model's
+bounds and socket positions against the saved report, and verified GLB hashes.
+All 24 GLB hashes were identical on an unchanged-recipe rebuild. Front and rear
+contact sheets were visually inspected, with the unresolved finish issues above
+retained as revisions, not approved quality. All eight existing resource packs
+passed their validator. No runtime client tests, Godot 4.3 compatibility tests,
+full manifold audit or city performance benchmark were run for this batch.
+
 ### Connected-scene study
 
 - `river-port-main.png`: primary orthographic composition.
