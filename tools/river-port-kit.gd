@@ -405,7 +405,12 @@ func catalog_specs() -> Array:
 		["low-brick-bathhouse", "architecture"], ["old-stone-residence", "architecture"],
 		["cruck-cottage", "architecture"], ["barn-stable", "architecture"],
 		["plain-weaponsmith", "architecture"], ["mud-court", "terrain"],
-		["tattered-shelter", "architecture"]
+		["tattered-shelter", "architecture"],
+		["plaster-wall-section", "architecture"], ["stone-wall-section", "architecture"],
+		["timber-doorway-section", "architecture"], ["window-wall-section", "architecture"],
+		["pine-shop-counter", "neutral_prop"], ["wooden-display-bin", "neutral_prop"],
+		["shield-hook-board", "neutral_prop"], ["wooden-park-bench", "neutral_prop"],
+		["gingham-picnic-table", "neutral_prop"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -469,10 +474,94 @@ func sloped_block(parent: Node3D, width: float, depth: float, high: float, low: 
 	surface.generate_normals()
 	piece(surface.commit(),Vector3.ZERO,Vector3.ONE,key,parent)
 
+## Reusable room construction batch. Openings are actual gaps, not painted
+## rectangles; perimeter sockets permit exact joins without game topology.
+func interior_module(id: String, g: Node3D) -> void:
+	if id.ends_with("-section"):
+		var opening := id == "timber-doorway-section" or id == "window-wall-section"
+		if id == "stone-wall-section":
+			wall(3.0,3.0,0.32,Vector3.ZERO,g)
+		elif opening:
+			for x in [-1.12,1.12]:
+				block(Vector3(x,1.5,0),Vector3(0.76,3,0.24),"plaster",g)
+			block(Vector3(0,2.78,0),Vector3(1.48,0.44,0.24),"plaster",g)
+			if id == "window-wall-section":
+				block(Vector3(0,0.5,0),Vector3(1.48,1,0.24),"plaster",g)
+				# Mullioned opening with a sill; glass is an authoring choice.
+				for x in [-0.68,0.0,0.68]:
+					block(Vector3(x,1.77,0),Vector3(0.08,1.5,0.20),"oak",g)
+				for y in [1.04,1.78,2.52]:
+					block(Vector3(0,y,0),Vector3(1.48,0.08,0.20),"oak",g)
+				block(Vector3(0,1.0,0),Vector3(1.7,0.12,0.48),"oak_light",g)
+			else:
+				for x in [-0.75,0.75]:
+					block(Vector3(x,1.28,0),Vector3(0.16,2.56,0.36),"oak",g)
+				block(Vector3(0,2.56,0),Vector3(1.66,0.18,0.36),"oak_light",g)
+				attachment(g,"entrance",Vector3(0,0,-0.22))
+		else:
+			block(Vector3(0,1.5,0),Vector3(3,3,0.24),"plaster",g)
+		for x in [-1.46,1.46]:
+			block(Vector3(x,1.5,0),Vector3(0.08,3,0.35),"oak",g)
+		for y in [0.08,2.94]:
+			block(Vector3(0,y,0),Vector3(3,0.12,0.35),"oak",g)
+		attachment(g,"join_a",Vector3(-1.5,0,0))
+		attachment(g,"join_b",Vector3(1.5,0,0))
+		g.set_meta("opening_width",1.32 if opening else 0.0)
+	elif id == "pine-shop-counter":
+		for x in [-1.15,1.15]:
+			for z in [-0.34,0.34]:
+				block(Vector3(x,0.48,z),Vector3(0.13,0.96,0.13),"oak",g)
+		for i in 15:
+			block(Vector3(-1.12+i*0.16,0.5,-0.38),Vector3(0.155,0.82,0.065),shade("wood"),g)
+		for y in [0.13,0.86]:
+			block(Vector3(0,y,-0.43),Vector3(2.5,0.1,0.08),"oak_light",g)
+		for z in [-0.3,0.0,0.3]:
+			block(Vector3(0,1.0,z),Vector3(2.6,0.1,0.29),shade("wood"),g)
+		attachment(g,"surface",Vector3(0,1.05,0))
+	elif id == "wooden-display-bin":
+		for i in 6:
+			block(Vector3((i-2.5)*0.2,0.06,0),Vector3(0.19,0.12,0.85),shade("wood"),g)
+		for y in [0.18,0.36,0.54]:
+			for z in [-0.44,0.44]:
+				block(Vector3(0,y,z),Vector3(1.26,0.17,0.055),shade("wood"),g)
+			for x in [-0.62,0.62]:
+				block(Vector3(x,y,0),Vector3(0.055,0.17,0.88),shade("wood"),g)
+		for x in [-0.59,0.59]:
+			for z in [-0.4,0.4]:
+				block(Vector3(x,0.35,z),Vector3(0.07,0.7,0.07),"oak",g)
+		attachment(g,"surface",Vector3(0,0.12,0))
+	elif id == "shield-hook-board":
+		block(Vector3(0,0.24,0),Vector3(2.4,0.48,0.1),"oak_light",g)
+		for x in [-0.9,-0.3,0.3,0.9]:
+			beam(Vector3(x,0.25,-0.05),Vector3(x,0.25,-0.23),0.035,"iron",g)
+			beam(Vector3(x,0.25,-0.23),Vector3(x,0.36,-0.23),0.035,"iron",g)
+			attachment(g,"hook_%s" % str(x),Vector3(x,0.3,-0.23))
+	else:
+		var picnic := id == "gingham-picnic-table"
+		var height := 0.8 if picnic else 0.48
+		var depth := 0.9 if picnic else 0.48
+		for x in [-0.86,0.86]:
+			for z in [-depth*0.35,depth*0.35]:
+				beam(Vector3(x,0,z),Vector3(x,height,z),0.10,"oak",g)
+		for i in 4:
+			block(Vector3(0,height,(i-1.5)*depth/4),Vector3(2.2,0.075,depth/4-0.008),shade("wood"),g)
+		if picnic:
+			for x in 16:
+				for z in 8:
+					block(Vector3((x-7.5)*0.14,height+0.045,(z-3.5)*0.12),Vector3(0.14,0.01,0.12),"redcloth" if (x+z)%2 else "plaster",g)
+			attachment(g,"surface",Vector3(0,height+0.05,0))
+		else:
+			for x in [-0.95,0.95]:
+				block(Vector3(x,0.72,0.25),Vector3(0.09,0.65,0.09),"oak",g)
+			for y in [0.72,0.92]:
+				block(Vector3(0,y,0.25),Vector3(2.2,0.15,0.065),shade("wood"),g)
+
 func catalog_model(id: String) -> Node3D:
 	rng.seed = 5012026+id.hash() # Independent of build order and unrelated recipes.
 	var g := node_group(id,Vector3.ZERO)
-	if id in ["unpainted-armorer-shop","trellised-herbalist","low-brick-bathhouse","old-stone-residence","cruck-cottage","barn-stable","plain-weaponsmith"]:
+	if id in ["plaster-wall-section","stone-wall-section","timber-doorway-section","window-wall-section","pine-shop-counter","wooden-display-bin","shield-hook-board","wooden-park-bench","gingham-picnic-table"]:
+		interior_module(id,g)
+	elif id in ["unpainted-armorer-shop","trellised-herbalist","low-brick-bathhouse","old-stone-residence","cruck-cottage","barn-stable","plain-weaponsmith"]:
 		# Complete exteriors. Shared archetypes, not named-game identity:
 		# consumer recipes retain the description and interpretation boundary.
 		var sizes := {"unpainted-armorer-shop":Vector3(6,3,5), "trellised-herbalist":Vector3(5.5,3.6,5),

@@ -21,6 +21,32 @@ Pirate Island; this workflow owns reusable environments and scene composition.
 
 ## Building candidates
 
+### Interior and furnishing batch (98-model catalog checkpoint)
+
+Nine additional candidate models extend the same kit: plaster and stone wall
+sections, a timber doorway section, a mullioned window section, pine shop
+counter, wooden display bin, shield-hook board, wooden park bench and gingham
+picnic table. Wall modules have a nominal 3 m span and 3 m height, with named
+end joins. Doorway clear width is approximately 1.32 m; consumers must account
+for the raised threshold. Windows have real openings but no glass. Counter,
+bin and table expose support surfaces; hook board exposes four hanging points.
+Catalog bounds and sockets are the exported measurement authority.
+
+The shop fittings answer Milgrym showroom and Tembeg salesroom description
+requirements; this does not assign those identities to the neutral models.
+The bench and table are candidates for Town Green Pond furnishings, subject to
+season/state confirmation. Front views of doorway, window, bench and table
+were inspected. The table's flat checkerboard treatment was rejected for room
+admission: cloth drape and fabric material remain to be built. It stays a
+catalog candidate, not an approved runtime furnishing. All other new pieces
+still require composed-room review, not automatic admission from this ledger.
+
+Validation: all 98 saved models passed independent bounds, sockets and GLB
+hash checks; all 89 previously published GLB hashes stayed unchanged. The
+94-instance existing assembly was rebuilt and independently reloaded against
+the new catalog hash. No service credits consumed. These checks establish
+reusable geometry integrity, not completion of Crossing's interiors.
+
 Nine new shared candidates, built locally with the existing river-port kit.
 No paid services, no decimation, no generated live population. Complete shells
 have measured bounds, bottom-centered pivots, front/rear captures and entrance

@@ -5511,6 +5511,493 @@
 			"statusHook": "consumer-owned",
 			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
 			"triangles": 952
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.plaster-wall-section",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.5,
+					0.0,
+					-0.175000131130219
+				],
+				"size": [
+					3.0,
+					3.0,
+					0.350000262260437
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "plaster-wall-section.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"plaster",
+				"oak"
+			],
+			"meshInstances": 5,
+			"nativeNode": "painted_plaster_wall_section",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "21f1d8aabf9e0332257fc0863c8b2b129248958e955efdb471ebda69ead9cc29",
+			"sockets": {
+				"join_a": [
+					1.5,
+					0.0,
+					-0.000000131134157754786
+				],
+				"join_b": [
+					-1.5,
+					0.0,
+					0.000000131134157754786
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 140
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.stone-wall-section",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.5,
+					0.0,
+					-0.175000131130219
+				],
+				"size": [
+					3.0,
+					3.0,
+					0.350000262260437
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "stone-wall-section.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"stone4",
+				"stone8",
+				"stone11",
+				"stone10",
+				"stone2",
+				"stone0",
+				"stone3",
+				"stone9",
+				"stone7",
+				"stone1",
+				"stone5",
+				"oak"
+			],
+			"meshInstances": 35,
+			"nativeNode": "painted_stone_wall_section",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "063234cfe3aa0c8b25b66fa6d868e739fa112e50eddd4b2d55624dff48e4e7e7",
+			"sockets": {
+				"join_a": [
+					1.5,
+					0.0,
+					-0.000000131134157754786
+				],
+				"join_b": [
+					-1.5,
+					0.0,
+					0.000000131134157754786
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 980
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.timber-doorway-section",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.5,
+					0.0,
+					-0.180000081658363
+				],
+				"size": [
+					3.0,
+					3.0,
+					0.360000163316727
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "timber-doorway-section.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"plaster",
+				"oak",
+				"oak_light"
+			],
+			"meshInstances": 10,
+			"nativeNode": "painted_timber_doorway_section",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "fb9de75775ecae813979709ad5638f721f1b9667fee705283c3e53f0a1315728",
+			"sockets": {
+				"entrance": [
+					0.0000000192330116277617,
+					0.0,
+					0.219999998807907
+				],
+				"join_a": [
+					1.5,
+					0.0,
+					-0.000000131134157754786
+				],
+				"join_b": [
+					-1.5,
+					0.0,
+					0.000000131134157754786
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 280
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.window-wall-section",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.5,
+					0.0,
+					-0.240000069141388
+				],
+				"size": [
+					3.0,
+					3.0,
+					0.480000138282776
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "architecture",
+			"forwardAxis": "-Z",
+			"geometryGlb": "window-wall-section.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"plaster",
+				"oak",
+				"oak_light"
+			],
+			"meshInstances": 15,
+			"nativeNode": "painted_window_wall_section",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "67f35a82ab23dba5cd2aa957cc218c1b155990686ab700f9697e3ec69553724a",
+			"sockets": {
+				"join_a": [
+					1.5,
+					0.0,
+					-0.000000131134157754786
+				],
+				"join_b": [
+					-1.5,
+					0.0,
+					0.000000131134157754786
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 420
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.pine-shop-counter",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.29999995231628,
+					0.0,
+					-0.457500159740448
+				],
+				"size": [
+					2.59999990463257,
+					1.04999995231628,
+					0.915000319480896
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "neutral_prop",
+			"forwardAxis": "-Z",
+			"geometryGlb": "pine-shop-counter.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"oak",
+				"wood11",
+				"wood6",
+				"wood5",
+				"wood8",
+				"wood2",
+				"wood0",
+				"wood3",
+				"wood7",
+				"wood4",
+				"oak_light"
+			],
+			"meshInstances": 24,
+			"nativeNode": "painted_pine_shop_counter",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "ac7e47622e21644150ee9b82f2fddf7ea8a137b7e34852695698fd44f5361397",
+			"sockets": {
+				"surface": [
+					0.0,
+					1.04999995231628,
+					-0.0125000178813934
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 672
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.wooden-display-bin",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-0.647500038146973,
+					0.0,
+					-0.46750009059906
+				],
+				"size": [
+					1.29500007629395,
+					0.699999988079071,
+					0.93500018119812
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "neutral_prop",
+			"forwardAxis": "-Z",
+			"geometryGlb": "wooden-display-bin.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"wood2",
+				"wood11",
+				"wood10",
+				"wood3",
+				"wood5",
+				"wood1",
+				"wood8",
+				"wood9",
+				"wood6",
+				"wood7",
+				"oak"
+			],
+			"meshInstances": 22,
+			"nativeNode": "painted_wooden_display_bin",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "3009e83967e0e5fff4cdccef8ef187778c3629de4eb08544eb922df5dca97248",
+			"sockets": {
+				"surface": [
+					0.0,
+					0.119999997317791,
+					-0.0000000298023223876953
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 616
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.shield-hook-board",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.20000004768372,
+					0.0,
+					-0.148750096559525
+				],
+				"size": [
+					2.40000009536743,
+					0.479999989271164,
+					0.297500193119049
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "neutral_prop",
+			"forwardAxis": "-Z",
+			"geometryGlb": "shield-hook-board.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"oak_light",
+				"iron"
+			],
+			"meshInstances": 9,
+			"nativeNode": "painted_shield_hook_board",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "ee55d7d0199b43e79843090ab9f96d8c2469cb36eadc12101d40f4f9a6468552",
+			"sockets": {
+				"hook_-0_3": [
+					0.300000041723251,
+					0.300000011920929,
+					0.131249979138374
+				],
+				"hook_-0_9": [
+					0.899999976158142,
+					0.300000011920929,
+					0.131249934434891
+				],
+				"hook_0_3": [
+					-0.299999982118607,
+					0.300000011920929,
+					0.131250038743019
+				],
+				"hook_0_9": [
+					-0.899999976158142,
+					0.300000011920929,
+					0.131250083446503
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 252
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.wooden-park-bench",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.10000002384186,
+					0.0,
+					-0.265500068664551
+				],
+				"size": [
+					2.20000004768372,
+					1.04500007629395,
+					0.531000196933746
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "neutral_prop",
+			"forwardAxis": "-Z",
+			"geometryGlb": "wooden-park-bench.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"oak",
+				"wood6",
+				"wood9",
+				"wood2",
+				"wood5",
+				"wood4"
+			],
+			"meshInstances": 12,
+			"nativeNode": "painted_wooden_park_bench",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "508abeef7a05ae0580daa9f7297cbb903cf46cbf4646c11f4966cf93c8dd714a",
+			"sockets": {},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 336
+		},
+		{
+			"admissionStatus": "candidate",
+			"assetId": "painted-river-port.gingham-picnic-table",
+			"assetKind": "model",
+			"bounds": {
+				"min": [
+					-1.12000000476837,
+					0.0,
+					-0.480000078678131
+				],
+				"size": [
+					2.24000000953674,
+					0.850000023841858,
+					0.960000157356262
+				]
+			},
+			"buildingStandard": "User accepted first-batch building treatment on 2026-09-06; runtime admission remains separate",
+			"collisionPolicy": "not supplied; visual envelope is not navigation",
+			"domain": "neutral_prop",
+			"forwardAxis": "-Z",
+			"geometryGlb": "gingham-picnic-table.glb",
+			"licenseStatus": "project-authored geometry; material source licenses listed separately",
+			"lodPolicy": "full authored geometry; no decimation",
+			"materialSlots": [
+				"oak",
+				"wood1",
+				"wood4",
+				"wood11",
+				"wood9",
+				"plaster",
+				"redcloth"
+			],
+			"meshInstances": 136,
+			"nativeNode": "painted_gingham_picnic_table",
+			"pivotPolicy": "bottom-center of measured visual envelope",
+			"provenanceId": "local-river-port-kit",
+			"reviewStatus": "needs visual polish and consumer semantic review",
+			"scaleMeters": 1,
+			"selectionHook": "assetId",
+			"sha256": "b53188641b7c711a9c32ecdad5ac50449b8872fc1ea2eef54fb93c29cc7000de",
+			"sockets": {
+				"surface": [
+					0.0,
+					0.850000023841858,
+					0.0
+				]
+			},
+			"statusHook": "consumer-owned",
+			"thumbnailPolicy": "fixed three-quarter front and rear; fitted to measured bounds",
+			"triangles": 3808
 		}
 	],
 	"engine": "4.7.2-stable (official)",
