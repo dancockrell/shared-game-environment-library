@@ -1,5 +1,5 @@
 {
-  "height": 1.6135872602462769,
+  "height": 1.6242371797561646,
   "name": "",
   "outfit": {
     "dyes": {
@@ -7,10 +7,16 @@
       "Hair": "ffffffff"
     },
     "morphs": {
+      "Broad nose": 0.0,
+      "Full lips": 0.0,
       "Lean": 0.0,
-      "Muscular": 0.0
+      "Muscular": 0.0,
+      "Narrow chin": 0.0,
+      "Oval face": 0.0,
+      "Pointed ears": 0.0,
+      "Square face": 0.0
     },
-    "profileSha256": "ab179d8571e04e6217229141c4351dc00a6aa15d0c56c339cb9dda3dc592b5fd",
+    "profileSha256": "64291a9dbe6fcf2e6f45a8f32ee12ab14469c4913b809cb3ff94a8573da5a180",
     "slots": {
       "Clothes": "Casual 01"
     }
@@ -26,21 +32,64 @@
   },
   "schemaVersion": 1,
   "shapes": {
+    "Skeleton3D/Body01::Broad nose": 0.0,
+    "Skeleton3D/Body01::Full lips": 0.0,
     "Skeleton3D/Body01::Lean": 0.0,
     "Skeleton3D/Body01::Muscular": 0.0,
+    "Skeleton3D/Body01::Narrow chin": 0.0,
+    "Skeleton3D/Body01::Oval face": 0.0,
+    "Skeleton3D/Body01::Pointed ears": 0.0,
+    "Skeleton3D/Body01::Square face": 0.0,
+    "Skeleton3D/Body02::Broad nose": 0.0,
+    "Skeleton3D/Body02::Full lips": 0.0,
     "Skeleton3D/Body02::Lean": 0.0,
     "Skeleton3D/Body02::Muscular": 0.0,
+    "Skeleton3D/Body02::Narrow chin": 0.0,
+    "Skeleton3D/Body02::Oval face": 0.0,
+    "Skeleton3D/Body02::Pointed ears": 0.0,
+    "Skeleton3D/Body02::Square face": 0.0,
+    "Skeleton3D/Eyes::Broad nose": 0.0,
+    "Skeleton3D/Eyes::Full lips": 0.0,
     "Skeleton3D/Eyes::Lean": 0.0,
     "Skeleton3D/Eyes::Muscular": 0.0,
+    "Skeleton3D/Eyes::Narrow chin": 0.0,
+    "Skeleton3D/Eyes::Oval face": 0.0,
+    "Skeleton3D/Eyes::Pointed ears": 0.0,
+    "Skeleton3D/Eyes::Square face": 0.0,
+    "Skeleton3D/Hair::Broad nose": 0.0,
+    "Skeleton3D/Hair::Full lips": 0.0,
     "Skeleton3D/Hair::Lean": 0.0,
     "Skeleton3D/Hair::Muscular": 0.0,
+    "Skeleton3D/Hair::Narrow chin": 0.0,
+    "Skeleton3D/Hair::Oval face": 0.0,
+    "Skeleton3D/Hair::Pointed ears": 0.0,
+    "Skeleton3D/Hair::Square face": 0.0,
+    "Skeleton3D/Outfit01::Broad nose": 0.0,
+    "Skeleton3D/Outfit01::Full lips": 0.0,
     "Skeleton3D/Outfit01::Lean": 0.0,
     "Skeleton3D/Outfit01::Muscular": 0.0,
+    "Skeleton3D/Outfit01::Narrow chin": 0.0,
+    "Skeleton3D/Outfit01::Oval face": 0.0,
+    "Skeleton3D/Outfit01::Pointed ears": 0.0,
+    "Skeleton3D/Outfit01::Square face": 0.0,
+    "Skeleton3D/Outfit02::Broad nose": 0.0,
+    "Skeleton3D/Outfit02::Full lips": 0.0,
     "Skeleton3D/Outfit02::Lean": 0.0,
     "Skeleton3D/Outfit02::Muscular": 0.0,
+    "Skeleton3D/Outfit02::Narrow chin": 0.0,
+    "Skeleton3D/Outfit02::Oval face": 0.0,
+    "Skeleton3D/Outfit02::Pointed ears": 0.0,
+    "Skeleton3D/Outfit02::Square face": 0.0,
+    "Skeleton3D/Shoes::Broad nose": 0.0,
+    "Skeleton3D/Shoes::Full lips": 0.0,
     "Skeleton3D/Shoes::Lean": 0.0,
-    "Skeleton3D/Shoes::Muscular": 0.0
+    "Skeleton3D/Shoes::Muscular": 0.0,
+    "Skeleton3D/Shoes::Narrow chin": 0.0,
+    "Skeleton3D/Shoes::Oval face": 0.0,
+    "Skeleton3D/Shoes::Pointed ears": 0.0,
+    "Skeleton3D/Shoes::Square face": 0.0
   },
   "sourceFilename": "female-source.glb",
-  "sourceSha256": "48c8d3ccebdd448a49455694b2de43f949b7232599e2bc521cc86f07fccf3aae"
+  "sourceSha256": "e1f58c5af17ff98c124ec1aa8607c5bcfc3204e67c3dc01692daee791ec69874",
+  "variationSeed": ""
 }

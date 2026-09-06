@@ -104,6 +104,24 @@ func run() -> void:
 		editor.import_model(args[0])
 		editor.load_outfit_profile(args[2])
 		check(not editor.outfit.profile.is_empty(),"load authored source profile")
+		var unvaried: Dictionary = editor.make_recipe()
+		editor.create_variation("npc-001")
+		var first_variation: Dictionary = editor.make_recipe()
+		editor.create_variation("npc-002")
+		check(editor.make_recipe().outfit.morphs != first_variation.outfit.morphs,"different NPC seeds vary real body and face controls")
+		editor.create_variation("npc-001")
+		check(editor.make_recipe() == first_variation,"NPC seed reproduces appearance")
+		check(first_variation.name == unvaried.name and first_variation.height == unvaried.height,"variation preserves identity and height")
+		check(first_variation.outfit.morphs["Pointed ears"] == unvaried.outfit.morphs["Pointed ears"],"variation preserves explicit species trait")
+		editor.focus_face()
+		check(editor.camera.size < editor.target_height*.5,"face view focuses on the head")
+		editor.frame_model()
+		editor.create_variation("")
+		check(editor.make_recipe() == first_variation,"blank seed rejected atomically")
+		editor.save_recipe(args[1]+".json")
+		editor.load_recipe(args[1]+".json")
+		check(editor.make_recipe() == first_variation,"variation provenance roundtrip")
+		editor.apply_recipe(unvaried)
 		var prepared_before: Dictionary = editor.make_recipe()
 		editor.open_prepared_body("unknown")
 		check(editor.make_recipe() == prepared_before,"invalid prepared body preserves appearance")
@@ -111,6 +129,13 @@ func run() -> void:
 		check(not editor.outfit.profile.is_empty() and editor.source_hash == prepared_before.sourceSha256,"prepared body opens matching wardrobe automatically")
 		var body_mesh: MeshInstance3D = editor.parts["Skeleton3D/Body01"]
 		var garment: MeshInstance3D = editor.parts["Skeleton3D/Outfit01"]
+		for shape_index in range(2,body_mesh.get_blend_shape_count()):
+			var points: PackedVector3Array = body_mesh.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+			var target: PackedVector3Array = body_mesh.mesh.surface_get_blend_shape_arrays(0)[shape_index][Mesh.ARRAY_VERTEX]
+			var displacement := 0.0
+			for i in points.size():
+				displacement = maxf(displacement,points[i].distance_to(target[i]))
+			check(displacement > .0001,"face geometry target: "+body_mesh.mesh.get_blend_shape_name(shape_index))
 		for part in [body_mesh,garment]:
 			var deltas: PackedVector3Array = part.mesh.surface_get_blend_shape_arrays(0)[0][Mesh.ARRAY_VERTEX]
 			var original: PackedVector3Array = part.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
@@ -217,5 +242,27 @@ func run() -> void:
 					await process_frame
 				RenderingServer.force_draw(false)
 				check(root.get_texture().get_image().save_png(args[1]+"-posed.png") == OK,"render lean posed garment")
+				rig.reset_bone_poses()
+				editor.camera.size = .58
+				var face_y: float = editor.target_height*.91
+				editor.camera.position = Vector3(0,face_y,3)
+				editor.camera.look_at(Vector3(0,face_y,0))
+				for seed_text in ["npc-001","npc-002"]:
+					editor.create_variation(seed_text)
+					for i in 8:
+						await process_frame
+					editor.focus_face()
+					for i in 3:
+						await process_frame
+					RenderingServer.force_draw(false)
+					check(root.get_texture().get_image().save_png(args[1]+"-"+seed_text+".png") == OK,"render seeded face "+seed_text)
+				editor.outfit.morphs["Pointed ears"] = 1.0
+				editor.outfit.apply()
+				editor.refresh_controls()
+				editor.focus_face()
+				for i in 3:
+					await process_frame
+				RenderingServer.force_draw(false)
+				check(root.get_texture().get_image().save_png(args[1]+"-ears.png") == OK,"render pointed ears")
 	print("Workshop failures: ",failures)
 	quit(0 if failures == 0 else 1)

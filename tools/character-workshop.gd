@@ -17,6 +17,7 @@ var source_name := ""
 var source_height := 1.0
 var target_height := 1.7
 var title_edit: LineEdit
+var variation_seed := ""
 var outfit = preload("res://character-outfit.gd").new()
 
 func _ready() -> void:
@@ -173,6 +174,7 @@ func import_model(path: String) -> String:
 	source_height = box.size.y
 	source_hash = FileAccess.get_sha256(path)
 	source_name = path.get_file()
+	variation_seed = ""
 	target_height = source_height
 	pivot.rotation = Vector3.ZERO
 	pivot.scale = Vector3.ONE
@@ -211,6 +213,10 @@ func refresh_controls() -> void:
 		controls.remove_child(child)
 		child.queue_free()
 	slider("Turntable",0,360,pivot.rotation_degrees.y,func(v): pivot.rotation_degrees.y=v)
+	var views := HBoxContainer.new()
+	controls.add_child(views)
+	button(views,"Face view",focus_face)
+	button(views,"Full body",frame_model)
 	slider("Height (source units assumed metres)",.1,maxf(10,source_height*2),target_height,func(v): target_height=v; frame_model())
 	var animations := OptionButton.new()
 	animations.add_item("Rest pose")
@@ -228,6 +234,11 @@ func refresh_controls() -> void:
 		if index>0:
 			clips[index-1][0].play(clips[index-1][1]))
 	if not outfit.profile.is_empty():
+		var seed_edit := LineEdit.new()
+		seed_edit.placeholder_text = "NPC variation seed"
+		seed_edit.text = variation_seed
+		controls.add_child(seed_edit)
+		button(controls,"Create variation",func(): create_variation(seed_edit.text))
 		for slot in outfit.profile.slots:
 			var label := Label.new()
 			label.text = slot
@@ -273,10 +284,21 @@ func make_recipe() -> Dictionary:
 		visibility[key] = parts[key].visible
 	for key in shapes:
 		weights[key] = shapes[key][0].get_blend_shape_value(shapes[key][1])
-	var result := {"schemaVersion":1,"name":title_edit.text,"sourceFilename":source_name,"sourceSha256":source_hash,"height":target_height,"parts":visibility,"shapes":weights}
+	var result := {"schemaVersion":1,"name":title_edit.text,"sourceFilename":source_name,"sourceSha256":source_hash,"height":target_height,"parts":visibility,"shapes":weights,"variationSeed":variation_seed}
 	if not outfit.profile.is_empty():
 		result["outfit"] = outfit.recipe()
 	return result
+
+func focus_face() -> void:
+	if model == null:
+		return
+	var point := Vector3(0,target_height*.91,0)
+	if parts.has("Skeleton3D/Eyes"):
+		var eyes: MeshInstance3D = parts["Skeleton3D/Eyes"]
+		point = eyes.global_transform*eyes.mesh.get_aabb().get_center()
+	camera.size = maxf(.2,target_height*.34)
+	camera.position = point+Vector3(0,0,target_height*2)
+	camera.look_at(point)
 
 func apply_recipe(value: Variant) -> String:
 	if model == null:
@@ -288,6 +310,8 @@ func apply_recipe(value: Variant) -> String:
 		return "Preset version or source hash mismatch; no changes applied."
 	if not data.get("name") is String or not data.get("parts") is Dictionary or not data.get("shapes") is Dictionary:
 		return "Malformed preset fields."
+	if not data.get("variationSeed","") is String:
+		return "Invalid variation seed."
 	var h: Variant = data.get("height")
 	if not (h is float or h is int) or not is_finite(float(h)) or h < .1 or h > maxf(10,source_height*2):
 		return "Height is outside supported range."
@@ -311,6 +335,7 @@ func apply_recipe(value: Variant) -> String:
 	# All validation completes before any live state changes.
 	target_height = float(h)
 	title_edit.text = data.name
+	variation_seed = data.get("variationSeed","")
 	for key in data.parts:
 		parts[key].visible = data.parts[key]
 	for key in data.shapes:
@@ -320,6 +345,35 @@ func apply_recipe(value: Variant) -> String:
 	frame_model()
 	refresh_controls()
 	return ""
+
+func variation_value(seed_text: String, key: String) -> float:
+	# Independent hashes avoid iteration-order changes reshuffling an NPC.
+	return float((seed_text+"|"+key).sha256_text().left(8).hex_to_int())/4294967295.0
+
+func create_variation(seed_text: String) -> void:
+	if model == null or outfit.profile.is_empty() or seed_text.strip_edges().is_empty():
+		status.text = "Open a prepared body and enter a variation seed."
+		return
+	var recipe := make_recipe()
+	recipe.variationSeed = seed_text
+	for key in recipe.outfit.morphs:
+		# Dyadic steps survive JSON and float32 mesh storage exactly.
+		recipe.outfit.morphs[key] = floori(variation_value(seed_text,"shape:"+key)*.65*1024)/1024.0
+	# Keep species choice explicit, and avoid combining opposite face shapes.
+	if recipe.outfit.morphs.has("Pointed ears"):
+		recipe.outfit.morphs["Pointed ears"] = outfit.morphs["Pointed ears"]
+	if recipe.outfit.morphs.has("Oval face") and recipe.outfit.morphs.has("Square face"):
+		recipe.outfit.morphs["Oval face" if variation_value(seed_text,"face-family")<.5 else "Square face"] = 0.0
+	for slot in outfit.profile.slots:
+		var names: Array = outfit.profile.slots[slot].keys()
+		names.sort()
+		recipe.outfit.slots[slot] = names[mini(int(variation_value(seed_text,"slot:"+slot)*names.size()),names.size()-1)]
+	if recipe.outfit.dyes.has("Hair"):
+		var colors := ["342820ff","6b4930ff","ac8654ff","423731ff","80452fff"]
+		recipe.outfit.dyes.Hair = colors[mini(int(variation_value(seed_text,"hair")*colors.size()),colors.size()-1)]
+	# Profile application is the single owner of linked shapes and visibility.
+	var error := apply_recipe(recipe)
+	status.text = "Variation created; name, height and species retained." if error.is_empty() else error
 
 func save_recipe(path: String) -> void:
 	if model == null:

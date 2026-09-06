@@ -6,6 +6,14 @@ var failure := false
 var core := ""
 var body := PackedVector3Array()
 var body_variants: Array[PackedVector3Array] = []
+const FACE_TARGETS := {
+	"Oval face":["head/head-oval.target"],
+	"Square face":["head/head-square.target"],
+	"Narrow chin":["chin/chin-width-decr.target"],
+	"Broad nose":["nose/nose-scale-horiz-incr.target"],
+	"Full lips":["mouth/mouth-upperlip-volume-incr.target","mouth/mouth-lowerlip-volume-incr.target"],
+	"Pointed ears":["ears/l-ear-shape-pointed.target","ears/r-ear-shape-pointed.target"]}
+var shape_names: Array = ["Lean","Muscular"] + FACE_TARGETS.keys()
 var skeleton: Skeleton3D
 var skin: Skin
 var vertex_weights: Array[Dictionary] = []
@@ -197,8 +205,8 @@ func mesh_from_obj(path: String, fit_path: String, deleted: Dictionary = {}) -> 
 	# Store full target normals, not tiny normal deltas that octahedral packing
 	# normalizes and destroys. Normalized mode also supports additive controls.
 	result.blend_shape_mode = Mesh.BLEND_SHAPE_MODE_NORMALIZED
-	result.add_blend_shape("Lean")
-	result.add_blend_shape("Muscular")
+	for shape_name in shape_names:
+		result.add_blend_shape(shape_name)
 	for surface in surfaces:
 		surface.generate_normals()
 	var arrays := surfaces[0].commit_to_arrays()
@@ -296,6 +304,11 @@ func make_rig(parent: Node3D) -> void:
 func build(sex: String) -> void:
 	body = add_target(read_vertices(core.path_join("base.obj")),core.path_join("targets/macrodetails/caucasian-"+sex+"-young.target"))
 	body_variants = [add_target(body,core.path_join("targets/macrodetails/universal-"+sex+"-young-averagemuscle-minweight.target")),add_target(body,core.path_join("targets/macrodetails/universal-"+sex+"-young-maxmuscle-averageweight.target"))]
+	for control in FACE_TARGETS:
+		var variant := body.duplicate()
+		for target in FACE_TARGETS[control]:
+			variant = add_target(variant,core.path_join("targets/"+target))
+		body_variants.append(variant)
 	var character := Node3D.new()
 	character.name = "Character"
 	root.add_child(character)
@@ -324,13 +337,15 @@ func build(sex: String) -> void:
 	var profile := {"schemaVersion":1,"sourceSha256":FileAccess.get_sha256(model_path),
 		"slots":{"Clothes":{"Casual 01":{"meshes":["Skeleton3D/Outfit01","Skeleton3D/Body01"],"hides":[]},"Casual 02":{"meshes":["Skeleton3D/Outfit02","Skeleton3D/Body02"],"hides":[]}}},
 		"morphs":{"Lean":[],"Muscular":[]},"dyes":{"Clothing":[{"mesh":"Skeleton3D/Outfit01","surface":0},{"mesh":"Skeleton3D/Outfit02","surface":0}],"Hair":[{"mesh":"Skeleton3D/Hair","surface":0}]}}
+	for shape in shape_names:
+		profile.morphs[shape] = []
 	for mesh in skeleton.get_children():
-		for shape in ["Lean","Muscular"]:
+		for shape in shape_names:
 			profile.morphs[shape].append("Skeleton3D/"+str(mesh.name)+"::"+shape)
 	var file := FileAccess.open(destination.path_join(sex+"-profile.json"),FileAccess.WRITE)
 	file.store_string(JSON.stringify(profile,"  ",true,true))
 	file.close()
-	print("Prepared ",sex," fitted source geometry, ",skeleton.get_bone_count()," bones and 2 linked morphology targets.")
+	print("Prepared ",sex," fitted source geometry, ",skeleton.get_bone_count()," bones and ",shape_names.size()," linked morphology targets.")
 	character.free()
 func run() -> void:
 	var args := OS.get_cmdline_user_args()
@@ -357,7 +372,7 @@ func run() -> void:
 			"compilerSha256":FileAccess.get_sha256("res://prepare-character-model.gd"),
 			"systemManifestSha256":FileAccess.get_sha256(source.path_join("source-manifest.json")),
 			"coreManifestSha256":FileAccess.get_sha256(core.path_join("source-manifest.json")),
-			"textureMaxDimension":1024,"bones":163,"linkedMorphs":["Lean","Muscular"],"files":records,
+			"textureMaxDimension":1024,"bones":163,"linkedMorphs":shape_names,"files":records,
 			"limitations":["Global-axis rest frames, not source bone-roll conventions","Modern sample wardrobe, not period art","Not a complete character builder or production crowd asset"]}
 		var receipt_file := FileAccess.open(destination.path_join("build-receipt.json"),FileAccess.WRITE)
 		if receipt_file == null:

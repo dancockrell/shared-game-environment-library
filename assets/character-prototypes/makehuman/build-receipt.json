@@ -1,24 +1,24 @@
 {
   "bones": 163,
-  "compilerSha256": "083a3b910f302bbc1aae16d34bb3d8da8692790e68b8b25f16810bcc0454c47d",
-  "coreManifestSha256": "cee8002ad1f138a5f0abd9383f825d4dbc5d7f23ba668d4a9958edc4eeb55587",
+  "compilerSha256": "80ddfdecf3e4a7d2ad8bcddca0f52c48ded5873e047a187150992daacfd219e4",
+  "coreManifestSha256": "b433552d36cfaaee461336b77035faeae7342c2cd8be1fe906f0a7931bf063b3",
   "engine": "4.7.2-stable (official)",
   "files": [
     {
       "path": "female-source.glb",
-      "sha256": "48c8d3ccebdd448a49455694b2de43f949b7232599e2bc521cc86f07fccf3aae"
+      "sha256": "e1f58c5af17ff98c124ec1aa8607c5bcfc3204e67c3dc01692daee791ec69874"
     },
     {
       "path": "female-profile.json",
-      "sha256": "10ca3d87f39da32eba6477f8a299f4dac0f9534bb827f44d6f5030cff5d92879"
+      "sha256": "a2fce3480e0e9300cdbf298668fbf53ff92bad2507f91965de4815725b47a08d"
     },
     {
       "path": "male-source.glb",
-      "sha256": "e7d733079b264b02b7870a39f50b033cb3c392434c24940d0d8eadbcae8768d5"
+      "sha256": "eb2ce20ac6e9f14eee8ba0bca4848866bd2f516b6cfc229fbb367f76a40388ca"
     },
     {
       "path": "male-profile.json",
-      "sha256": "0836d8b744389ae69882e9896d1fefb00001aab88acb51d6a153a31f3aed1b86"
+      "sha256": "9d8bd2c192ff9c697cdb1fe9d27429a9e4aa855571f6d194662f7241dc3c4cbd"
     }
   ],
   "license": "CC0-1.0",
@@ -29,7 +29,13 @@
   ],
   "linkedMorphs": [
     "Lean",
-    "Muscular"
+    "Muscular",
+    "Oval face",
+    "Square face",
+    "Narrow chin",
+    "Broad nose",
+    "Full lips",
+    "Pointed ears"
   ],
   "schemaVersion": 1,
   "status": "development-source-assembly-not-approved-game-art",

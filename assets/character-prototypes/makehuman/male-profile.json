@@ -18,6 +18,24 @@
     ]
   },
   "morphs": {
+    "Broad nose": [
+      "Skeleton3D/Body01::Broad nose",
+      "Skeleton3D/Outfit01::Broad nose",
+      "Skeleton3D/Body02::Broad nose",
+      "Skeleton3D/Outfit02::Broad nose",
+      "Skeleton3D/Hair::Broad nose",
+      "Skeleton3D/Eyes::Broad nose",
+      "Skeleton3D/Shoes::Broad nose"
+    ],
+    "Full lips": [
+      "Skeleton3D/Body01::Full lips",
+      "Skeleton3D/Outfit01::Full lips",
+      "Skeleton3D/Body02::Full lips",
+      "Skeleton3D/Outfit02::Full lips",
+      "Skeleton3D/Hair::Full lips",
+      "Skeleton3D/Eyes::Full lips",
+      "Skeleton3D/Shoes::Full lips"
+    ],
     "Lean": [
       "Skeleton3D/Body01::Lean",
       "Skeleton3D/Outfit01::Lean",
@@ -35,6 +53,42 @@
       "Skeleton3D/Hair::Muscular",
       "Skeleton3D/Eyes::Muscular",
       "Skeleton3D/Shoes::Muscular"
+    ],
+    "Narrow chin": [
+      "Skeleton3D/Body01::Narrow chin",
+      "Skeleton3D/Outfit01::Narrow chin",
+      "Skeleton3D/Body02::Narrow chin",
+      "Skeleton3D/Outfit02::Narrow chin",
+      "Skeleton3D/Hair::Narrow chin",
+      "Skeleton3D/Eyes::Narrow chin",
+      "Skeleton3D/Shoes::Narrow chin"
+    ],
+    "Oval face": [
+      "Skeleton3D/Body01::Oval face",
+      "Skeleton3D/Outfit01::Oval face",
+      "Skeleton3D/Body02::Oval face",
+      "Skeleton3D/Outfit02::Oval face",
+      "Skeleton3D/Hair::Oval face",
+      "Skeleton3D/Eyes::Oval face",
+      "Skeleton3D/Shoes::Oval face"
+    ],
+    "Pointed ears": [
+      "Skeleton3D/Body01::Pointed ears",
+      "Skeleton3D/Outfit01::Pointed ears",
+      "Skeleton3D/Body02::Pointed ears",
+      "Skeleton3D/Outfit02::Pointed ears",
+      "Skeleton3D/Hair::Pointed ears",
+      "Skeleton3D/Eyes::Pointed ears",
+      "Skeleton3D/Shoes::Pointed ears"
+    ],
+    "Square face": [
+      "Skeleton3D/Body01::Square face",
+      "Skeleton3D/Outfit01::Square face",
+      "Skeleton3D/Body02::Square face",
+      "Skeleton3D/Outfit02::Square face",
+      "Skeleton3D/Hair::Square face",
+      "Skeleton3D/Eyes::Square face",
+      "Skeleton3D/Shoes::Square face"
     ]
   },
   "schemaVersion": 1,
@@ -56,5 +110,5 @@
       }
     }
   },
-  "sourceSha256": "e7d733079b264b02b7870a39f50b033cb3c392434c24940d0d8eadbcae8768d5"
+  "sourceSha256": "eb2ce20ac6e9f14eee8ba0bca4848866bd2f516b6cfc229fbb367f76a40388ca"
 }

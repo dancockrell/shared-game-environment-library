@@ -75,6 +75,62 @@
       "gitBlobSha": "f3ede1fc3318f8d794e2cb51924186c62f02f71a",
       "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c",
       "bytes": 6962
+    },
+    {
+      "path": "targets/head/head-oval.target",
+      "sourcePath": "makehuman/data/targets/head/head-oval.target",
+      "gitBlobSha": "66d8131706f7a95b763171c336801a76710f2971",
+      "sha256": "a17cd3a600588a344babe520fbd4d4edcb096db3328051fe692dfb997a1a678d",
+      "bytes": 36452
+    },
+    {
+      "path": "targets/head/head-square.target",
+      "sourcePath": "makehuman/data/targets/head/head-square.target",
+      "gitBlobSha": "8d156ed42db13219844e01bf4ab3185d9205befa",
+      "sha256": "001d0d135d964daf4ad99ba46a0f77c5bc2378f04e53c2b5a20242ab19cbf265",
+      "bytes": 12618
+    },
+    {
+      "path": "targets/chin/chin-width-decr.target",
+      "sourcePath": "makehuman/data/targets/chin/chin-width-decr.target",
+      "gitBlobSha": "5dcb2e236c7fe8c28b2e21b4ae5d0abd8510a2f4",
+      "sha256": "ac081bd1652c203fc8973f20988a868a423a49f1fe6449cb974727fd46c26af1",
+      "bytes": 2853
+    },
+    {
+      "path": "targets/nose/nose-scale-horiz-incr.target",
+      "sourcePath": "makehuman/data/targets/nose/nose-scale-horiz-incr.target",
+      "gitBlobSha": "abc36f4e9813600c89414fd64edcab332332c753",
+      "sha256": "cc319e3ddb0523fa2b563dcfc840cf2f915a890abe5612009a0becebecd3c5ae",
+      "bytes": 7568
+    },
+    {
+      "path": "targets/mouth/mouth-upperlip-volume-incr.target",
+      "sourcePath": "makehuman/data/targets/mouth/mouth-upperlip-volume-incr.target",
+      "gitBlobSha": "57261c7dab665aca7169d5bb7acddf0c002f6786",
+      "sha256": "b124cbd9b9be318264f61a143da603b42e0357ed92b4b6afd1b31a83daaf8568",
+      "bytes": 3600
+    },
+    {
+      "path": "targets/mouth/mouth-lowerlip-volume-incr.target",
+      "sourcePath": "makehuman/data/targets/mouth/mouth-lowerlip-volume-incr.target",
+      "gitBlobSha": "b3a27855023b20b8eee8b885d81033083d75feaa",
+      "sha256": "dbdaf045b00c67bf8672d53bc8cf94eb3e3dea316de6fe18a278f7080564c65d",
+      "bytes": 3585
+    },
+    {
+      "path": "targets/ears/l-ear-shape-pointed.target",
+      "sourcePath": "makehuman/data/targets/ears/l-ear-shape-pointed.target",
+      "gitBlobSha": "6f1088bff46b73abade9816fe9c3716020c82703",
+      "sha256": "fb69b849f07de8297473f070f1fbddbc0c821f96770634ecb2af54691ac54414",
+      "bytes": 2860
+    },
+    {
+      "path": "targets/ears/r-ear-shape-pointed.target",
+      "sourcePath": "makehuman/data/targets/ears/r-ear-shape-pointed.target",
+      "gitBlobSha": "cb2faba9601510c02994d21c7ee8bf58a102ad19",
+      "sha256": "32598e38492c6b1d34d0e700a61d9710b73d7be4070b4c5597125f53d0fab5e3",
+      "bytes": 2733
     }
   ]
 }
