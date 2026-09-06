@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Add opt-in bounded radial tessellation to non-fluted spline lathes and validate pastry fixture cost without changing legacy recipes",
+  "summary": "Validate reduced radial geometry through full cake-and-pie portable export and lock opt-in compatibility/fluting rejection in regression tests",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

@@ -388,6 +388,31 @@ mod radial_budget_tests {
     use super::radial_segment_count;
 
     #[test]
+    fn authored_budget_reduces_mesh_and_rejects_unsupported_fluting() {
+        let fixture: serde_json::Value =
+            serde_json::from_str(include_str!("../examples/patisserie.json")).unwrap();
+        let mut value = fixture["definitions"]["service.plate"].clone();
+        let budgeted: super::Definition = serde_json::from_value(value.clone()).unwrap();
+        let reduced = super::mesh("plate", &budgeted, 1000000).unwrap();
+        value["shape"]
+            .as_object_mut()
+            .unwrap()
+            .remove("radial_tolerance");
+        let legacy: super::Definition = serde_json::from_value(value.clone()).unwrap();
+        let fixed = super::mesh("plate", &legacy, 1000000).unwrap();
+        assert!(reduced.indices.len() < fixed.indices.len());
+        assert!(serde_json::to_value(&legacy).unwrap()["shape"]
+            .get("radial_tolerance")
+            .is_none());
+        value["shape"]["radial_tolerance"] = serde_json::json!(0.0003);
+        value["shape"]["fluting"] = serde_json::json!({"count": 8, "depth": 0.1});
+        let unsupported: super::Definition = serde_json::from_value(value).unwrap();
+        assert!(super::mesh("plate", &unsupported, 1000000)
+            .unwrap_err()
+            .contains("fluted"));
+    }
+
+    #[test]
     fn chooses_minimum_segments_meeting_circle_error() {
         for radius in [0.001_f32, 0.01, 0.17, 1.] {
             let error = radius * 0.001;

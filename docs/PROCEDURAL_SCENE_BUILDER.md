@@ -1308,6 +1308,36 @@ matched-camera pixel-error certification or final food-art approval. This
 geometry checkpoint has not yet been rebaked/revalidated in Godot or Unity.
 No paid generation, Godot restart, push or Actions run.
 
+#### Full patisserie portable-export verification
+
+The reduced-radial geometry has now passed the complete Blender bake/GLB
+path, not just the source reference renderer. Evidence is `baked-full-001`
+inside `20260906-152000-0d5661e97d564e389bd9fa2333de4802`.
+This is the full 92-instance cake/board/pie assembly, not the earlier pie-only
+61-instance subset. All 18 unique meshes and 109,822 unique triangles passed
+independent oriented-surface comparison. Native import retained all placements,
+shared resources, planned texture dimensions, recipe and asset manifest.
+GLB size is 5,748,796 bytes, SHA-256
+`cdd0e08dec5e3e58bb675a8f795e3055dc7dfa88552a79adc919c8a24ce0a271`.
+
+This batch exercised actual budget reductions: six lattice textures dropped
+from requested 256 to 128, and pie filling from 512 to 256. Final estimated
+texture mip allocation is 33,030,072 bytes, within the 33,554,432-byte budget.
+No triangle decimation or source material changes occurred during export.
+The actual native-reimport render was inspected: overall composition is intact;
+the darker portable lighting and omitted scattering are not reference parity.
+Fine texture/close-up equivalence and Godot/Unity behavior remain unverified.
+The cake and pastry still do not meet final-art quality.
+
+Hidden BelowNormal CPU/two-thread export/reimport/render took 18.14 seconds,
+sampled process RAM 718,684,160 bytes, under the existing watchdog. No measured
+VRAM claim. Added an actual-definition regression test proving the opt-in
+reduces the emitted mesh, omitted options serialize as absent for legacy
+recipes, and fluted definitions reject the unsupported bound. CPU receipt
+`20260906-152535-9fbb1cac6b7243378a6f9c9b44987fe4` passes all 38 stages with
+60 Rust tests; all 24 Python tests also pass. No Godot restart, paid generation,
+push or Actions run.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository
