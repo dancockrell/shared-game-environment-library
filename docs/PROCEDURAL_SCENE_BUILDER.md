@@ -697,9 +697,24 @@ concatenation** that left coincident faces and invalid shared-edge connectivity.
 It is an exact axis-aligned room-boundary construction, not a general triangle
 Boolean or tolerance-based weld. There is no voxel-resolution approximation:
 grid lines occur at authored boundaries. Interior clearance remains empty.
-Openings with overlapping horizontal spans are rejected, including vertically
-stacked openings: that more general cut arrangement is not supported yet.
-Out-of-bounds cuts and invalid dimensions fail rather than being silently moved.
+Wall construction partitions horizontal slabs at aperture endpoints and removes
+their sorted vertical aperture intervals. Vertically stacked openings, including
+unequal widths and offset transoms, are supported. This supersedes the old
+horizontal-span-only rejection. True rectangular-area overlaps are rejected;
+shared edges merge geometrically while retaining separate authored descriptors.
+Corner-only aperture contact is rejected because it makes a non-manifold material
+edge. Out-of-bounds cuts, precision-collapsed openings and invalid dimensions fail
+rather than being silently moved. The existing common boundary mesher remains
+the only triangulation path; there is no second wall implementation.
+
+Stacked-opening verification: local receipt
+`procedural/generated/reviews/20260906-124403-6b748b11c49f4b6c9d19c45c527064c5/report.json`
+passed 48 Rust tests and the CPU fixture/audit workflow. Tests cover material
+volume, all four wall orientations, descriptor positions, shared edges, actual
+overlaps and rejected corner-only contact. The five-opening example includes two
+offset/stacked transoms; its 992 triangles form one closed oriented position graph
+with zero reported connectivity defects. This new room variant has not received
+a native visual or saved-engine reload review; the live teapot was left running.
 
 Room geometry respects the existing vertex allocation budget. Repeated rooms
 reuse their definition mesh. The 17,000-instance test demonstrates reuse and
@@ -1025,7 +1040,22 @@ unfinished rim treatment. The next paint checkpoint introduces authored
 botanical marks, borders and a quieter glaze; this does not remedy solid
 construction or establish final artistic quality. No
 functional-pouring or high-end-art claim is made. This checkpoint does not pass
-the teapot gate, so cake/pie and ballerina work have not started.
+the engineering teapot gate; cake/pie and ballerina work had not started at that
+checkpoint.
+
+**Live review update, 6 September 2026:** the user described the current native
+teapot preview as "fantastic teapot". Preserve its silhouette, teal glaze, gold
+accents and botanical decoration as the accepted visual direction for subsequent
+cake/pie studies. This positive visual response supersedes the earlier lack of a
+user-endorsed aesthetic anchor; it does not certify the uncut body/spout junction,
+attachment blending, watertight assembly, Unity parity or final production status.
+The live version-2 import passed seven-part mesh, transform and bounds checks.
+Its retained local capture is
+`procedural/generated/reviews/20260906-123121-c3bd93acdf3147719a9f3238033bbe30/live-teapot.png`.
+The existing Godot test/review entry point accepts `--keep-open` after its input,
+output and two camera-angle arguments for explicitly requested live inspection;
+it caps the retained preview at 12 FPS. Normal checks still exit. The CPU runner
+still never launches Godot. Do not restart or touch another task's engine session.
 
 The actual native render below is retained as a construction baseline. The
 reviewer found its smooth silhouette useful but finish and attachment quality

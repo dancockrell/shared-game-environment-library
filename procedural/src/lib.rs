@@ -1562,11 +1562,13 @@ mod tests {
         assert_eq!(s.instances[1].position, [10., 0., 0.]);
         let m = &s.meshes[0];
         assert_eq!(m.positions.len(), m.normals.len());
-        assert_eq!(m.apertures.len(), 3);
+        assert_eq!(m.apertures.len(), 5);
         assert_eq!(m.apertures[0].opening_index, 0);
         assert_eq!(m.apertures[0].position, [1.5, 0., 3.65]);
         assert_eq!(m.apertures[0].outward_normal, [0., 0., 1.]);
         assert_eq!(m.apertures[1].position, [4.15, 1., -1.]);
+        assert_eq!(m.apertures[3].position, [1.5, 2.6, 3.65]);
+        assert_eq!(m.apertures[4].position, [4.15, 2.6, -1.2]);
         assert!(m.indices.iter().all(|i| (*i as usize) < m.positions.len()));
         assert_eq!(compile_json(text).unwrap(), compile_json(text).unwrap());
         r.limits.max_vertices = m.positions.len() - 1;

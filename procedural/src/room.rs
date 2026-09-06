@@ -106,6 +106,9 @@ impl Room {
             {
                 return Err("Opening lies outside clear wall bounds".into());
             }
+            if o.offset - o.width / 2. >= o.offset + o.width / 2. || o.sill >= o.sill + o.height {
+                return Err("Opening collapses at output precision".into());
+            }
         }
         let x0 = -w / 2. - t;
         let x1 = w / 2. + t;
@@ -115,9 +118,22 @@ impl Room {
         for wall in [Wall::North, Wall::East, Wall::South, Wall::West] {
             let horizontal = matches!(wall, Wall::North | Wall::South);
             let length = if horizontal { *w } else { *d };
-            let mut cuts: Vec<_> = openings.iter().filter(|o| o.wall == wall).collect();
-            cuts.sort_by(|a, b| a.offset.total_cmp(&b.offset));
-            let mut cursor = -length / 2.;
+            let cuts: Vec<_> = openings.iter().filter(|o| o.wall == wall).collect();
+            for (i, a) in cuts.iter().enumerate() {
+                for b in &cuts[i + 1..] {
+                    let dx = (a.offset + a.width / 2.).min(b.offset + b.width / 2.)
+                        - (a.offset - a.width / 2.).max(b.offset - b.width / 2.);
+                    let dy = (a.sill + a.height).min(b.sill + b.height) - a.sill.max(b.sill);
+                    if dx > 0. && dy > 0. {
+                        return Err("Overlapping opening rectangles on a wall".into());
+                    }
+                    // Diagonal apertures that touch at one corner produce a
+                    // non-manifold material edge, not a meaningful wall joint.
+                    if dx == 0. && dy == 0. {
+                        return Err("Opening rectangles touch at a corner".into());
+                    }
+                }
+            }
             // East/west own the corner columns; no overlapping solid volumes.
             let extent = if horizontal { 0. } else { *t };
             let mut segment = |a: f32, b: f32, bottom: f32, top: f32| {
@@ -132,19 +148,30 @@ impl Room {
                 };
                 result.push(bounds);
             };
-            segment(cursor - extent, cursor, 0., *h);
-            for o in cuts {
-                let a = o.offset - o.width / 2.;
-                let b = o.offset + o.width / 2.;
-                if a < cursor {
-                    return Err("Overlapping opening spans on a wall".into());
-                }
-                segment(cursor, a, 0., *h);
-                segment(a, b, 0., o.sill);
-                segment(a, b, o.sill + o.height, *h);
-                cursor = b;
+            let mut horizontal_cuts = vec![-length / 2. - extent, length / 2. + extent];
+            for o in &cuts {
+                horizontal_cuts.extend([o.offset - o.width / 2., o.offset + o.width / 2.]);
             }
-            segment(cursor, length / 2. + extent, 0., *h);
+            horizontal_cuts.sort_by(f32::total_cmp);
+            horizontal_cuts.dedup();
+            // Within each horizontal slab, remove a sorted union of vertical
+            // aperture intervals. No midpoint rounding and no duplicated solid
+            // volumes; the common boundary mesher still owns triangulation.
+            for pair in horizontal_cuts.windows(2) {
+                let [a, b] = [pair[0], pair[1]];
+                let mut intervals: Vec<_> = cuts
+                    .iter()
+                    .filter(|o| o.offset - o.width / 2. <= a && o.offset + o.width / 2. >= b)
+                    .map(|o| (o.sill, o.sill + o.height))
+                    .collect();
+                intervals.sort_by(|a, b| a.0.total_cmp(&b.0));
+                let mut bottom = 0.;
+                for (sill, top) in intervals {
+                    segment(a, b, bottom, sill);
+                    bottom = top;
+                }
+                segment(a, b, bottom, *h);
+            }
         }
         Ok(result)
     }
@@ -325,6 +352,89 @@ mod tests {
         assert!(occupied(&b, [5.15, 2.5, -1.]));
         assert!(!occupied(&b, [0., 1., 0.]));
         assert!(occupied(&b, [0., -0.1, 0.]));
+    }
+    #[test]
+    fn stacked_openings_preserve_wall_material_and_metadata_on_every_side() {
+        for wall in [Wall::North, Wall::East, Wall::South, Wall::West] {
+            let mut r = room();
+            r.openings = vec![
+                Opening {
+                    wall,
+                    offset: 0.,
+                    width: 2.,
+                    height: 1.,
+                    sill: 0.,
+                },
+                Opening {
+                    wall,
+                    offset: 0.5,
+                    width: 1.,
+                    height: 0.5,
+                    sill: 2.,
+                },
+            ];
+            let boxes = r.boxes().unwrap();
+            let point = |offset, y| match wall {
+                Wall::North => [offset, y, -4.15],
+                Wall::South => [offset, y, 4.15],
+                Wall::East => [5.15, y, offset],
+                Wall::West => [-5.15, y, offset],
+            };
+            assert!(!occupied(&boxes, point(0.5, 0.5)));
+            assert!(occupied(&boxes, point(0.5, 1.5)));
+            assert!(!occupied(&boxes, point(0.5, 2.25)));
+            assert!(occupied(&boxes, point(-0.5, 2.25)));
+            assert!(occupied(&boxes, point(0.5, 2.75)));
+            let volume: f64 = boxes
+                .iter()
+                .map(|(lo, hi)| (0..3).map(|i| hi[i] as f64 - lo[i] as f64).product::<f64>())
+                .sum();
+            let mut solid = r.clone();
+            solid.openings.clear();
+            let solid_volume: f64 = solid
+                .boxes()
+                .unwrap()
+                .iter()
+                .map(|(lo, hi)| (0..3).map(|i| hi[i] as f64 - lo[i] as f64).product::<f64>())
+                .sum();
+            assert!((solid_volume - volume - 2.5 * r.wall_thickness as f64).abs() < 1e-5);
+            let m = crate::mesh(
+                "stacked",
+                &crate::Definition {
+                    shape: crate::Shape::Room { room: r },
+                    color: [1.; 4],
+                    material: crate::MaterialSettings::default(),
+                },
+                1_000_000,
+            )
+            .unwrap();
+            assert_eq!(m.apertures.len(), 2);
+            assert_eq!(m.apertures[1].opening_index, 1);
+            assert_eq!(m.apertures[1].position[1], 2.);
+            assert_eq!(m.apertures[1].wall, wall);
+        }
+    }
+    #[test]
+    fn opening_contact_rules_distinguish_edges_corners_and_area() {
+        let mut r = room();
+        r.openings = vec![Opening {
+            wall: Wall::South,
+            offset: 0.,
+            width: 2.,
+            height: 1.,
+            sill: 0.,
+        }];
+        let mut second = r.openings[0].clone();
+        second.sill = 1.;
+        r.openings.push(second);
+        assert!(r.boxes().is_ok(), "shared edges merge geometrically");
+        r.openings[1].sill = 0.5;
+        assert!(r.boxes().unwrap_err().contains("Overlapping"));
+        r.openings[1].sill = 1.;
+        r.openings[1].offset = 2.;
+        assert!(r.boxes().unwrap_err().contains("corner"));
+        r.openings[1].offset = 2.01;
+        assert!(r.boxes().is_ok());
     }
     #[test]
     fn invalid_openings_rejected() {
