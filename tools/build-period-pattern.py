@@ -73,8 +73,100 @@ def validate_pattern(spec):
             "dartStitches": sum(s[0]["panel"] == s[1]["panel"] for s in stitches)}
 
 
+def mesh_panels(directory, resolution_cm):
+    """Use the author's constrained triangulation and matched edge sampling.
+
+    Do not call BoxMesh.load(): its subsequent weld collapses separated seams
+    before fitting. Preserve flat rest geometry for Newton's FEM construction.
+    """
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from pygarment.meshgen.boxmeshgen import BoxMesh
+
+    mesh = BoxMesh(str(directory / "FittedShirt_specification.json"), res=resolution_cm)
+    mesh.load_panels()
+    mesh.gen_panel_meshes()
+    data = {"schemaVersion": 1, "units": "metres", "resolutionMetres": resolution_cm / 100,
+            "state": "unsewn-flat-rest-panels-not-fitted", "panels": {}, "stitches": []}
+    fig, axes = plt.subplots(2, 2, figsize=(10, 11), layout="constrained")
+    for axis, (name, panel) in zip(axes.flat, sorted(mesh.panels.items())):
+        points = np.asarray(panel.panel_vertices, dtype=float) / 100
+        faces = np.asarray(panel.panel_faces, dtype=int)
+        bounds = [list(map(int, e.vertex_range)) for e in panel.edges]
+        placed = np.asarray(panel.rot_trans_panel(panel.panel_vertices)) / 100
+        data["panels"][name] = {
+            "restXY": points.tolist(), "placedXYZ": placed.tolist(),
+            "triangles": faces.tolist(), "boundaryEdges": bounds,
+        }
+        axis.triplot(points[:, 0], points[:, 1], faces, color="#38454c", linewidth=.45)
+        axis.set_title(name.replace("_", " "))
+        axis.set_aspect("equal")
+        axis.set_xlabel("metres")
+        axis.set_ylabel("metres")
+    for stitch in mesh.stitches:
+        left, right = mesh._swap_stitch_ranges(stitch)
+        data["stitches"].append({"panels": [stitch.panel_1, stitch.panel_2],
+                                 "vertexPairs": [[int(a), int(b)] for a, b in zip(left, right)],
+                                 "edgeIds": [stitch.edge_1, stitch.edge_2]})
+        if len(left) != len(right):
+            raise ValueError("Unmatched seam vertex counts")
+    metrics = validate_mesh(data)
+    (directory / "panel-mesh.json").write_text(json.dumps(data, indent=2, allow_nan=False))
+    fig.savefig(directory / "triangulated-panels.png", dpi=130)
+    plt.close(fig)
+    return metrics
+
+
+def validate_mesh(data):
+    """Independent checks of actual triangles, boundary coverage and units."""
+    from collections import Counter
+    import numpy as np
+    json.dumps(data, allow_nan=False)
+    if data["units"] != "metres":
+        raise ValueError("Meshed panels must explicitly use metres")
+    vertices = triangles = pairs = 0
+    total_area = 0.0
+    for panel in data["panels"].values():
+        p = np.asarray(panel["restXY"])
+        f = np.asarray(panel["triangles"])
+        if f.size == 0 or f.min() < 0 or f.max() >= len(p):
+            raise ValueError("Invalid triangle indices")
+        if np.asarray(panel["placedXYZ"]).shape != (len(p), 3):
+            raise ValueError("Missing 3D placement correspondence")
+        a, b = p[f[:, 1]] - p[f[:, 0]], p[f[:, 2]] - p[f[:, 0]]
+        area = abs(a[:, 0] * b[:, 1] - a[:, 1] * b[:, 0]) / 2
+        if area.min() <= 1e-12:
+            raise ValueError("Degenerate triangle")
+        incidence = Counter(tuple(sorted((int(u), int(v)))) for tri in f
+                            for u, v in zip(tri, np.roll(tri, -1)))
+        expected = Counter(tuple(sorted((a, b))) for edge in panel["boundaryEdges"]
+                           for a, b in zip(edge, edge[1:]))
+        actual = Counter({edge: count for edge, count in incidence.items() if count == 1})
+        if max(incidence.values()) > 2 or actual != expected:
+            raise ValueError("Triangulation boundary differs from the cut/seam constraints")
+        # Polygon integral over directed sampled boundary vs sum of mesh areas.
+        boundary_area = abs(sum(p[a, 0] * p[b, 1] - p[a, 1] * p[b, 0]
+                                for edge in panel["boundaryEdges"]
+                                for a, b in zip(edge, edge[1:]))) / 2
+        if not math.isclose(float(area.sum()), float(boundary_area), rel_tol=1e-8, abs_tol=1e-10):
+            raise ValueError("Triangulation area differs from sampled cut area")
+        vertices += len(p)
+        triangles += len(f)
+        total_area += float(area.sum())
+    for seam in data["stitches"]:
+        for a, b in seam["vertexPairs"]:
+            for name, index in zip(seam["panels"], (a, b)):
+                if not 0 <= index < len(data["panels"][name]["restXY"]):
+                    raise ValueError("Seam references missing mesh vertex")
+            pairs += 1
+    return {"vertices": vertices, "triangles": triangles,
+            "matchedSeamVertexPairs": pairs, "flatFabricAreaSquareMetres": total_area}
+
+
 def build(args):
     start = time.perf_counter()
+    if not math.isfinite(args.resolution_cm) or not 0.75 <= args.resolution_cm <= 3:
+        raise ValueError("Offline study resolution must be between 0.75 and 3 cm")
     source = args.source.resolve()
     verified = verify_source(source, args.archive)
     if args.output.exists():
@@ -126,6 +218,7 @@ def build(args):
                     output_width=1400, background_color="#f2ede3")
     body.save(args.output)
     (args.output / "design.json").write_text(json.dumps(design, indent=2, allow_nan=False))
+    mesh_metrics = mesh_panels(args.output, args.resolution_cm)
     outputs = {p.name: digest(p) for p in args.output.iterdir() if p.is_file()}
     receipt = {
         "schemaVersion": 1, "upstreamCommit": COMMIT,
@@ -136,10 +229,10 @@ def build(args):
                                 else "caller-supplied-not-independently-measured",
         "status": "cut-pattern-study-not-fitted-or-runtime-admitted",
         "unitsInMetre": 100, "metresPerPatternUnit": 0.01,
-        "metrics": metrics, "cpuThreadLimitRequested": 1,
+        "metrics": metrics, "meshMetrics": mesh_metrics, "cpuThreadLimitRequested": 1,
         "elapsedSeconds": time.perf_counter() - start,
         "versions": {p: importlib.metadata.version(p) for p in
-                     ("numpy", "scipy", "svgpathtools", "CairoSVG", "matplotlib", "cffi", "pycparser")},
+                     ("numpy", "scipy", "svgpathtools", "CairoSVG", "matplotlib", "cffi", "pycparser", "cgal", "libigl")},
         "unverified": ["target body measurements", "pointed hem and narrow straps",
                        "boning and closures", "3D fit", "self-contact in motion", "engine garment integration"],
     }
@@ -152,6 +245,7 @@ if __name__ == "__main__":
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--archive", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--resolution-cm", type=float, default=2.0)
     authority = parser.add_mutually_exclusive_group(required=True)
     authority.add_argument("--body", type=Path)
     authority.add_argument("--upstream-fixture", action="store_true")

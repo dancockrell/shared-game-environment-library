@@ -12,9 +12,45 @@ builder = importlib.util.module_from_spec(loader)
 loader.loader.exec_module(builder)
 REVIEW = Path(sys.argv.pop(1))
 SPEC = json.loads((REVIEW / "FittedShirt_specification.json").read_text())
+MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_mesh_area_and_boundary(self):
+        result = builder.validate_mesh(MESH)
+        receipt = json.loads((REVIEW / "receipt.json").read_text())
+        self.assertEqual(result, receipt["meshMetrics"])
+        self.assertGreater(result["triangles"], 1000)
+        self.assertEqual(len(MESH["stitches"]), len(SPEC["pattern"]["stitches"]))
+
+    def test_missing_face_rejected(self):
+        bad = copy.deepcopy(MESH)
+        next(iter(bad["panels"].values()))["triangles"].pop()
+        with self.assertRaises(ValueError):
+            builder.validate_mesh(bad)
+
+    def test_degenerate_face_rejected(self):
+        bad = copy.deepcopy(MESH)
+        next(iter(bad["panels"].values()))["triangles"][0] = [0, 0, 0]
+        with self.assertRaises(ValueError):
+            builder.validate_mesh(bad)
+
+    def test_seam_out_of_range_rejected(self):
+        bad = copy.deepcopy(MESH)
+        bad["stitches"][0]["vertexPairs"][0][0] = 100000
+        with self.assertRaises(ValueError):
+            builder.validate_mesh(bad)
+
+    def test_rest_and_placement_are_rigidly_equivalent(self):
+        import numpy as np
+        for panel in MESH["panels"].values():
+            rest, placed = np.asarray(panel["restXY"]), np.asarray(panel["placedXYZ"])
+            # Every triangle edge retains its material rest length at placement.
+            for tri in panel["triangles"]:
+                for a, b in zip(tri, tri[1:] + tri[:1]):
+                    self.assertAlmostEqual(float(np.linalg.norm(rest[a] - rest[b])),
+                                           float(np.linalg.norm(placed[a] - placed[b])), places=10)
+
     def test_real_curves_and_darts(self):
         result = builder.validate_pattern(SPEC)
         self.assertEqual(result["panels"], 4)

@@ -50,6 +50,7 @@
   "completion": {
     "commit": null,
     "checks": [
+      "GarmentCode author CGAL meshing executed CPU-only at 2 cm and 1 cm: 1023/3785 vertices, 1680/6876 triangles, 128/232 matched seam pairs; flat rest and rigid placement preserved; eleven tests passed at both resolutions; two 2 cm runs byte-identical across all ten outputs; actual triangulation image inspected, no fitted garment admission",
       "GarmentCode pinned source verified against archive: 160 files; unchanged constructor generated four curved/darted panels, 16 stitches and 8 dart closures; two CPU runs produced identical eight-output hashes; six structural/hash/negative-input tests passed; flat panel review inspected, not fitted or admitted costume",
       "User requested live demonstration: one owned OpenGL runtime opened at 30 FPS and below-normal priority, not an editor; observed 354 MB RAM and 2106 MiB total GPU memory; preview left available, no other task process touched",
       "User shared-machine rule recorded: headless Godot, no editor window cycling, reuse owned session, check RAM/VRAM headroom and defer heavy runs; historical multi-launch rendered iteration batch is not permitted under current workflow. Live check found no Godot process; no other task process was modified.",
