@@ -2,11 +2,15 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Fitted clothing components, headwear and NPC batch authoring",
-  "status": "completed",
+  "summary": "Shared character production coverage and period-aware wardrobe admission",
+  "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T13:31:00Z",
+  "updated_at": "2026-09-06T14:10:00Z",
   "paths": [
+    "tools/character-production.mjs",
+    "tools/test-character-production.mjs",
+    "catalog/characters/",
+    "docs/CHARACTER_PRODUCTION.md",
     "tools/character-workshop.gd",
     "tools/character-workshop.tscn",
     "tools/test-character-workshop.gd",
@@ -27,8 +31,10 @@
     "notes": "Own shared character tooling; DR Companion owns scenery. Free source assets obtained and staged. No paid generation. Broader builder remains unfinished: period wardrobe, face and creature construction, fit coverage and game integration."
   },
   "completion": {
-    "commit": "0030198",
+    "commit": null,
     "checks": [
+      "node tools/test-character-production.mjs: passed 18 inventory and metadata admission assertions",
+      "DragonRealms local-cache inventory: generated 11 races, 919 creature pages and 2493 NPC pages; all unassessed",
       "Both rendered workshop suites: 85 checks each passed",
       "Both six-actor standalone batch reviews: 69 checks each passed and renders inspected",
       "Synthetic wardrobe suite: 15 checks passed",

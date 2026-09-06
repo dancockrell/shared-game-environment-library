@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import { admission, buildInventory } from './character-production.mjs';
+
+const data = { races: { Human: {} }, creatures: { 'Rat (1)': {}, 'Rat (2)': {} }, bestiary: { 'Rat (1)': { BodyType: 'quadruped' }, Rat: {} }, npcs: { Captain: {} } };
+const result = buildInventory(data, []);
+assert.deepEqual(result.counts, { races: 1, creatures: 3, npcs: 1 });
+assert.equal(new Set(result.entries.map(e => e.id)).size, 5);
+assert.deepEqual(result.entries.find(e => e.title === 'Rat (1)').sourceBodyTypes, ['quadruped']);
+assert(result.entries.every(e => e.constructionStatus === 'unassessed' && e.approvedAssetIds.length === 0));
+assert.equal(JSON.stringify(result), JSON.stringify(buildInventory(data, [])));
+const valid = { status: 'approved', consumers: ['dragonrealms', 'pirate-island'], era: 'early-modern', tags: [], sourceSha256: 'a'.repeat(64), license: 'CC0-1.0', fitReview: 'review/fit.json', visualReview: 'review/front.png' };
+assert.deepEqual(admission(valid, 'dragonrealms'), []);
+assert(admission({ ...valid, tags: ['firearm'] }, 'dragonrealms').length > 0);
+assert.deepEqual(admission({ ...valid, tags: ['firearm'] }, 'pirate-island'), []);
+assert(admission({ ...valid, era: 'fantasy-steampunk' }, 'dragonrealms').length > 0);
+assert.deepEqual(admission({ ...valid, era: 'fantasy-steampunk' }, 'pirate-island'), []);
+assert(admission({ ...valid, status: 'prototype' }, 'pirate-island').length > 0);
+assert(admission({ ...valid, sourceSha256: '' }, 'pirate-island').length > 0);
+assert(admission({ ...valid, visualReview: null }, 'pirate-island').length > 0);
+assert(admission(valid, 'unknown').length > 0);
+assert(admission(null, 'dragonrealms').length > 0);
+assert(admission({ ...valid, consumers: 'dragonrealms' }, 'dragonrealms').length > 0);
+assert(admission({ ...valid, sourceSha256: 12 }, 'dragonrealms').length > 0);
+assert(admission({ ...valid, fitReview: true }, 'dragonrealms').length > 0);
+console.log('18 production inventory and admission checks passed');
