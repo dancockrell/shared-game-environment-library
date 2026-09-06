@@ -254,6 +254,22 @@ impl Room {
                             if mesh.positions.len() != before + 6 {
                                 return Err("Room boundary collapses at output precision".into());
                             }
+                            // One UV unit per definition-space metre. Keep vertical
+                            // surfaces upright; do not restart the tile at grid cuts.
+                            let (texture_u, texture_v) = match axis {
+                                0 => (2, 1),
+                                1 => (0, 2),
+                                _ => (0, 1),
+                            };
+                            let sign = if (axis == 0 && high) || (axis == 2 && !high) {
+                                -1.
+                            } else {
+                                1.
+                            };
+                            for i in before..before + 6 {
+                                let p = mesh.positions[i];
+                                mesh.uvs[i] = [sign * p[texture_u], p[texture_v]];
+                            }
                         }
                     }
                 }
@@ -327,6 +343,63 @@ mod tests {
         r = room();
         r.width = f32::NAN;
         assert!(r.boxes().is_err());
+    }
+    #[test]
+    fn material_uvs_are_metric_and_continuous_across_subdivisions() {
+        let m = crate::mesh(
+            "uv-room",
+            &crate::Definition {
+                shape: crate::Shape::Room { room: room() },
+                color: [1.; 4],
+                material: crate::MaterialSettings::default(),
+            },
+            1_000_000,
+        )
+        .unwrap();
+        let mut shared = std::collections::BTreeMap::new();
+        let mut repeated = 0;
+        for ((p, n), uv) in m.positions.iter().zip(&m.normals).zip(&m.uvs) {
+            let key =
+                [p[0], p[1], p[2], n[0], n[1], n[2]].map(|x| if x == 0. { 0 } else { x.to_bits() });
+            if let Some(previous) = shared.insert(key, *uv) {
+                assert_eq!(previous, *uv);
+                repeated += 1;
+            }
+            if n[1] == 0. {
+                assert_eq!(uv[1], p[1]);
+            }
+            if n[0] > 0. {
+                assert_eq!(uv[0], -p[2]);
+            }
+            if n[0] < 0. {
+                assert_eq!(uv[0], p[2]);
+            }
+            if n[2] > 0. {
+                assert_eq!(uv[0], p[0]);
+            }
+            if n[2] < 0. {
+                assert_eq!(uv[0], -p[0]);
+            }
+        }
+        assert!(repeated > 100);
+        assert!(m.uvs.iter().flatten().any(|x| x.abs() > 1.));
+        for (points, uvs) in m
+            .positions
+            .as_chunks::<3>()
+            .0
+            .iter()
+            .zip(m.uvs.as_chunks::<3>().0)
+        {
+            for (a, b) in [(0, 1), (1, 2), (2, 0)] {
+                let geometry = (0..3)
+                    .map(|i| (points[a][i] as f64 - points[b][i] as f64).powi(2))
+                    .sum::<f64>();
+                let texture = (0..2)
+                    .map(|i| (uvs[a][i] as f64 - uvs[b][i] as f64).powi(2))
+                    .sum::<f64>();
+                assert!((geometry - texture).abs() < 1e-10);
+            }
+        }
     }
     #[test]
     fn boundary_preserves_material_volume_and_grid_is_bounded() {

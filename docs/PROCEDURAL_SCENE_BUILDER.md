@@ -712,8 +712,16 @@ are counted against the vertex budget before triangle allocation. Construction
 cells collapsed by output precision are refused. Dense valid opening layouts
 can exceed this grid cap and receive a diagnostic rather than unbounded work.
 The conforming subdivisions can increase triangle counts; they are not mesh
-decimation. UVs remain diagnostic triangle-local coordinates, not finished room
-materials. General self-intersection validation and new engine renders remain
+decimation. Room UVs now use continuous planar coordinates with one UV unit per
+definition-space metre, instead of restarting the texture on every triangle.
+Wall V follows height; north/south U follows signed X and east/west U follows
+signed Z so the exterior-facing mapping is consistently oriented. Horizontal
+faces use X/Z. This preserves texture scale and continuity across coplanar
+construction subdivisions. It does not unwrap continuously around corners;
+UVs intentionally exceed 0..1 and require repeating material textures. Instance
+scaling also scales the pattern: this is not world-space triplanar texturing.
+These coordinates are a material foundation, not finished room art.
+General self-intersection validation and new engine renders remain
 outstanding.
 
 The connectivity audit now enforces closed oriented graphs for source-declared
@@ -732,6 +740,16 @@ The new gate rejects the retained pre-fix `rooms.json` with exit 1, identifying
 The revised room fixture has 520 triangles and 944 render vertices; the simpler
 transformed shell has 192 triangles and 366 render vertices. Neither has been
 rendered or engine-reloaded in this pass. Teapot Boolean joins are still absent.
+
+Continuous-UV follow-up receipt:
+`procedural/generated/reviews/20260906-123121-c3bd93acdf3147719a9f3238033bbe30/report.json`:
+46 Rust tests, six audit tests and all 32 CPU stages passed. Tests compare
+geometric and UV edge lengths, upright wall mapping and shared-vertex UV values.
+Independent comparison of all nine fixtures confirms unchanged triangle-corner
+positions/normals, placements and apertures. Consistent UVs let exact indexing
+reduce the room fixture from 944 to 440 render vertices (still 520 triangles)
+and the transformed shell from 366 to 186 (still 192 triangles). GPU memory,
+engine texture appearance and final material quality were not measured/reviewed.
 
 Historical initial box-concatenation validation: eleven Rust tests passed, including aperture-side
 occupancy, window sill/lintel solids, four-sided full-height cuts, invalid cuts,
