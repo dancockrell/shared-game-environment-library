@@ -1,1 +1,29 @@
-{"schema_version":1,"task_id":"crossing-support-assets","agent":"codex","summary":"Nine description-led building and terrain assets for Crossing; preserve concurrent character tooling","status":"active","claimed_at":"2026-09-06T03:10:00Z","updated_at":"2026-09-06T03:30:00Z","paths":["tools/river-port-kit.gd","docs/river-port-build/catalog/","docs/CROSSING_BUILDING_BATCH.md"],"coordination":{"depends_on":[],"conflicts_with":[],"notes":"Character claim and uncommitted character files excluded; existing environment kit and catalog only."},"completion":{"commit":"included in this content checkpoint","checks":["80 native models and GLB roundtrips passed","76 previous GLB hashes unchanged","94-instance workshop/quay regenerated and independently reloaded","Lawn, stump, plank and display-rack review images generated; lawn checker pattern rejected and replaced with continuous turf","No service credits consumed"]}}
+{
+  "schema_version": 1,
+  "task_id": "crossing-support-assets",
+  "agent": "codex",
+  "summary": "Published nine Crossing building and terrain assets; character work preserved",
+  "status": "completed",
+  "claimed_at": "2026-09-06T03:10:00Z",
+  "updated_at": "2026-09-06T06:13:07.162Z",
+  "paths": [
+    "tools/river-port-kit.gd",
+    "docs/river-port-build/catalog/",
+    "docs/CROSSING_BUILDING_BATCH.md"
+  ],
+  "coordination": {
+    "depends_on": [],
+    "conflicts_with": [],
+    "notes": "Character claim and uncommitted character files excluded; existing environment kit and catalog only."
+  },
+  "completion": {
+    "commit": "688ecc25c7ba3f0dc34f048fbfa42f71874a1f49",
+    "checks": [
+      "89 model roundtrips passed",
+      "80 existing GLB hashes preserved in initial batch",
+      "94-instance assembly reloaded",
+      "Roof and mud revised after visual review",
+      "No paid services or credits"
+    ]
+  }
+}
