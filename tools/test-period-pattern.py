@@ -159,7 +159,7 @@ class ActualPatternTests(unittest.TestCase):
         if result.get("supportsReleased"):
             self.assertEqual(result["supportReleaseAfterFrame"],90)
             masses = result["releasedSupportMassesKg"]
-            self.assertEqual(len(masses),8)
+            self.assertEqual(len(masses),len(result["temporaryDressingSupports"]))
             self.assertTrue(all(value>0 for value in masses.values()))
             area = .5*np.linalg.norm(np.cross(rest[faces[:,1]]-rest[faces[:,0]],
                                               rest[faces[:,2]]-rest[faces[:,0]]),axis=1)
@@ -168,10 +168,10 @@ class ActualPatternTests(unittest.TestCase):
                 np.add.at(expected_mass,faces[:,corner],area*result["parameters"]["density"]/3)
             for index,mass in masses.items():
                 self.assertAlmostEqual(mass,expected_mass[int(index)],delta=1e-10)
-            displacement = [np.linalg.norm(points[int(index)]-support["targetXYZ"]) for index,support in result["temporaryShoulderSupports"].items()]
+            displacement = [np.linalg.norm(points[int(index)]-support["targetXYZ"]) for index,support in result["temporaryDressingSupports"].items()]
             self.assertGreater(max(displacement),.001)
         else:
-            for index,support in result["temporaryShoulderSupports"].items():
+            for index,support in result["temporaryDressingSupports"].items():
                 np.testing.assert_allclose(points[int(index)],support["targetXYZ"],atol=2e-7,rtol=0)
         gaps = np.linalg.norm(points[pairs[:,0]]-points[pairs[:,1]],axis=1)
         self.assertAlmostEqual(float(gaps.max()),result["history"][-1]["maxSeamGapMetres"],places=7)
@@ -212,8 +212,11 @@ class ActualPatternTests(unittest.TestCase):
         self.assertEqual(len(faces),sum(len(p["triangles"]) for p in MESH["panels"].values()))
         self.assertTrue(np.all(rest[:,2]==0))
         self.assertTrue(np.all(pairs[:,0]!=pairs[:,1]))
-        supports = fitter.shoulder_supports(data,body,offsets,placed)
-        self.assertEqual(len(supports),8)
+        supports = fitter.dressing_supports(data,body,offsets,placed)
+        has_skirt = any("skirt" in name for name in data["panels"])
+        self.assertEqual(len(supports),24 if has_skirt else 16)
+        self.assertEqual(sum(s["kind"]=="shoulder" for s in supports.values()),8)
+        self.assertEqual(sum(s["kind"]=="torso-side" for s in supports.values()),8)
         for support in supports.values():
             weights = np.asarray(support["barycentric"])
             triangle = np.asarray(body["vertices"])[body["triangles"][support["bodyTriangle"]]]
@@ -222,9 +225,30 @@ class ActualPatternTests(unittest.TestCase):
             self.assertAlmostEqual(weights.sum(),1)
             self.assertTrue(np.all(weights >= -1e-9))
             self.assertAlmostEqual(np.linalg.norm(np.asarray(support["targetXYZ"])-surface),.003,places=9)
-            self.assertGreater(surface[1],.45)
+            if support["kind"] == "shoulder":
+                self.assertGreater(surface[1],.45)
+            elif support["kind"] == "skirt-side":
+                self.assertEqual(support["kind"],"skirt-side")
+                self.assertLess(surface[1],.1)
+                self.assertGreater(surface[0]*support["queryXYZ"][0],0)
+            else:
+                self.assertEqual(support["kind"],"torso-side")
+                self.assertGreater(surface[0]*support["queryXYZ"][0],0)
             nearest_vertex_distance = np.linalg.norm(np.asarray(body["vertices"])-support["queryXYZ"],axis=1).min()
             self.assertLessEqual(np.linalg.norm(surface-support["queryXYZ"]),nearest_vertex_distance+1e-10)
+
+    @unittest.skipUnless(BODY_PATH and "sourceBodySha256" in MESH,"Needs body-anchored panels")
+    def test_dressing_guides_are_direction_invariant_and_reject_remote_body(self):
+        import numpy as np
+        data,body,offsets,rest,placed,faces,pairs = fitter.read_inputs(SimpleNamespace(panels=REVIEW/"panel-mesh.json",body=BODY_PATH))
+        expected = fitter.dressing_supports(data,body,offsets,placed)
+        reversed_data = copy.deepcopy(data)
+        for seam in reversed_data["stitches"]:
+            seam["vertexPairs"].reverse()
+        actual = fitter.dressing_supports(reversed_data,body,offsets,placed)
+        self.assertEqual(expected,actual)
+        with self.assertRaisesRegex(ValueError,"not near a usable body surface"):
+            fitter.dressing_supports(data,body,offsets,placed+np.array([10,0,0]))
 
     def test_placement_matches_author_transform_and_body_origin(self):
         import numpy as np

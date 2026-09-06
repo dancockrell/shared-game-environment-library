@@ -92,10 +92,10 @@ def seam_filters(faces, edges, pairs, count):
     return vertex_filter, edge_filter
 
 
-def shoulder_supports(data, body, offsets, placed):
-    """Temporary dressing supports at the high front/back joining seams.
+def dressing_supports(data, body, offsets, placed):
+    """Temporary surface supports for shoulders and torso/coat-skirt side seams.
 
-    This selector is for the current sleeveless bodice only. Targets are actual
+    These selectors are for the current bodice/coat studies. Targets are actual
     body triangle surfaces plus 3 mm along barycentrically interpolated normals.
     Nearest-vertex snapping visibly overstretched narrow shoulder straps.
     """
@@ -110,6 +110,21 @@ def shoulder_supports(data, body, offsets, placed):
     surface = trimesh.Trimesh(vertices,triangles,process=False)
     threshold = placed[:,1].min() + .8*np.ptp(placed[:,1])
     supports = {}
+    def attach(pair,kind,max_distance):
+        midpoint = placed[list(pair)].mean(axis=0)
+        closest, distance, ids = trimesh.proximity.closest_point_naive(surface,[midpoint])
+        triangle = int(ids[0])
+        barycentric = trimesh.triangles.points_to_barycentric(vertices[triangles[[triangle]]],closest)[0]
+        normal = barycentric @ normals[triangles[triangle]]
+        if distance[0] > max_distance or np.linalg.norm(normal) < 1e-10:
+            raise ValueError(f"{kind} support is not near a usable body surface")
+        if kind == "skirt-side" and (normal[0]*midpoint[0] <= 0 or abs(closest[0,0]) < .5*abs(midpoint[0])):
+            raise ValueError("Skirt support would route through the crotch or wrong body side")
+        target = closest[0]+.003*normal/np.linalg.norm(normal)
+        for index in pair:
+            supports[index] = {"kind":kind,"targetXYZ":target.tolist(),"bodyTriangle":triangle,
+                               "barycentric":barycentric.tolist(),"surfaceXYZ":closest[0].tolist(),
+                               "queryXYZ":midpoint.tolist()}
     for seam in data["stitches"]:
         names = seam["panels"]
         if not any("ftorso" in name for name in names) or not any("btorso" in name for name in names):
@@ -118,23 +133,31 @@ def shoulder_supports(data, body, offsets, placed):
         if min(placed[index,1] for pair in pairs for index in pair) < threshold:
             continue
         for pair in (pairs[0],pairs[-1]):
-            midpoint = placed[list(pair)].mean(axis=0)
             # Existing Ericson point/triangle method in Trimesh. One query at a
             # time bounds temporary arrays to this <=100k-triangle body; this
             # exhaustive method is not a per-frame or whole-garment collider.
-            closest, distance, ids = trimesh.proximity.closest_point_naive(surface,[midpoint])
-            triangle = int(ids[0])
-            barycentric = trimesh.triangles.points_to_barycentric(vertices[triangles[[triangle]]],closest)[0]
-            normal = barycentric @ normals[triangles[triangle]]
-            if distance[0] > .04 or np.linalg.norm(normal) < 1e-10:
-                raise ValueError("Shoulder support is not near a usable body surface")
-            target = closest[0]+.003*normal/np.linalg.norm(normal)
-            for index in pair:
-                supports[index] = {"targetXYZ":target.tolist(),"bodyTriangle":triangle,
-                                   "barycentric":barycentric.tolist(),"surfaceXYZ":closest[0].tolist(),
-                                   "queryXYZ":midpoint.tolist()}
+            attach(pair,"shoulder",.04)
     if len(supports) != 8:
         raise ValueError("Expected eight endpoint supports across two bodice shoulder seams")
+    for seam in data["stitches"]:
+        names = seam["panels"]
+        if not any("ftorso" in n for n in names) or not any("btorso" in n for n in names):
+            continue
+        pairs = [(offsets[names[0]]+a,offsets[names[1]]+b) for a,b in seam["vertexPairs"]]
+        pair = min(pairs,key=lambda pair: placed[list(pair),1].mean())
+        if min(placed[index,1] for index in pair) >= threshold:
+            continue
+        attach(pair,"torso-side",.12)
+    for seam in data["stitches"]:
+        names = seam["panels"]
+        if not any("fskirt" in n for n in names) or not any("bskirt" in n for n in names):
+            continue
+        pairs = [(offsets[names[0]]+a,offsets[names[1]]+b) for a,b in seam["vertexPairs"]]
+        # Keep the lower side seam outside the leg during sewing, then release.
+        # Do not anchor the waist to its still-separated initial panel height.
+        pairs.sort(key=lambda pair: placed[list(pair),1].mean())
+        for pair in (pairs[0],pairs[len(pairs)//2]):
+            attach(pair,"skirt-side",.2)
     return supports
 
 
@@ -150,7 +173,7 @@ def solve(args):
     if args.device == "cpu":
         raise ValueError("Full-surface fitting requires CUDA for the bounded body SDF; CPU review remains available")
     data, body, offsets, rest, placed, faces, pairs = read_inputs(args)
-    supports = shoulder_supports(data,body,offsets,placed)
+    supports = dressing_supports(data,body,offsets,placed)
     args.output.mkdir(parents=True)
     start = time.perf_counter()
     with wp.ScopedDevice(args.device):
@@ -280,7 +303,7 @@ def solve(args):
             "toolSha256": digest(__file__), "solver":"Newton SolverVBD", "device": args.device,
             "frames":args.frames, "substeps":10, "iterations":10, "dt":1/600,
             "gravitySchedule":"zero during 90-frame sewing; -9.81 Y after support release",
-            "temporaryShoulderSupports":supports,
+            "temporaryDressingSupports":supports,
             "supportsReleased":args.frames>90, "supportReleaseAfterFrame":90,
             "releasedSupportMassesKg":{str(i):float(released_masses[i]) for i in supports},
             "sewingRamp":"900 substeps; support positions and velocities plus seam lengths updated every substep",
