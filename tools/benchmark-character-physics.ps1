@@ -3,6 +3,7 @@ param(
     [ValidateSet('vbd','xpbd','style3d')][string]$Solver = 'vbd',
     [ValidateSet('cpu','cuda:0')][string]$Device = 'cuda:0',
     [ValidateRange(1,3600)][int]$Frames = 300,
+    [ValidateRange(1,40)][int]$Iterations = 10,
     [ValidateRange(10,1800)][int]$TimeoutSeconds = 300,
     [string]$PatternMesh,
     [string]$FittingBody,
@@ -12,6 +13,7 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $pythonPath = (Resolve-Path -LiteralPath $Python).Path
 $isFitting = -not [string]::IsNullOrEmpty($PatternMesh)
+if (-not $isFitting -and $Iterations -ne 10) { throw 'Iterations override is only supported for measured-pattern fitting.' }
 if ($ReviewResult -and (-not $isFitting -or $Device -ne 'cuda:0')) { throw 'Depth review requires pattern/body inputs and GPU resource monitoring.' }
 if ($isFitting -and (-not $FittingBody -or $Solver -ne 'vbd' -or $Frames -gt 600)) { throw 'Fitting requires body, VBD, and at most 600 frames.' }
 $freeRamKiB = (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory
@@ -36,6 +38,7 @@ if ($isFitting) {
     $patternPath = (Resolve-Path -LiteralPath $PatternMesh).Path
     $bodyPath = (Resolve-Path -LiteralPath $FittingBody).Path
     $arguments = @('-u','-X','utf8',(Join-Path $PSScriptRoot 'fit-period-pattern.py'),'--panels',$patternPath,'--body',$bodyPath,'--output',(Join-Path $output 'fitting'),'--frames',"$Frames",'--device',$Device)
+    $arguments += @('--iterations',"$Iterations")
     if ($ReviewResult) { $arguments += @('--review-only',(Resolve-Path -LiteralPath $ReviewResult).Path,'--depth-render') }
 } else {
     $arguments = @('-X','utf8','-m','newton.examples','cloth_hanging','--viewer','null','--solver',$Solver,'--device',$Device,'--num-frames',"$Frames",'--test')

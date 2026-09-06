@@ -334,12 +334,17 @@ class ActualPatternTests(unittest.TestCase):
             self.assertGreater(max(item["bodyContacts"][kind] for item in result["history"]),0)
 
     def test_seam_contact_filters_follow_joined_topology(self):
-        vertex, edge = fitter.seam_filters([[0,1,2],[3,4,5],[6,7,8]],
-            [[-1,-1,0,1],[-1,-1,3,4],[-1,-1,6,7]], [(0,3),(3,6)],9)
+        vertex, edge = fitter.seam_filters([[0,1,2],[3,4,5],[6,7,8],[9,10,11]],
+            [[-1,-1,0,1],[-1,-1,3,4],[-1,-1,6,7],[-1,-1,9,10]], [(0,3),(3,6)],12)
         self.assertEqual(vertex[0],{1,2})
         self.assertEqual(vertex[3],{0,2})
         self.assertEqual(edge[0],{1,2})
-        self.assertNotIn(1,vertex)  # Do not exempt unrelated cloth vertices.
+        self.assertEqual(vertex[1],{1,2})  # One-ring neighbors carry through the seam.
+        self.assertNotIn(9,vertex)  # Disconnected cloth still collides.
+        self.assertNotIn(3,edge)
+        for a,others in edge.items():
+            for b in others:
+                self.assertIn(a,edge[b])
 
     @unittest.skipUnless(BODY_PATH and "sourceBodySha256" in MESH,"Needs body-anchored panels")
     def test_fitting_input_and_surface_supports(self):

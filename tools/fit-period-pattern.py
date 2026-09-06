@@ -59,7 +59,11 @@ def read_inputs(args):
 
 
 def seam_filters(faces, edges, pairs, count):
-    """Exclude self-contact only at topology joined by an intended seam."""
+    """Extend Newton's default two-ring contact exclusions across sewn topology.
+
+    Seam-equivalent vertices are one topological location, not another cloth
+    layer. Keep original particle/primitive IDs; no physical vertex welding.
+    """
     parent = list(range(count))
     def root(i):
         while parent[i] != i:
@@ -78,17 +82,28 @@ def seam_filters(faces, edges, pairs, count):
     for i, edge in enumerate(edges):
         for vertex in edge[-2:]:
             incident_edges[vertex].add(i)
+    neighbors = {r:set() for r in groups}
+    for face in faces:
+        reps = {root(int(v)) for v in face}
+        for r in reps:
+            neighbors[r].update(reps-{r})
+    # Newton n=2 filters triangles incident to a one-edge neighbor. Apply that
+    # same rule on the seam-equivalence graph instead of the separate panels.
+    nearby = {}
+    for r in groups:
+        nearby[r] = set().union(*(set(groups[n]) for n in neighbors[r]|{r}))
     vertex_filter, edge_filter = {}, {}
-    for group in groups.values():
-        if len(group) < 2:
-            continue
-        for a in group:
-            for b in group:
-                if a == b:
-                    continue
-                vertex_filter.setdefault(a, set()).update(incident_triangles[b])
-                for edge in incident_edges[a]:
-                    edge_filter.setdefault(edge, set()).update(incident_edges[b])
+    for a in range(count):
+        candidates = set().union(*(incident_triangles[b] for b in nearby[root(a)]))
+        candidates.difference_update(incident_triangles[a])
+        if candidates:
+            vertex_filter[a] = candidates
+    for edge_id,edge in enumerate(edges):
+        a,b = map(int,edge[-2:])
+        candidates = set().union(*(incident_edges[v] for v in nearby[root(a)]|nearby[root(b)]))
+        candidates.discard(edge_id)
+        if candidates:
+            edge_filter[edge_id] = candidates
     return vertex_filter, edge_filter
 
 
@@ -264,8 +279,8 @@ def solve(args):
     from newton._src.geometry.types import GeoType
     if args.output.exists():
         raise ValueError("Preserve previous fitting studies; choose a new directory")
-    if not 1 <= args.frames <= 600:
-        raise ValueError("Use one to 600 frames for this bounded study")
+    if not 1 <= args.frames <= 600 or not 1 <= args.iterations <= 40:
+        raise ValueError("Use one to 600 frames and one to 40 solver iterations for this bounded study")
     if args.device == "cpu":
         raise ValueError("Full-surface fitting requires CUDA for the bounded body SDF; CPU review remains available")
     data, body, offsets, rest, placed, faces, pairs = read_inputs(args)
@@ -288,7 +303,7 @@ def solve(args):
         for index in supports:
             builder.particle_mass[index] = 0.0
         for a, b in pairs:
-            builder.add_spring(int(a), int(b), ke=5000, kd=1, control=0)
+            builder.add_spring(int(a), int(b), ke=50000, kd=1, control=0)
         initial_lengths = np.asarray(builder.spring_rest_length, dtype=np.float32)
         collider = newton.Mesh(np.asarray(body["vertices"], dtype=np.float32),
                                np.asarray(body["triangles"], dtype=np.int32).ravel(), compute_inertia=False)
@@ -311,7 +326,7 @@ def solve(args):
         model.soft_contact_ke = 50000
         model.soft_contact_kd = 10
         model.soft_contact_mu = .2
-        solver = newton.solvers.SolverVBD(model, iterations=10, particle_enable_self_contact=True,
+        solver = newton.solvers.SolverVBD(model, iterations=args.iterations, particle_enable_self_contact=True,
             particle_self_contact_margin=.004,
             particle_self_contact_gap=.002, particle_enable_tile_solve=args.device != "cpu",
             particle_external_vertex_contact_filtering_map=vertex_filter,
@@ -417,20 +432,20 @@ def solve(args):
             "vertices": positions.tolist(), "triangles": faces.tolist(), "seamPairs": pairs.tolist(),
             "panelOffsets": offsets, "sourceBodySha256": digest(args.body), "sourcePanelsSha256": digest(args.panels),
             "toolSha256": digest(__file__), "solver":"Newton SolverVBD", "device": args.device,
-            "frames":args.frames, "substeps":10, "iterations":10, "dt":1/600,
+            "frames":args.frames, "substeps":10, "iterations":args.iterations, "dt":1/600,
             "gravitySchedule":"zero during 90-frame sewing; -9.81 Y after support release",
             "temporaryDressingSupports":supports,
             "supportsReleased":args.frames>90, "supportReleaseAfterFrame":90,
             "releasedSupportMassesKg":{str(i):float(released_masses[i]) for i in supports},
             "sewingRamp":"900 substeps; support positions and velocities plus seam lengths updated every substep",
-            "selfContactEnabled":True, "seamContactExclusions":"incident primitives at sewn topology only",
+            "selfContactEnabled":True, "seamContactExclusions":"Newton two-ring neighborhood on seam-equivalent topology",
             "bodyContactMethod":"Newton full-surface rigid-soft SDF contacts plus original vertex contacts",
             "bodySdfMaxResolution":128,"bodySdfTextureFormat":"float32",
             "bodyContactCapacity":contacts.soft_contact_max,
             "bodySdfDistancesMetres":field_distances.tolist(),
             "bodySdfSampleOrder":"cloth vertices followed by triangle centroids",
             "parameters":{"density":.25,"triKe":1000,"triKa":1000,"triKd":1,"bendKe":.001,
-                          "seamKe":5000,"seamKd":1,"bodyContactKe":50000,"particleRadiusMetres":.002},
+                          "seamKe":50000,"seamKd":1,"bodyContactKe":50000,"particleRadiusMetres":.002},
             "history":history, "elapsedSeconds":time.perf_counter()-start,
             "versions": {name:importlib.metadata.version(name) for name in ("newton","warp-lang","numpy","trimesh","scipy")}}
         (args.output/"fit.json").write_text(json.dumps(result, allow_nan=False))
@@ -575,6 +590,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", choices=("cpu", "cuda:0"), default="cpu")
     parser.add_argument("--depth-render",action="store_true",help="Render exported GLB offscreen; requires graphics and resource-budgeted execution")
     parser.add_argument("--frames", type=int, default=120)
+    parser.add_argument("--iterations",type=int,default=10,help="VBD convergence work per substep, bounded to 1..40")
     parser.add_argument("--review-only",type=Path,help="Measure and export existing fit.json on CPU; optional depth render uses graphics")
     args = parser.parse_args()
     review(args) if args.review_only else solve(args)
