@@ -743,10 +743,13 @@ func build() -> void:
 	DirAccess.make_dir_recursive_absolute(output_dir)
 	root.size = Vector2i(1800,1200)
 	root.msaa_3d = Viewport.MSAA_4X
-	root.use_taa = true
+	root.use_taa = RenderingServer.get_current_rendering_method() == "forward_plus"
 	RenderingServer.directional_shadow_atlas_set_size(8192,true)
 	if args.size() == 2 and args[1] == "--catalog":
 		await build_catalog()
+		return
+	if args.size() == 2 and args[1] == "--inspect-catalog":
+		inspect_catalog()
 		return
 	if args.size() == 2 and args[1] == "--inspect":
 		await inspect_saved_scene()
@@ -955,6 +958,8 @@ func build_catalog() -> void:
 	overlay.add_child(caption)
 	var sheet := Image.create_empty(2560,3360,false,Image.FORMAT_RGBA8)
 	sheet.fill(Color("20282d"))
+	var rear_sheet := Image.create_empty(2560,3360,false,Image.FORMAT_RGBA8)
+	rear_sheet.fill(Color("20282d"))
 	var specs := kit.catalog_specs()
 	for index in specs.size():
 		var id: String = specs[index][0]
@@ -1010,7 +1015,10 @@ func build_catalog() -> void:
 		for frame in 8:
 			await process_frame
 		RenderingServer.force_draw(false)
-		assert(root.get_texture().get_image().save_png(folder.path_join(id+"-rear.png")) == OK)
+		var rear := root.get_texture().get_image()
+		rear.convert(Image.FORMAT_RGBA8)
+		assert(rear.save_png(folder.path_join(id+"-rear.png")) == OK)
+		rear_sheet.blit_rect(rear,Rect2i(0,0,640,520),Vector2i((index%4)*640,(index/4)*560))
 		# Preserve shared surface inputs in one native catalog, not 24 embedded
 		# copies of identical textures. Standalone GLBs retain all geometry.
 		var retained: Dictionary = {}
@@ -1052,11 +1060,46 @@ func build_catalog() -> void:
 	assert(collect_meshes(reloaded).size() == collect_meshes(kit.root).size())
 	reloaded.free()
 	assert(sheet.save_png(folder.path_join("contact-sheet.png")) == OK)
+	assert(rear_sheet.save_png(folder.path_join("contact-sheet-rear.png")) == OK)
 	var report := FileAccess.open(folder.path_join("build-report.json"),FileAccess.WRITE)
 	report.store_string(JSON.stringify({"generator":"tools/build-river-port.gd --catalog","recipeSource":"tools/river-port-kit.gd","engine":Engine.get_version_info().string,"serviceCreditsConsumed":0,"materialSources":kit.material_sources,"assets":entries,"native":"catalog-native.scn","exportNote":"Native contains shared triplanar textures; standalone GLBs are geometry/material-color interchange only, not visual-equivalent exports.","scope":"Neutral Crossing supply candidates; no canonical room assignments or new MUD links."},"\t")+"\n")
 	report.close()
 	ground.queue_free()
 	print("PASS catalog native reload: ",entries.size()," independent models")
+	quit()
+
+func inspect_catalog() -> void:
+	kit.root.free()
+	var folder := output_dir.path_join("catalog")
+	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("build-report.json")))
+	var loaded := (load(folder.path_join(report.native)) as PackedScene).instantiate()
+	root.add_child(loaded)
+	assert(report.assets.size() == kit.catalog_specs().size())
+	assert(report.serviceCreditsConsumed == 0)
+	var ids: Dictionary = {}
+	for entry in report.assets:
+		assert(not ids.has(entry.assetId),"Duplicate asset ID")
+		ids[entry.assetId] = true
+		assert(entry.forwardAxis == "-Z" and entry.scaleMeters == 1 and entry.admissionStatus == "candidate")
+		var model := loaded.get_node(NodePath(entry.nativeNode)) as Node3D
+		var actual := bounds_of(model)
+		var expected := AABB(Vector3(entry.bounds.min[0],entry.bounds.min[1],entry.bounds.min[2]),Vector3(entry.bounds.size[0],entry.bounds.size[1],entry.bounds.size[2]))
+		assert(actual.position.distance_to(expected.position) < 0.001 and actual.size.distance_to(expected.size) < 0.001)
+		assert(collect_meshes(model).size() == entry.meshInstances)
+		assert(FileAccess.get_sha256(folder.path_join(entry.geometryGlb)) == entry.sha256)
+		for socket_name in entry.sockets:
+			var socket := model.find_child(socket_name,true,false) as Node3D
+			assert(socket != null)
+			var p: Array = entry.sockets[socket_name]
+			assert(model.to_local(socket.global_position).distance_to(Vector3(p[0],p[1],p[2])) < 0.001)
+		if entry.assetId.ends_with("gatehouse"):
+			# The central route really is empty below the lintel, not a black
+			# rectangle painted onto a solid wall. Conservative mesh-AABB test.
+			var corridor := AABB(Vector3(-1.0,0.05,-1.45),Vector3(2.0,2.35,2.9))
+			for mesh in collect_meshes(model):
+				assert(not corridor.intersects(model.global_transform.affine_inverse()*mesh.global_transform*mesh.mesh.get_aabb()),"Gate passage obstructed")
+		print("PASS independent native bounds, sockets and GLB hash: ",entry.assetId)
+	loaded.free()
 	quit()
 
 func assign_owners(node: Node, owner_node: Node) -> void:

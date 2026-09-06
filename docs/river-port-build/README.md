@@ -10,6 +10,59 @@ These are actual Godot captures of constructed 3D geometry, not generated concep
 
 ## Deliverables
 
+### Reusable supply batch — 6 September 2026
+
+The existing kit now builds **24 independent model candidates**, not one
+monolithic scene. This is a first Crossing supply batch, not the complete
+Crossing, not 24 canonically placed landmarks, and not final art approval.
+No paid generation, subscription, API or Magnific credits were consumed.
+
+- [Front review sheet](catalog/contact-sheet.png) and [rear review sheet](catalog/contact-sheet-rear.png): actual Godot geometry captures; thumbnails fit each asset individually and therefore are not a common scale chart.
+- [Editable native catalog](catalog/catalog-native.scn): shared textured material resources, complete model hierarchies and named sockets. Each top-level child is a separate model at its own bottom-centered origin, hidden by default to prevent overlap. Instantiate the desired child and enable its visibility. Model paths are recorded in the report.
+- [Build report and asset index](catalog/build-report.json): stable IDs, per-model GLB filename/hash, native child path, measured bounds, mesh/triangle counts, sockets, materials and review status. This is a candidate build report, **not** an approved runtime manifest.
+- One standalone GLB and two PNGs per recipe under `catalog/`. GLBs preserve geometry and material colors, **not** the native triplanar texture treatment. Do not present them as visually equivalent final exports.
+
+The architecture batch includes bakery, smithy, warehouse, townhouse,
+meeting hall, watchtower, gatehouse and stable. The remaining sixteen models
+cover produce/fish stalls, coopered barrel, braced cargo, open handcart,
+roofed well, fountain, bench, street lantern, signpost, hedge, vine bower,
+quay wall, pier, landing stairs and mooring post. Produce/fish stalls share
+their frame but have different stock; these are not two architecture families.
+All are neutral reuse ingredients. Consumer room descriptions must authorize
+their selection before they are called part of an actual Crossing location.
+
+Rebuild and independently inspect using the existing builder:
+
+```text
+godot --path tools --rendering-method forward_plus --script res://build-river-port.gd -- <absolute-repository-path> --catalog
+godot --headless --path tools --script res://build-river-port.gd -- <absolute-repository-path> --inspect-catalog
+```
+
+Each recipe has its own deterministic seed derived from its stable name.
+The exporter normalizes measured visual bounds to bottom-center and wraps
+the scene's older +Z-facing construction in a -Z-facing catalog root.
+Door, vendor, seat, connector and label sockets follow that same transform.
+Visual bounds include decorative overhangs; they are not colliders or legal
+route envelopes. No MUD exits, interactions, animation or NPCs are invented.
+
+Construction review corrected separated circular masonry courses, the closed
+cart body, undersized hedge height, and the stable rail blocking its door.
+The gatehouse has a conservative mesh-bound check for a 2 m wide, 2.35 m high
+central passage. This does not establish complete scene navigation safety.
+
+Remaining polish: architecture still needs richer function-specific silhouettes
+and detailing; bakery/smithy/warehouse/stable are visibly related shells, not
+finished bespoke landmarks. Fish/produce need more recognizable sculpted
+stock. Vegetation is dense procedural geometry, not production-optimized:
+refer to measured counts, especially hedge and bower, before city instancing.
+No decimation was applied and no dense-city performance acceptance is claimed.
+The simple bench and signage need a decorative finish pass. Native texture
+interchange, collision authoring, consumer admission and actual room placement
+remain outstanding. This checkpoint broadens the library; it does not lower
+the approved finish standard or retire the remaining city work.
+
+### Connected-scene study
+
 - `river-port-main.png`: primary orthographic composition.
 - `river-port-ground.png`: same camera and geometry with buildings hidden, exposing the traced quay, bridge landings, and dock footprint.
 - `river-port-alternate.png`: opposite front quarter.

@@ -448,7 +448,9 @@ func catalog_model(id: String) -> Node3D:
 		elif id == "stable":
 			for x in [-3.1,3.1]:
 				crate(g,Vector3(x,0,d.z/2+0.65),Vector3(1.25,0.7,0.65))
-			beam(Vector3(-2.0,0.95,d.z/2+1.5),Vector3(2.0,0.95,d.z/2+1.5),0.13,"oak",g)
+			for x in [-3.8,-1.8]:
+				beam(Vector3(x,0,d.z/2+1.5),Vector3(x,1.1,d.z/2+1.5),0.12,"oak",g)
+			beam(Vector3(-3.8,0.95,d.z/2+1.5),Vector3(-1.8,0.95,d.z/2+1.5),0.13,"oak",g)
 	elif id in ["watchtower","gatehouse"]:
 		for x in ([-3.0,3.0] if id == "gatehouse" else [0.0]):
 			var tower := node_group("Tower",Vector3(x,0,0),0,g)
@@ -457,6 +459,11 @@ func catalog_model(id: String) -> Node3D:
 				var elevation := node_group("MasonryFace",Vector3.ZERO,face*PI/2,tower)
 				wall(3.3,6.2,0.3,Vector3(0,0,1.65),elevation)
 				window_at(Vector3(0,4.7,1.83),elevation,0.5)
+				for y in [0.2,3.4,5.95]:
+					block(Vector3(0,y,1.72),Vector3(3.6,0.16,0.34),"stone9",elevation)
+				for row in 15:
+					for bx in [-1.52,1.52]:
+						block(Vector3(bx,0.21+row*0.4,1.71),Vector3(0.36 if row%2 == 0 else 0.54,0.37,0.32),shade("stone"),elevation)
 				for bx in [-1.2,0.0,1.2]:
 					block(Vector3(bx,6.55,1.65),Vector3(0.55,0.7,0.5),"stone9",elevation)
 			block(Vector3(0,6.15,0),Vector3(3.8,0.24,3.8),"stone7",tower)
@@ -464,10 +471,19 @@ func catalog_model(id: String) -> Node3D:
 			block(Vector3(0,4.35,0),Vector3(3.0,1.0,3.2),"stone5",g)
 			for z in [-1.7,1.7]:
 				block(Vector3(0,5.05,z),Vector3(3.0,0.5,0.25),"stone9",g)
+				for i in 13:
+					var a := PI*i/12
+					var arch := block(Vector3(cos(a)*1.48,2.5+sin(a)*1.48,z),Vector3(0.32,0.4,0.3),"stone9",g)
+					arch.rotation.z = a-PI/2
 			attachment(g,"route_a",Vector3(0,0,2.2))
 			attachment(g,"route_b",Vector3(0,0,-2.2))
 		else:
 			block(Vector3(0,1.05,1.83),Vector3(1.05,2.1,0.08),"oak",g)
+			for y in [0.45,1.5]:
+				block(Vector3(0,y,1.88),Vector3(1.02,0.08,0.04),"iron",g)
+			for x in [-0.65,0.65]:
+				block(Vector3(x,1.12,1.84),Vector3(0.22,2.24,0.26),"stone9",g)
+			block(Vector3(0,2.24,1.84),Vector3(1.5,0.25,0.26),"stone9",g)
 			attachment(g,"entrance",Vector3(0,0,2.1))
 	elif id in ["produce-stall","fish-stall"]:
 		for x in [-1.45,1.45]:
@@ -491,7 +507,15 @@ func catalog_model(id: String) -> Node3D:
 		crate(g,Vector3(-0.4,0.82,0),Vector3(0.7,0.55,0.7))
 		barrel(g,Vector3(0.65,0,0.15))
 	elif id == "handcart":
-		crate(g,Vector3(0,0.55,0),Vector3(1.15,0.42,1.7))
+		for i in 7:
+			block(Vector3((i-3)*0.17,0.58,0),Vector3(0.16,0.12,1.7),shade("wood"),g)
+		for row in 3:
+			for x in [-0.58,0.58]:
+				block(Vector3(x,0.72+row*0.15,0),Vector3(0.07,0.13,1.7),shade("wood"),g)
+			block(Vector3(0,0.72+row*0.15,-0.84),Vector3(1.15,0.13,0.07),shade("wood"),g)
+		for x in [-0.6,0.6]:
+			for z in [-0.8,0.8]:
+				block(Vector3(x,0.86,z),Vector3(0.09,0.68,0.09),"iron",g)
 		for x in [-0.8,0.8]:
 			var wheel := node_group("SpokedWheel",Vector3(x,0.5,0),0,g)
 			wheel.rotation.z = PI/2
@@ -504,9 +528,10 @@ func catalog_model(id: String) -> Node3D:
 	elif id in ["roofed-well","fountain"]:
 		for row in 4:
 			for i in 20:
-				var a := TAU*(i+0.5*(row%2))/20
-				var stone := block(Vector3(cos(a)*1.05,0.12+row*0.24,sin(a)*1.05),Vector3(0.32,0.23,0.27),shade("stone"),g)
-				stone.rotation.y = -a
+				var a := TAU*(i+0.5*(row%2))/20+0.004
+				var b := a+TAU/20-0.008
+				var outline := PackedVector2Array([Vector2(cos(a),sin(a))*0.88,Vector2(cos(a),sin(a))*1.21,Vector2(cos(b),sin(b))*1.21,Vector2(cos(b),sin(b))*0.88])
+				piece(solid_polygon(outline,0.237,0.008),Vector3(0,row*0.24,0),Vector3.ONE,shade("stone"),g)
 		cylinder(Vector3(0,0.22,0),0.96,0.045,"water",g,40)
 		if id == "roofed-well":
 			for x in [-1.25,1.25]:
@@ -541,7 +566,10 @@ func catalog_model(id: String) -> Node3D:
 	elif id in ["hedge-run","vine-bower"]:
 		if id == "hedge-run":
 			for i in 12:
-				shrub(Vector3((i-5.5)*0.25,0,0),0.5,g)
+				var x := (i-5.5)*0.25
+				beam(Vector3(x,0,0),Vector3(x,0.85,0),0.035,"oak",g)
+				for y in [0.15,0.5,0.8]:
+					shrub(Vector3(x,y,0),0.42,g)
 		else:
 			for x in [-1.45,1.45]:
 				for z in [-0.75,0.75]:
