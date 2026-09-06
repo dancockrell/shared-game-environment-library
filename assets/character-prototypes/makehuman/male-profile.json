@@ -30,6 +30,26 @@
         "surface": 0
       }
     ],
+    "Eyebrows": [
+      {
+        "mesh": "Skeleton3D/Brows001",
+        "surface": 0
+      },
+      {
+        "mesh": "Skeleton3D/Brows005",
+        "surface": 0
+      }
+    ],
+    "Eyelashes": [
+      {
+        "mesh": "Skeleton3D/Lashes01",
+        "surface": 0
+      },
+      {
+        "mesh": "Skeleton3D/Lashes04",
+        "surface": 0
+      }
+    ],
     "Formal bottom": [
       {
         "mesh": "Skeleton3D/FormalBottom",
@@ -746,6 +766,10 @@
       "Skeleton3D/Hat::Broad jaw",
       "Skeleton3D/Hair::Broad jaw",
       "Skeleton3D/Eyes::Broad jaw",
+      "Skeleton3D/Brows001::Broad jaw",
+      "Skeleton3D/Brows005::Broad jaw",
+      "Skeleton3D/Lashes01::Broad jaw",
+      "Skeleton3D/Lashes04::Broad jaw",
       "Skeleton3D/Shoes::Broad jaw",
       "Skeleton3D/ShortCloak::Broad jaw",
       "Skeleton3D/LongCloak::Broad jaw"
@@ -761,6 +785,10 @@
       "Skeleton3D/Hat::Broad nose",
       "Skeleton3D/Hair::Broad nose",
       "Skeleton3D/Eyes::Broad nose",
+      "Skeleton3D/Brows001::Broad nose",
+      "Skeleton3D/Brows005::Broad nose",
+      "Skeleton3D/Lashes01::Broad nose",
+      "Skeleton3D/Lashes04::Broad nose",
       "Skeleton3D/Shoes::Broad nose",
       "Skeleton3D/ShortCloak::Broad nose",
       "Skeleton3D/LongCloak::Broad nose"
@@ -776,6 +804,10 @@
       "Skeleton3D/Hat::Defined cheekbones",
       "Skeleton3D/Hair::Defined cheekbones",
       "Skeleton3D/Eyes::Defined cheekbones",
+      "Skeleton3D/Brows001::Defined cheekbones",
+      "Skeleton3D/Brows005::Defined cheekbones",
+      "Skeleton3D/Lashes01::Defined cheekbones",
+      "Skeleton3D/Lashes04::Defined cheekbones",
       "Skeleton3D/Shoes::Defined cheekbones",
       "Skeleton3D/ShortCloak::Defined cheekbones",
       "Skeleton3D/LongCloak::Defined cheekbones"
@@ -791,6 +823,10 @@
       "Skeleton3D/Hat::Full cheeks",
       "Skeleton3D/Hair::Full cheeks",
       "Skeleton3D/Eyes::Full cheeks",
+      "Skeleton3D/Brows001::Full cheeks",
+      "Skeleton3D/Brows005::Full cheeks",
+      "Skeleton3D/Lashes01::Full cheeks",
+      "Skeleton3D/Lashes04::Full cheeks",
       "Skeleton3D/Shoes::Full cheeks",
       "Skeleton3D/ShortCloak::Full cheeks",
       "Skeleton3D/LongCloak::Full cheeks"
@@ -806,6 +842,10 @@
       "Skeleton3D/Hat::Full lips",
       "Skeleton3D/Hair::Full lips",
       "Skeleton3D/Eyes::Full lips",
+      "Skeleton3D/Brows001::Full lips",
+      "Skeleton3D/Brows005::Full lips",
+      "Skeleton3D/Lashes01::Full lips",
+      "Skeleton3D/Lashes04::Full lips",
       "Skeleton3D/Shoes::Full lips",
       "Skeleton3D/ShortCloak::Full lips",
       "Skeleton3D/LongCloak::Full lips"
@@ -821,6 +861,10 @@
       "Skeleton3D/Hat::Larger eyes",
       "Skeleton3D/Hair::Larger eyes",
       "Skeleton3D/Eyes::Larger eyes",
+      "Skeleton3D/Brows001::Larger eyes",
+      "Skeleton3D/Brows005::Larger eyes",
+      "Skeleton3D/Lashes01::Larger eyes",
+      "Skeleton3D/Lashes04::Larger eyes",
       "Skeleton3D/Shoes::Larger eyes",
       "Skeleton3D/ShortCloak::Larger eyes",
       "Skeleton3D/LongCloak::Larger eyes"
@@ -836,6 +880,10 @@
       "Skeleton3D/Hat::Lean",
       "Skeleton3D/Hair::Lean",
       "Skeleton3D/Eyes::Lean",
+      "Skeleton3D/Brows001::Lean",
+      "Skeleton3D/Brows005::Lean",
+      "Skeleton3D/Lashes01::Lean",
+      "Skeleton3D/Lashes04::Lean",
       "Skeleton3D/Shoes::Lean",
       "Skeleton3D/ShortCloak::Lean",
       "Skeleton3D/LongCloak::Lean"
@@ -851,6 +899,10 @@
       "Skeleton3D/Hat::Muscular",
       "Skeleton3D/Hair::Muscular",
       "Skeleton3D/Eyes::Muscular",
+      "Skeleton3D/Brows001::Muscular",
+      "Skeleton3D/Brows005::Muscular",
+      "Skeleton3D/Lashes01::Muscular",
+      "Skeleton3D/Lashes04::Muscular",
       "Skeleton3D/Shoes::Muscular",
       "Skeleton3D/ShortCloak::Muscular",
       "Skeleton3D/LongCloak::Muscular"
@@ -866,6 +918,10 @@
       "Skeleton3D/Hat::Narrow chin",
       "Skeleton3D/Hair::Narrow chin",
       "Skeleton3D/Eyes::Narrow chin",
+      "Skeleton3D/Brows001::Narrow chin",
+      "Skeleton3D/Brows005::Narrow chin",
+      "Skeleton3D/Lashes01::Narrow chin",
+      "Skeleton3D/Lashes04::Narrow chin",
       "Skeleton3D/Shoes::Narrow chin",
       "Skeleton3D/ShortCloak::Narrow chin",
       "Skeleton3D/LongCloak::Narrow chin"
@@ -881,6 +937,10 @@
       "Skeleton3D/Hat::Oval face",
       "Skeleton3D/Hair::Oval face",
       "Skeleton3D/Eyes::Oval face",
+      "Skeleton3D/Brows001::Oval face",
+      "Skeleton3D/Brows005::Oval face",
+      "Skeleton3D/Lashes01::Oval face",
+      "Skeleton3D/Lashes04::Oval face",
       "Skeleton3D/Shoes::Oval face",
       "Skeleton3D/ShortCloak::Oval face",
       "Skeleton3D/LongCloak::Oval face"
@@ -896,6 +956,10 @@
       "Skeleton3D/Hat::Pointed ears",
       "Skeleton3D/Hair::Pointed ears",
       "Skeleton3D/Eyes::Pointed ears",
+      "Skeleton3D/Brows001::Pointed ears",
+      "Skeleton3D/Brows005::Pointed ears",
+      "Skeleton3D/Lashes01::Pointed ears",
+      "Skeleton3D/Lashes04::Pointed ears",
       "Skeleton3D/Shoes::Pointed ears",
       "Skeleton3D/ShortCloak::Pointed ears",
       "Skeleton3D/LongCloak::Pointed ears"
@@ -911,12 +975,22 @@
       "Skeleton3D/Hat::Square face",
       "Skeleton3D/Hair::Square face",
       "Skeleton3D/Eyes::Square face",
+      "Skeleton3D/Brows001::Square face",
+      "Skeleton3D/Brows005::Square face",
+      "Skeleton3D/Lashes01::Square face",
+      "Skeleton3D/Lashes04::Square face",
       "Skeleton3D/Shoes::Square face",
       "Skeleton3D/ShortCloak::Square face",
       "Skeleton3D/LongCloak::Square face"
     ]
   },
   "schemaVersion": 1,
+  "shadowlessMeshes": [
+    "Skeleton3D/Brows001",
+    "Skeleton3D/Brows005",
+    "Skeleton3D/Lashes01",
+    "Skeleton3D/Lashes04"
+  ],
   "slots": {
     "Clothes": {
       "Casual 01": {
@@ -940,6 +1014,42 @@
           "Skeleton3D/FormalTop",
           "Skeleton3D/FormalBottom"
         ]
+      }
+    },
+    "Eyebrows": {
+      "Brow 01": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Brows001"
+        ]
+      },
+      "Brow 05": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Brows005"
+        ]
+      },
+      "No eyebrows": {
+        "hides": [],
+        "meshes": []
+      }
+    },
+    "Eyelashes": {
+      "Lashes 01": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Lashes01"
+        ]
+      },
+      "Lashes 04": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Lashes04"
+        ]
+      },
+      "No eyelashes": {
+        "hides": [],
+        "meshes": []
       }
     },
     "Headwear": {
@@ -975,11 +1085,21 @@
       }
     }
   },
-  "sourceSha256": "a53254886e59277ea8a2947195105a4c1e4abe826b2afbc9bdd7849450d32324",
+  "sourceSha256": "6e478745d9431e6663aed4eb375590cada46297232a3647f60a559d593df220f",
   "variationCaps": {
     "Broad jaw": 0.55,
     "Defined cheekbones": 0.22,
     "Full cheeks": 0.35,
     "Larger eyes": 0.5
+  },
+  "variationChoices": {
+    "Eyebrows": [
+      "Brow 01",
+      "Brow 05"
+    ],
+    "Eyelashes": [
+      "Lashes 01",
+      "Lashes 04"
+    ]
   }
 }

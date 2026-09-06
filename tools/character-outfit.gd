@@ -16,6 +16,24 @@ func configure(value: Variant, available: Dictionary, shape_bindings: Dictionary
 		if not value.get(field) is Dictionary:
 			return "Missing profile field: " + field
 	var owned := {}
+	if value.has("shadowlessMeshes"):
+		if not value.shadowlessMeshes is Array:
+			return "Shadow settings must name explicit meshes."
+		for key in value.shadowlessMeshes:
+			if not key is String or not available.has(key):
+				return "Shadow setting refers to an unknown mesh."
+	if value.has("variationChoices"):
+		if not value.variationChoices is Dictionary:
+			return "Variation choices must name wardrobe slots."
+		for slot in value.variationChoices:
+			var choices: Variant = value.variationChoices[slot]
+			if not value.slots.has(slot) or not choices is Array or choices.is_empty():
+				return "Invalid automatic wardrobe choices."
+			var seen_choices := {}
+			for choice in choices:
+				if not choice is String or not value.slots[slot] is Dictionary or not value.slots[slot].has(choice) or seen_choices.has(choice):
+					return "Unknown or duplicate automatic wardrobe choice."
+				seen_choices[choice] = true
 	if value.has("variationCaps"):
 		if not value.variationCaps is Dictionary:
 			return "Variation caps must name known body controls."
@@ -165,6 +183,8 @@ func restore(value: Dictionary) -> String:
 
 func apply() -> void:
 	var hidden := {}
+	for key in profile.get("shadowlessMeshes",[]):
+		meshes[key].cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Reset only profile-managed regions, preserving unrelated asset visibility.
 	for choices in profile.slots.values():
 		for item in choices.values():

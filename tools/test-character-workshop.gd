@@ -131,6 +131,8 @@ func run() -> void:
 		check(first_variation.outfit.morphs["Narrow chin"] == 0 or first_variation.outfit.morphs["Broad jaw"] == 0,"seeded variation avoids opposing jaw controls")
 		for control in editor.outfit.profile.variationCaps:
 			check(first_variation.outfit.morphs[control] <= editor.outfit.profile.variationCaps[control],"seeded face respects authored cap: "+control)
+		for slot in editor.outfit.profile.variationChoices:
+			check(first_variation.outfit.slots[slot] in editor.outfit.profile.variationChoices[slot],"seeded appearance uses curated choices: "+slot)
 		editor.focus_face()
 		check(editor.camera.size < editor.target_height*.5,"face view focuses on the head")
 		editor.frame_model()
@@ -376,6 +378,8 @@ func run() -> void:
 				editor.outfit.selections.Outerwear = "No cloak"
 				editor.outfit.apply()
 				check(not editor.parts["Skeleton3D/LongCloak"].visible and not editor.parts["Skeleton3D/ShortCloak"].visible,"removing outerwear hides both cuts")
+				editor.outfit.selections.Eyebrows = "Brow 01"
+				editor.outfit.selections.Eyelashes = "Lashes 01"
 				for control in ["Base face","Defined cheekbones","Full cheeks","Larger eyes","Broad jaw"]:
 					for morph in editor.outfit.morphs:
 						editor.outfit.morphs[morph] = 1.0 if morph == control else 0.0
@@ -387,5 +391,21 @@ func run() -> void:
 						await process_frame
 					RenderingServer.force_draw(false)
 					check(root.get_texture().get_image().save_png(args[1]+"-"+control.to_lower().replace(" ","-")+".png") == OK,"render isolated facial construction: "+control)
+				for style in ["01","04"]:
+					editor.outfit.selections.Eyebrows = "Brow 01" if style == "01" else "Brow 05"
+					editor.outfit.selections.Eyelashes = "Lashes "+style
+					editor.outfit.morphs["Broad jaw"] = 0
+					editor.outfit.morphs["Larger eyes"] = .5
+					editor.outfit.apply()
+					editor.refresh_controls()
+					var brow: MeshInstance3D = editor.parts["Skeleton3D/Brows001" if style == "01" else "Skeleton3D/Brows005"]
+					var lashes: MeshInstance3D = editor.parts["Skeleton3D/Lashes"+style]
+					check(brow.visible and lashes.visible and brow.get_blend_shape_count() == editor.outfit.profile.morphs.size(),"brow and lash style stays fitted: "+style)
+					check(brow.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF and lashes.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF,"source facial-hair shadow settings preserved: "+style)
+					check(brow.get_active_material(0).transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and lashes.get_active_material(0).transparency != BaseMaterial3D.TRANSPARENCY_DISABLED,"facial hair retains texture transparency: "+style)
+					for i in 5:
+						await process_frame
+					RenderingServer.force_draw(false)
+					check(root.get_texture().get_image().save_png(args[1]+"-brows-lashes-"+style+".png") == OK,"render fitted brows and lashes: "+style)
 	print("Workshop failures: ",failures)
 	quit(0 if failures == 0 else 1)

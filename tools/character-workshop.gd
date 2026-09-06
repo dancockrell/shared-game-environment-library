@@ -392,7 +392,7 @@ func create_variation(seed_text: String) -> void:
 	if recipe.outfit.morphs.has("Narrow chin") and recipe.outfit.morphs.has("Broad jaw"):
 		recipe.outfit.morphs["Narrow chin" if variation_value(seed_text,"jaw-family")<.5 else "Broad jaw"] = 0.0
 	for slot in outfit.profile.slots:
-		var names: Array = outfit.profile.slots[slot].keys()
+		var names: Array = outfit.profile.get("variationChoices",{}).get(slot,outfit.profile.slots[slot].keys()).duplicate()
 		names.sort()
 		recipe.outfit.slots[slot] = names[mini(int(variation_value(seed_text,"slot:"+slot)*names.size()),names.size()-1)]
 	if recipe.outfit.dyes.has("Hair"):

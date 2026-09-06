@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Expand face construction with verified source targets and authored automatic variation caps",
+  "summary": "Fit brows and lashes, preserve source transparency and shadow rules, and verify appearance exports",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T07:06:18Z",
+  "updated_at": "2026-09-06T07:36:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -34,6 +34,9 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Fitted two brow and two lash styles per body with twelve linked controls; both rendered workshop suites and fresh standalone reloads passed with zero failures",
+      "Thirty synthetic wardrobe assertions passed, including generation-choice and shadow-override validation; all 125 system and 25 core source hashes and compiler/output receipt hashes passed",
+      "Actual brow/lash close-ups inspected: soft transparency improves hard dotted cutouts; hair edges and lash density still require art refinement; not approved game characters",
       "Seven additional CC0 target files match original Git blobs and SHA-256; all 25 core source files verified",
       "Both rendered body suites passed with twelve linked controls; isolated face renders inspected; extreme cheek settings excluded from ordinary seeded generation by profile caps",
       "Rest-body envelope: full source/base and individual target extrema verified during compiler build; 47 female and 44 male extreme candidates retained",

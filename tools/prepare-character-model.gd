@@ -40,9 +40,11 @@ func material(path: String) -> StandardMaterial3D:
 			result.albedo_color = Color(float(fields[1]),float(fields[2]),float(fields[3]))
 		if fields[0] == "backfaceCull" and fields.size() == 2 and fields[1] == "False":
 			result.cull_mode = BaseMaterial3D.CULL_DISABLED
+		if fields[0] == "castShadows" and fields.size() == 2:
+			result.set_meta("source_cast_shadows",fields[1] != "False")
 		if fields[0] == "transparent" and fields.size() == 2 and fields[1] == "True":
-			result.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-			result.alpha_scissor_threshold = .3
+			# Preserve fine hair-card opacity instead of cutting strands into hard dots.
+			result.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS
 		if fields[0] == "diffuseTexture" and fields.size() == 2:
 			var texture_path := path.get_base_dir().path_join(fields[1])
 			var image := Image.load_from_file(texture_path)
@@ -294,7 +296,10 @@ func add_part(parent: Node3D, part_name: String, obj_path: String, material_path
 	if instance.mesh == null:
 		instance.free()
 		return
-	instance.mesh.surface_set_material(0,material(source.path_join(material_path)))
+	var source_material := material(source.path_join(material_path))
+	instance.mesh.surface_set_material(0,source_material)
+	if not source_material.get_meta("source_cast_shadows",true):
+		instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	skeleton.add_child(instance)
 	instance.owner = parent
 	instance.skin = skin
@@ -526,6 +531,12 @@ func build(sex: String) -> void:
 	add_part(character,"Hat","clothes/fedora01/fedora.obj","clothes/fedora01/fedora.mhmat",{},-1,"clothes/fedora01/fedora01.mhclo")
 	add_part(character,"Hair","hair/%s/%s.obj" % [hair_name,hair_name],"hair/%s/%s.mhmat" % [hair_name,hair_name])
 	add_part(character,"Eyes","eyes/low-poly/low-poly.obj","eyes/materials/brown.mhmat")
+	for number in ["001","005"]:
+		var brow_path: String = "eyebrows/eyebrow"+number+"/eyebrow"+number
+		add_part(character,"Brows"+number,brow_path+".obj",brow_path+".mhmat")
+	for number in ["01","04"]:
+		var lash_path: String = "eyelashes/eyelashes"+number+"/eyelashes"+number
+		add_part(character,"Lashes"+number,lash_path+".obj",lash_path+".mhmat")
 	add_part(character,"Shoes","clothes/shoes01/shoes01.obj","clothes/shoes01/shoes01.mhmat")
 	add_cloak(character,"ShortCloak",sex,.52)
 	add_cloak(character,"LongCloak",sex,1.05)
@@ -551,8 +562,17 @@ func build(sex: String) -> void:
 	profile.slots.Outerwear = {"No cloak":{"meshes":[],"hides":[]},"Short travelling cloak":{"meshes":["Skeleton3D/ShortCloak"],"hides":[]},"Long travelling cloak":{"meshes":["Skeleton3D/LongCloak"],"hides":[]}}
 	profile.dyes.Cloak = [{"mesh":"Skeleton3D/ShortCloak","surface":0},{"mesh":"Skeleton3D/LongCloak","surface":0}]
 	profile.dyes["Cloak border"] = [{"mesh":"Skeleton3D/ShortCloak","surface":1},{"mesh":"Skeleton3D/LongCloak","surface":1}]
+	profile.slots.Eyebrows = {"Brow 01":{"meshes":["Skeleton3D/Brows001"],"hides":[]},"Brow 05":{"meshes":["Skeleton3D/Brows005"],"hides":[]},"No eyebrows":{"meshes":[],"hides":[]}}
+	profile.slots.Eyelashes = {"Lashes 01":{"meshes":["Skeleton3D/Lashes01"],"hides":[]},"Lashes 04":{"meshes":["Skeleton3D/Lashes04"],"hides":[]},"No eyelashes":{"meshes":[],"hides":[]}}
+	profile.dyes.Eyebrows = [{"mesh":"Skeleton3D/Brows001","surface":0},{"mesh":"Skeleton3D/Brows005","surface":0}]
+	profile.dyes.Eyelashes = [{"mesh":"Skeleton3D/Lashes01","surface":0},{"mesh":"Skeleton3D/Lashes04","surface":0}]
 	profile.measurement = body_height_samples(sex)
 	profile.variationCaps = {"Defined cheekbones":.22,"Full cheeks":.35,"Larger eyes":.5,"Broad jaw":.55}
+	profile.variationChoices = {"Eyebrows":["Brow 01","Brow 05"],"Eyelashes":["Lashes 01","Lashes 04"]}
+	profile.shadowlessMeshes = []
+	for mesh in skeleton.get_children():
+		if mesh.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
+			profile.shadowlessMeshes.append("Skeleton3D/"+str(mesh.name))
 	for shape in shape_names:
 		profile.morphs[shape] = []
 	for mesh in skeleton.get_children():

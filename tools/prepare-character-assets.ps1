@@ -18,6 +18,8 @@ $prefixes = @(
     'clothes/fedora01/',
     'clothes/shoes01/', 'hair/ponytail01/', 'hair/short01/',
     'eyes/low-poly/', 'eyes/materials/',
+    'eyebrows/eyebrow001/', 'eyebrows/eyebrow005/',
+    'eyelashes/eyelashes01/', 'eyelashes/eyelashes04/',
     'skins/young_caucasian_female/', 'skins/young_caucasian_male/'
 )
 $archiveHandle = [IO.Compression.ZipFile]::OpenRead($archivePath)

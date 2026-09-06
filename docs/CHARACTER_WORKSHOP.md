@@ -121,6 +121,16 @@ Dyes multiply a copied standard material's original albedo color and retain its 
 
 ## Free source acquisition and completion gate
 
+### Fitted brows and lashes — 2026-09-06 checkpoint
+
+Both prepared body profiles now expose **Eyebrows** (Brow 01, Brow 05, none) and **Eyelashes** (Lashes 01, Lashes 04, none), with separate dye channels. The four source parts use their original fitting tables, transferred skin weights and all twelve linked morphology controls. The ZIP subset now contains 125 original files; the separate core manifest contains 25. This supersedes the smaller extraction counts in the historical checkpoints below.
+
+Profiles can provide `variationChoices` to restrict automatic appearance generation to an explicit nonempty subset of each slot's choices. Manual choices remain available: ordinary seeded humanoids get brows and lashes, but an artist can remove either. Invalid, duplicate or unknown choices reject atomically.
+
+The converter preserves source `castShadows False` through profile `shadowlessMeshes`, because GLB alone does not reliably retain that engine setting. Transparent source hair cards use alpha blending with a depth prepass rather than a hard alpha cutout. Close-up review showed that hard cutouts broke fine strands into dotted edges; blending improved them. Hair-card edge cleanup and lash density still need art work. These parts and the modern source outfits remain construction fixtures, not approved faction costumes or character likenesses.
+
+Verification: both twelve-control body builds completed; both rendered workshop suites and both fresh standalone scene loads reported zero failures. Thirty synthetic wardrobe checks passed, including invalid generation choices and malformed shadow overrides. All 125 system and 25 core source hashes, compiled output hashes and compiler receipt hash matched. Review images `*-review-brows-lashes-01.png` and `*-review-brows-lashes-04.png` show the actual assemblies. Environmental log and certificate access warnings remain. No paid generation was used.
+
 Researched 2026-09-06: MakeHuman explicitly permits reuse of its CC0 base mesh, targets and core system assets in another character generator: https://static.makehumancommunity.org/mpfb/faq/build_other_chargen.html . Its system pack includes clothing, hair, skins and body parts with per-item CC0 declarations: https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html . Third-party packs may use different licenses. Runtime code licenses are separate from asset licenses; no MakeHuman/MPFB application code has been copied.
 
 The user supplied the completed system ZIP on 2026-09-06. `prepare-character-assets.ps1` verifies its pinned SHA-256, extracts 87 selected original files, refuses changed-source overwrites, and writes a per-file hash manifest. Core base geometry, six adult targets, skeleton and weights were fetched through the GitHub connector by immutable blob ID. Their separate source manifest records those IDs, hashes and license evidence. The full ZIP is not duplicated in the repository. No browser security setting was bypassed.

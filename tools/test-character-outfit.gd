@@ -77,6 +77,20 @@ func run() -> void:
 		bad = measured.duplicate(true)
 		bad.measurement = measurement
 		check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == measured_before,"invalid measurement rejects atomically")
+	for choices in [{"Coat":[]},{"Coat":["Missing"]},{"Coat":["On","On"]}]:
+		bad = measured.duplicate(true)
+		bad.variationChoices = choices
+		check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == measured_before,"invalid generation choices reject atomically")
+	for cap in [NAN,-.1,1.1]:
+		bad = measured.duplicate(true)
+		bad.variationCaps = {"Build":cap}
+		check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == measured_before,"invalid generation cap rejects atomically")
+	for shadowless in ["shirt",["Missing"],[42]]:
+		bad = measured.duplicate(true)
+		bad.shadowlessMeshes = shadowless
+		check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == measured_before,"invalid shadow override rejects atomically")
+	measured.shadowlessMeshes = ["shirt"]
+	check(outfit.configure(measured,meshes,shapes,"test").is_empty() and meshes.shirt.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF,"source shadow override applies to fitted mesh")
 	for mesh in meshes.values():
 		mesh.free()
 	print("Outfit failures: ",failures)
