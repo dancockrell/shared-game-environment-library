@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Implement bounded porous-box field and conforming tetrahedral extraction as an engine-neutral crumb coupon; test hash/neighbor coverage and closed output before native inspection; no cake admission from tests alone",
+  "summary": "Extend the existing porous field with bounded per-cell cavity populations and test finer/denser crumb structure; retain closure gate, deterministic old population and native review in the same process",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

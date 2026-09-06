@@ -12,9 +12,14 @@ pub struct PorousBox {
     pub radii: [f32; 2],
     pub step: f32,
     pub seed: u32,
+    #[serde(default = "default_population")]
+    pub pores_per_cell: u32,
     /// Explicit level-set offset in metres, bounded to one tenth of a grid step.
     #[serde(default)]
     pub surface_offset: f32,
+}
+fn default_population() -> u32 {
+    1
 }
 fn random(state: &mut u32) -> f64 {
     *state ^= *state >> 16;
@@ -31,6 +36,7 @@ impl PorousBox {
         finite(&[self.spacing, self.step, self.radii[0], self.radii[1]])?;
         finite(&[self.surface_offset])?;
         if self.size.iter().any(|x| *x < 0.001)
+            || !(1..=8).contains(&self.pores_per_cell)
             || self.step < 0.00001
             || self.spacing < 0.0001
             || self.surface_offset.abs() > self.step * 0.1
@@ -45,8 +51,9 @@ impl PorousBox {
         }
         Ok(())
     }
-    fn particle(&self, cell: [i32; 3]) -> ([f64; 3], f64) {
+    fn particle(&self, cell: [i32; 3], index: u32) -> ([f64; 3], f64) {
         let mut state = self.seed
+            ^ index.wrapping_mul(0x9e3779b9)
             ^ (cell[0] as u32).wrapping_mul(0x8da6b343)
             ^ (cell[1] as u32).wrapping_mul(0xd8163841)
             ^ (cell[2] as u32).wrapping_mul(0xcb1ab31f);
@@ -65,9 +72,11 @@ impl PorousBox {
         for z in -reach..=reach {
             for y in -reach..=reach {
                 for x in -reach..=reach {
-                    let (c, r) = self.particle([q[0] + x, q[1] + y, q[2] + z]);
-                    distance =
-                        distance.min((0..3).map(|i| (p[i] - c[i]).powi(2)).sum::<f64>().sqrt() - r);
+                    for index in 0..self.pores_per_cell {
+                        let (c, r) = self.particle([q[0] + x, q[1] + y, q[2] + z], index);
+                        distance = distance
+                            .min((0..3).map(|i| (p[i] - c[i]).powi(2)).sum::<f64>().sqrt() - r);
+                    }
                 }
             }
         }
@@ -246,6 +255,7 @@ mod tests {
             radii: [0.0025, 0.004],
             step: 0.001,
             seed: 19,
+            pores_per_cell: 1,
             surface_offset: 0.000001,
         }
     }
@@ -273,6 +283,38 @@ mod tests {
         assert!(offset.validate().is_err());
     }
     #[test]
+    fn population_is_bounded_local_and_preserves_existing_particles() {
+        let original = sample();
+        for population in [1, 3, 8] {
+            let mut dense = original.clone();
+            dense.pores_per_cell = population;
+            dense.validate().unwrap();
+            assert_eq!(
+                original.particle([-2, 1, 0], 0),
+                dense.particle([-2, 1, 0], 0)
+            );
+            let mut state = 71;
+            for _ in 0..32 {
+                let p = std::array::from_fn(|_| (random(&mut state) - 0.5) * 0.1);
+                assert_eq!(dense.pores(p, 1), dense.pores(p, 3));
+                assert!(dense.pores(p, 1) <= original.pores(p, 1));
+            }
+        }
+        for population in [0, 9, u32::MAX] {
+            let mut invalid = original.clone();
+            invalid.pores_per_cell = population;
+            assert!(invalid.validate().is_err());
+        }
+        let mut value = serde_json::to_value(&original).unwrap();
+        value.as_object_mut().unwrap().remove("pores_per_cell");
+        let legacy: PorousBox = serde_json::from_value(value).unwrap();
+        assert_eq!(legacy.pores_per_cell, 1);
+        assert_eq!(
+            legacy.field([0.001, -0.002, 0.003]),
+            original.field([0.001, -0.002, 0.003])
+        );
+    }
+    #[test]
     fn local_cavities_match_bruteforce_and_have_stable_physical_scale() {
         let a = sample();
         a.validate().unwrap();
@@ -281,12 +323,12 @@ mod tests {
             let p = std::array::from_fn(|_| (random(&mut state) - 0.5) * 0.1);
             assert_eq!(a.pores(p, 1), a.pores(p, 3));
         }
-        let (center, radius) = a.particle([-2, 1, 0]);
+        let (center, radius) = a.particle([-2, 1, 0], 0);
         assert!((a.pores(center, 1) + radius).abs() < 1e-12);
-        assert_eq!(a.particle([-2, 1, 0]), a.particle([-2, 1, 0]));
+        assert_eq!(a.particle([-2, 1, 0], 0), a.particle([-2, 1, 0], 0));
         let mut b = a.clone();
         b.seed += 1;
-        assert_ne!(a.particle([0; 3]), b.particle([0; 3]));
+        assert_ne!(a.particle([0; 3], 0), b.particle([0; 3], 0));
         assert!(a.field([1.; 3]) > 0.);
         let mut invalid = a;
         invalid.step = 0.002;

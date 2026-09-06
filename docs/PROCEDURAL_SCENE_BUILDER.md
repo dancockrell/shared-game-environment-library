@@ -696,6 +696,40 @@ grid and vertex-budget rejection and excessive surface offsets, in addition to
 neighbor lookup and seed checks. Native evidence above is for the same geometry;
 no additional Godot process was required.
 
+#### Denser cavity population: technical pass, visual rejection
+
+The same operator now accepts `pores_per_cell` in 1..8 (default 1).
+Particle index zero preserves the previous seed field; additional indices add
+cavities without moving existing ones. Neighborhood lookup remains 27 cells,
+with at most 216 particles considered per sample. Tests compare populations
+1, 3 and 8 against a larger neighborhood, verify monotonic cavity union,
+legacy JSON defaulting, and reject zero or excessive population.
+
+The current coupon is 24 x 16 x 12 mm, spacing 4.5 mm, cavity radii
+1.2..2 mm, sampling step 0.4 mm and three pores per cell. The unchanged
+grid/vertex caps remain enforced. It produces 210,736 triangles, 105,164
+exact-position vertices and nine components, with zero boundary edges,
+winding conflicts, excess edge incidence or failed closed vertex fans.
+This is not a self-intersection or connected-solid certification.
+
+CPU receipt:
+`procedural/generated/reviews/20260906-134334-6bce43cd9d2847e4b07682b1c0d1a8eb/report.json`.
+All 54 Rust tests, six Node audit tests and the 38-stage workflow passed.
+Native import and spatial checks passed in the existing PID 30828;
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/porous-dense.png`
+was visually inspected. No new Godot process was launched.
+
+**Reject as cake art:** the render reads as cut foam, with sharp cavity rims,
+uniform flat color, thin fragments and unnaturally planar outside faces.
+Increasing pore population did not establish edible material. Its triangle
+cost is also unsuitable for indiscriminate room-scale replication. Keep this
+as a bounded extraction fixture, not an approved food asset or cake replacement.
+Next material experiments should separate sparse silhouette-scale cavities
+from fine normal/roughness detail, establish a browned exterior versus fresh
+cut interior, and validate those cues in the complete cake rather than treating
+a denser diagnostic block as visual success. These next steps are not yet
+implemented; existing cake and pie remain unapproved.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository
