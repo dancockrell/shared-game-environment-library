@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Tool-only priority: harden shared Rust Scene Forge geometry, bounded workloads and engine exports; room expansion paused and characters separately owned",
+  "summary": "Tool-only priority: paper-grounded high-end stylized construction; sequential teapot, cake/pie and coordinated ballerina quality gates; room expansion paused",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-06T10:05:00Z",
+  "updated_at": "2026-09-06T11:00:00Z",
   "paths": [
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",

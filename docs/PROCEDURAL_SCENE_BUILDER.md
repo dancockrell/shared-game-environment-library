@@ -551,6 +551,111 @@ its own revision, dependency and MIT-or-more-permissive license audit.
 | [4DSynth, August 27 2026 preprint](https://arxiv.org/abs/2608.26947) | Multiple inputs converge on one editable geometry-grounded scene representation | Architectural reference: source prose, graph bindings and authored constraints should converge on the same recipe representation. Its actor animation and simulation work is outside our current static scenery milestone. |
 | [Infinigen-Sim, May 2025](https://arxiv.org/abs/2505.10755) | Procedural articulated assets with joint annotations | Later scenery work: hinges, shutters, gates, cranes and ferries need explicit pivots and parts even before animation. Not a replacement for Pirate Island's character workflow. |
 
+### Hero-asset research and acceptance sequence (2026-09-06)
+
+Current user direction: read the actual methods before further construction.
+Make a gorgeous teapot first, then pass cake **and** pie tests, then a ballerina
+test. These are generator capability gates, not permission to hand-author a
+separate one-off runtime for each object. None has passed. Existing primitive
+fixtures and painted vessels remain technical diagnostics, not the quality bar.
+
+#### Reading that changes the implementation plan
+
+- [Wang et al., Computation of Rotation Minimizing Frames](https://www.cs.hku.hk/data/techreps/document/TR-2007-07.pdf): read the authors' technical-report version, especially sections 4.1, 4.3, 4.4 and Table 1. Double reflection transports the cross-section frame along a curve without arbitrary tangent-axis spin. The report explicitly identifies coincident samples and degenerate second reflections. **Decision:** use this as the basis for a general 3D sweep, with bounded resampling and explicit failure diagnostics; not a planar-only teapot tube. No source code copied; implementation pending.
+- [Niessner et al., Feature Adaptive GPU Rendering of Catmull-Clark Subdivision Surfaces](https://www.niessnerlab.org/papers/2012/3feature/niessner2012feature.pdf): read subdivision rules, semi-sharp feature handling and the adaptive-patching architecture in sections 1 and 3. Crease tags preserve designed edges while local refinement avoids indiscriminate subdivision. **Decision:** retain editable surface structure and crease intent; evaluate CPU-baked meshes/LODs first for both engines. This is not a claim to have implemented their GPU evaluator, watertight patch scheme, or reported performance. Remaining detailed evaluator work must be read before implementing it.
+- [Applying Painterly Concepts in a CG Film — Bolt](https://media.disneyanimation.com/uploads/production/publication_asset/64/asset/painterlyCgConcepts.pdf): read the production note's massing, painting-LOD, raypainting and painterly-normal discussion. **Decision:** preserve readable broad values and controlled edges before adding texture marks; separate broad color, ornament and fine finish layers. Random color noise alone does not satisfy the painterly target. This note describes production concepts, not a turnkey open-source shader.
+- [ProcFunc, April 2026](https://arxiv.org/html/2604.26943v1): read sections 3 and 4, including the actual benchmark setting and limitations. Explicit function inputs/outputs, separate deterministic generators and samplers, and traceable composition directly inform our editable recipe contract. **Decision:** make construction, material masks and decoration independently composable; expose parameters and intermediate results. Its CPU scene-construction measurements are not game frame rates, and its RAM figures do not certify our 8 GB VRAM target. Blender dependency and code licenses require inspection before any reuse; no dependency has been adopted.
+
+These supplement the scene-layout research above. They do not substitute for
+art direction. New publications are useful where they solve our problem;
+older established surface mathematics is still appropriate where it does.
+No paper, figure, research asset, weights or third-party implementation has
+been redistributed by this checkpoint.
+
+#### Teapot: precision and designed curvature
+
+Proposed first art direction: a graceful fantasy ceramic service piece, deep
+blue-green glaze, warm ivory accents and restrained aged-gold ornament. This
+palette is a proposal, not a new user-approved reference. Shape must remain
+beautiful in clay shading without ornament. Start at plausible tabletop scale,
+approximately 0.30 m overall width; store units and all dimensions explicitly.
+
+Required capabilities and inspections:
+
+1. A continuous, intentionally shaped belly/shoulder/neck profile, not a stack
+   of obvious straight conical bands disguised by interpolated normals.
+2. A fitted removable lid with seating lip, visible clearance, designed knob
+   and underside. A hollow vessel and a genuinely open spout with wall thickness.
+3. A tapered rising spout and graceful handle with comfortable negative space,
+   deliberate attachment regions and finished transitions. Intersecting tubes
+   are not automatically accepted as joined ceramic. A visible inner blockage
+   fails the functional geometry review.
+4. Deliberate foot, rim and decorative hierarchy. No uniform edge softening,
+   random dents, arbitrary excessive ornament, or noise covering weak shape.
+5. Distinct ceramic, glaze and metal response. Assess highlights under neutral
+   light before flattering light; a wet-plastic appearance fails material review.
+
+Reusable implementation order: smooth editable curves and derivatives; stable
+sweep frames and variable sections; thickness/rim/attachment construction;
+controlled surface refinement; layered materials and ornament masks. Preserve
+the current mesh/export owner and extend it; do not build a separate teapot mesh
+engine. A sweep alone cannot solve blended surface junctions.
+
+Numerical acceptance must include finite derivatives, nonzero tangents,
+right-handed orthonormal frames, seam continuity, outward normals, meaningful
+wall thickness and measured clearance. Test straight paths, inflections, strong
+curvature, repeated samples and reversed traversal. Reject unresolved
+self-intersections rather than silently emitting a corrupt surface. Surface
+sampling must have explicit error limits and allocation/depth caps; reaching a
+cap is a diagnostic, not permission to misreport tolerance compliance.
+
+#### Cake and pie: soft construction and material differentiation
+
+Both must pass after the teapot; recoloring the teapot operator is not the test.
+The cake should show a cut slice: sponge, filling and icing must remain distinct,
+with controlled pores, rounded piping, believable layer contact and a designed
+decoration pattern. The pie should show a crimped crust, a filled cut section and
+an interwoven lattice with actual over/under relationships, plus restrained
+browning variation. Avoid stone-like cake, plastic frosting and rope-like pastry.
+
+Build these from reusable sectioning, sweep/profile, pattern, contact and material
+operators. Keep cut surfaces intentional and bounded, not random mesh damage.
+The food should look appealing as a complete composition and remain readable
+at game distance; pore count alone is not a quality measure.
+
+#### Ballerina: anatomy, cloth and graceful pose
+
+Later coordinated integration test with the existing Pirate Island/shared
+character workshop, not a competing anatomy, rigging or garment system. Start
+with an adult stylized dancer in a static, anatomically credible ballet pose.
+Assess line of action, balance/support, hands and feet, joint shapes, face,
+costume construction, layered skirt silhouette and intersections from front,
+side and rear. Rig readiness is required; an animation suite is a later gate,
+not implicitly certified by a still image. Read the relevant anatomy/deformation
+and cloth methods with that workflow before implementing this stage.
+
+#### Common evidence contract
+
+Every candidate must expose stable semantic part identifiers (body, lid, spout,
+handle, etc.), source recipe location, parameters/ranges/units, evaluated bounds,
+surface and attachment frames, material assignments, seeds, dependency hashes,
+resource counts and actionable constraint failures. Existing recipe pointers
+are useful but are not stable IDs across structural edits. Do not claim the
+full contract is implemented merely because the JSON contains a mesh name.
+
+Review a fixed camera set: front, side, rear, three-quarter, silhouette/clay,
+material close-up, and intended gameplay scale. Include a lid-off/cutaway view
+where needed to expose construction rather than conceal it. Record exact recipe,
+lighting, camera, build hash and images. Compare revisions under identical light.
+Use a small deterministic variation batch to expose brittle special cases only
+after one authored design meets the visual target.
+
+Track four separate states: numerical correctness, visual acceptance, native
+engine roundtrip, and performance measurement. No average score can compensate
+for a failed state. Profile actual GPU memory, frame time and loading behavior;
+estimated mesh bytes are not VRAM usage. User-visible review must show the real
+engine render, not a generated concept image standing in for implemented work.
+
 ### What is actually implemented
 
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
