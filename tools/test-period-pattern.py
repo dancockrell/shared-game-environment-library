@@ -32,6 +32,44 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    @unittest.skipUnless(FIT_PATH and BODY_PATH,"No actual sewing result requested")
+    def test_cpu_review_needs_no_graphics_and_retains_sdf_evidence(self):
+        import contextlib
+        import io
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp)/"review"
+            args = SimpleNamespace(panels=REVIEW/"panel-mesh.json",body=BODY_PATH,
+                                   review_only=FIT_PATH,output=output,depth_render=False)
+            with patch.dict(sys.modules,{"pyrender":None,"matplotlib.pyplot":None}), contextlib.redirect_stdout(io.StringIO()):
+                fitter.review(args)
+            metrics = json.loads((output/"review.json").read_text())
+            self.assertEqual(set(metrics["outputs"]),{"sewing-review.glb"})
+            self.assertNotIn("render",metrics)
+            self.assertFalse((output/"sewing-review.png").exists())
+            self.assertEqual(metrics["outputs"]["sewing-review.glb"],builder.digest(output/"sewing-review.glb"))
+            result = json.loads(FIT_PATH.read_text())
+            self.assertEqual(len(result["bodySdfDistancesMetres"]),metrics["sampleCount"])
+            self.assertEqual(len(metrics["bodySdfAudit"]["worstSamples"]),8)
+
+    def test_body_sdf_audit_detects_sign_misses_and_rejects_invalid_samples(self):
+        import numpy as np
+        query = np.zeros((3,3))
+        signed = np.array([-.02,-.01,.03])
+        result = {"bodySdfDistancesMetres":[-.015,.002,.03],
+                  "bodySdfSampleOrder":"cloth vertices followed by triangle centroids"}
+        audit = fitter.audit_body_field(result,query,signed)
+        self.assertEqual(audit["missedInsideSamplesOver1mm"],1)
+        self.assertAlmostEqual(audit["maxAbsoluteErrorMetres"],.012)
+        self.assertEqual(audit["worstSamples"][0]["index"],1)
+        for changed in ({"bodySdfSampleOrder":"reversed"},
+                        {"bodySdfDistancesMetres":[0]},
+                        {"bodySdfDistancesMetres":[0,float("nan"),0]}):
+            with self.assertRaisesRegex(ValueError,"SDF comparison"):
+                fitter.audit_body_field({**result,**changed},query,signed)
+        with self.assertRaises(ValueError):
+            fitter.audit_body_field(result,query[:2],signed)
+
     def test_coat_controls_are_bounded_and_validate_before_mutation(self):
         style = json.loads((Path(__file__).parent.parent/"catalog/characters/construction-studies/male-coat-toile.json").read_text())
         design = {"collar":{key:{"v":0} for key in ("width","fc_depth","bc_depth","f_collar","b_collar")},

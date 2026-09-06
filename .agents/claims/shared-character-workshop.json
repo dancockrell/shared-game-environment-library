@@ -5,7 +5,7 @@
   "summary": "Replace rejected rigid male overgarment with anatomically measured period tailoring and cloth drape through existing shared generator; preserve tested bodice fitting and research established coat construction",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T14:15:00Z",
+  "updated_at": "2026-09-06T14:39:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -55,6 +55,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Contact-field audit and depth-render checkpoint: actual Newton SDF compared with independent source triangles. Male wrist source -21.908 mm versus field -15.564 mm; no missed inside samples deeper than 1 mm, not exact-contact certification. Pyglet/Pyrender hidden depth buffer replaces misleading painter polygons inside existing fitter; actual exported GLBs rendered without changed positions or masked body. Both front/three-quarter/back sheets inspected, remain unapproved.",
+      "Fresh male 20260906T143354731Z-vbd / female 20260906T143432816Z-vbd: 300 frames in 24.59/19.24 s; sampled process 481.33/479.07 MiB, whole-device GPU 4058/3881 MiB. Female all 25 tests pass; male 24 pass, unchanged mean-seam 1 mm gate fails at 1.066 mm. CPU review tested with graphics imports blocked. Bounded offscreen reviews 20260906T143513510Z-vbd / 20260906T143531302Z-vbd complete in 3.04/3.10 s. No paid work, new Godot window, final art or 8 GB certification.",
       "Dressing-route checkpoint: existing surface guides extended to torso/skirt sides and released at frame 90. Read pinned GarmentCode body-region/reference/attachment code. Final male 20260906T141205166Z-vbd and female 20260906T141128951Z-vbd both pass 23 actual pattern/body/support/contact/export tests. Mean seam gaps 0.954/0.086 mm; sampled penetrations over 1 mm 8/0. Actual CPU meshes inspected, still unapproved for art/rigged runtime. No new solver, paid work or Godot window.",
       "Two skirt-only male repeats improved worst seam from 177.605 mm to 15.641/16.428 mm, but female regression exposed trapped torso seam; shared transient torso guides corrected it. Final male/female time 32.45/15.19 s; sampled RAM 483.21/473.88 MiB and whole GPU 2641/2556 MiB. No 8 GB certification. Narrow female cut regenerated at original 1 cm: all ten outputs identical; old builder receipt rejected correctly. Accidental coarse 2 cm author Edge.name exception retained as rejected/incomplete evidence.",
       "Full-surface contact: read complete Macklin 2020 paper and pinned Newton source; integrated upstream mesh SDF edge/face contacts. Run 20260906T135821151Z-vbd: 300 frames in 18.18 s, sampled 485.42 MiB process / 2995 MiB whole GPU. Actual CPU render inspected, still rejected. 20 sampled penetrations over 1 mm versus previous 95, but mean seam gap 3.499 mm fails unchanged gate. 21/22 actual pattern/body/contact/export tests pass, one seam test fails. 22 measurement tests pass; default 18/22 pass/four skipped. No paid calls or new engine window; goal remains active.",

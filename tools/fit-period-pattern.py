@@ -166,6 +166,9 @@ def solve(args):
     import numpy as np
     import warp as wp
     import newton
+    from newton._src.geometry.soft_contacts_sdf import eval_shape_sdf
+    from newton._src.geometry.sdf_texture import TextureSDFData
+    from newton._src.geometry.types import GeoType
     if args.output.exists():
         raise ValueError("Preserve previous fitting studies; choose a new directory")
     if not 1 <= args.frames <= 600:
@@ -297,6 +300,21 @@ def solve(args):
                 print(json.dumps(item), flush=True)
         wp.synchronize()
         positions = state0.particle_q.numpy()
+        @wp.kernel
+        def sample_body_field(q:wp.array(dtype=wp.vec3),sdf_ids:wp.array(dtype=wp.int32),
+                              textures:wp.array(dtype=TextureSDFData),values:wp.array(dtype=float)):
+            i = wp.tid()
+            lower,phi,gradient = eval_shape_sdf(GeoType.MESH,wp.vec3(1.0,1.0,1.0),q[i],sdf_ids[0],textures)
+            values[i] = phi
+        # Same sampler as contact generation; compare independently to the source
+        # triangles in CPU review. Do not assume an SDF matches thin anatomy.
+        queries = np.concatenate([positions,positions[faces].mean(axis=1)])
+        sdf_values = wp.empty(len(queries),dtype=float)
+        wp.launch(sample_body_field,dim=len(queries),inputs=[wp.array(queries,dtype=wp.vec3),
+                  model._shape_sdf_index,model._texture_sdf_data,sdf_values])
+        field_distances = sdf_values.numpy()
+        if not np.isfinite(field_distances).all():
+            raise ValueError("Nonfinite body SDF audit")
         result = {"schemaVersion": 1, "state": "newton-sewing-study-not-art-or-fit-approved", "units":"metres",
             "vertices": positions.tolist(), "triangles": faces.tolist(), "seamPairs": pairs.tolist(),
             "panelOffsets": offsets, "sourceBodySha256": digest(args.body), "sourcePanelsSha256": digest(args.panels),
@@ -311,6 +329,8 @@ def solve(args):
             "bodyContactMethod":"Newton full-surface rigid-soft SDF contacts plus original vertex contacts",
             "bodySdfMaxResolution":128,"bodySdfTextureFormat":"float32",
             "bodyContactCapacity":contacts.soft_contact_max,
+            "bodySdfDistancesMetres":field_distances.tolist(),
+            "bodySdfSampleOrder":"cloth vertices followed by triangle centroids",
             "parameters":{"density":.25,"triKe":1000,"triKa":1000,"triKd":1,"bendKe":.001,
                           "seamKe":5000,"seamKd":1,"bodyContactKe":50000,"particleRadiusMetres":.002},
             "history":history, "elapsedSeconds":time.perf_counter()-start,
@@ -342,13 +362,28 @@ def export_review_glb(output, body, points, faces, rest, provenance):
     output.write_bytes(export_glb(scene, include_normals=True))
 
 
+def audit_body_field(result, queries, signed):
+    """Compare the actual contact sampler with independently measured triangles."""
+    import numpy as np
+    field = np.asarray(result["bodySdfDistancesMetres"], dtype=float)
+    if (result.get("bodySdfSampleOrder") != "cloth vertices followed by triangle centroids"
+            or field.shape != signed.shape or len(field) == 0
+            or queries.shape != (len(field),3)
+            or not all(np.isfinite(a).all() for a in (field,signed,queries))):
+        raise ValueError("Invalid body SDF comparison samples")
+    error = abs(field-signed)
+    worst = np.argsort(error)[-8:][::-1]
+    return {"maxAbsoluteErrorMetres":float(error.max()),
+        "p95AbsoluteErrorMetres":float(np.percentile(error,95)),
+        "missedInsideSamplesOver1mm":int(np.count_nonzero((signed<-.001)&(field>=0))),
+        "worstSamples":[{"index":int(i),"xyz":queries[i].tolist(),
+            "sourceDistanceMetres":float(signed[i]),"sdfDistanceMetres":float(field[i])} for i in worst]}
+
+
 def review(args):
     import numpy as np
     import trimesh
     import igl
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-    from matplotlib.colors import LightSource, to_rgba
     if args.output.exists():
         raise ValueError("Choose a new review directory")
     data, body, offsets, rest, placed, faces, pairs = read_inputs(args)
@@ -374,33 +409,61 @@ def review(args):
         "bodyPenetrationSamplesOver1mm":int(np.count_nonzero(signed < -.001)),
         "sampleCount":len(queries), "sampling":"cloth vertices and triangle centroids; not continuous triangle/body or self-intersection certification",
         "seams":result["history"][-1]}
+    if "bodySdfDistancesMetres" in result:
+        metrics["bodySdfAudit"] = audit_body_field(result,queries,signed)
     args.output.mkdir(parents=True)
-    fig = plt.figure(figsize=(15,7), layout="constrained")
-    # CPU mesh diagnostic, not a game-engine render or approved material treatment.
-    low = points.min(axis=0)-.05
-    high = points.max(axis=0)+.05
-    torso_faces = source.faces[np.any((source.vertices[source.faces,1] > low[1]) & (source.vertices[source.faces,1] < high[1]),axis=1)]
-    for index, (azimuth,label) in enumerate(((90,"front"),(35,"three-quarter"),(270,"back")),1):
-        axis = fig.add_subplot(1,3,index,projection="3d")
-        # One collection sorts body and cloth triangles together. Separate
-        # collections can incorrectly paint the entire body over close cloth.
-        triangles = np.concatenate([source.vertices[torso_faces], points[faces]])[:,:,[0,2,1]]
-        colors = np.array([to_rgba("#69777c")]*len(torso_faces) + [to_rgba("#ded0b3")]*len(faces))
-        axis.add_collection3d(Poly3DCollection(triangles,facecolors=colors,linewidths=0,shade=True,lightsource=LightSource(azdeg=120,altdeg=50)))
-        axis.set(xlim=(low[0],high[0]),ylim=(low[2],high[2]),zlim=(low[1],high[1]),title=label)
-        axis.set_box_aspect((high-low)[[0,2,1]])
-        axis.view_init(elev=8,azim=azimuth)
-        axis.set_axis_off()
-    fig.suptitle("Actual simulated mesh — CPU diagnostic, not final garment art")
-    fig.savefig(args.output/"sewing-review.png",dpi=160)
-    plt.close(fig)
     export_review_glb(args.output/"sewing-review.glb", body, points, faces, rest, {
         "status":"unapproved-static-fitting-study-not-a-rigged-character",
         "units":"metres", "upAxis":"Y", "simulationSha256":digest(args.review_only),
         "sourceBodySha256":digest(args.body), "sourcePanelsSha256":digest(args.panels),
         "reviewToolSha256":digest(__file__), "temporarySupportsRetained":not result.get("supportsReleased",False),
     })
-    metrics["outputs"] = {name:digest(args.output/name) for name in ("sewing-review.png","sewing-review.glb")}
+    outputs = ["sewing-review.glb"]
+    if args.depth_render:
+        # Depth-buffered rendering replaces painter-sorted polygons. Reload the
+        # actual exported GLB: no position smoothing, masks or decimation.
+        import pyrender
+        import matplotlib.pyplot as plt
+        scene = pyrender.Scene.from_trimesh_scene(trimesh.load(args.output/"sewing-review.glb",force="scene"),
+                   bg_color=[.09,.11,.13,1],ambient_light=[.3,.3,.3])
+        center = (points.min(axis=0)+points.max(axis=0))/2
+        extent = max(np.ptp(points,axis=0)[1]*.6,np.ptp(points,axis=0)[0]*.6)
+        camera_node = scene.add(pyrender.OrthographicCamera(xmag=extent,ymag=extent,znear=.01,zfar=10))
+        def camera_pose(direction):
+            z = np.asarray(direction,dtype=float)
+            z /= np.linalg.norm(z)
+            x = np.cross([0,1,0],z)
+            x /= np.linalg.norm(x)
+            pose = np.eye(4)
+            pose[:3,:3] = np.column_stack([x,np.cross(z,x),z])
+            pose[:3,3] = center+3*z
+            return pose
+        for direction,intensity in (([1,1,2],2.0),([-2,.5,-1],1.2)):
+            scene.add(pyrender.DirectionalLight(color=np.ones(3),intensity=intensity),pose=camera_pose(direction))
+        renderer = pyrender.OffscreenRenderer(720,720)
+        depth_counts = []
+        fig,axes = plt.subplots(1,3,figsize=(15,5),layout="constrained")
+        try:
+            for axis,direction,label in zip(axes,([0,0,1],[1,0,1],[0,0,-1]),("Front","Three-quarter","Back")):
+                scene.set_pose(camera_node,camera_pose(direction))
+                color,depth = renderer.render(scene)
+                if not np.isfinite(depth).all() or np.count_nonzero(depth)>depth.size*.95 or np.count_nonzero(depth)<1000:
+                    raise ValueError("Depth-render framing or geometry is invalid")
+                depth_counts.append(int(np.count_nonzero(depth)))
+                axis.imshow(color)
+                axis.set_title(label)
+                axis.set_axis_off()
+            fig.suptitle("Actual exported mesh — depth-buffered review, not finished character art")
+            fig.savefig(args.output/"sewing-review.png",dpi=144)
+        finally:
+            renderer.delete()
+            plt.close(fig)
+        outputs.append("sewing-review.png")
+        metrics["render"] = {"backend":"pyrender offscreen / hidden Pyglet context",
+            "pyrender":importlib.metadata.version("pyrender"),"viewport":[720,720],
+            "depthPixelCounts":depth_counts,"sourceGlbSha256":digest(args.output/"sewing-review.glb"),
+            "geometryModifiedForRender":False}
+    metrics["outputs"] = {name:digest(args.output/name) for name in outputs}
     (args.output/"review.json").write_text(json.dumps(metrics,indent=2,allow_nan=False))
     print(json.dumps(metrics,indent=2))
 
@@ -411,7 +474,8 @@ if __name__ == "__main__":
     parser.add_argument("--body", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--device", choices=("cpu", "cuda:0"), default="cpu")
+    parser.add_argument("--depth-render",action="store_true",help="Render exported GLB offscreen; requires graphics and resource-budgeted execution")
     parser.add_argument("--frames", type=int, default=120)
-    parser.add_argument("--review-only",type=Path,help="Review an existing fit.json using CPU mesh/plot dependencies")
+    parser.add_argument("--review-only",type=Path,help="Measure and export existing fit.json on CPU; optional depth render uses graphics")
     args = parser.parse_args()
     review(args) if args.review_only else solve(args)

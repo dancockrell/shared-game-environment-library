@@ -5,12 +5,14 @@ param(
     [ValidateRange(1,3600)][int]$Frames = 300,
     [ValidateRange(10,1800)][int]$TimeoutSeconds = 300,
     [string]$PatternMesh,
-    [string]$FittingBody
+    [string]$FittingBody,
+    [string]$ReviewResult
 )
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $pythonPath = (Resolve-Path -LiteralPath $Python).Path
 $isFitting = -not [string]::IsNullOrEmpty($PatternMesh)
+if ($ReviewResult -and (-not $isFitting -or $Device -ne 'cuda:0')) { throw 'Depth review requires pattern/body inputs and GPU resource monitoring.' }
 if ($isFitting -and (-not $FittingBody -or $Solver -ne 'vbd' -or $Frames -gt 600)) { throw 'Fitting requires body, VBD, and at most 600 frames.' }
 $freeRamKiB = (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory
 if ($freeRamKiB -lt 8GB/1KB) { throw 'Defer cloth work: preserve at least 8 GiB free system RAM before starting.' }
@@ -34,6 +36,7 @@ if ($isFitting) {
     $patternPath = (Resolve-Path -LiteralPath $PatternMesh).Path
     $bodyPath = (Resolve-Path -LiteralPath $FittingBody).Path
     $arguments = @('-u','-X','utf8',(Join-Path $PSScriptRoot 'fit-period-pattern.py'),'--panels',$patternPath,'--body',$bodyPath,'--output',(Join-Path $output 'fitting'),'--frames',"$Frames",'--device',$Device)
+    if ($ReviewResult) { $arguments += @('--review-only',(Resolve-Path -LiteralPath $ReviewResult).Path,'--depth-render') }
 } else {
     $arguments = @('-X','utf8','-m','newton.examples','cloth_hanging','--viewer','null','--solver',$Solver,'--device',$Device,'--num-frames',"$Frames",'--test')
 }
@@ -87,12 +90,13 @@ $exitCode = $process.ExitCode
 [System.IO.File]::WriteAllText($stdout,$outTask.GetAwaiter().GetResult())
 [System.IO.File]::WriteAllText($stderr,$errTask.GetAwaiter().GetResult())
 $packageCode = 'import importlib.metadata as m,json,hashlib; d=m.distribution("newton"); p=d.locate_file("newton/examples/cloth/example_cloth_hanging.py"); print(json.dumps({"newton":d.version,"warp":m.version("warp-lang"),"numpy":m.version("numpy"),"source":json.loads(d.read_text("direct_url.json") or "{}"),"upstreamExampleSha256":hashlib.sha256(p.read_bytes()).hexdigest()}))'
+if ($ReviewResult) { $packageCode = 'import importlib.metadata as m,json; print(json.dumps({n:m.version(n) for n in ("pyrender","pyglet","PyOpenGL","numpy","trimesh")}))' }
 $packageOutput = & $pythonPath -X utf8 -c $packageCode
 $packageInfo = if ($LASTEXITCODE -eq 0) { $packageOutput | ConvertFrom-Json } else { $null }
 if ($isFitting -and $packageInfo) { $packageInfo.PSObject.Properties.Remove('upstreamExampleSha256') }
 $gpuSamples = @($samples | Where-Object { $null -ne $_.wholeGpuUsedMiB })
 $receipt = [ordered]@{
-    schemaVersion=1; purpose=if ($isFitting) {'Measured-panel Newton sewing study, not fit or art admission'} else {'Unmodified upstream hanging-cloth feasibility benchmark, not garment or art admission'}
+    schemaVersion=1; purpose=if ($ReviewResult) {'Depth-buffered exported-mesh review, not final art admission'} elseif ($isFitting) {'Measured-panel Newton sewing study, not fit or art admission'} else {'Unmodified upstream hanging-cloth feasibility benchmark, not garment or art admission'}
     invocation=$arguments; python=$pythonPath; packages=$packageInfo
     runnerSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash.ToLower()
     exitCode=$exitCode; timedOut=$timedOut; resourceStopped=$resourceStopped; terminationReason=$terminationReason; elapsedSeconds=$watch.Elapsed.TotalSeconds
