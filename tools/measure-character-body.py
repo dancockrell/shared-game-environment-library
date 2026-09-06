@@ -310,6 +310,11 @@ def bodice_measurements(mesh, landmarks, bands, dimensions, partitions, profiles
     if not all(math.isfinite(value) and (0 <= value < 90 if key in angular else value > 0) for key, value in body.items()):
         raise ValueError("Invalid bodice measurement")
     return {"body": body, "armGeodesic": arm, "neckViaNapeGeodesic": neck, "wristSection": wrist,
+            "armPose": {"units":"metres", "upAxis":"Y",
+                        "shoulderLeft":xyz["shoulder_left"].tolist(),
+                        "elbowLeft":xyz["elbow_left"].tolist(),
+                        "wristLeft":xyz["wrist_left"].tolist(),
+                        "otherArm":"mirrored-left-study-not-asymmetric-pose-support"},
             "status": "measured-source-body-bodice-input-study-not-fit-approved",
             "methodDifferences": ["Neck width uses two surface geodesics via nape, not author template edge path",
                                   "Wrist uses oblique section through landmark, not author template edge path",
@@ -440,6 +445,7 @@ def main(args):
     if bodice:
         import yaml
         provenance = {"status": bodice["status"], "bodySha256": body_hash,
+                      "armPose": bodice["armPose"],
                       "measurementToolSha256": result["toolSha256"],
                       "landmarkFileSha256": result["landmarkFileSha256"],
                       "methodDifferences": bodice["methodDifferences"],

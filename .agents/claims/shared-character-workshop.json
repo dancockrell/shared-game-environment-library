@@ -5,7 +5,7 @@
   "summary": "Replace rejected rigid male overgarment with anatomically measured period tailoring and cloth drape through existing shared generator; preserve tested bodice fitting and research established coat construction",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T14:39:00Z",
+  "updated_at": "2026-09-06T14:47:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -55,6 +55,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "3D sleeve-placement checkpoint: measurement pose retained and shortest rigid rotation applied after author assembly. First component-rotation trial rejected: origin-based autonorm reversed edges and sleeves collapsed. Corrected male-coat-panels-05 preserves exact cut vertices, edges and stitch identities; female regenerated output hashes all unchanged. 22 measurement tests and female 26 checks pass; male 25 pass, mean seam gate fails at 1.607 mm.",
+      "Actual corrected solve 20260906T144446946Z-vbd and depth review 20260906T144541179Z-vbd inspected: deepest sampled penetration -2.365 mm versus -21.908, two over-1-mm samples versus eight; seams worsen to 1.607 mm mean / 47.467 mm maximum. Not overall fit approval. 44.00 s, 487.62 MiB sampled process and 3914 MiB whole GPU. Initial RAM guard deferred before launch, later headroom check permitted bounded run. No paid call or new engine window. Continue sleeve sewing path and armhole constraints.",
       "Contact-field audit and depth-render checkpoint: actual Newton SDF compared with independent source triangles. Male wrist source -21.908 mm versus field -15.564 mm; no missed inside samples deeper than 1 mm, not exact-contact certification. Pyglet/Pyrender hidden depth buffer replaces misleading painter polygons inside existing fitter; actual exported GLBs rendered without changed positions or masked body. Both front/three-quarter/back sheets inspected, remain unapproved.",
       "Fresh male 20260906T143354731Z-vbd / female 20260906T143432816Z-vbd: 300 frames in 24.59/19.24 s; sampled process 481.33/479.07 MiB, whole-device GPU 4058/3881 MiB. Female all 25 tests pass; male 24 pass, unchanged mean-seam 1 mm gate fails at 1.066 mm. CPU review tested with graphics imports blocked. Bounded offscreen reviews 20260906T143513510Z-vbd / 20260906T143531302Z-vbd complete in 3.04/3.10 s. No paid work, new Godot window, final art or 8 GB certification.",
       "Dressing-route checkpoint: existing surface guides extended to torso/skirt sides and released at frame 90. Read pinned GarmentCode body-region/reference/attachment code. Final male 20260906T141205166Z-vbd and female 20260906T141128951Z-vbd both pass 23 actual pattern/body/support/contact/export tests. Mean seam gaps 0.954/0.086 mm; sampled penetrations over 1 mm 8/0. Actual CPU meshes inspected, still unapproved for art/rigged runtime. No new solver, paid work or Godot window.",

@@ -246,6 +246,49 @@ def apply_cut_style(design, style):
     return values["frontHemDropCm"]
 
 
+def sleeve_alignment(source_direction, pose, side):
+    """Shortest rigid rotation to the measured arm axis; no mesh stretching."""
+    import numpy as np
+    from scipy.spatial.transform import Rotation
+    if pose.get("units") != "metres" or pose.get("upAxis") != "Y" or side not in (-1,1):
+        raise ValueError("Invalid measured sleeve pose")
+    shoulder,wrist = (np.asarray(pose[k],dtype=float) for k in ("shoulderLeft","wristLeft"))
+    source = np.asarray(source_direction,dtype=float)
+    if any(v.shape != (3,) or not np.isfinite(v).all() for v in (shoulder,wrist,source)):
+        raise ValueError("Invalid measured sleeve vectors")
+    target = wrist-shoulder
+    target[0] = abs(target[0])*side
+    if target[1] >= 0 or abs(target[0]) < .01 or np.linalg.norm(source) < 1e-6:
+        raise ValueError("Sleeve requires a laterally extended downward arm")
+    rotation,_ = Rotation.align_vectors([target/np.linalg.norm(target)],[source/np.linalg.norm(source)])
+    return rotation
+
+
+def align_sleeves(garment, pattern, pose):
+    """Rotate each author sleeve around its armhole, preserving panel rest cuts."""
+    import numpy as np
+    from scipy.spatial.transform import Rotation
+    evidence = {}
+    for side in ("right","left"):
+        sleeve = getattr(garment,side).sleeve
+        anchor = sleeve.interfaces["in"].verts_3d().mean(axis=0)
+        cuff = sleeve.interfaces["out"].verts_3d().mean(axis=0)
+        rotation = sleeve_alignment(cuff-anchor,pose,1 if anchor[0]>0 else -1)
+        # Apply the rigid placement after author assembly. Component.rotate_by
+        # invokes origin-based autonorm and reverses cut edges mid-assembly;
+        # that is inappropriate for an already directed sewing pattern.
+        for name in (sleeve.f_sleeve.name,sleeve.b_sleeve.name):
+            panel = pattern.pattern["panels"][name]
+            panel["translation"] = (anchor+rotation.apply(np.asarray(panel["translation"])-anchor)).tolist()
+            panel["rotation"] = (rotation*Rotation.from_euler("xyz",panel["rotation"],degrees=True)).as_euler("xyz",degrees=True).tolist()
+        evidence[side] = {"armholeBeforeCm":anchor.tolist(),
+            "armholeAfterCm":anchor.tolist(),
+            "cuffBeforeCm":cuff.tolist(),
+            "cuffAfterCm":(anchor+rotation.apply(cuff-anchor)).tolist(),
+            "rotationMatrix":rotation.as_matrix().tolist()}
+    return evidence
+
+
 def assemble_coat(garment, controls):
     """Compose existing shaped bodice/sleeve and skirt panels, with an open front.
 
@@ -348,8 +391,12 @@ def build(args):
     garment = FittedShirt(body, design)
     cut_measurements = shape_front_hem(garment,hem_drop)
     if style and style.get("coat"):
+        if not body_provenance or not body_provenance.get("armPose"):
+            raise ValueError("Regenerate measured inputs with complete arm pose for coat placement")
         assemble_coat(garment,style["coat"])
     pattern = garment.assembly()
+    if style and style.get("coat"):
+        cut_measurements["sleevePlacement"] = align_sleeves(garment,pattern,body_provenance["armPose"])
     # Upstream collects subcomponents through a set. Canonicalize containers,
     # never the directed panel edges or the two sides of an individual seam.
     pattern.pattern["panels"] = dict(sorted(pattern.pattern["panels"].items()))

@@ -32,6 +32,22 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_sleeve_alignment_is_rigid_mirrored_and_scale_independent(self):
+        import numpy as np
+        pose = {"units":"metres","upAxis":"Y","shoulderLeft":[.2,.6,.04],"wristLeft":[.47,.25,.21]}
+        for side in (-1,1):
+            source = np.array([side*.3,-.4,0.])
+            target = np.array([side*.27,-.35,.17])
+            rotation = builder.sleeve_alignment(source,pose,side)
+            np.testing.assert_allclose(rotation.apply(source/np.linalg.norm(source)),target/np.linalg.norm(target),atol=1e-12)
+            np.testing.assert_allclose(rotation.as_matrix().T@rotation.as_matrix(),np.eye(3),atol=1e-12)
+            shifted = {**pose, **{k:(np.asarray(pose[k])*2+[4,3,2]).tolist() for k in ("shoulderLeft","wristLeft")}}
+            np.testing.assert_allclose(builder.sleeve_alignment(source*3,shifted,side).as_matrix(),rotation.as_matrix(),atol=1e-12)
+        for invalid in ({**pose,"upAxis":"Z"},{**pose,"wristLeft":[.2,.7,.1]},
+                        {**pose,"wristLeft":[float("nan"),0,0]}):
+            with self.assertRaises(ValueError):
+                builder.sleeve_alignment([1,-1,0],invalid,1)
+
     @unittest.skipUnless(FIT_PATH and BODY_PATH,"No actual sewing result requested")
     def test_cpu_review_needs_no_graphics_and_retains_sdf_evidence(self):
         import contextlib
@@ -116,6 +132,12 @@ class ActualPatternTests(unittest.TestCase):
             self.skipTest("Default upstream cut")
         self.assertEqual(style["status"],"construction-study-not-approved-garment")
         if style.get("coat"):
+            placements = receipt["cutMeasurements"]["sleevePlacement"]
+            for evidence in placements.values():
+                before,after = (np.asarray(evidence[k]) for k in ("armholeBeforeCm","armholeAfterCm"))
+                np.testing.assert_allclose(before,after,atol=1e-10)
+                np.testing.assert_allclose(np.asarray(evidence["rotationMatrix"])@(np.asarray(evidence["cuffBeforeCm"])-before),
+                                           np.asarray(evidence["cuffAfterCm"])-after,atol=1e-10)
             self.assertEqual(style["parameters"]["frontHemDropCm"],0)
             self.assertEqual(len(MESH["panels"]),12)
             self.assertEqual(sum("sleeve" in n for n in MESH["panels"]),4)
