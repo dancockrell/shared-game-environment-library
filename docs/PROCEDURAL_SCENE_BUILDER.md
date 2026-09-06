@@ -891,6 +891,41 @@ all 38 stages, 57 Rust tests and six mesh-audit tests passed.
 This art checkpoint is committed locally without a push or Actions dispatch,
 respecting the user's request to limit GitHub Actions usage.
 
+#### Filling close-up: resolution alone is not the defect
+
+The next recipe experiment darkens and glosses the cake jam and pie compote,
+softens the cake cream's upper outer profile, and adds twelve partly submerged
+fruit pieces using one shared fluted-lathe definition. Their centers are in
+lattice openings; this is deliberate placement, not random scattering.
+No general fruit/lattice intersection certification is claimed.
+
+CPU receipt `20260906-141327-7c49ff98068b4b1fb1465b7d51668c30` passed all
+38 stages, 57 Rust tests and six mesh-audit tests.
+Native whole-scene capture passed 92 instances/18 meshes:
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pastry-fruit-filling.png`.
+A pie-only review recipe keeps the same pie geometry/materials and frames it
+larger at elevation 38 degrees:
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pie-filling-close.png`.
+Native import/spatial checks passed 61 instances/11 meshes in the unchanged
+PID 30828. This is a native close-up, not an AI-enhanced image.
+
+**Visual rejection remains:** enlarged filling still reads as a smooth slab;
+fruit tops resemble separate buttons. More pixels do not solve this material
+and geometric-transition problem. Cream is fuller but remains overly regular.
+Retain this as an unapproved development fixture, not evidence of convincing
+wet fruit or final food art. The user specifically questioned missing wet-surface
+math. Distinguish the existing Godot PBR renderer from our limited exported
+controls: roughness/metallic/color are exposed; layered glaze, transmission and
+roughness texture controls are not. Normal-map integration remains unverified.
+
+Godot already provides a separate clearcoat lobe and roughness control
+([official material documentation](https://docs.godotengine.org/en/4.7/classes/class_basematerial3d.html)).
+A next material step should expose that existing capability and evaluate
+reflections in a close-up with useful lighting contrast, rather than inventing
+a replacement BRDF or claiming that a dark glossy albedo is syrup.
+No clearcoat implementation, new lighting rig or engine restart occurred here.
+Checkpoint remains local; no Actions dispatch or remote push.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository

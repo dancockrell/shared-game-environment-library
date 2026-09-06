@@ -694,7 +694,8 @@
       },
       "color": [0.42, 0.045, 0.08, 1],
       "material": {
-        "roughness": 0.7
+        "roughness": 0.24,
+        "paint": {"color": [0.16, 0.008, 0.024], "strength": 0.5, "seed": 39, "size": 128}
       }
     },
     "cake.icing": {
@@ -1447,9 +1448,25 @@
           ]
         ]
       },
-      "color": [0.4, 0.04, 0.065, 1],
+      "color": [0.23, 0.009, 0.024, 1],
       "material": {
-        "roughness": 0.7
+        "roughness": 0.23,
+        "paint": {"color": [0.08, 0.004, 0.012], "strength": 0.65, "seed": 193, "size": 256}
+      }
+    },
+    "pie.fruit_piece": {
+      "shape": {
+        "kind": "lathe_spline", "segments": 40, "tolerance": 0.0001,
+        "profile": [
+          [[0,0],[0.006,0],[0.01,0.001],[0.01,0.005]],
+          [[0.01,0.005],[0.01,0.01],[0.005,0.013],[0,0.011]]
+        ],
+        "fluting": {"count": 3, "depth": 0.065}
+      },
+      "color": [0.32,0.015,0.028,1],
+      "material": {
+        "roughness": 0.22,
+        "paint": {"color":[0.12,0.006,0.018],"strength":0.6,"seed":211,"size":64}
       }
     },
     "pie.lattice_long_0": {
@@ -5289,7 +5306,7 @@
           [
             [0.125, 0],
             [0.132, 0],
-            [0.132, 0.013499999999999998],
+            [0.138, 0.013499999999999998],
             [0.125, 0.013499999999999998]
           ],
           [
@@ -5300,9 +5317,9 @@
           ]
         ]
       },
-      "color": [0.62, 0.51, 0.36, 1],
+      "color": [0.66, 0.57, 0.43, 1],
       "material": {
-        "roughness": 0.9
+        "roughness": 0.64
       }
     },
     "pie.crimp": {
@@ -5431,6 +5448,18 @@
               "kind": "part",
               "mesh": "pie.filling"
             },
+            {"kind":"part","mesh":"pie.fruit_piece","position":[-0.061,0.04,-0.061],"scale":0.96},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[-0.019,0.041,-0.06],"scale":1.04,"yaw":0.4},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[0.02,0.041,-0.061],"scale":0.9,"yaw":1.1},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[0.06,0.04,-0.02],"scale":1.06,"yaw":0.7},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[-0.06,0.04,-0.019],"scale":1.04,"yaw":1.5},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[-0.02,0.04,-0.02],"scale":0.96,"yaw":2.1},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[0.021,0.041,-0.02],"scale":1.02,"yaw":0.2},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[-0.02,0.04,0.021],"scale":1.08,"yaw":1.8},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[0.02,0.042,0.021],"scale":0.94,"yaw":2.7},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[-0.061,0.04,0.06],"scale":1.02,"yaw":0.9},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[0.019,0.04,0.061],"scale":1.05,"yaw":1.4},
+            {"kind":"part","mesh":"pie.fruit_piece","position":[0.061,0.041,0.061],"scale":0.91,"yaw":2.5},
             {
               "kind": "part",
               "mesh": "pie.lattice_long_0",

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Refine cherry glaze in the pastry recipe and inspect in the existing viewer; keep unverified normal relief off and do not trigger remote Actions for the art iteration",
+  "summary": "Improve pastry filling with submerged fruit geometry, darker moist compote and softer cream profile; validate and render locally with no remote workflow",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",
