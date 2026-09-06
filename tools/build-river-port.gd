@@ -745,6 +745,9 @@ func build() -> void:
 	root.msaa_3d = Viewport.MSAA_4X
 	root.use_taa = RenderingServer.get_current_rendering_method() == "forward_plus"
 	RenderingServer.directional_shadow_atlas_set_size(8192,true)
+	if args.size() == 3 and args[1] == "--review-catalog":
+		await review_catalog(args[2].split(",",false))
+		return
 	if args.size() == 2 and args[1] == "--catalog":
 		await build_catalog()
 		return
@@ -953,6 +956,63 @@ func catalog_stage() -> Node3D:
 	sun.shadow_bias = 0.03
 	stage.add_child(sun)
 	return stage
+
+func review_catalog(ids: PackedStringArray) -> void:
+	# Review saved assets without replaying or regenerating the entire library.
+	var folder := output_dir.path_join("catalog")
+	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder.path_join("build-report.json")))
+	var source := (load(folder.path_join(report.native)) as PackedScene).instantiate() as Node3D
+	var selected: Array = []
+	for id in ids:
+		var matches: Array = report.assets.filter(func(entry): return entry.assetId == "painted-river-port."+id)
+		if matches.size() != 1 or id in selected:
+			push_error("Unknown or duplicate review asset: "+id)
+			source.free()
+			quit(1)
+			return
+		selected.append(id)
+	if selected.is_empty():
+		source.free()
+		quit(1)
+		return
+	root.size = Vector2i(640,520)
+	root.add_child(kit.root)
+	kit.setup_palette()
+	var stage := catalog_stage()
+	kit.block(Vector3(0,-0.1,0),Vector3(60,0.2,60),"mortar",stage)
+	root.add_child(source)
+	var overlay := CanvasLayer.new()
+	root.add_child(overlay)
+	var caption := Label.new()
+	caption.position = Vector2(18,482)
+	caption.add_theme_font_size_override("font_size",24)
+	overlay.add_child(caption)
+	var review_dir := folder.path_join("review-batch")
+	DirAccess.make_dir_recursive_absolute(review_dir)
+	for id in selected:
+		var asset := source.get_node("painted_"+id.replace("-","_")) as Node3D
+		asset.visible = true
+		caption.text = id.replace("-"," ").capitalize()
+		var bounds := bounds_of(asset)
+		var aim := bounds.get_center()
+		for rear in [false,true]:
+			camera.position = aim+(Vector3(-12,10,16) if rear else Vector3(12,10,-16))
+			camera.look_at(aim)
+			var projected := AABB()
+			for corner in 8:
+				var p: Vector3 = camera.global_transform.affine_inverse()*bounds.get_endpoint(corner)
+				projected = AABB(p,Vector3.ZERO) if corner == 0 else projected.expand(p)
+			camera.size = maxf(projected.size.y,projected.size.x/(640.0/520.0))*1.22
+			for frame in 12:
+				await process_frame
+			RenderingServer.force_draw(false)
+			assert(root.get_texture().get_image().save_png(review_dir.path_join(id+("-rear" if rear else "")+".png")) == OK)
+		asset.visible = false
+	var receipt := FileAccess.open(review_dir.path_join("review.json"),FileAccess.WRITE)
+	receipt.store_string(JSON.stringify({"assetIds":selected,"sourceCatalogSha256":FileAccess.get_sha256(folder.path_join(report.native)),"geometryRegenerated":false,"status":"captures only; not approval"},"\t")+"\n")
+	receipt.close()
+	print("PASS focused review: ",selected.size()," saved assets; no geometry regenerated")
+	quit()
 
 func build_catalog() -> void:
 	# Batch mode of the existing builder, using the same kit/material owner.

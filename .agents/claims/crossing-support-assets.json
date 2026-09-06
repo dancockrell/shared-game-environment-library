@@ -3,10 +3,11 @@
   "task_id": "crossing-support-assets",
   "agent": "codex",
   "summary": "Published nine Crossing building and terrain assets; character work preserved",
-  "status": "completed",
+  "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T06:13:07.162Z",
   "paths": [
+    "tools/build-river-port.gd",
     "tools/river-port-kit.gd",
     "docs/river-port-build/catalog/",
     "docs/CROSSING_BUILDING_BATCH.md"

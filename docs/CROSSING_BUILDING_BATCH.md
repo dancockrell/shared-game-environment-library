@@ -1,5 +1,26 @@
 # Description-led Crossing building batch
 
+## Focused review, not a growing slideshow
+
+Use the existing builder's `--review-catalog <comma-separated-ids>` mode to
+inspect a small named batch from the saved native catalog. For example:
+`godot --path tools --rendering-method forward_plus --script res://build-river-port.gd -- <absolute-repo> --review-catalog pine-shop-counter,wooden-display-bin,shield-hook-board`.
+This captures front/rear views without regenerating any geometry. Unknown or
+duplicate IDs fail instead of silently reviewing something else. Output lives
+in `docs/river-port-build/catalog/review-batch/`; `review.json` names the current
+batch and pins its source catalog hash. Older image files can remain there;
+only the receipt's IDs belong to the current review. Captures are not approval.
+
+Routine visual review should cover changed pieces and their composed room,
+including joins, scale, access and sightlines. A full `--catalog` build still
+rebuilds, checks and renders every model; it is not an incremental build cache.
+Reserve that full visual sweep for broad material/geometry changes or an
+intentional catalog audit. Automated catalog-wide validation remains separate
+from asking the user to watch every model. Character production is owned by
+Pirate Island; this workflow owns reusable environments and scene composition.
+
+## Building candidates
+
 Nine new shared candidates, built locally with the existing river-port kit.
 No paid services, no decimation, no generated live population. Complete shells
 have measured bounds, bottom-centered pivots, front/rear captures and entrance
