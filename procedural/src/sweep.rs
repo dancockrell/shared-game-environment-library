@@ -16,6 +16,16 @@ pub struct Sweep {
     pub sides: u32,
     #[serde(default)]
     pub wall_thickness: f32,
+    /// Semiaxis multipliers in the transported normal/binormal frame.
+    /// Wall thickness is applied before this affine section scaling.
+    #[serde(default = "unit_section")]
+    pub section_scale: [f32; 2],
+    /// Constant initial section rotation, in degrees about the spine tangent.
+    #[serde(default)]
+    pub section_roll: f32,
+}
+fn unit_section() -> [f32; 2] {
+    [1., 1.]
 }
 fn sub(a: D3, b: D3) -> D3 {
     std::array::from_fn(|i| a[i] - b[i])
@@ -222,7 +232,15 @@ pub(super) fn validate_meridian(profile: &[[f32; 2]]) -> Result<()> {
 }
 impl Sweep {
     fn samples(&self, cap: usize) -> Result<Vec<Sample>> {
-        finite(&[self.tolerance, self.wall_thickness])?;
+        finite(&[self.tolerance, self.wall_thickness, self.section_roll])?;
+        finite(&self.section_scale)?;
+        if self.section_scale.iter().any(|x| !(0.125..=8.).contains(x))
+            || self.section_roll.abs() > 360.
+        {
+            return Err(
+                "Sweep section scales must be 0.125..8 and roll within -360..360 degrees".into(),
+            );
+        }
         if self.spans.is_empty()
             || self.spans.len() > 64
             || !(8..=256).contains(&self.sides)
@@ -255,7 +273,8 @@ impl Sweep {
             } else {
                 result.push(first);
             }
-            sample_span(c, self.tolerance as f64, 0, &mut result, cap)?;
+            let enlargement = self.section_scale[0].max(self.section_scale[1]).max(1.) as f64;
+            sample_span(c, self.tolerance as f64 / enlargement, 0, &mut result, cap)?;
         }
         Ok(result)
     }
@@ -279,6 +298,10 @@ impl Sweep {
             [0., 1., 0.]
         };
         let mut n = unit(sub(axis, mul(t, dot(axis, t))))?;
+        if self.section_roll != 0. {
+            let angle = (self.section_roll as f64).to_radians();
+            n = unit(add(mul(n, angle.cos()), mul(cross(t, n), angle.sin())))?;
+        }
         frames.push(n);
         for pair in samples.windows(2) {
             n = transport(pair[0].p, pair[1].p, pair[0].t, pair[1].t, n)?;
@@ -293,7 +316,8 @@ impl Sweep {
                 return Err("Sweep contains coincident sampled positions".into());
             }
             let curvature = dot(sub(pair[1].t, pair[0].t), sub(pair[1].t, pair[0].t)).sqrt() / ds;
-            if curvature * pair[0].r.max(pair[1].r) >= 0.95 {
+            let max_section = self.section_scale[0].max(self.section_scale[1]) as f64;
+            if curvature * pair[0].r.max(pair[1].r) * max_section >= 0.95 {
                 return Err("Sweep radius exceeds local curvature clearance".into());
             }
             distance.push(distance.last().unwrap() + ds);
@@ -322,14 +346,22 @@ impl Sweep {
                 let mut ns = Vec::new();
                 for j in 0..sides {
                     let angle = std::f64::consts::TAU * j as f64 / sides as f64;
-                    let radial = add(mul(frames[i], angle.cos()), mul(binormal, angle.sin()));
+                    let [a, b] = self.section_scale.map(f64::from);
+                    let radial = add(
+                        mul(frames[i], a * angle.cos()),
+                        mul(binormal, b * angle.sin()),
+                    );
+                    let gradient = add(
+                        mul(frames[i], angle.cos() / a),
+                        mul(binormal, angle.sin() / b),
+                    );
                     let p = add(s.p, mul(radial, radius)).map(|x| x as f32);
                     finite(&p)?;
                     ring.push(p);
                     // Surface-of-variable-radius correction; a radial-only
                     // normal is wrong on tapered spouts and icing tips.
                     let surface_normal = unit(sub(
-                        mul(radial, 1. - radius * dot(curvature, radial)),
+                        mul(gradient, 1. - radius * dot(curvature, radial)),
                         mul(s.t, s.dr_ds),
                     ))?;
                     ns.push(
@@ -444,14 +476,27 @@ mod tests {
                     tolerance: 0.001,
                     sides: 32,
                     wall_thickness: if hollow { 0.04 } else { 0. },
+                    section_scale: unit_section(),
+                    section_roll: 0.,
                 },
             },
         }
     }
     #[test]
     fn straight_solid_and_hollow_are_closed_and_outward() {
-        for hollow in [false, true] {
-            let m = mesh("tube", &fixture(hollow), 100000).unwrap();
+        for (hollow, scale, roll) in [
+            (false, [1., 1.], 0.),
+            (true, [1., 1.], 0.),
+            (false, [2., 0.5], 30.),
+            (true, [2., 0.5], 90.),
+        ] {
+            let mut d = fixture(hollow);
+            let Shape::Sweep { sweep } = &mut d.shape else {
+                unreachable!()
+            };
+            sweep.section_scale = scale;
+            sweep.section_roll = roll;
+            let m = mesh("tube", &d, 100000).unwrap();
             let mut edges = std::collections::BTreeMap::new();
             for (p, ns) in m
                 .positions
@@ -477,8 +522,101 @@ mod tests {
             }
             assert!(edges.values().all(|n| *n == 2));
             if hollow {
-                assert!(m.positions.iter().all(|p| p[0].hypot(p[2]) > 0.159));
+                assert!(m
+                    .positions
+                    .iter()
+                    .all(|p| p[0].hypot(p[2]) > 0.159 * scale[0].min(scale[1])));
             }
+        }
+    }
+    #[test]
+    fn elliptical_taper_normals_match_implicit_surface_gradient() {
+        for hollow in [false, true] {
+            let mut d = fixture(hollow);
+            let Shape::Sweep { sweep } = &mut d.shape else {
+                unreachable!()
+            };
+            sweep.section_scale = [2., 0.5];
+            for (i, p) in sweep.spans[0].iter_mut().enumerate() {
+                p[3] = 0.2 + 0.03 * i as f32;
+            }
+            let m = mesh("oval-taper", &d, 100000).unwrap();
+            let mut checked = 0;
+            for (p, n) in m.positions.iter().zip(&m.normals) {
+                if n[1].abs() > 0.99 {
+                    continue;
+                } // Flat caps, not side surface.
+                let radial_dot = p[0] * n[0] + p[2] * n[2];
+                let inner = radial_dot < 0.;
+                let radius = 0.2 + 0.03 * p[1] as f64 - if inner { 0.04 } else { 0. };
+                // Gradient of x^2/a^2 + z^2/b^2 - r(y)^2 = 0,
+                // divided by 2r; separate from the transported-frame algorithm.
+                let expected = unit([
+                    p[0] as f64 / (4. * radius),
+                    -0.03,
+                    p[2] as f64 / (0.25 * radius),
+                ])
+                .unwrap();
+                assert!(
+                    dot(
+                        n.map(f64::from),
+                        mul(expected, if inner { -1. } else { 1. })
+                    ) > 0.99999
+                );
+                checked += 1;
+            }
+            assert!(checked >= 192);
+        }
+    }
+    #[test]
+    fn elliptical_orientation_defaults_and_invalid_controls() {
+        let d = fixture(false);
+        let mut legacy = serde_json::to_value(&d).unwrap();
+        legacy["shape"]["sweep"]
+            .as_object_mut()
+            .unwrap()
+            .remove("section_scale");
+        legacy["shape"]["sweep"]
+            .as_object_mut()
+            .unwrap()
+            .remove("section_roll");
+        let old: Definition = serde_json::from_value(legacy).unwrap();
+        assert_eq!(
+            serde_json::to_vec(&mesh("legacy", &d, 100000).unwrap()).unwrap(),
+            serde_json::to_vec(&mesh("legacy", &old, 100000).unwrap()).unwrap()
+        );
+        for (roll, extents) in [(0., [0.4, 0.1]), (90., [0.1, 0.4])] {
+            let mut d = fixture(false);
+            let Shape::Sweep { sweep } = &mut d.shape else {
+                unreachable!()
+            };
+            sweep.section_scale = [2., 0.5];
+            sweep.section_roll = roll;
+            let m = mesh("oriented", &d, 100000).unwrap();
+            for (axis, expected) in [(0, extents[0]), (2, extents[1])] {
+                let extent = m
+                    .positions
+                    .iter()
+                    .map(|p| p[axis].abs())
+                    .fold(0_f32, f32::max);
+                assert!((extent - expected).abs() < 1e-6);
+            }
+        }
+        for invalid in [0., -1., 0.124, 8.01, f32::NAN, f32::INFINITY] {
+            let mut d = fixture(false);
+            let Shape::Sweep { sweep } = &mut d.shape else {
+                unreachable!()
+            };
+            sweep.section_scale[0] = invalid;
+            assert!(mesh("invalid-scale", &d, 100000).is_err());
+        }
+        for invalid in [361., -361., f32::NAN, f32::INFINITY] {
+            let mut d = fixture(false);
+            let Shape::Sweep { sweep } = &mut d.shape else {
+                unreachable!()
+            };
+            sweep.section_roll = invalid;
+            assert!(mesh("invalid-roll", &d, 100000).is_err());
         }
     }
     #[test]

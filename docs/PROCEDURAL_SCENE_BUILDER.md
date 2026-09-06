@@ -758,6 +758,55 @@ Ordinary lathe meridians may now return downward to construct inner walls;
 crossings and nonadjacent contacts are rejected. Ordered profiles determine
 winding. Existing ascending profiles remain compatible.
 
+Sweeps also accept `section_scale: [a,b]` (each 0.125..8, default `[1,1]`)
+and `section_roll` (degrees -360..360, default zero). These provide an elliptical
+cross-section in the transported normal/binormal plane and a constant initial
+orientation. Roll does not add progressive twisting. The initial frame projects
+world X perpendicular to the initial tangent, except when `abs(tangent.x) >= 0.8`,
+where world Y is used. Authored roll is relative to that deterministic frame.
+This automatic axis choice can change discontinuously when editing across that
+threshold; an explicit author-defined initial normal remains future work.
+
+Construction uses the existing [Wang et al. double-reflection frame transport](https://www.cs.hku.hk/data/techreps/document/TR-2007-07.pdf),
+not a second sweep implementation. The ellipse and shading extension is original
+analytic geometry, not a claim from that paper. In the following, `r` is the
+current outer radius or `radius - wall_thickness` for the bore, `r_prime` is its
+arc-length derivative, and `k` is the sampled tangent derivative:
+
+```text
+radial = a*cos(theta)*frame_normal + b*sin(theta)*frame_binormal
+gradient = cos(theta)/a*frame_normal + sin(theta)/b*frame_binormal
+position = spine_position + r*radial
+normal = normalize((1 - r*dot(k, radial))*gradient - r_prime*tangent)
+if inner_surface: normal = -normal
+```
+
+This is the cross-product normal for an ideal rotation-minimizing frame with
+fixed semiaxis multipliers; implementation curvature remains sampled. A radial
+normal would be incorrect for the ellipse. Hollow sections apply wall thickness
+**before affine scaling**: axis thicknesses are `a*wall_thickness` and
+`b*wall_thickness`, not a constant surface-normal thickness around the ellipse.
+Both annular ends and caps follow the same scaled rings. UV U remains normalized
+section angle, not ellipse arc length. Wider sections tighten the spine sampler
+tolerance and use the maximum semiaxis in the conservative local folding guard.
+These measures still do not certify global self-intersection or shading error.
+
+The current teapot handle uses `[1.45,0.65]` to make a flattened oval metal band
+instead of circular wire. This is an unrendered construction candidate under
+the CPU-only shared-machine workflow. The saved PNG below predates this change;
+do not use it as visual approval of the new handle. No extra triangles are
+required per ring; adaptive refinement may increase ring count.
+
+CPU receipt: `procedural/generated/reviews/20260906-115635-879c15bf77c74af2b3e86e290fdfeb05/report.json`.
+39 tests, format, strict clippy, release and nine deterministic fixtures passed.
+Tests cover closed solid/hollow ellipse meshes, outward unit normals, tapered
+normals against the independent implicit-surface gradient, 0/90-degree extents,
+invalid controls and omitted-field compatibility. Independent previous-output
+comparison found eight fixtures and six teapot parts unchanged; the handle's
+placement/source stayed fixed while its bounds updated. Handle output remains
+3,237 indexed vertices and 6,000 triangles. Godot/Unity execution, a new render
+and VRAM measurement are not run for this checkpoint.
+
 The tolerance bounds control-hull deviation from each accepted 4D chord
 (position plus radius), not complete mesh, shading, or screen-space error.
 Angular checks and a positive derivative-projection test reject hidden cusps.
