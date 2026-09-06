@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "status": "authored-seed-landmarks-for-review-not-approved-anatomy",
+  "bodySha256": "566985f23a9182de4831034afec6e159c27fee803e6e2b49f10e53927dcfa645",
+  "units": "metres",
+  "upAxis": "Y",
+  "source": "Authored on the actual CC0-derived male source-rest mesh for tailoring construction; not Captain Michael likeness. Chest and seat use explicit anatomical planes, not an extremum that can include arms or thighs.",
+  "seeds": {
+    "nape": [0, 0.679, -0.027],
+    "neck_left": [0.065, 0.662, 0.046],
+    "neck_right": [-0.065, 0.662, 0.046],
+    "shoulder_left": [0.212, 0.620, 0.045],
+    "shoulder_right": [-0.212, 0.620, 0.045],
+    "bust_left": [0.10, 0.465, 0.147],
+    "bust_right": [-0.10, 0.465, 0.147],
+    "bust_side_left": [0.161, 0.465, 0.060],
+    "bust_side_right": [-0.161, 0.465, 0.060],
+    "waist_side_left": [0.136, 0.277, 0.039],
+    "waist_side_right": [-0.136, 0.277, 0.039],
+    "waist_back": [0, 0.277, -0.015],
+    "hip_side_left": [0.179, 0.055, 0.041],
+    "hip_side_right": [-0.179, 0.055, 0.041],
+    "bum_left": [0.081, 0.055, -0.086],
+    "bum_right": [-0.081, 0.055, -0.086],
+    "wrist_left": [0.474, 0.249, 0.208],
+    "elbow_left": [0.333, 0.423, 0.071],
+    "armpit_left": [0.208, 0.493, 0.038]
+  }
+}

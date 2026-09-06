@@ -22,6 +22,30 @@ def cylinder(radius):
 
 
 class MeasurementTests(unittest.TestCase):
+    def test_sleeve_angle_uses_horizontal_not_vertical(self):
+        for angle in (30,45,60):
+            for sign in (-1,1):
+                end = [sign*math.cos(math.radians(angle)),-math.sin(math.radians(angle)),.3]
+                self.assertAlmostEqual(measure.sleeve_pose_angle([0,0,0],end),angle)
+                shift = np.array([2,3,4])
+                self.assertAlmostEqual(measure.sleeve_pose_angle(shift,np.array(end)*2+shift),angle)
+        for end in ([0,-1,0],[1,1,0],[float("nan"),-1,0],[1,0,0]):
+            with self.assertRaises(ValueError):
+                measure.sleeve_pose_angle([0,0,0],end)
+
+    def test_authored_plane_does_not_chase_larger_cross_section(self):
+        mesh = trimesh.creation.cone(radius=.1, height=.4, sections=64)
+        mesh.apply_transform(trimesh.transformations.rotation_matrix(-math.pi / 2, [1, 0, 0]))
+        exact = measure.measure_band(mesh, .2, "landmark")
+        searched = measure.measure_band(mesh, .2, "max")
+        self.assertEqual(exact["selection"], "landmark")
+        self.assertEqual(exact["selected"]["yMetres"], .2)
+        self.assertEqual(len(exact["samples"]), 1)
+        self.assertFalse(exact["atSearchBoundary"])
+        self.assertLess(exact["selected"]["circumferenceMetres"], searched["selected"]["circumferenceMetres"])
+        with self.assertRaises(ValueError):
+            measure.measure_band(mesh, float("nan"), "landmark")
+
     def test_regular_polygon_tape(self):
         result = measure.section_tape(cylinder(.1), .013)
         self.assertAlmostEqual(result["circumferenceMetres"], 128 * .1 * math.sin(math.pi / 64), places=10)

@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Build shared character construction; reject failed bodice fitting, read complete contact papers and current garment methods, inspect author code and benchmark pinned Newton before replacing the construction solver",
+  "summary": "Replace rejected rigid male overgarment with anatomically measured period tailoring and cloth drape through existing shared generator; preserve tested bodice fitting and research established coat construction",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T13:40:00Z",
+  "updated_at": "2026-09-06T13:45:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -53,6 +53,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Male coat checkpoint: existing GarmentCode composition generates 12 panels/36 stitches with fitted torso, set-in sleeves, waist-seamed skirts and open front. Authored male planes and corrected horizontal sleeve angle exercised; 22 measurement tests passed. Male pattern suite 19 passed/two skipped; baseline 18 passed/three skipped of 21, all ten baseline output hashes unchanged.",
+      "Actual male drape 20260906T134056316Z-vbd inspected front/three-quarter/back: sleeve placement improved, skirts still penetrate body. Mean seam gap 1.659 mm fails unchanged 1 mm gate; 95/10388 samples deeper than 1 mm and worst seam 58.813 mm. Rejected construction study, not runtime coat replacement. 300 frames in 14.63 s, sampled 475.59 MiB process and 2858 MiB whole GPU; no new Godot window or paid tool.",
       "Tailored cut, triangle-surface supports and frame-90 support release: 20 pattern/body/fit/export tests passed; study 20260906T132132438Z-vbd completed 300 frames in 16.10 s, sampled 491.22 MiB process working set and 3012 MiB whole GPU. Actual CPU diagnostic inspected and remains unapproved; one sampled body penetration deeper than 1 mm, worst seam gap 6.110 mm. Male rigid overgarment remains rejected and unfixed; no new Godot window or paid work.",
       "Read GarmentCodeData dressing/release and limitations, Dress Anyone preprint fitting methods, and B-Spline FEM 2025 membrane/bending methods. Adopted existing Trimesh 4.11.3 surface projection and temporary support release; B-Spline FEM and pattern optimization not implemented. Baseline cut output hashes unchanged; narrow period cut preserves author seams and shared endpoints.",
       "Committed and pushed f66771d: Newton sewing and actual static GLB review export; local HEAD and remote branch both verified at f66771df14c55239ddaafaccd709dd18a9d5b976",

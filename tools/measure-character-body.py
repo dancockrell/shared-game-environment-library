@@ -255,6 +255,21 @@ def local_section_loop(mesh, origin, normal):
             "method": "local oblique surface section, nearest loop, not convex hull"}
 
 
+def sleeve_pose_angle(shoulder, wrist):
+    """GarmentCode sleeves rotate down from horizontal X in the source XY plane.
+
+    This is not the 3D angle from vertical, and does not model forward arm yaw.
+    The constructor mirrors the other sleeve, so use unsigned lateral distance.
+    """
+    shoulder, wrist = np.asarray(shoulder,dtype=float), np.asarray(wrist,dtype=float)
+    if shoulder.shape != (3,) or wrist.shape != (3,) or not np.isfinite([shoulder,wrist]).all():
+        raise ValueError("Invalid sleeve pose landmarks")
+    delta = wrist-shoulder
+    if abs(delta[0]) < 1e-8 or delta[1] >= 0:
+        raise ValueError("Current sleeve placement requires a laterally extended downward arm")
+    return float(np.degrees(np.arctan2(-delta[1],abs(delta[0]))))
+
+
 def bodice_measurements(mesh, landmarks, bands, dimensions, partitions, profiles):
     """Bounded sleeveless-bodice inputs with explicit methods, not a full body preset."""
     required = ("shoulder_left", "neck_left", "neck_right", "nape", "wrist_left", "elbow_left",
@@ -269,7 +284,6 @@ def bodice_measurements(mesh, landmarks, bands, dimensions, partitions, profiles
     # author's topology-specific neck edge path, not that same copied path.
     neck = surface_distance(mesh, [xyz["neck_left"], xyz["nape"], xyz["neck_right"]])
     wrist = local_section_loop(mesh, xyz["wrist_left"], xyz["wrist_left"] - xyz["elbow_left"])
-    arm_vector = xyz["wrist_left"] - xyz["shoulder_left"]
     hip_vector = np.asarray(landmarks["hip_side_left"]["xyz"]) - landmarks["waist_side_left"]["xyz"]
     body = {"height": float(mesh.extents[1]) * 100,
             "head_l": dimensions["headLengthMetres"] * 100,
@@ -289,7 +303,7 @@ def bodice_measurements(mesh, landmarks, bands, dimensions, partitions, profiles
             "neck_w": neck["lengthMetres"] * 100,
             "wrist": wrist["lengthMetres"] * 100,
             "armscye_depth": float(np.linalg.norm(xyz["shoulder_left"] - xyz["armpit_left"])) * 100,
-            "arm_pose_angle": float(np.degrees(np.arcsin(abs(arm_vector[0]) / np.linalg.norm(arm_vector)))),
+            "arm_pose_angle": sleeve_pose_angle(xyz["shoulder_left"],xyz["wrist_left"]),
             "hip_inclination": float(np.degrees(np.arcsin(abs(hip_vector[0]) / np.linalg.norm(hip_vector))))}
     body.update({name: bands[name]["selected"]["circumferenceMetres"] * 100 for name in ("bust", "waist", "hips")})
     angular = {"arm_pose_angle", "hip_inclination", "shoulder_incl"}
@@ -300,6 +314,7 @@ def bodice_measurements(mesh, landmarks, bands, dimensions, partitions, profiles
             "methodDifferences": ["Neck width uses two surface geodesics via nape, not author template edge path",
                                   "Wrist uses oblique section through landmark, not author template edge path",
                                   "Front profile uses authored bust X, not least-squares template plane",
+                                  "Sleeve angle is downward from horizontal X in the source XY plane; forward arm yaw is not captured",
                                   "Waist line uses nape-to-waist vertical distance"]}
 
 
@@ -326,8 +341,14 @@ def section_tape(mesh, y):
 
 
 def measure_band(mesh, seed, mode):
+    if mode == "landmark":
+        # Anatomically authored plane: do not chase an extremum into the arms
+        # or down past the seat into separate thighs. No search is performed.
+        section = section_tape(mesh, seed)
+        return {"seedYMetres": seed, "selection": mode, "selectedIndex": 0,
+                "atSearchBoundary": False, "samples": [section], "selected": section}
     if mode not in ("min", "max"):
-        raise ValueError("Expected min or max search")
+        raise ValueError("Expected min/max search or explicit landmark plane")
     # Paper's +/-2 cm neighborhood with 5 mm samples; explicit, not global anatomy detection.
     samples = [section_tape(mesh, seed + offset * .005) for offset in range(-4, 5)]
     selector = min if mode == "min" else max
@@ -407,7 +428,7 @@ def main(args):
               "toolSha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               "status": "partial-measurements-landmarks-require-review-not-tailoring-preset",
               "methodSource": "https://cg.cs.tu-dortmund.de/publications/2024-garment.pdf#page=6",
-              "method": "horizontal section, largest closed loop convex-hull tape, local extremum",
+              "method": "horizontal section, largest closed loop convex-hull tape; per-band local extremum or explicit authored plane",
               "bodyHeightMetres": float(mesh.extents[1]), "bands": bands,
               "landmarks": landmarks, "frontBackTapes": partitions,
               "landmarkDimensions": dimensions,
@@ -423,7 +444,7 @@ def main(args):
                       "landmarkFileSha256": result["landmarkFileSha256"],
                       "methodDifferences": bodice["methodDifferences"],
                       "measurementUnits": "centimetres-and-degrees",
-                      "purpose": "sleeveless-bodice-cut-study-not-general-body-or-fit-approval"}
+                      "purpose": "measured-upper-garment-construction-study-not-general-body-or-fit-approval"}
         (args.output / "bodice-body.yaml").write_text(yaml.safe_dump({"body": bodice["body"], "measurement_provenance": provenance}, sort_keys=True))
     print(json.dumps({"heightCm": result["bodyHeightMetres"] * 100,
                       "bands": {n: {"cm": b["selected"]["circumferenceMetres"] * 100,
@@ -435,7 +456,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--body", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--band", action="append", required=True, help="name:seed-Y-metres:min|max")
+    parser.add_argument("--band", action="append", required=True, help="name:seed-Y-metres:min|max|landmark; landmark is an authored plane without extremum search")
     parser.add_argument("--landmarks", type=Path, help="Explicit body-hash-bound surface landmark seeds")
     parser.add_argument("--export-bodice-measurements", action="store_true", help="Export measured-input study for the current sleeveless bodice constructor; requires full landmarks")
     main(parser.parse_args())

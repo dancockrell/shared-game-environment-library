@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "male-coat-toile",
+  "status": "construction-study-not-approved-garment",
+  "intent": "Replace rigid male shell with a measured fitted coat toile: shaped torso, set-in sleeves, waist seam, separate flared coat skirts and open centre front. Unlined; lapels, collars, pockets, vent, fastening, period refinement and character-specific art remain unfinished.",
+  "parameters": {
+    "neckWidth": -0.4,
+    "frontNeckDepth": 0.65,
+    "backNeckDepth": 0.0,
+    "frontHemDropCm": 0
+  },
+  "coat": {
+    "sleeveLength": 1.0,
+    "sleeveEndWidth": 0.55,
+    "skirtLengthCm": 45,
+    "skirtFlareCm": 6
+  }
+}

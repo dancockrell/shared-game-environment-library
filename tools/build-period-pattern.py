@@ -47,8 +47,8 @@ def validate_pattern(spec):
     json.dumps(spec, allow_nan=False)
     panels = spec["pattern"]["panels"]
     stitches = spec["pattern"]["stitches"]
-    if len(panels) != 4 or spec["properties"]["units_in_meter"] != 100:
-        raise ValueError("Expected four centimetre-based fitted torso panels")
+    if not 4 <= len(panels) <= 16 or spec["properties"]["units_in_meter"] != 100:
+        raise ValueError("Expected four to sixteen centimetre-based garment panels")
     used = set()
     for name, panel in panels.items():
         if len(panel["vertices"]) < 3 or not panel["edges"]:
@@ -94,7 +94,8 @@ def mesh_panels(directory, resolution_cm, fitting_body=None):
         translation[1] = np.min(np.asarray(fitting_body["vertices"])[:, 1])
         data["sourceBodySha256"] = fitting_body["fileSha256"]
         data["patternToBodyTranslationMetres"] = translation.tolist()
-    fig, axes = plt.subplots(2, 2, figsize=(10, 11), layout="constrained")
+    rows = math.ceil(len(mesh.panels)/2)
+    fig, axes = plt.subplots(rows, 2, figsize=(10, 5.5*rows), layout="constrained")
     for axis, (name, panel) in zip(axes.flat, sorted(mesh.panels.items())):
         points = np.asarray(panel.panel_vertices, dtype=float) / 100
         faces = np.asarray(panel.panel_faces, dtype=int)
@@ -131,7 +132,8 @@ def mesh_panels(directory, resolution_cm, fitting_body=None):
                 points, triangles = np.asarray(panel["placedXYZ"]), np.asarray(panel["triangles"])
                 axis.triplot(points[:, horizontal], points[:, 1], triangles, color=f"C{i}", linewidth=.25, alpha=.65, label=name)
             axis.set_ylim(float(all_y.min())-.05, float(all_y.max())+.06)
-            axis.set_xlim(-.38, .4)
+            all_x = np.concatenate([np.asarray(panel["placedXYZ"])[:, horizontal] for panel in data["panels"].values()])
+            axis.set_xlim(min(-.38,float(all_x.min())-.03),max(.4,float(all_x.max())+.03))
             axis.set_aspect("equal")
             axis.set_title(f"{label}: actual body and separated panels")
             axis.legend(fontsize=7)
@@ -223,9 +225,66 @@ def apply_cut_style(design, style):
     # the assembled placement. Reject them instead of silently changing fit.
     if values["frontHemDropCm"] != int(values["frontHemDropCm"]):
         raise ValueError("Front hem drop currently requires whole centimetres")
+    coat = style.get("coat")
+    if coat is not None:
+        bounds = {"sleeveLength":(.8,1.1), "sleeveEndWidth":(.3,1),
+                  "skirtLengthCm":(25,60), "skirtFlareCm":(2,12)}
+        if not isinstance(coat,dict) or set(coat) != set(bounds) or values["frontHemDropCm"] != 0:
+            raise ValueError("Coat requires exact sleeve/skirt controls and an undropped waist seam")
+        for name,(low,high) in bounds.items():
+            value = coat[name]
+            if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value) or not low <= value <= high:
+                raise ValueError(f"Invalid coat parameter {name}")
     for key,name in (("width","neckWidth"),("fc_depth","frontNeckDepth"),("bc_depth","backNeckDepth")):
         design["collar"][key]["v"] = values[name]
+    if coat is not None:
+        design["sleeve"]["sleeveless"]["v"] = False
+        design["sleeve"]["length"]["v"] = coat["sleeveLength"]
+        design["sleeve"]["end_width"]["v"] = coat["sleeveEndWidth"]
+        design["collar"]["f_collar"]["v"] = "VNeckHalf"
+        design["collar"]["b_collar"]["v"] = "CircleNeckHalf"
     return values["frontHemDropCm"]
+
+
+def assemble_coat(garment, controls):
+    """Compose existing shaped bodice/sleeve and skirt panels, with an open front.
+
+    This is an unlined tailoring toile, not historical-pattern certification or
+    finished coat art. The author's interfaces retain seam lengths and darts.
+    """
+    import numpy as np
+    import pygarment as pyg
+    from assets.garment_programs.skirt_paneled import SkirtPanel
+    garment.stitching_rules = pyg.Stitches((garment.right.interfaces["back_in"],
+                                           garment.left.interfaces["back_in"]))
+    skirts = {}
+    for side in ("right","left"):
+        half = getattr(garment,side)
+        for location in ("f","b"):
+            torso = getattr(half,location+"torso")
+            waist = torso.interfaces["bottom"]
+            skirt = SkirtPanel(side+"_"+location+"skirt",waist_length=waist.edges.length(),
+                               length=controls["skirtLengthCm"],flare=controls["skirtFlareCm"])
+            skirt.rotate_to(torso.rotation)
+            skirt.place_by_interface(skirt.interfaces["top"],waist,gap=1,alignment="center")
+            garment.subs.append(skirt)
+            garment.stitching_rules.append((skirt.interfaces["top"],waist))
+            # Explicitly identify inside/outside for each mirrored quarter.
+            # Both edges are vertical side boundaries; compare waist endpoints,
+            # not arbitrary nearest meshes or inferred seam neighbours.
+            candidates = []
+            for key in ("left","right"):
+                edge = skirt.interfaces[key].edges[0]
+                world = np.asarray([skirt.point_to_3D(edge.start),skirt.point_to_3D(edge.end)])
+                candidates.append((abs(world[np.argmax(world[:,1]),0]),key))
+            inner,outer = [key for _,key in sorted(candidates)]
+            skirts[(side,location)] = (skirt,inner,outer)
+        front,_,fo = skirts[(side,"f")]
+        back,_,bo = skirts[(side,"b")]
+        garment.stitching_rules.append((front.interfaces[fo],back.interfaces[bo]))
+    right,ri,_ = skirts[("right","b")]
+    left,li,_ = skirts[("left","b")]
+    garment.stitching_rules.append((right.interfaces[ri],left.interfaces[li]))
 
 
 def shape_front_hem(garment, drop_cm):
@@ -288,6 +347,8 @@ def build(args):
     hem_drop = apply_cut_style(design,style) if style is not None else 0
     garment = FittedShirt(body, design)
     cut_measurements = shape_front_hem(garment,hem_drop)
+    if style and style.get("coat"):
+        assemble_coat(garment,style["coat"])
     pattern = garment.assembly()
     # Upstream collects subcomponents through a set. Canonicalize containers,
     # never the directed panel edges or the two sides of an individual seam.
@@ -331,8 +392,8 @@ def build(args):
         "elapsedSeconds": time.perf_counter() - start,
         "versions": {p: importlib.metadata.version(p) for p in
                      ("numpy", "scipy", "svgpathtools", "CairoSVG", "matplotlib", "cffi", "pycparser", "cgal", "libigl")},
-        "unverified": ["target body measurements", "pointed hem and narrow straps",
-                       "boning and closures", "3D fit", "self-contact in motion", "engine garment integration"],
+        "unverified": ["character-specific cut and body", "lining, structural reinforcement and closures",
+                       "3D fit", "self-contact in motion", "engine garment integration"],
     }
     (args.output / "receipt.json").write_text(json.dumps(receipt, indent=2, allow_nan=False))
     print(json.dumps(receipt, indent=2))

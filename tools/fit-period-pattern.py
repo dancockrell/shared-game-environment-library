@@ -335,7 +335,9 @@ def review(args):
     args.output.mkdir(parents=True)
     fig = plt.figure(figsize=(15,7), layout="constrained")
     # CPU mesh diagnostic, not a game-engine render or approved material treatment.
-    torso_faces = source.faces[np.any((source.vertices[source.faces,1] > .07) & (source.vertices[source.faces,1] < .60),axis=1)]
+    low = points.min(axis=0)-.05
+    high = points.max(axis=0)+.05
+    torso_faces = source.faces[np.any((source.vertices[source.faces,1] > low[1]) & (source.vertices[source.faces,1] < high[1]),axis=1)]
     for index, (azimuth,label) in enumerate(((90,"front"),(35,"three-quarter"),(270,"back")),1):
         axis = fig.add_subplot(1,3,index,projection="3d")
         # One collection sorts body and cloth triangles together. Separate
@@ -343,8 +345,8 @@ def review(args):
         triangles = np.concatenate([source.vertices[torso_faces], points[faces]])[:,:,[0,2,1]]
         colors = np.array([to_rgba("#69777c")]*len(torso_faces) + [to_rgba("#ded0b3")]*len(faces))
         axis.add_collection3d(Poly3DCollection(triangles,facecolors=colors,linewidths=0,shade=True,lightsource=LightSource(azdeg=120,altdeg=50)))
-        axis.set(xlim=(-.32,.32),ylim=(-.22,.30),zlim=(.07,.62),title=label)
-        axis.set_box_aspect((.64,.52,.55))
+        axis.set(xlim=(low[0],high[0]),ylim=(low[2],high[2]),zlim=(low[1],high[1]),title=label)
+        axis.set_box_aspect((high-low)[[0,2,1]])
         axis.view_init(elev=8,azim=azimuth)
         axis.set_axis_off()
     fig.suptitle("Actual simulated mesh — CPU diagnostic, not final garment art")

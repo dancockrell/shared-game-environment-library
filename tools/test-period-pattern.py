@@ -32,6 +32,23 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_coat_controls_are_bounded_and_validate_before_mutation(self):
+        style = json.loads((Path(__file__).parent.parent/"catalog/characters/construction-studies/male-coat-toile.json").read_text())
+        design = {"collar":{key:{"v":0} for key in ("width","fc_depth","bc_depth","f_collar","b_collar")},
+                  "sleeve":{key:{"v":0} for key in ("sleeveless","length","end_width")}}
+        for key in style["coat"]:
+            for value in (-1,100,True,float("nan"),"1"):
+                bad = copy.deepcopy(style)
+                bad["coat"][key] = value
+                before = copy.deepcopy(design)
+                with self.assertRaises(ValueError):
+                    builder.apply_cut_style(design,bad)
+                self.assertEqual(design,before)
+        self.assertEqual(builder.apply_cut_style(design,style),0)
+        self.assertFalse(design["sleeve"]["sleeveless"]["v"])
+        self.assertEqual(design["sleeve"]["length"]["v"],1)
+        self.assertEqual(design["collar"]["f_collar"]["v"],"VNeckHalf")
+
     def test_cut_style_validation_is_atomic(self):
         design = {"collar":{key:{"v":0} for key in ("width","fc_depth","bc_depth")}}
         style = {"schemaVersion":1,"parameters":{"neckWidth":.85,"frontNeckDepth":.52,
@@ -60,6 +77,24 @@ class ActualPatternTests(unittest.TestCase):
         if style is None:
             self.skipTest("Default upstream cut")
         self.assertEqual(style["status"],"construction-study-not-approved-garment")
+        if style.get("coat"):
+            self.assertEqual(style["parameters"]["frontHemDropCm"],0)
+            self.assertEqual(len(MESH["panels"]),12)
+            self.assertEqual(sum("sleeve" in n for n in MESH["panels"]),4)
+            self.assertEqual(sum("skirt" in n for n in MESH["panels"]),4)
+            self.assertFalse(any(set(s["panels"]) == {"left_ftorso","right_ftorso"} or
+                                 set(s["panels"]) == {"left_fskirt","right_fskirt"} for s in MESH["stitches"]))
+            for name,panel in MESH["panels"].items():
+                if "skirt" in name:
+                    self.assertAlmostEqual(np.ptp(np.asarray(panel["restXY"])[:,1]),style["coat"]["skirtLengthCm"]/100)
+                    neighbours = {n for s in MESH["stitches"] if name in s["panels"] for n in s["panels"]}
+                    self.assertIn(name.replace("skirt","torso"),neighbours)
+            # Side/back skirt seams must sew waist-to-waist, never waist-to-hem.
+            for seam in MESH["stitches"]:
+                if all("skirt" in n for n in seam["panels"]):
+                    a,b = [np.asarray(MESH["panels"][n]["placedXYZ"])[np.asarray(seam["vertexPairs"])[:,i]] for i,n in enumerate(seam["panels"])]
+                    self.assertLess(abs((a[0,1]-a[-1,1])-(b[0,1]-b[-1,1])),.01)
+            return
         self.assertEqual(style["referenceSha256"],builder.digest(Path(__file__).parent.parent/"catalog/characters/references/beatrix-exact-target.png"))
         for side in ("right","left"):
             info = receipt["cutMeasurements"][side]
@@ -268,8 +303,10 @@ class ActualPatternTests(unittest.TestCase):
 
     def test_real_curves_and_darts(self):
         result = builder.validate_pattern(SPEC)
-        self.assertEqual(result["panels"], 4)
-        self.assertEqual(result["stitches"], 16)
+        receipt = json.loads((REVIEW/"receipt.json").read_text())
+        coat = (receipt.get("cutStyle") or {}).get("coat")
+        self.assertEqual(result["panels"], 12 if coat else 4)
+        self.assertEqual(result["stitches"], 36 if coat else 16)
         self.assertGreater(result["curvedEdges"], 0)
         self.assertGreater(result["dartStitches"], 0)
 
