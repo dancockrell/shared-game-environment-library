@@ -13,6 +13,7 @@ func _run() -> void:
 		assert(child is MultiMeshInstance3D)
 		count += child.multimesh.instance_count
 		assert(child.multimesh.mesh.get_aabb().size.length() > 0)
+		assert(child.multimesh.custom_aabb.size.length() > 0)
 	assert(count == data.instances.size())
 	var packed := PackedScene.new()
 	for child in scene.get_children():
@@ -24,6 +25,7 @@ func _run() -> void:
 	for mesh_index in data.meshes.size():
 		var descriptors: Array = data.meshes[mesh_index].get("apertures", [])
 		var display: MultiMeshInstance3D = copy.get_child(mesh_index)
+		assert(display.multimesh.custom_aabb.size.length() > 0)
 		assert(display.get_meta("scene_forge_apertures") == descriptors)
 		if not descriptors.is_empty() and display.multimesh.instance_count > 1:
 			var importer = preload("res://addons/scene_forge/import_scene.gd")

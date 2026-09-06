@@ -193,6 +193,11 @@ checks and Godot translation, rotation, scale, missing-index and reload checks
 passed. Unity currently ignores these additive descriptors; equivalent Unity
 metadata consumption and engine execution are still outstanding.
 
+Saved MultiMeshes explicitly persist the union of transformed mesh bounds in
+`custom_aabb`. Crossing's off-screen capture exposed empty automatically derived
+rendering bounds after native package reload even though mesh vertices and
+instance transforms survived. Checking source mesh bounds alone missed this.
+
 Crossing integration must bind actual exits to these descriptors explicitly.
 The uncommitted earlier JavaScript shell experiment is not the production
 authority: its neighbor-position fallback is insufficient evidence for a door's

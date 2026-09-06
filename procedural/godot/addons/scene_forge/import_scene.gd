@@ -39,10 +39,17 @@ static func build(data: Dictionary) -> Node3D:
 		multi.transform_format = MultiMesh.TRANSFORM_3D
 		multi.mesh = mesh
 		multi.instance_count = instances.size()
+		var instance_bounds := AABB()
 		for i in instances.size():
 			var item: Dictionary = instances[i]
 			var basis := Basis(Vector3.UP, float(item.yaw)).scaled(Vector3.ONE * float(item.scale))
-			multi.set_instance_transform(i, Transform3D(basis, Vector3(item.position[0], item.position[1], item.position[2])))
+			var transform := Transform3D(basis, Vector3(item.position[0], item.position[1], item.position[2]))
+			multi.set_instance_transform(i, transform)
+			var bounds: AABB = transform * mesh.get_aabb()
+			instance_bounds = bounds if i == 0 else instance_bounds.merge(bounds)
+		# A PackedScene reload can retain instance buffers but lose the automatic
+		# render-server AABB. Persist explicit bounds so meshes are not culled.
+		multi.custom_aabb = instance_bounds
 		var display := MultiMeshInstance3D.new()
 		display.name = spec.name
 		display.multimesh = multi
