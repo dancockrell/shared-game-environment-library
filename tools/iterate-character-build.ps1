@@ -19,7 +19,7 @@ $runRoot = Join-Path $repoPath ('artifacts/character-iterations/' + $runId)
 [IO.Directory]::CreateDirectory($runRoot) | Out-Null
 $stages = [Collections.Generic.List[object]]::new()
 $inputs = @{}
-foreach ($file in @('prepare-character-model.gd','character-workshop.gd','character-outfit.gd','character-textiles.gd','sewing-pattern.gd','test-sewing-pattern.gd','test-character-workshop.gd','test-character-outfit.gd','test-character-textiles.gd','addons/shared_character_builder/character_package.gd','iterate-character-build.ps1')) {
+foreach ($file in @('prepare-character-model.gd','character-workshop.gd','character-outfit.gd','character-textiles.gd','sewing-pattern.gd','cloth-contact.gd','test-cloth-drape.gd','test-sewing-pattern.gd','test-character-workshop.gd','test-character-outfit.gd','test-character-textiles.gd','addons/shared_character_builder/character_package.gd','iterate-character-build.ps1')) {
     $inputs[$file] = (Get-FileHash -LiteralPath (Join-Path $PSScriptRoot $file) -Algorithm SHA256).Hash.ToLowerInvariant()
 }
 $head = (& git -C $repoPath rev-parse HEAD).Trim()
@@ -88,6 +88,7 @@ try {
         [IO.Directory]::CreateDirectory($directory) | Out-Null
         Invoke-Stage "build-$iteration" 'prepare-character-model.gd' @((Join-Path $repoPath 'assets/character-sources/makehuman-system'),$directory) $true
         foreach ($sex in @('female','male')) {
+            Invoke-Stage "$sex-cloth-$iteration" 'test-cloth-drape.gd' @((Join-Path $directory ($sex+'-drape')),(Join-Path $directory ($sex+'-fitting-surface.res'))) $NoRender.IsPresent
             $prefix = Join-Path $directory ($sex+'-review')
             Invoke-Stage "$sex-$iteration" 'test-character-workshop.gd' @((Join-Path $directory ($sex+'-source.glb')),$prefix,(Join-Path $directory ($sex+'-profile.json'))) $NoRender.IsPresent
             Invoke-Stage "$sex-packed-$iteration" 'test-character-workshop.gd' @(($prefix+'.scn'),($prefix+'-packed-reload')) $NoRender.IsPresent

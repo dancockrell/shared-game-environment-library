@@ -1,0 +1,22 @@
+{
+  "bodyContact": {
+    "bvhNodes": 8191,
+    "maxNearestDistanceErrorMetres": 0.0000000007250340015863,
+    "scope": "base-body surface queries and one vertex sweep, not full garment fit or morph extremes",
+    "sourceSha256": "52db1298004c79fe9fa3ebb91591ee0b6161c81aa0235919535963dc21b8e3d7",
+    "torsoSweepClearanceMetres": 0.00300000142306089,
+    "triangles": 27300
+  },
+  "clothEdgeCCD": false,
+  "contactSha256": "db5854b683c00bdf1f179cea648a99d58f7727e90405e842d3586436d7ede6ee",
+  "dt": 0.00833333333333333,
+  "maxPinnedDisplacementMetres": 0.0,
+  "maxRelativeEdgeStretch": 0.0095293915458762,
+  "minimumGroundSeparationMetres": 0.00300000002607703,
+  "rendered": true,
+  "selfContact": false,
+  "solverSha256": "30dab1e193dd244acd5475e31dd56894eb5b70f76faacb2890758609bf68ba0a",
+  "status": "drape-construction-fixture-not-costume",
+  "steps": 180,
+  "vertices": 81
+}

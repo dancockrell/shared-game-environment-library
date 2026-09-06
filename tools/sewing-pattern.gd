@@ -18,7 +18,7 @@ static func compile(pattern: Variant, levels: int = 2) -> Dictionary:
 		return {"error":"Unsupported pattern or refinement level."}
 	if not pattern.get("panels") is Array or pattern.panels.is_empty() or pattern.panels.size() > 32 or not pattern.get("stitches",[]) is Array:
 		return {"error":"Expected 1..32 panels and a stitch array."}
-	var result := {"error":"","positions":PackedVector3Array(),"fabric":PackedVector2Array(),"triangles":PackedInt32Array(),"constraints":[],"panels":{},"inverse_mass":PackedFloat32Array()}
+	var result := {"error":"","positions":PackedVector3Array(),"fabric":PackedVector2Array(),"triangles":PackedInt32Array(),"constraints":[],"bends":[],"panels":{},"inverse_mass":PackedFloat32Array()}
 	for panel in pattern.panels:
 		if not panel is Dictionary or not panel.get("id") is String or panel.id.is_empty() or result.panels.has(panel.id):
 			return {"error":"Panel IDs must be nonempty and unique."}
@@ -92,8 +92,25 @@ static func compile(pattern: Variant, levels: int = 2) -> Dictionary:
 				var b := triangles[face+(edge+1)%3]
 				var key := Vector2i(mini(a,b),maxi(a,b))
 				if not links.has(key):
-					links[key] = true
+					links[key] = triangles[face+(edge+2)%3]
 					result.constraints.append({"a":offset+a,"b":offset+b,"rest":points[a].distance_to(points[b]),"kind":"stretch"})
+				else:
+					var c: int = links[key]
+					var d := triangles[face+(edge+2)%3]
+					var e := points[b]-points[a]
+					var tc := (points[c]-points[a]).dot(e)/e.length_squared()
+					var td := (points[d]-points[a]).dot(e)/e.length_squared()
+					var hc := e.cross(points[c]-points[a])/e.length()
+					var hd := e.cross(points[d]-points[a])/e.length()
+					# Linear-precision flat-rest curvature stencil across the shared edge.
+					# Sum(w)=0 and sum(w*p_flat)=0; rotation/translation invariant energy.
+					var weights := PackedFloat32Array([-(1-tc)/hc+(1-td)/hd,-tc/hc+td/hd,1/hc,-1/hd])
+					var norm := 0.0
+					for weight in weights:
+						norm += absf(weight)
+					for i in 4:
+						weights[i] /= norm
+					result.bends.append({"vertices":PackedInt32Array([offset+a,offset+b,offset+c,offset+d]),"weights":weights})
 		for vertex in triangles:
 			result.triangles.append(offset+vertex)
 		for chain in edges:
@@ -126,7 +143,7 @@ static func compile(pattern: Variant, levels: int = 2) -> Dictionary:
 			result.constraints.append({"a":chains[0][i],"b":chains[1][i],"rest":0.0,"kind":"seam"})
 	return result
 
-static func relax(compiled: Dictionary, iterations: int = 100, compliance: float = 0.0, step_seconds: float = 1.0/60) -> Dictionary:
+static func relax(compiled: Dictionary, iterations: int = 100, compliance: float = 0.0, step_seconds: float = 1.0/60, options: Dictionary = {}) -> Dictionary:
 	if compiled.get("error") != "" or iterations < 1 or iterations > 2000 or not is_finite(compliance) or compliance < 0 or not is_finite(step_seconds) or step_seconds < .00001:
 		return {"error":"Invalid relaxation inputs."}
 	if not compiled.get("positions") is PackedVector3Array or not compiled.get("inverse_mass") is PackedFloat32Array or not compiled.get("constraints") is Array:
@@ -153,6 +170,30 @@ static func relax(compiled: Dictionary, iterations: int = 100, compliance: float
 	var multipliers := PackedFloat64Array()
 	multipliers.resize(compiled.constraints.size())
 	var alpha := compliance/(step_seconds*step_seconds)
+	var bends: Array = compiled.get("bends",[])
+	var bending_enabled: bool = options.get("bending",false)
+	var bend_compliance: float = options.get("bendCompliance",.001)
+	if not is_finite(bend_compliance) or bend_compliance < 0:
+		return {"error":"Invalid bend compliance."}
+	var bend_alpha := bend_compliance/(step_seconds*step_seconds)
+	if not is_finite(alpha) or not is_finite(bend_alpha):
+		return {"error":"Constraint compliance overflow."}
+	if bending_enabled:
+		for bend in bends:
+			if not bend is Dictionary or not bend.get("vertices") is PackedInt32Array or not bend.get("weights") is PackedFloat32Array or bend.vertices.size() != 4 or bend.weights.size() != 4:
+				return {"error":"Invalid bending stencil."}
+			for i in 4:
+				if bend.vertices[i] < 0 or bend.vertices[i] >= positions.size() or not is_finite(bend.weights[i]):
+					return {"error":"Invalid bending stencil values."}
+	var bend_multipliers := PackedVector3Array()
+	bend_multipliers.resize(bends.size())
+	var contact: RefCounted = options.get("contact")
+	var previous: PackedVector3Array = options.get("previous",positions).duplicate()
+	if previous.size() != positions.size() or (contact != null and contact.error != ""):
+		return {"error":"Invalid contact state."}
+	for point in previous:
+		if not point.is_finite():
+			return {"error":"Invalid previous contact position."}
 	for iteration in iterations:
 		for index in compiled.constraints.size():
 			var link: Dictionary = compiled.constraints[index]
@@ -167,6 +208,27 @@ static func relax(compiled: Dictionary, iterations: int = 100, compliance: float
 			var correction := delta*(change/length)
 			positions[link.a] += correction*masses[link.a]
 			positions[link.b] -= correction*masses[link.b]
+		if bending_enabled:
+			for index in bends.size():
+				var bend: Dictionary = bends[index]
+				var curvature := Vector3.ZERO
+				var denominator := bend_alpha
+				for i in 4:
+					var vertex: int = bend.vertices[i]
+					var weight: float = bend.weights[i]
+					curvature += positions[vertex]*weight
+					denominator += masses[vertex]*weight*weight
+				if denominator <= 0:
+					continue
+				var change := (-curvature-bend_multipliers[index]*bend_alpha)/denominator
+				bend_multipliers[index] += change
+				for i in 4:
+					var vertex: int = bend.vertices[i]
+					positions[vertex] += change*masses[vertex]*bend.weights[i]
+		if contact != null:
+			for vertex in positions.size():
+				if masses[vertex] > 0:
+					positions[vertex] = contact.resolve(previous[vertex],positions[vertex],options.get("thickness",.003))
 	var seam_gap := 0.0
 	var stretch_error := 0.0
 	for link in compiled.constraints:
@@ -176,6 +238,41 @@ static func relax(compiled: Dictionary, iterations: int = 100, compliance: float
 		else:
 			stretch_error = maxf(stretch_error,absf(length-link.rest)/maxf(link.rest,.000001))
 	return {"error":"","positions":positions,"maxSeamGapMetres":seam_gap,"maxRelativeEdgeStretch":stretch_error,"iterations":iterations,"bodyPenetration":null,"selfIntersections":null,"status":"constraint-baseline-not-draped-garment"}
+
+## Offline fixed-step damped dynamics. Calls the same constraint owner as sewing.
+static func simulate(compiled: Dictionary, steps: int = 120, dt: float = 1.0/120, options: Dictionary = {}) -> Dictionary:
+	if compiled.get("error") != "" or steps < 1 or steps > 10000 or not is_finite(dt) or dt < .00001 or dt > .05:
+		return {"error":"Invalid simulation inputs."}
+	var validation := relax(compiled,1,0,dt,options)
+	if validation.error != "":
+		return validation
+	var state := compiled.duplicate(false)
+	state.positions = compiled.positions.duplicate()
+	var velocities := PackedVector3Array()
+	velocities.resize(state.positions.size())
+	var gravity: Vector3 = options.get("gravity",Vector3(0,-9.81,0))
+	var damping: float = options.get("damping",2.0)
+	if not gravity.is_finite() or not is_finite(damping) or damping < 0:
+		return {"error":"Invalid force settings."}
+	var settings := options.duplicate(false)
+	var result := {}
+	for step in steps:
+		var previous: PackedVector3Array = state.positions.duplicate()
+		for i in state.positions.size():
+			if state.inverse_mass[i] > 0:
+				velocities[i] = (velocities[i]+gravity*dt)*exp(-damping*dt)
+				state.positions[i] += velocities[i]*dt
+		settings.previous = previous
+		result = relax(state,options.get("iterations",8),options.get("stretchCompliance",0.0),dt,settings)
+		if result.error != "":
+			return result
+		state.positions = result.positions
+		for i in state.positions.size():
+			velocities[i] = (state.positions[i]-previous[i])/dt
+	result.velocities = velocities
+	result.simulatedSeconds = steps*dt
+	result.status = "offline-cloth-baseline-not-approved-garment"
+	return result
 
 ## One surface per cut panel; seams remain separate, preserving cloth UV discontinuities.
 ## UV coordinates are metres, not normalized independently for each panel.

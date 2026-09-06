@@ -1,0 +1,57 @@
+{
+  "bones": 163,
+  "compilerSha256": "a5c5ec7308599c6d21e1c664acafd2c0dd0c38eb17f1f9cd65b2a91a1d60ab14",
+  "coreManifestSha256": "d3e648fa16d154fad02b1388d52d2e94ecfb7ee7556bb34e12de81e518d24c3e",
+  "engine": "4.7.2-stable (official)",
+  "files": [
+    {
+      "path": "female-source.glb",
+      "sha256": "7bd71f01bfb16d606d38c4a138dc22cb7e96d28d0ad78a9b854501bfd1b20d2c"
+    },
+    {
+      "path": "female-profile.json",
+      "sha256": "504da14524484db2132e08208034535d7171f3411d6203d105be697c20233e89"
+    },
+    {
+      "path": "female-fitting-surface.res",
+      "sha256": "aa762fab62568a4a59bfe75e407254e60f2a34ed3a79cbe26b5aecb0a2dd3fb5"
+    },
+    {
+      "path": "male-source.glb",
+      "sha256": "775671e63a5afb67d25f5933a49699cf4f4af1b04f9f5af47fee93550311d08f"
+    },
+    {
+      "path": "male-profile.json",
+      "sha256": "a5c37ef02ba00fb8096b69fbeb74216260be643807134e3bfe67a9913a1c74e3"
+    },
+    {
+      "path": "male-fitting-surface.res",
+      "sha256": "52db1298004c79fe9fa3ebb91591ee0b6161c81aa0235919535963dc21b8e3d7"
+    }
+  ],
+  "license": "CC0-1.0",
+  "limitations": [
+    "Global-axis rest frames, not source bone-roll conventions",
+    "Modern sample wardrobe, not period art",
+    "Not a complete character builder or production crowd asset"
+  ],
+  "linkedMorphs": [
+    "Lean",
+    "Muscular",
+    "Oval face",
+    "Square face",
+    "Narrow chin",
+    "Broad nose",
+    "Full lips",
+    "Pointed ears",
+    "Defined cheekbones",
+    "Full cheeks",
+    "Larger eyes",
+    "Broad jaw"
+  ],
+  "schemaVersion": 1,
+  "status": "development-source-assembly-not-approved-game-art",
+  "systemManifestSha256": "d70c87bdf7a40965c9cddaa3177a3b98e948fcffc1e2dd9ee7bb5b116221ce81",
+  "textileCompilerSha256": "68f6a6aafc611afdaee003306fddd99a087fb144a12ea03b5187b4aa93638697",
+  "textureMaxDimension": 1024
+}

@@ -524,6 +524,14 @@ func build(sex: String) -> void:
 	character.name = "Character"
 	root.add_child(character)
 	make_rig(character)
+	# Tailoring needs the complete body, not the display variants with garment masks.
+	# Use this same fitting owner; do not reconstruct a second body in the cloth tools.
+	var fitting_path := source.path_join("proxymeshes/%s_generic/%s_generic" % [sex,sex])
+	var fitting_mesh := mesh_from_obj(fitting_path+".obj",fitting_path+".proxy")
+	if fitting_mesh == null or ResourceSaver.save(fitting_mesh,destination.path_join(sex+"-fitting-surface.res")) != OK:
+		fail("Could not save complete tailoring body")
+		character.free()
+		return
 	for number in ["01","02"]:
 		var outfit_name: String = sex+"_casualsuit"+number
 		var deleted: Dictionary = proxy_data(source.path_join("clothes/%s/%s.mhclo" % [outfit_name,outfit_name])).delete
@@ -632,7 +640,7 @@ func run() -> void:
 	if not failure:
 		var records := []
 		for sex in ["female","male"]:
-			for suffix in ["-source.glb","-profile.json"]:
+			for suffix in ["-source.glb","-profile.json","-fitting-surface.res"]:
 				var filename: String = sex+suffix
 				records.append({"path":filename,"sha256":FileAccess.get_sha256(destination.path_join(filename))})
 		var receipt := {"schemaVersion":1,"status":"development-source-assembly-not-approved-game-art",
