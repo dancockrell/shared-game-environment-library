@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {auditMesh} from './audit-solids.mjs';
+import {auditMesh,auditScene} from './audit-solids.mjs';
 
 const tetra = () => ({name:'tetra', positions:[0,0,0, 1,0,0, 0,1,0, 0,0,1], indices:[0,2,1, 0,1,3, 0,3,2, 1,2,3]});
 test('closed tetrahedron, volume and split rendering vertices', () => {
@@ -43,4 +43,11 @@ test('separate shells are counted without declaring them one solid', () => {
   assert.equal(r.connected_components,2);
   assert.equal(r.closed_oriented_position_graph,true);
   assert.equal(r.solid_validity,'not_certified');
+});
+test('room closure is enforced from retained source, not guessed from mesh names', () => {
+  const d=tetra();d.indices.splice(0,3);
+  const scene={version:2,meshes:[d],recipe_json:JSON.stringify({definitions:{tetra:{shape:{kind:'room'}}}})};
+  assert.deepEqual(auditScene(scene).failed_required_meshes,['tetra']);
+  scene.recipe_json='';
+  assert.deepEqual(auditScene(scene).failed_required_meshes,[]);
 });

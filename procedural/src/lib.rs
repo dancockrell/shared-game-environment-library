@@ -413,35 +413,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
             rounded_box::build(&mut m, *size, *radius, *segments, max_vertices)?;
         }
         Shape::Room { room } => {
-            let boxes = room.boxes()?;
-            m.apertures = room.apertures();
-            if boxes.len() * 36 > max_vertices {
-                return Err("Vertex budget exceeded before room allocation".into());
-            }
-            for (size, position) in boxes {
-                let part = mesh(
-                    name,
-                    &Definition {
-                        shape: Shape::Box { size },
-                        color: d.color,
-                        material: MaterialSettings {
-                            paint: None,
-                            ..d.material
-                        },
-                    },
-                    36,
-                )?;
-                let start = m.positions.len() as u32;
-                m.positions.extend(
-                    part.positions
-                        .into_iter()
-                        .map(|p| [p[0] + position[0], p[1] + position[1], p[2] + position[2]]),
-                );
-                m.normals.extend(part.normals);
-                m.uvs.extend(part.uvs);
-                m.indices
-                    .extend(part.indices.into_iter().map(|i| i + start));
-            }
+            room.build(&mut m, max_vertices)?;
         }
         Shape::Gable { width, depth, rise } => {
             finite(&[*width, *depth, *rise])?;
@@ -1598,6 +1570,8 @@ mod tests {
         assert!(m.indices.iter().all(|i| (*i as usize) < m.positions.len()));
         assert_eq!(compile_json(text).unwrap(), compile_json(text).unwrap());
         r.limits.max_vertices = m.positions.len() - 1;
-        assert!(compile(&r).unwrap_err().contains("before room allocation"));
+        assert!(compile(&r)
+            .unwrap_err()
+            .contains("before room boundary allocation"));
     }
 }

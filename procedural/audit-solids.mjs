@@ -78,10 +78,19 @@ export function auditMesh(mesh) {
     connectivity_basis:'exact numeric positions; signed zero unified; no tolerance or mesh edits'};
 }
 
+export function auditScene(scene) {
+  if (![1,2].includes(scene.version) || !Array.isArray(scene.meshes)) throw new Error('Unsupported compiled scene');
+  const meshes=scene.meshes.map(auditMesh);
+  const recipe=scene.recipe_json ? JSON.parse(scene.recipe_json) : null;
+  const failed=meshes.filter(m=>recipe?.definitions?.[m.name]?.shape?.kind==='room' && !m.closed_oriented_position_graph).map(m=>m.name);
+  return {scope:'read-only exact-position connectivity audit; not solid admission', required_closed_shapes:['room'], failed_required_meshes:failed, meshes};
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const input = process.argv[2];
   if (!input || statSync(input).size > 128*1024*1024) throw new Error('Expected compiled scene no larger than 128 MiB');
   const scene = JSON.parse(readFileSync(input, 'utf8'));
-  if (![1,2].includes(scene.version) || !Array.isArray(scene.meshes)) throw new Error('Unsupported compiled scene');
-  process.stdout.write(JSON.stringify({scope:'read-only exact-position connectivity audit; not solid admission', meshes:scene.meshes.map(auditMesh)},null,2)+'\n');
+  const report=auditScene(scene);
+  process.stdout.write(JSON.stringify(report,null,2)+'\n');
+  if (report.failed_required_meshes.length) process.exitCode=1;
 }

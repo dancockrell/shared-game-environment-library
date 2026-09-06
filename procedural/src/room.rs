@@ -1,6 +1,6 @@
 //! Rectangular room construction: dimensions are clear interior dimensions.
 //! Openings are supplied constraints, never inferred world-graph connections.
-use crate::{finite, Result, V3};
+use crate::{finite, quad, Mesh, Result, V3};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]
@@ -74,6 +74,7 @@ impl Room {
             })
             .collect()
     }
+    /// Exact shared min/max construction coordinates, never centre/size reconstruction.
     pub(crate) fn boxes(&self) -> Result<Vec<(V3, V3)>> {
         let Self {
             width: w,
@@ -106,7 +107,11 @@ impl Room {
                 return Err("Opening lies outside clear wall bounds".into());
             }
         }
-        let mut result = vec![([w + 2. * t, *f, d + 2. * t], [0., -f / 2., 0.])];
+        let x0 = -w / 2. - t;
+        let x1 = w / 2. + t;
+        let z0 = -d / 2. - t;
+        let z1 = d / 2. + t;
+        let mut result = vec![([x0, -*f, z0], [x1, 0., z1])];
         for wall in [Wall::North, Wall::East, Wall::South, Wall::West] {
             let horizontal = matches!(wall, Wall::North | Wall::South);
             let length = if horizontal { *w } else { *d };
@@ -119,19 +124,13 @@ impl Room {
                 if b <= a || top <= bottom {
                     return;
                 }
-                let centre = (a + b) / 2.;
-                let y = (bottom + top) / 2.;
-                let sign = if matches!(wall, Wall::North | Wall::West) {
-                    -1.
-                } else {
-                    1.
+                let bounds = match wall {
+                    Wall::North => ([a, bottom, z0], [b, top, -d / 2.]),
+                    Wall::South => ([a, bottom, d / 2.], [b, top, z1]),
+                    Wall::West => ([x0, bottom, a], [-w / 2., top, b]),
+                    Wall::East => ([w / 2., bottom, a], [x1, top, b]),
                 };
-                let (size, position) = if horizontal {
-                    ([b - a, top - bottom, *t], [centre, y, sign * (d + t) / 2.])
-                } else {
-                    ([*t, top - bottom, b - a], [sign * (w + t) / 2., y, centre])
-                };
-                result.push((size, position));
+                result.push(bounds);
             };
             segment(cursor - extent, cursor, 0., *h);
             for o in cuts {
@@ -148,6 +147,120 @@ impl Room {
             segment(cursor, length / 2. + extent, 0., *h);
         }
         Ok(result)
+    }
+    pub(crate) fn build(&self, mesh: &mut Mesh, budget: usize) -> Result<()> {
+        let boxes = self.boxes()?;
+        for (lo, hi) in &boxes {
+            finite(lo)?;
+            finite(hi)?;
+            if (0..3).any(|axis| lo[axis] >= hi[axis]) {
+                return Err("Room construction cell collapses at output precision".into());
+            }
+        }
+        let mut cuts: [Vec<f32>; 3] = std::array::from_fn(|axis| {
+            boxes
+                .iter()
+                .flat_map(|(lo, hi)| [lo[axis], hi[axis]])
+                .collect()
+        });
+        for values in &mut cuts {
+            values.sort_by(f32::total_cmp);
+            values.dedup();
+            finite(values)?;
+        }
+        let dims = cuts.each_ref().map(|c| c.len() - 1);
+        let cells = dims
+            .iter()
+            .try_fold(1_usize, |a, b| a.checked_mul(*b))
+            .ok_or("Room grid overflow")?;
+        if cells > 262_144 {
+            return Err("Room construction grid exceeds 262144 cells".into());
+        }
+        let index = |p: [usize; 3]| (p[0] * dims[1] + p[1]) * dims[2] + p[2];
+        let mut occupied = vec![false; cells];
+        for (lo, hi) in boxes {
+            let a: [usize; 3] =
+                std::array::from_fn(|i| cuts[i].iter().position(|x| *x == lo[i]).unwrap());
+            let b: [usize; 3] =
+                std::array::from_fn(|i| cuts[i].iter().position(|x| *x == hi[i]).unwrap());
+            for x in a[0]..b[0] {
+                for y in a[1]..b[1] {
+                    for z in a[2]..b[2] {
+                        occupied[index([x, y, z])] = true;
+                    }
+                }
+            }
+        }
+        let exposed = |p: [usize; 3], axis: usize, high: bool| {
+            if (high && p[axis] + 1 == dims[axis]) || (!high && p[axis] == 0) {
+                return true;
+            }
+            let mut other = p;
+            if high {
+                other[axis] += 1;
+            } else {
+                other[axis] -= 1;
+            }
+            !occupied[index(other)]
+        };
+        // First count, then allocate triangles: subdivision cannot evade the budget.
+        let mut faces = 0_usize;
+        for x in 0..dims[0] {
+            for y in 0..dims[1] {
+                for z in 0..dims[2] {
+                    let p = [x, y, z];
+                    if occupied[index(p)] {
+                        for axis in 0..3 {
+                            for high in [false, true] {
+                                if exposed(p, axis, high) {
+                                    faces += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if faces * 6 > budget {
+            return Err("Vertex budget exceeded before room boundary allocation".into());
+        }
+        for x in 0..dims[0] {
+            for y in 0..dims[1] {
+                for z in 0..dims[2] {
+                    let cell = [x, y, z];
+                    if !occupied[index(cell)] {
+                        continue;
+                    }
+                    for axis in 0..3 {
+                        for high in [false, true] {
+                            if !exposed(cell, axis, high) {
+                                continue;
+                            }
+                            let u = (axis + 1) % 3;
+                            let v = (axis + 2) % 3;
+                            let mut points = [[0_f32; 3]; 4];
+                            for (i, (du, dv)) in
+                                [(0, 0), (1, 0), (1, 1), (0, 1)].into_iter().enumerate()
+                            {
+                                points[i][axis] = cuts[axis][cell[axis] + usize::from(high)];
+                                points[i][u] = cuts[u][cell[u] + du];
+                                points[i][v] = cuts[v][cell[v] + dv];
+                            }
+                            if !high {
+                                points.reverse();
+                            }
+                            let before = mesh.positions.len();
+                            quad(mesh, points[0], points[1], points[2], points[3])?;
+                            if mesh.positions.len() != before + 6 {
+                                return Err("Room boundary collapses at output precision".into());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        mesh.apertures = self.apertures();
+        Ok(())
     }
 }
 
@@ -182,7 +295,7 @@ mod tests {
     fn occupied(boxes: &[(V3, V3)], p: V3) -> bool {
         boxes
             .iter()
-            .any(|(s, c)| (0..3).all(|i| (p[i] - c[i]).abs() < s[i] / 2.))
+            .any(|(lo, hi)| (0..3).all(|i| p[i] > lo[i] && p[i] < hi[i]))
     }
     #[test]
     fn actual_holes_and_correct_sides() {
@@ -214,6 +327,54 @@ mod tests {
         r = room();
         r.width = f32::NAN;
         assert!(r.boxes().is_err());
+    }
+    #[test]
+    fn boundary_preserves_material_volume_and_grid_is_bounded() {
+        let build = |r: Room| {
+            crate::mesh(
+                "room",
+                &crate::Definition {
+                    shape: crate::Shape::Room { room: r },
+                    color: [1.; 4],
+                    material: crate::MaterialSettings::default(),
+                },
+                1_000_000,
+            )
+        };
+        let r = room();
+        let expected: f64 = r
+            .boxes()
+            .unwrap()
+            .iter()
+            .map(|(lo, hi)| (0..3).map(|i| hi[i] as f64 - lo[i] as f64).product::<f64>())
+            .sum();
+        let mesh = build(r).unwrap();
+        let mut volume = 0.;
+        for triangle in mesh.positions.as_chunks::<3>().0 {
+            let [a, b, c] = [triangle[0], triangle[1], triangle[2]].map(|p| p.map(f64::from));
+            volume += (a[0] * (b[1] * c[2] - b[2] * c[1])
+                + a[1] * (b[2] * c[0] - b[0] * c[2])
+                + a[2] * (b[0] * c[1] - b[1] * c[0]))
+                / 6.;
+        }
+        assert!((volume - expected).abs() < 1e-8 * expected);
+        let mut dense = room();
+        dense.width = 20.;
+        dense.depth = 20.;
+        dense.openings = (0..64)
+            .map(|i| Opening {
+                wall: if i % 2 == 0 { Wall::South } else { Wall::East },
+                offset: -7. + (i / 2) as f32 * 0.4,
+                width: 0.15,
+                height: 0.005,
+                sill: 0.1 + i as f32 * 0.01,
+            })
+            .collect();
+        assert!(build(dense).unwrap_err().contains("grid exceeds"));
+        let mut thin = room();
+        thin.width = 1_000_000.;
+        thin.wall_thickness = 0.001;
+        assert!(build(thin).unwrap_err().contains("output precision"));
     }
     #[test]
     fn all_four_sides_support_full_height_openings() {

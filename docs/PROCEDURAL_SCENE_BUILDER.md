@@ -69,7 +69,8 @@ selects its executable; the Rust generator itself remains Node-independent.
 Audit findings are retained in each `*-connectivity.log`; a successful runner
 means the diagnostics executed, not that every mesh is a valid solid.
 
-Receipt `procedural/generated/reviews/20260906-121846-a0ce66980da34535bd4e39e2a4588a47/report.json`:
+Initial audit receipt (room-shell defects subsequently corrected below):
+`procedural/generated/reviews/20260906-121846-a0ce66980da34535bd4e39e2a4588a47/report.json`:
 44 Rust tests, five audit tests, format, strict clippy, release, nine deterministic
 fixtures and nine connectivity audits passed (32 stages). Of 40 mesh definitions
 audited, 38 have closed oriented exact-position graphs. All seven teapot parts
@@ -687,11 +688,15 @@ means a floor-level door). Openings are geometric constraints, not evidence of
 MUD exits. A caller must choose their wall from actual layout/graph data. This
 operator neither creates graph links nor infers them from nearby rooms.
 
-The compiler subdivides wall spans into jamb, sill and lintel boxes and lowers
-them through the existing box mesher. It does not paint a black rectangle over
-a solid wall. Interior clearance remains empty. East/west walls own corner
-columns to avoid overlapping solid volumes. The result is a multi-solid mesh,
-not a welded boolean union; coincident internal faces remain at segment joins.
+The compiler subdivides wall spans into jamb, sill and lintel volumes using
+shared min/max coordinates. It builds a bounded rectilinear occupancy grid on
+all construction boundaries and emits only faces between occupied and empty
+cells. Shared internal faces disappear, and every neighboring surface uses
+the same face subdivisions. This **supersedes the disconnected box-mesh
+concatenation** that left coincident faces and invalid shared-edge connectivity.
+It is an exact axis-aligned room-boundary construction, not a general triangle
+Boolean or tolerance-based weld. There is no voxel-resolution approximation:
+grid lines occur at authored boundaries. Interior clearance remains empty.
 Openings with overlapping horizontal spans are rejected, including vertically
 stacked openings: that more general cut arrangement is not supported yet.
 Out-of-bounds cuts and invalid dimensions fail rather than being silently moved.
@@ -702,7 +707,33 @@ budget enforcement only, not 17,000 distinct room designs, city rendering speed,
 or measured VRAM. Roofs, material differentiation, trim, collision,
 MUD adapter integration and final art admission remain subsequent work.
 
-Validation for this operator: eleven Rust tests passed, including aperture-side
+The occupancy grid is capped at 262,144 cells before allocation; boundary faces
+are counted against the vertex budget before triangle allocation. Construction
+cells collapsed by output precision are refused. Dense valid opening layouts
+can exceed this grid cap and receive a diagnostic rather than unbounded work.
+The conforming subdivisions can increase triangle counts; they are not mesh
+decimation. UVs remain diagnostic triangle-local coordinates, not finished room
+materials. General self-intersection validation and new engine renders remain
+outstanding.
+
+The connectivity audit now enforces closed oriented graphs for source-declared
+`room` shapes. It fails the CPU run on a regression while retaining the report.
+This shape-specific gate does not promote other meshes to certified solids.
+
+Corrected-boundary receipt:
+`procedural/generated/reviews/20260906-122748-617c1f275457457eb45294ebbaaed12c/report.json`:
+45 Rust tests, six audit tests and the 32-stage CPU pipeline passed. All 40
+fixture mesh definitions now pass the closed oriented exact-position graph
+check. Both room meshes have one component and zero boundary/excess-incidence
+edges, winding conflicts or failed closed vertex fans. Their opening descriptors
+are unchanged. Material-volume and excessive-grid/precision-collapse tests pass.
+The new gate rejects the retained pre-fix `rooms.json` with exit 1, identifying
+`room_shell`, so the original defect is a verified failing case.
+The revised room fixture has 520 triangles and 944 render vertices; the simpler
+transformed shell has 192 triangles and 366 render vertices. Neither has been
+rendered or engine-reloaded in this pass. Teapot Boolean joins are still absent.
+
+Historical initial box-concatenation validation: eleven Rust tests passed, including aperture-side
 occupancy, window sill/lintel solids, four-sided full-height cuts, invalid cuts,
 17,000 shared instances, deterministic output and vertex-budget rejection.
 Clippy with warnings denied and the release build passed. The four-room fixture
