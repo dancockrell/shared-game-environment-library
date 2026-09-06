@@ -227,7 +227,7 @@ its own revision, dependency and MIT-or-more-permissive license audit.
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
 groups/repetition; exact rectangular aperture subdivision; strict geometry and
 allocation limits; portable mesh/instance representation; native engine adapters;
-Crossing evidence rules; greedy bounded furnishing placement with reserved
+Crossing evidence rules; bounded discrete furnishing repair with reserved
 circulation; content-hashed rebuilds. This is not full shape-grammar search,
 wave-function collapse, learned generation, a city constraint solver, PBR synthesis,
 or automatic art-quality certification.
@@ -261,6 +261,15 @@ above is already automated. The current real loop is build, regression tests,
 native reload, background capture, inspection and corrective edits. The missing
 instance-buffer defect demonstrates why successful code execution alone is not
 a valid scene-quality metric.
+
+Crossing compiler v7.1 now implements the first limited search/repair component:
+deterministic depth-first selection over hard-filtered furniture candidates,
+seeded by the previous greedy result, with a 4,000-state/attempt budget per room.
+It prioritizes fitted requirement count, then placement score, and can revisit
+earlier choices. This supersedes the greedy-only status above, but not the wider
+research roadmap. Its regression fixture resolves a greedy dead end; the current
+real Crossing batch evaluates 676 states and retains its existing sparse layouts.
+No visual improvement, city-level solving or optimality claim follows from that.
 
 Crossing integration must bind actual exits to these descriptors explicitly.
 The uncommitted earlier JavaScript shell experiment is not the production
