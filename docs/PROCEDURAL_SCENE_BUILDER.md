@@ -11,8 +11,13 @@ has a separate owner; this work does not replace it or its asset/provenance data
 
 `procedural/` is the common engine-neutral compiler and adapter package. It
 extends this library's procedural production workflow, not another world server.
-Original software in that directory is MIT licensed. Existing CC0-only art
-admission is unchanged; permissively licensed software dependencies are not art.
+Current generator software is GPL-3.0-or-later following the user's explicit
+approval of GPL and Blender. Prior MIT grants remain valid and their notice
+is retained in procedural/LICENSE.MIT. Third-party notices remain applicable.
+The Unity adapter remains MIT as a separately licensed file-import boundary;
+shipping a GPL-linked native Unity plugin is not an admitted distribution.
+Existing CC0-only catalog art admission is unchanged; software licenses are
+not automatically licenses on generated artistic output.
 
 ## Visual target: high-end stylized, not blocky
 
@@ -92,8 +97,9 @@ be admitted as single clean solids. No geometry was repaired or changed.
   is an author technical write-up, not a peer-reviewed paper. No code was copied.
 - [Manifold-rust 0.13.1](https://docs.rs/crate/manifold-rust/latest) is a CPU Rust
   candidate with Apache-2.0 licensing and cancellation support documented by its
-  author. It has not been benchmarked or admitted under the user's MIT-or-better
-  constraint; advertised correctness and performance are not our measurements.
+  author. It has not been benchmarked or admitted; the former MIT-only policy
+  is superseded by GPL-compatible licensing. Advertised correctness and
+  performance are not our measurements.
 - [Boolmesh](https://github.com/komietty/boolmesh) currently declares MPL-2.0 and
   requires manifold, nonoverlapping input. No dependency was added.
 - [Trueform's July 2026 paper abstract](https://arxiv.org/abs/2607.15905) discusses
@@ -926,6 +932,50 @@ a replacement BRDF or claiming that a dark glossy albedo is syrup.
 No clearcoat implementation, new lighting rig or engine restart occurred here.
 Checkpoint remains local; no Actions dispatch or remote push.
 
+#### Blender reference renderer and GPL adoption
+
+The user approved Blender and GPL. procedural/LICENSING.md is the current
+licensing authority: GPL-3.0-or-later generator, preserved historical MIT notice,
+unchanged third-party and asset notices, separate MIT Unity-adapter exception
+without clearance to distribute a GPL-linked proprietary-engine plugin.
+No Blender implementation code was copied into Rust.
+
+procedural/blender/render_reference.py consumes the existing compiled meshes,
+UVs, normals and instance transforms; it does not generate replacement geometry.
+It preserves shared meshes, packs painted textures, and stores the source recipe
+in the editable .blend. An explicit food-reference treatment adds Principled
+coat, modest subsurface scattering, noise bump/roughness, area lights and AgX.
+Those material nodes are Blender-only reference work, not exported game parity.
+The first render exposed pale color handling; the corrected version explicitly
+converts authored sRGB colors/bytes to linear values without double conversion.
+Godot color parity is not yet measured.
+
+Official portable Blender 4.5.9 LTS Windows x64 ZIP was checksum verified:
+41da973b9bf95bb312cbeff4d1982feb13259b43c821686b9bafea4dfe5477cf.
+It is installed outside the repository in Documents/Codex/tools/blender-4.5.9.
+No paid generation, model weights, cloud rendering or GPU rendering was used.
+
+Corrected image and editable scene reside in
+procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/blender-glaze-002/
+as reference.png and reference.blend. Input SHA256:
+b254b72269fc7045f776ad269316db3dc61fc34fb489c2a6d16c132c4c3ec65e.
+Observed render/save time 30.14 seconds, sampled process RAM peak
+1,147,883,520 bytes, two CPU threads, 32-sample maximum and 60-second render cap.
+The launch watchdog enforced 3 GiB process RAM and 150 seconds total.
+These are not VRAM or game-performance measurements.
+
+Fresh background --verify-only reload passed 61 instances, 11 shared meshes,
+original positions, triangle counts, packed textures, recipe metadata and coat
+settings. Future renders also perform that reload check. Rust's separate CPU
+receipt 20260906-142640-f3a49c9c7fbc4fbcb2e795e58cd0ac95 passed 38 stages,
+57 Rust tests and six mesh-audit tests; it does not verify Blender.
+
+Visual finding: wet fruit highlights and contact shadows are more legible,
+but the crust is too pale/regular and fruit tops still resemble placed pieces.
+This is a material reference, not final food art. Earlier rejected reference
+blender-glaze-001 is retained. No Godot process was changed; no remote push
+or Actions dispatch occurred.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository
@@ -1120,7 +1170,7 @@ other validation remains headless. A valid AABB alone is not rendering proof.
 This is a targeted current literature review, not an exhaustive claim of newest
 or best results. Paper claims below are not our measured performance. No upstream
 implementation has been copied or added by this review; any code adoption needs
-its own revision, dependency and MIT-or-more-permissive license audit.
+its own revision, dependency and GPL-compatibility license audit.
 
 | Work | Relevant method | Decision for this builder |
 | --- | --- | --- |

@@ -18,8 +18,12 @@ Cargo.lock is the exact version/checksum authority. This first build resolved:
 
 These declarations were read from Cargo metadata for the resolved packages.
 They are permissive; unicode-ident additionally requires the Unicode notice.
-No GPL, LGPL, MPL, model weights, online service SDK or engine bindings are
-included. Original geometry algorithms here were written from first principles.
+The Rust dependencies above remain unchanged. The generator is now distributed
+under GPL-3.0-or-later by the user's direction. Its previously granted MIT
+notice is preserved in LICENSE.MIT; that grant is not retroactively revoked.
+No Blender implementation code has been copied into Rust. Blender is an
+external GPL-licensed authoring/rendering dependency, installed separately.
+No model weights or online service SDK are required.
 
 Binary distribution must include the upstream copyright/license notices from
 each resolved crate, not just this summary. No binary release package is being
