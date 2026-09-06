@@ -731,8 +731,9 @@ compile_food(recipe, budgets):
     retain candidate until visual comparison passes; technical pass is separate
 ```
 
-The current box-only field cannot accept arbitrary hosts or robust region-aware
-cuts yet. Implement those extensions in place, with analytic primitive fixtures
+The current box-only field cannot accept arbitrary hosts or region-aware
+material cuts yet. The bounded axis-cut checkpoint below adds geometry only.
+Implement the remaining extensions in place, with analytic primitive fixtures
 before food complexity. For deformed fields, compare local queries to exhaustive
 small-domain evaluation; test maximal reach, negative coordinates, seam samples
 and minimum allowed feature size. Thickness checks must be independent of just
@@ -753,6 +754,49 @@ closed topology: a closed mesh can still contain unusably thin walls.
 - No new engine processes, paid services, dependencies, runtime shader changes
   or GitHub Actions were needed for this research checkpoint. No measured 8 GB
   VRAM claim or new visual quality pass is made.
+
+#### Original crust and subsequent cut checkpoint, 7 September 2026
+
+The existing `PorousBox` now accepts optional `crust_thickness` and
+`cut: {axis, at}`. Both are omitted when absent in serialization; legacy source
+and generated fixtures remain unchanged. The crust control rejects entire
+candidate spheres whose original-box clearance is less than radius plus shell
+thickness. It does not merely change shading or fill a shell after slicing.
+The cut retains coordinates `p[axis] <= at` and is applied after the existing
+surface offset. Axis is 0/1/2 for X/Y/Z; `at` is in object-space metres.
+Crust clearance is measured before the small existing level-set offset, which
+can slightly change the resulting physical shell thickness.
+
+Validation requires finite dimensions, shell thickness >= two sampling steps
+and room for an interior pore; cut planes must lie at least two steps from
+either original face. Existing radius, population, grid and vertex caps remain.
+The omission behavior, malformed axes (including maximum integer), nonfinite
+values, shell preservation, cut exposure and filtered-neighborhood versus
+larger-search equality are tested. This is not a general Boolean or deformation
+operator and does not yet emit per-face crust/cut material regions.
+
+`procedural/examples/porous-cut.json` is a live compiler fixture, not unused
+scaffolding. CPU receipt `20260906-224748-89ea0e7f7f32464c848acfded33b0cc3`
+passed 62 Rust tests, six Node audit tests, strict clippy, formatting, release
+compilation and 12 deterministic fixture checks (41 workflow stages).
+Independent comparison found all eleven pre-existing compiled fixtures byte
+identical to `20260906-152535-9fbb1cac6b7243378a6f9c9b44987fe4`.
+Actual extracted maximum X equals 0.003137 m, the authored cut; 3,292 vertices
+lie on that plane. The cut mesh has 101,132 triangles, 50,542 vertices and four
+components, with zero reported closure/orientation findings. Self-intersections,
+component containment and physical wall-thickness certification remain untested.
+
+The actual Blender CPU render and saved-file reload passed in 17.03 seconds,
+with sampled process peak 1,119,481,856 bytes under the 3 GiB/150-second guard.
+Two threads; no visible engine or GPU render. The inspected image is
+`procedural/generated/reviews/20260906-224748-89ea0e7f7f32464c848acfded33b0cc3/crust-cut-render/reference.png`.
+It visibly preserves plain exterior faces while exposing holes on the right
+cut face. **Reject as food art:** it is still a hard-edged block with sparse,
+coarse cavities and uniform finish; this render proves a construction distinction,
+not convincing cake. Its triangle cost is unacceptable for blind replication.
+The small object also occupies too little of the reference frame for close pore
+review. Next work needs a curved host, labelled cut/interior surfaces, smoother
+irregular crumb and better diagnostic framing, not adoption of this cube as cake.
 
 ### Porous food: evidence and next implementation boundary, 6 September 2026
 

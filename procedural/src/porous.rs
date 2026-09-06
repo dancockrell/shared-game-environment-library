@@ -17,6 +17,18 @@ pub struct PorousBox {
     /// Explicit level-set offset in metres, bounded to one tenth of a grid step.
     #[serde(default)]
     pub surface_offset: f32,
+    /// Optional minimum intact shell, measured from the original box boundary.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub crust_thickness: Option<f32>,
+    /// Cut AFTER forming the crust. Retains points whose axis coordinate <= at.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cut: Option<CutPlane>,
+}
+#[derive(Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CutPlane {
+    pub axis: usize,
+    pub at: f32,
 }
 fn default_population() -> u32 {
     1
@@ -49,6 +61,19 @@ impl PorousBox {
                 "Invalid porous dimensions: radius needs >=2 steps and <=0.45 spacing".into(),
             );
         }
+        if let Some(thickness) = self.crust_thickness {
+            finite(&[thickness])?;
+            let half = self.size.iter().copied().fold(f32::INFINITY, f32::min) * 0.5;
+            if thickness < 2. * self.step || thickness + self.radii[0] >= half {
+                return Err("Crust needs >=2 steps and space for an interior pore".into());
+            }
+        }
+        if let Some(cut) = &self.cut {
+            finite(&[cut.at])?;
+            if cut.axis > 2 || cut.at.abs() + 2. * self.step >= self.size[cut.axis] * 0.5 {
+                return Err("Cut axis must be 0..2 and plane must be inside the host".into());
+            }
+        }
         Ok(())
     }
     fn particle(&self, cell: [i32; 3], index: u32) -> ([f64; 3], f64) {
@@ -74,6 +99,14 @@ impl PorousBox {
                 for x in -reach..=reach {
                     for index in 0..self.pores_per_cell {
                         let (c, r) = self.particle([q[0] + x, q[1] + y, q[2] + z], index);
+                        if let Some(thickness) = self.crust_thickness {
+                            let clearance = (0..3)
+                                .map(|i| self.size[i] as f64 * 0.5 - c[i].abs())
+                                .fold(f64::INFINITY, f64::min);
+                            if clearance < r + thickness as f64 {
+                                continue;
+                            }
+                        }
                         distance = distance
                             .min((0..3).map(|i| (p[i] - c[i]).powi(2)).sum::<f64>().sqrt() - r);
                     }
@@ -86,7 +119,11 @@ impl PorousBox {
         let q: [f64; 3] = std::array::from_fn(|i| p[i].abs() - self.size[i] as f64 * 0.5);
         let host = q.map(|x| x.max(0.).powi(2)).iter().sum::<f64>().sqrt()
             + q[0].max(q[1]).max(q[2]).min(0.);
-        host.max(-self.pores(p, 1)) - self.surface_offset as f64
+        let solid = host.max(-self.pores(p, 1)) - self.surface_offset as f64;
+        match &self.cut {
+            Some(cut) => solid.max(p[cut.axis] - cut.at as f64),
+            None => solid,
+        }
     }
     fn normal(&self, p: [f64; 3]) -> V3 {
         let h = self.step as f64 * 0.02;
@@ -257,6 +294,63 @@ mod tests {
             seed: 19,
             pores_per_cell: 1,
             surface_offset: 0.000001,
+            crust_thickness: None,
+            cut: None,
+        }
+    }
+    #[test]
+    fn crust_keeps_original_boundary_but_cut_exposes_interior() {
+        let mut a = sample();
+        a.size = [0.05; 3];
+        a.crust_thickness = Some(0.003);
+        a.validate().unwrap();
+        // Every sampled point in the original exterior shell remains material.
+        for axis in 0..3 {
+            for sign in [-1., 1.] {
+                for u in -10..=10 {
+                    let mut p = [0.; 3];
+                    p[axis] = sign * 0.024;
+                    p[(axis + 1) % 3] = u as f64 * 0.002;
+                    assert!(a.field(p) < 0.);
+                }
+            }
+        }
+        let (center, _) = a.particle([0; 3], 0);
+        assert!(a.field(center) > 0., "Original interior contains a cavity");
+        a.cut = Some(CutPlane {
+            axis: 0,
+            at: center[0] as f32,
+        });
+        a.validate().unwrap();
+        assert!(
+            a.field(center) > 0.,
+            "Cut must not fill in the exposed cavity"
+        );
+        assert!(a.field([0.024, 0., 0.]) > 0., "Removed half is outside");
+        assert!(a.field([-0.024, 0., 0.]) < 0., "Retained crust survives");
+        let mut state = 52;
+        for _ in 0..64 {
+            let p = std::array::from_fn(|_| (random(&mut state) - 0.5) * 0.1);
+            assert_eq!(a.pores(p, 1), a.pores(p, 3));
+        }
+    }
+    #[test]
+    fn crust_and_cut_validate_and_legacy_serialization_is_unchanged() {
+        let a = sample();
+        let json = serde_json::to_value(&a).unwrap();
+        assert!(json.get("crust_thickness").is_none());
+        assert!(json.get("cut").is_none());
+        let restored: PorousBox = serde_json::from_value(json).unwrap();
+        assert_eq!(a.field([0.; 3]), restored.field([0.; 3]));
+        for thickness in [0., -0.001, 0.001, 0.02, f32::NAN] {
+            let mut b = a.clone();
+            b.crust_thickness = Some(thickness);
+            assert!(b.validate().is_err());
+        }
+        for (axis, at) in [(3, 0.), (usize::MAX, 0.), (0, 0.025), (1, f32::NAN)] {
+            let mut b = a.clone();
+            b.cut = Some(CutPlane { axis, at });
+            assert!(b.validate().is_err());
         }
     }
     #[test]
