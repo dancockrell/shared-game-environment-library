@@ -21,6 +21,7 @@ var shape_names: Array = ["Lean","Muscular"] + FACE_TARGETS.keys()
 var skeleton: Skeleton3D
 var skin: Skin
 var vertex_weights: Array[Dictionary] = []
+const HAIR_STYLES := {"Braid":"braid01","Long loose":"long01","Bob":"bob01","Afro":"afro01"}
 func _init() -> void:
 	call_deferred("run")
 func fail(message: String) -> void:
@@ -544,6 +545,9 @@ func build(sex: String) -> void:
 	add_part(character,"FormalBottom",formal_path+".obj",formal_path+".mhmat",{},bottom_seed)
 	add_part(character,"Hat","clothes/fedora01/fedora.obj","clothes/fedora01/fedora.mhmat",{},-1,"clothes/fedora01/fedora01.mhclo")
 	add_part(character,"Hair","hair/%s/%s.obj" % [hair_name,hair_name],"hair/%s/%s.mhmat" % [hair_name,hair_name])
+	for style in HAIR_STYLES:
+		var hair_path: String = "hair/"+HAIR_STYLES[style]+"/"+HAIR_STYLES[style]
+		add_part(character,"Hair_"+HAIR_STYLES[style],hair_path+".obj",hair_path+".mhmat")
 	add_part(character,"Eyes","eyes/low-poly/low-poly.obj","eyes/materials/brown.mhmat")
 	for number in ["001","005"]:
 		var brow_path: String = "eyebrows/eyebrow"+number+"/eyebrow"+number
@@ -570,7 +574,14 @@ func build(sex: String) -> void:
 		"slots":{"Clothes":{"Casual 01":{"meshes":["Skeleton3D/Outfit01","Skeleton3D/Body01"],"hides":[]},"Casual 02":{"meshes":["Skeleton3D/Outfit02","Skeleton3D/Body02"],"hides":[]}}},
 		"morphs":{"Lean":[],"Muscular":[]},"dyes":{"Clothing":[{"mesh":"Skeleton3D/Outfit01","surface":0},{"mesh":"Skeleton3D/Outfit02","surface":0}],"Hair":[{"mesh":"Skeleton3D/Hair","surface":0}]}}
 	profile.slots.Clothes["Formal separates"] = {"meshes":["Skeleton3D/Body03","Skeleton3D/FormalTop","Skeleton3D/FormalBottom"],"hides":[]}
-	profile.slots.Headwear = {"Bare head":{"meshes":[],"hides":[]},"Felt hat":{"meshes":["Skeleton3D/Hat"],"hides":["Skeleton3D/Hair"]}}
+	profile.slots.Headwear = {"Bare head":{"meshes":[],"hides":[]},"Felt hat":{"meshes":["Skeleton3D/Hat"],"hides":[],"excludes":["Skeleton3D/Hair"]}}
+	profile.slots.Hairstyle = {"Source default":{"meshes":["Skeleton3D/Hair"],"hides":[]}}
+	for style in HAIR_STYLES:
+		var mesh_path: String = "Skeleton3D/Hair_"+HAIR_STYLES[style]
+		profile.slots.Hairstyle[style] = {"meshes":[mesh_path],"hides":[]}
+		profile.slots.Headwear["Felt hat"].excludes.append(mesh_path)
+		profile.dyes.Hair.append({"mesh":mesh_path,"surface":0})
+	profile.slots.Hairstyle["Bald"] = {"meshes":[],"hides":[]}
 	profile.dyes["Formal top"] = [{"mesh":"Skeleton3D/FormalTop","surface":0}]
 	profile.dyes["Formal bottom"] = [{"mesh":"Skeleton3D/FormalBottom","surface":0}]
 	profile.dyes.Hat = [{"mesh":"Skeleton3D/Hat","surface":0}]

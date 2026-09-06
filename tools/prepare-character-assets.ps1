@@ -17,6 +17,7 @@ $prefixes = @(
     'clothes/female_elegantsuit01/', 'clothes/male_elegantsuit01/',
     'clothes/fedora01/',
     'clothes/shoes01/', 'hair/ponytail01/', 'hair/short01/',
+    'hair/braid01/', 'hair/long01/', 'hair/bob01/', 'hair/afro01/',
     'eyes/low-poly/', 'eyes/materials/',
     'eyebrows/eyebrow001/', 'eyebrows/eyebrow005/',
     'eyelashes/eyelashes01/', 'eyelashes/eyelashes04/',

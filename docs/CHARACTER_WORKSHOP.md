@@ -121,6 +121,14 @@ Dyes multiply a copied standard material's original albedo color and retain its 
 
 ## Free source acquisition and completion gate
 
+### Selectable fitted hair — 2026-09-06 checkpoint
+
+The **Hairstyle** slot adds Braid, Long loose, Bob and Afro source meshes to both bodies, alongside their original Source default hair and a Bald option. These are four newly staged CC0 source styles, not newly approved character identities. The system subset now contains 145 original files. Every hair mesh shares the twelve fitting controls, transferred skin weights and Hair dye channel. The source files remain unchanged.
+
+Equipment choices may now declare optional `excludes` mesh lists. Unlike `hides` (body-region masks), exclusions explicitly target equipment owned by another slot. The felt-hat choice excludes all five hair meshes without changing the remembered hairstyle. Removing it restores only the selected style, including a genuinely bald selection. Unknown targets, same-slot targets and malformed lists reject atomically. Appearance recipes canonicalize numeric morph weights to floating-point values, so an integer-authored zero does not cause a false save/load mismatch.
+
+Front/back source fitting reviews use `*-review-hair-<style>-<view>.png`. The bob heavily obscures the face, the Afro has noisy alpha/shadow edges, and the male braid shows a small scalp gap. These are recorded art defects, not acceptable finished variants. Braid/long hair also require head-turn, shoulder and clothing collision checks plus secondary-motion work; source skinning is not a complete hair animation system. All styles remain authoring candidates and must not be treated as approved runtime pools.
+
 ### Fitted brows and lashes — 2026-09-06 checkpoint
 
 Period overgarment construction now also includes **Open-sided tabard** in the existing Outerwear slot. It uses the same constructor as the travelling cloaks, not a separate fitting/export pipeline. Its cut closes the front, connects the shoulders around a neck opening, and leaves both sides open to the hem. Cloth and edging have independent dye surfaces. Torso-depth samples provide chest/hip ease; twelve fitted shape targets and the shared skeleton remain attached. Source body polygons are not hidden by this overgarment.

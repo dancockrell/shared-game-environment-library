@@ -112,6 +112,10 @@ func run() -> void:
 		editor.import_model(args[0])
 		editor.load_outfit_profile(args[2])
 		check(not editor.outfit.profile.is_empty(),"load authored source profile")
+		if editor.outfit.profile.is_empty():
+			printerr(editor.status.text)
+			quit(1)
+			return
 		var measured_height: float = editor.source_height
 		editor.outfit.selections.Headwear = "Felt hat"
 		editor.outfit.selections.Outerwear = "Long travelling cloak"
@@ -304,6 +308,7 @@ func run() -> void:
 				RenderingServer.force_draw(false)
 				check(root.get_texture().get_image().save_png(args[1]+"-ears.png") == OK,"render pointed ears")
 				editor.outfit.selections.Clothes = "Formal separates"
+				editor.outfit.selections.Hairstyle = "Source default"
 				editor.outfit.selections.Headwear = "Felt hat"
 				editor.outfit.colors["Formal top"] = "ac8654ff"
 				editor.outfit.colors["Formal bottom"] = "605850ff"
@@ -411,5 +416,43 @@ func run() -> void:
 						await process_frame
 					RenderingServer.force_draw(false)
 					check(root.get_texture().get_image().save_png(args[1]+"-brows-lashes-"+style+".png") == OK,"render fitted brows and lashes: "+style)
+				for style in editor.outfit.profile.slots.Hairstyle:
+					editor.outfit.selections.Hairstyle = style
+					editor.outfit.selections.Headwear = "Bare head"
+					editor.outfit.apply()
+					var selected: Array = editor.outfit.profile.slots.Hairstyle[style].meshes
+					var all_hair: Array = editor.outfit.profile.slots.Headwear["Felt hat"].excludes
+					for path in all_hair:
+						check(editor.parts[path].visible == (path in selected),"exclusive hairstyle: "+style+" / "+path)
+						editor.outfit.selections.Headwear = "Felt hat"
+						editor.outfit.apply()
+						check(not editor.parts[path].visible,"hat hides every hairstyle: "+style+" / "+path)
+						editor.outfit.selections.Headwear = "Bare head"
+						editor.outfit.apply()
+					var hair_recipe: Dictionary = editor.make_recipe()
+					var hair_actor: Node3D = editor.build_character().instantiate()
+					for path in all_hair:
+						var exported_hair := hair_actor.find_child(path.get_file(),true,false) as MeshInstance3D
+						check(exported_hair != null and exported_hair.visible == (path in selected) and exported_hair.skin.get_bind_count() == 163 and exported_hair.mesh.get_blend_shape_count() == editor.outfit.profile.morphs.size(),"export retains selected fitted hairstyle: "+style+" / "+path)
+					hair_actor.free()
+					var hair_error: String = editor.apply_recipe(JSON.parse_string(JSON.stringify(hair_recipe,"",true,true)))
+					var restored_hair: Dictionary = editor.make_recipe()
+					check(hair_error.is_empty() and restored_hair == hair_recipe,"hairstyle recipe roundtrip: "+style)
+					if not hair_error.is_empty():
+						printerr(hair_error)
+					for field in hair_recipe:
+						if restored_hair.get(field) != hair_recipe[field]:
+							printerr("Hair recipe mismatch ",field,": ",hair_recipe[field]," => ",restored_hair.get(field))
+					editor.refresh_controls()
+					editor.focus_face()
+					editor.camera.size = .95
+					editor.status.text = "Hair fitting review: "+style+"\nSource prototype; not approved character art."
+					for angle in [.5,2.8]:
+						editor.pivot.rotation.y = angle
+						for i in 5:
+							await process_frame
+						RenderingServer.force_draw(false)
+						var hair_view := "front" if angle < 1 else "back"
+						check(root.get_texture().get_image().save_png(args[1]+"-hair-"+style.to_lower().replace(" ","-")+"-"+hair_view+".png") == OK,"render hairstyle: "+style+" / "+hair_view)
 	print("Workshop failures: ",failures)
 	quit(0 if failures == 0 else 1)

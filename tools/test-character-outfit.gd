@@ -91,6 +91,20 @@ func run() -> void:
 		check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == measured_before,"invalid shadow override rejects atomically")
 	measured.shadowlessMeshes = ["shirt"]
 	check(outfit.configure(measured,meshes,shapes,"test").is_empty() and meshes.shirt.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF,"source shadow override applies to fitted mesh")
+	var layered := profile.duplicate(true)
+	layered.slots.Coat.On.excludes = ["shirt"]
+	check(outfit.configure(layered,meshes,shapes,"test").is_empty() and not meshes.shirt.visible and meshes.coat.visible,"outer equipment excludes selected inner equipment")
+	outfit.selections.Coat = "Off"
+	outfit.apply()
+	check(meshes.shirt.visible and outfit.selections.Shirt == "On","removal restores remembered inner choice")
+	outfit.morphs.Build = 0
+	var numeric_recipe: Dictionary = outfit.recipe()
+	check(outfit.restore(JSON.parse_string(JSON.stringify(numeric_recipe,"",true,true))).is_empty() and outfit.recipe() == numeric_recipe,"integer-authored weights have stable JSON recipe types")
+	var layered_before: Dictionary = outfit.recipe()
+	for exclusion in ["shirt",["Missing"],["coat"],[42]]:
+		bad = layered.duplicate(true)
+		bad.slots.Coat.On.excludes = exclusion
+		check(not outfit.configure(bad,meshes,shapes,"test").is_empty() and outfit.recipe() == layered_before,"invalid equipment exclusion rejects atomically")
 	for mesh in meshes.values():
 		mesh.free()
 	print("Outfit failures: ",failures)

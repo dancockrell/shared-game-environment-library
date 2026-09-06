@@ -88,6 +88,11 @@ func configure(value: Variant, available: Dictionary, shape_bindings: Dictionary
 		next_selections[slot] = choices.keys()[0]
 	for slot in value.slots:
 		for item in value.slots[slot].values():
+			if not item.get("excludes",[]) is Array:
+				return "Equipment exclusions must be a list."
+			for key in item.get("excludes",[]):
+				if not key is String or not owned.has(key) or owned[key] == slot:
+					return "Equipment exclusions must name a mesh in another slot."
 			for key in item.hides:
 				if owned.has(key):
 					return "A hidden body region cannot also be a clothing choice."
@@ -135,7 +140,10 @@ func configure(value: Variant, available: Dictionary, shape_bindings: Dictionary
 	return ""
 
 func recipe() -> Dictionary:
-	return {"profileSha256":JSON.stringify(profile, "", true).sha256_text(), "slots":selections.duplicate(), "morphs":morphs.duplicate(), "dyes":colors.duplicate()}
+	var weights := {}
+	for control in morphs:
+		weights[control] = float(morphs[control])
+	return {"profileSha256":JSON.stringify(profile, "", true).sha256_text(), "slots":selections.duplicate(), "morphs":weights, "dyes":colors.duplicate()}
 
 func body_vertical_bounds() -> Vector2:
 	if not profile.has("measurement"):
@@ -185,11 +193,14 @@ func apply() -> void:
 	var hidden := {}
 	for key in profile.get("shadowlessMeshes",[]):
 		meshes[key].cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	# Reset only profile-managed regions, preserving unrelated asset visibility.
+	# Reset body masks first, then equipment. Interleaving those passes can
+	# accidentally reveal an unselected mesh when another slot covers it.
 	for choices in profile.slots.values():
 		for item in choices.values():
 			for key in item.hides:
 				meshes[key].visible = true
+	for choices in profile.slots.values():
+		for item in choices.values():
 			for key in item.meshes:
 				meshes[key].visible = false
 	for slot in selections:
@@ -197,6 +208,8 @@ func apply() -> void:
 		for key in item.meshes:
 			meshes[key].visible = true
 		for key in item.hides:
+			hidden[key] = true
+		for key in item.get("excludes",[]):
 			hidden[key] = true
 	for key in hidden:
 		meshes[key].visible = false

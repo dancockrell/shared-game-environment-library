@@ -525,6 +525,106 @@
       "sha256": "4e70a6c6530469ead049980969944cf1c2860700907c9dfee0fbc87af7965c68"
     },
     {
+      "path": "hair/afro01/afro_diffuse.png",
+      "bytes": 4817185,
+      "sha256": "dc0db7dd8a13802f02303ca7e49844b219e09db134471b7061538a8af8f7c7fb"
+    },
+    {
+      "path": "hair/afro01/afro01.mhclo",
+      "bytes": 149574,
+      "sha256": "9977bd4507e2dd1408504b7a39a6f585ffa2d3ba3aa40ad4bdc2844884bbebb5"
+    },
+    {
+      "path": "hair/afro01/afro01.mhmat",
+      "bytes": 1030,
+      "sha256": "6da1c6778df2450b135009274ed0145dc2dffbc5d8e287fc1d4c69ba539b483c"
+    },
+    {
+      "path": "hair/afro01/afro01.obj",
+      "bytes": 130040,
+      "sha256": "8344fffef15120a05a89219f31184ca2958537223fa885c885137ad1e97edcb8"
+    },
+    {
+      "path": "hair/afro01/afro01.thumb",
+      "bytes": 47414,
+      "sha256": "d371c511ce6b4c66ada60c5986d022a2f0113400088da20b532fc950fdf2845e"
+    },
+    {
+      "path": "hair/bob01/bob01_diffuse.png",
+      "bytes": 4243598,
+      "sha256": "2b38bc7a028e06e8e633accb7fe2dd1b2bacbb9d32463df73f39f82e63ef9009"
+    },
+    {
+      "path": "hair/bob01/bob01.mhclo",
+      "bytes": 352019,
+      "sha256": "a295b11ab6c7808afa1e01d0c79fb595bbbd7885f65252766486c9fcf6d158c5"
+    },
+    {
+      "path": "hair/bob01/bob01.mhmat",
+      "bytes": 1312,
+      "sha256": "9c3015044a832fb9a72a5d2f28218914ebfbdf6725cfd237cc53a3d95f054e3b"
+    },
+    {
+      "path": "hair/bob01/bob01.obj",
+      "bytes": 396190,
+      "sha256": "d7fb73806f47ee37ba3c37bcfadff40a91ba99635d08c3e02d94b4acbf97c231"
+    },
+    {
+      "path": "hair/bob01/bob01.thumb",
+      "bytes": 53628,
+      "sha256": "f354364f4fbd0d83982ba77d1e8e63e15a3f73a04bd43538d076237602965336"
+    },
+    {
+      "path": "hair/braid01/braid01_diffuse.png",
+      "bytes": 2615248,
+      "sha256": "24c0d2a639f04704734c3e38af97d110777c1b203e5a10c66a5c89563643a018"
+    },
+    {
+      "path": "hair/braid01/braid01.mhclo",
+      "bytes": 305086,
+      "sha256": "e350614dab32230c47d67e7747079b89859d36e62a890ca47890f068eca4f7a9"
+    },
+    {
+      "path": "hair/braid01/braid01.mhmat",
+      "bytes": 1299,
+      "sha256": "c8fdc8452c94715e9bf8fc194c82dc1e53124475b0665058d31b142bf0f3f762"
+    },
+    {
+      "path": "hair/braid01/braid01.obj",
+      "bytes": 302165,
+      "sha256": "ad0b449c80244452bc8d437f5d59c25ec2ac17b2eb35e1ae2d9531fc00b73b0a"
+    },
+    {
+      "path": "hair/braid01/braid01.thumb",
+      "bytes": 28768,
+      "sha256": "b0fc877ff3c45aa0055ea89fde0fc1fc83c228ac22a27c28aeb8816b9b252e64"
+    },
+    {
+      "path": "hair/long01/long01_diffuse.png",
+      "bytes": 2915253,
+      "sha256": "e8dc25d90f8f62467e8630420e1240a400d070054fb7c3f1d3f7bf3e457d6c2c"
+    },
+    {
+      "path": "hair/long01/long01.mhclo",
+      "bytes": 220891,
+      "sha256": "94ecbebfd834da2cbee2ce90b730972590eb22a252ecd9592038ea736e063646"
+    },
+    {
+      "path": "hair/long01/long01.mhmat",
+      "bytes": 1297,
+      "sha256": "74ec88267e679d316f8037a074511ffc887b27e198ea381d0ae4a3f180f96760"
+    },
+    {
+      "path": "hair/long01/long01.obj",
+      "bytes": 215324,
+      "sha256": "7f1d6dadbdf9e96435251955d6657e77ea5433c9bc7c85a5c5f5e4eae0cb9a8c"
+    },
+    {
+      "path": "hair/long01/long01.thumb",
+      "bytes": 35530,
+      "sha256": "4cb13248134980fc69fdbe298e2bdde58864aec764243cb3c50cb0da7dc0ed98"
+    },
+    {
       "path": "hair/ponytail01/ponytail01_diffuse.png",
       "bytes": 3910782,
       "sha256": "dcb364300cac06ce8bef91b2f7c0970baf310898bbdd06b0c6b884ee9306eb97"

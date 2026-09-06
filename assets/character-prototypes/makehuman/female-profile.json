@@ -66,6 +66,22 @@
       {
         "mesh": "Skeleton3D/Hair",
         "surface": 0
+      },
+      {
+        "mesh": "Skeleton3D/Hair_braid01",
+        "surface": 0
+      },
+      {
+        "mesh": "Skeleton3D/Hair_long01",
+        "surface": 0
+      },
+      {
+        "mesh": "Skeleton3D/Hair_bob01",
+        "surface": 0
+      },
+      {
+        "mesh": "Skeleton3D/Hair_afro01",
+        "surface": 0
       }
     ],
     "Hat": [
@@ -822,6 +838,10 @@
       "Skeleton3D/FormalBottom::Broad jaw",
       "Skeleton3D/Hat::Broad jaw",
       "Skeleton3D/Hair::Broad jaw",
+      "Skeleton3D/Hair_braid01::Broad jaw",
+      "Skeleton3D/Hair_long01::Broad jaw",
+      "Skeleton3D/Hair_bob01::Broad jaw",
+      "Skeleton3D/Hair_afro01::Broad jaw",
       "Skeleton3D/Eyes::Broad jaw",
       "Skeleton3D/Brows001::Broad jaw",
       "Skeleton3D/Brows005::Broad jaw",
@@ -842,6 +862,10 @@
       "Skeleton3D/FormalBottom::Broad nose",
       "Skeleton3D/Hat::Broad nose",
       "Skeleton3D/Hair::Broad nose",
+      "Skeleton3D/Hair_braid01::Broad nose",
+      "Skeleton3D/Hair_long01::Broad nose",
+      "Skeleton3D/Hair_bob01::Broad nose",
+      "Skeleton3D/Hair_afro01::Broad nose",
       "Skeleton3D/Eyes::Broad nose",
       "Skeleton3D/Brows001::Broad nose",
       "Skeleton3D/Brows005::Broad nose",
@@ -862,6 +886,10 @@
       "Skeleton3D/FormalBottom::Defined cheekbones",
       "Skeleton3D/Hat::Defined cheekbones",
       "Skeleton3D/Hair::Defined cheekbones",
+      "Skeleton3D/Hair_braid01::Defined cheekbones",
+      "Skeleton3D/Hair_long01::Defined cheekbones",
+      "Skeleton3D/Hair_bob01::Defined cheekbones",
+      "Skeleton3D/Hair_afro01::Defined cheekbones",
       "Skeleton3D/Eyes::Defined cheekbones",
       "Skeleton3D/Brows001::Defined cheekbones",
       "Skeleton3D/Brows005::Defined cheekbones",
@@ -882,6 +910,10 @@
       "Skeleton3D/FormalBottom::Full cheeks",
       "Skeleton3D/Hat::Full cheeks",
       "Skeleton3D/Hair::Full cheeks",
+      "Skeleton3D/Hair_braid01::Full cheeks",
+      "Skeleton3D/Hair_long01::Full cheeks",
+      "Skeleton3D/Hair_bob01::Full cheeks",
+      "Skeleton3D/Hair_afro01::Full cheeks",
       "Skeleton3D/Eyes::Full cheeks",
       "Skeleton3D/Brows001::Full cheeks",
       "Skeleton3D/Brows005::Full cheeks",
@@ -902,6 +934,10 @@
       "Skeleton3D/FormalBottom::Full lips",
       "Skeleton3D/Hat::Full lips",
       "Skeleton3D/Hair::Full lips",
+      "Skeleton3D/Hair_braid01::Full lips",
+      "Skeleton3D/Hair_long01::Full lips",
+      "Skeleton3D/Hair_bob01::Full lips",
+      "Skeleton3D/Hair_afro01::Full lips",
       "Skeleton3D/Eyes::Full lips",
       "Skeleton3D/Brows001::Full lips",
       "Skeleton3D/Brows005::Full lips",
@@ -922,6 +958,10 @@
       "Skeleton3D/FormalBottom::Larger eyes",
       "Skeleton3D/Hat::Larger eyes",
       "Skeleton3D/Hair::Larger eyes",
+      "Skeleton3D/Hair_braid01::Larger eyes",
+      "Skeleton3D/Hair_long01::Larger eyes",
+      "Skeleton3D/Hair_bob01::Larger eyes",
+      "Skeleton3D/Hair_afro01::Larger eyes",
       "Skeleton3D/Eyes::Larger eyes",
       "Skeleton3D/Brows001::Larger eyes",
       "Skeleton3D/Brows005::Larger eyes",
@@ -942,6 +982,10 @@
       "Skeleton3D/FormalBottom::Lean",
       "Skeleton3D/Hat::Lean",
       "Skeleton3D/Hair::Lean",
+      "Skeleton3D/Hair_braid01::Lean",
+      "Skeleton3D/Hair_long01::Lean",
+      "Skeleton3D/Hair_bob01::Lean",
+      "Skeleton3D/Hair_afro01::Lean",
       "Skeleton3D/Eyes::Lean",
       "Skeleton3D/Brows001::Lean",
       "Skeleton3D/Brows005::Lean",
@@ -962,6 +1006,10 @@
       "Skeleton3D/FormalBottom::Muscular",
       "Skeleton3D/Hat::Muscular",
       "Skeleton3D/Hair::Muscular",
+      "Skeleton3D/Hair_braid01::Muscular",
+      "Skeleton3D/Hair_long01::Muscular",
+      "Skeleton3D/Hair_bob01::Muscular",
+      "Skeleton3D/Hair_afro01::Muscular",
       "Skeleton3D/Eyes::Muscular",
       "Skeleton3D/Brows001::Muscular",
       "Skeleton3D/Brows005::Muscular",
@@ -982,6 +1030,10 @@
       "Skeleton3D/FormalBottom::Narrow chin",
       "Skeleton3D/Hat::Narrow chin",
       "Skeleton3D/Hair::Narrow chin",
+      "Skeleton3D/Hair_braid01::Narrow chin",
+      "Skeleton3D/Hair_long01::Narrow chin",
+      "Skeleton3D/Hair_bob01::Narrow chin",
+      "Skeleton3D/Hair_afro01::Narrow chin",
       "Skeleton3D/Eyes::Narrow chin",
       "Skeleton3D/Brows001::Narrow chin",
       "Skeleton3D/Brows005::Narrow chin",
@@ -1002,6 +1054,10 @@
       "Skeleton3D/FormalBottom::Oval face",
       "Skeleton3D/Hat::Oval face",
       "Skeleton3D/Hair::Oval face",
+      "Skeleton3D/Hair_braid01::Oval face",
+      "Skeleton3D/Hair_long01::Oval face",
+      "Skeleton3D/Hair_bob01::Oval face",
+      "Skeleton3D/Hair_afro01::Oval face",
       "Skeleton3D/Eyes::Oval face",
       "Skeleton3D/Brows001::Oval face",
       "Skeleton3D/Brows005::Oval face",
@@ -1022,6 +1078,10 @@
       "Skeleton3D/FormalBottom::Pointed ears",
       "Skeleton3D/Hat::Pointed ears",
       "Skeleton3D/Hair::Pointed ears",
+      "Skeleton3D/Hair_braid01::Pointed ears",
+      "Skeleton3D/Hair_long01::Pointed ears",
+      "Skeleton3D/Hair_bob01::Pointed ears",
+      "Skeleton3D/Hair_afro01::Pointed ears",
       "Skeleton3D/Eyes::Pointed ears",
       "Skeleton3D/Brows001::Pointed ears",
       "Skeleton3D/Brows005::Pointed ears",
@@ -1042,6 +1102,10 @@
       "Skeleton3D/FormalBottom::Square face",
       "Skeleton3D/Hat::Square face",
       "Skeleton3D/Hair::Square face",
+      "Skeleton3D/Hair_braid01::Square face",
+      "Skeleton3D/Hair_long01::Square face",
+      "Skeleton3D/Hair_bob01::Square face",
+      "Skeleton3D/Hair_afro01::Square face",
       "Skeleton3D/Eyes::Square face",
       "Skeleton3D/Brows001::Square face",
       "Skeleton3D/Brows005::Square face",
@@ -1121,15 +1185,56 @@
         "meshes": []
       }
     },
+    "Hairstyle": {
+      "Afro": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Hair_afro01"
+        ]
+      },
+      "Bald": {
+        "hides": [],
+        "meshes": []
+      },
+      "Bob": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Hair_bob01"
+        ]
+      },
+      "Braid": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Hair_braid01"
+        ]
+      },
+      "Long loose": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Hair_long01"
+        ]
+      },
+      "Source default": {
+        "hides": [],
+        "meshes": [
+          "Skeleton3D/Hair"
+        ]
+      }
+    },
     "Headwear": {
       "Bare head": {
         "hides": [],
         "meshes": []
       },
       "Felt hat": {
-        "hides": [
-          "Skeleton3D/Hair"
+        "excludes": [
+          "Skeleton3D/Hair",
+          "Skeleton3D/Hair_braid01",
+          "Skeleton3D/Hair_long01",
+          "Skeleton3D/Hair_bob01",
+          "Skeleton3D/Hair_afro01"
         ],
+        "hides": [],
         "meshes": [
           "Skeleton3D/Hat"
         ]
@@ -1160,7 +1265,7 @@
       }
     }
   },
-  "sourceSha256": "30a870c9a80f5ad87dcd07231176b92b056c9e0fb27246bb9855c737572b79f3",
+  "sourceSha256": "34b184078d5ef3079d4d74b850a54d267330974f8dcd1aaf9c282f9861f0051d",
   "variationCaps": {
     "Broad jaw": 0.55,
     "Defined cheekbones": 0.22,
