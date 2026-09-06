@@ -65,7 +65,11 @@
       "Narrow chin",
       "Broad nose",
       "Full lips",
-      "Pointed ears"
+      "Pointed ears",
+      "Defined cheekbones",
+      "Full cheeks",
+      "Larger eyes",
+      "Broad jaw"
     ],
     "samples": [
       [
@@ -77,6 +81,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -85,6 +93,10 @@
         0.0,
         0.008100032806396484,
         -0.0035999417304992676,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -99,6 +111,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -107,6 +123,10 @@
         0.0,
         0.008099973201751709,
         -0.007799983024597168,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -121,6 +141,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -129,6 +153,10 @@
         0.0,
         0.008099973201751709,
         -0.00289994478225708,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -143,6 +171,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -151,6 +183,10 @@
         0.0,
         0.010999977588653564,
         -0.0020999908447265625,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -165,6 +201,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -173,6 +213,10 @@
         0.0,
         0.011500000953674316,
         -0.0056999921798706055,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -187,6 +231,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -195,6 +243,10 @@
         0.0,
         0.008099973201751709,
         -0.0065999627113342285,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -209,6 +261,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -217,6 +273,10 @@
         0.0,
         0.009600043296813965,
         -0.006399989128112793,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -231,6 +291,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -239,6 +303,10 @@
         0.0,
         0.008000016212463379,
         -0.009199976921081543,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -253,6 +321,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -261,6 +333,10 @@
         0.0,
         0.010500013828277588,
         0.00019997358322143555,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -275,6 +351,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -283,6 +363,10 @@
         0.0,
         0.010999977588653564,
         -0.0018000602722167969,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -297,6 +381,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -305,6 +393,10 @@
         0.0,
         0.008100032806396484,
         -0.0035999417304992676,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -319,6 +411,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -327,6 +423,10 @@
         0.0,
         0.008099973201751709,
         -0.007799983024597168,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -341,6 +441,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -349,6 +453,10 @@
         0.0,
         0.008099973201751709,
         -0.00289994478225708,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -363,6 +471,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -371,6 +483,10 @@
         0.0,
         0.010999977588653564,
         -0.0020999908447265625,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -385,6 +501,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -393,6 +513,10 @@
         0.0,
         0.011500000953674316,
         -0.0056999921798706055,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -407,6 +531,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -415,6 +543,10 @@
         0.0,
         0.008099973201751709,
         -0.0065999627113342285,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -429,6 +561,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -437,6 +573,10 @@
         0.0,
         0.009600043296813965,
         -0.006399989128112793,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -451,6 +591,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -459,6 +603,10 @@
         0.0,
         0.008000016212463379,
         -0.009199976921081543,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -473,6 +621,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -481,6 +633,10 @@
         0.0,
         0.010500013828277588,
         0.00019997358322143555,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -495,6 +651,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -503,6 +663,10 @@
         0.0,
         0.010999977588653564,
         -0.0018000602722167969,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -517,6 +681,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -525,6 +693,10 @@
         0.0,
         0.010500013828277588,
         -0.010600030422210693,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -539,6 +711,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -547,6 +723,10 @@
         0.0,
         0.01100003719329834,
         -0.0068999528884887695,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -561,6 +741,10 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ],
       [
@@ -569,6 +753,10 @@
         0.0,
         0.007899999618530273,
         -0.003800034523010254,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -583,11 +771,30 @@
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       ]
     ]
   },
   "morphs": {
+    "Broad jaw": [
+      "Skeleton3D/Body01::Broad jaw",
+      "Skeleton3D/Outfit01::Broad jaw",
+      "Skeleton3D/Body02::Broad jaw",
+      "Skeleton3D/Outfit02::Broad jaw",
+      "Skeleton3D/Body03::Broad jaw",
+      "Skeleton3D/FormalTop::Broad jaw",
+      "Skeleton3D/FormalBottom::Broad jaw",
+      "Skeleton3D/Hat::Broad jaw",
+      "Skeleton3D/Hair::Broad jaw",
+      "Skeleton3D/Eyes::Broad jaw",
+      "Skeleton3D/Shoes::Broad jaw",
+      "Skeleton3D/ShortCloak::Broad jaw",
+      "Skeleton3D/LongCloak::Broad jaw"
+    ],
     "Broad nose": [
       "Skeleton3D/Body01::Broad nose",
       "Skeleton3D/Outfit01::Broad nose",
@@ -603,6 +810,36 @@
       "Skeleton3D/ShortCloak::Broad nose",
       "Skeleton3D/LongCloak::Broad nose"
     ],
+    "Defined cheekbones": [
+      "Skeleton3D/Body01::Defined cheekbones",
+      "Skeleton3D/Outfit01::Defined cheekbones",
+      "Skeleton3D/Body02::Defined cheekbones",
+      "Skeleton3D/Outfit02::Defined cheekbones",
+      "Skeleton3D/Body03::Defined cheekbones",
+      "Skeleton3D/FormalTop::Defined cheekbones",
+      "Skeleton3D/FormalBottom::Defined cheekbones",
+      "Skeleton3D/Hat::Defined cheekbones",
+      "Skeleton3D/Hair::Defined cheekbones",
+      "Skeleton3D/Eyes::Defined cheekbones",
+      "Skeleton3D/Shoes::Defined cheekbones",
+      "Skeleton3D/ShortCloak::Defined cheekbones",
+      "Skeleton3D/LongCloak::Defined cheekbones"
+    ],
+    "Full cheeks": [
+      "Skeleton3D/Body01::Full cheeks",
+      "Skeleton3D/Outfit01::Full cheeks",
+      "Skeleton3D/Body02::Full cheeks",
+      "Skeleton3D/Outfit02::Full cheeks",
+      "Skeleton3D/Body03::Full cheeks",
+      "Skeleton3D/FormalTop::Full cheeks",
+      "Skeleton3D/FormalBottom::Full cheeks",
+      "Skeleton3D/Hat::Full cheeks",
+      "Skeleton3D/Hair::Full cheeks",
+      "Skeleton3D/Eyes::Full cheeks",
+      "Skeleton3D/Shoes::Full cheeks",
+      "Skeleton3D/ShortCloak::Full cheeks",
+      "Skeleton3D/LongCloak::Full cheeks"
+    ],
     "Full lips": [
       "Skeleton3D/Body01::Full lips",
       "Skeleton3D/Outfit01::Full lips",
@@ -617,6 +854,21 @@
       "Skeleton3D/Shoes::Full lips",
       "Skeleton3D/ShortCloak::Full lips",
       "Skeleton3D/LongCloak::Full lips"
+    ],
+    "Larger eyes": [
+      "Skeleton3D/Body01::Larger eyes",
+      "Skeleton3D/Outfit01::Larger eyes",
+      "Skeleton3D/Body02::Larger eyes",
+      "Skeleton3D/Outfit02::Larger eyes",
+      "Skeleton3D/Body03::Larger eyes",
+      "Skeleton3D/FormalTop::Larger eyes",
+      "Skeleton3D/FormalBottom::Larger eyes",
+      "Skeleton3D/Hat::Larger eyes",
+      "Skeleton3D/Hair::Larger eyes",
+      "Skeleton3D/Eyes::Larger eyes",
+      "Skeleton3D/Shoes::Larger eyes",
+      "Skeleton3D/ShortCloak::Larger eyes",
+      "Skeleton3D/LongCloak::Larger eyes"
     ],
     "Lean": [
       "Skeleton3D/Body01::Lean",
@@ -768,5 +1020,11 @@
       }
     }
   },
-  "sourceSha256": "7d7bdfa25af08f23ac016b48a6f22670cd885c8fee267cb50637ae0f54d38fb3"
+  "sourceSha256": "8e31d542e86ecaa0492fa8d85935107492db03fd9a96350f6a0fd21db86b55c3",
+  "variationCaps": {
+    "Broad jaw": 0.55,
+    "Defined cheekbones": 0.22,
+    "Full cheeks": 0.35,
+    "Larger eyes": 0.5
+  }
 }

@@ -22,6 +22,14 @@ Owner: Pirate Island work. DR Companion continues environment-asset production. 
 
 ## Working first increment
 
+### Facial construction expansion
+
+Four additional controls use seven original CC0 MakeHuman target files: paired cheekbone definition, paired cheek fullness, paired eye size, and jaw width. Their Git blob IDs, SHA-256 values and exact lengths are in the existing core source manifest. Both assemblies now expose twelve linked morphology controls, and the stature envelope is rebuilt against all of them.
+
+The tests check actual source-mesh displacement and render each new control in isolation alongside the unchanged base face. Full-strength cheekbone and cheek-volume targets produce overly strong facial forms in the inspected source heads; these are authoring extremes, not approved NPC appearances. Prepared profiles therefore provide `variationCaps` for automatic generation. The wardrobe validates those caps, and seeded appearance generation observes them and avoids simultaneously choosing narrow-chin and broad-jaw controls. Existing profiles without caps retain their prior default.
+
+This is expanded construction capability, not approved character identity. Hair cards, eyebrows/lashes, skin presentation, faction styling and nonhuman topology remain unfinished. Do not interpret twelve controls as twelve completed races or characters.
+
 ### Rest-body stature
 
 Prepared profiles now include a `measurement` envelope derived from the **unclothed fitted body proxy**, not the assembly bounds. It stores vertical base coordinates and per-morph deltas for every vertex that could determine the minimum or maximum height across independent 0..1 controls. The compiler checks the reduced envelope against the full source for the base and each individual target. Current builds retain 47 female and 44 male measurement vertices, rather than every vertex of the source body.

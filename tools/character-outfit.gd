@@ -16,6 +16,13 @@ func configure(value: Variant, available: Dictionary, shape_bindings: Dictionary
 		if not value.get(field) is Dictionary:
 			return "Missing profile field: " + field
 	var owned := {}
+	if value.has("variationCaps"):
+		if not value.variationCaps is Dictionary:
+			return "Variation caps must name known body controls."
+		for control in value.variationCaps:
+			var cap: Variant = value.variationCaps[control]
+			if not value.morphs.has(control) or not (cap is float or cap is int) or not is_finite(float(cap)) or cap < 0 or cap > 1:
+				return "Invalid automatic variation cap."
 	if value.has("measurement"):
 		var measure: Variant = value.measurement
 		if not measure is Dictionary or measure.get("kind") != "rest-body-height-envelope" or not measure.get("morphs") is Array or not measure.get("samples") is Array or measure.samples.size() < 2:

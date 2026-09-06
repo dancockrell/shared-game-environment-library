@@ -128,6 +128,9 @@ func run() -> void:
 		check(editor.make_recipe() == first_variation,"NPC seed reproduces appearance")
 		check(first_variation.name == unvaried.name and first_variation.height == unvaried.height,"variation preserves identity and height")
 		check(first_variation.outfit.morphs["Pointed ears"] == unvaried.outfit.morphs["Pointed ears"],"variation preserves explicit species trait")
+		check(first_variation.outfit.morphs["Narrow chin"] == 0 or first_variation.outfit.morphs["Broad jaw"] == 0,"seeded variation avoids opposing jaw controls")
+		for control in editor.outfit.profile.variationCaps:
+			check(first_variation.outfit.morphs[control] <= editor.outfit.profile.variationCaps[control],"seeded face respects authored cap: "+control)
 		editor.focus_face()
 		check(editor.camera.size < editor.target_height*.5,"face view focuses on the head")
 		editor.frame_model()
@@ -323,7 +326,7 @@ func run() -> void:
 					var long_cut: bool = cut.begins_with("Long")
 					check(editor.parts["Skeleton3D/LongCloak"].visible == long_cut and editor.parts["Skeleton3D/ShortCloak"].visible != long_cut,"cloak selection is exclusive: "+cut)
 					var cloak: MeshInstance3D = editor.parts["Skeleton3D/LongCloak" if long_cut else "Skeleton3D/ShortCloak"]
-					check(cloak.mesh.get_blend_shape_count() == 8 and cloak.skin.get_bind_count() == 163,"cloak retains linked fit shapes and rig: "+cut)
+					check(cloak.mesh.get_blend_shape_count() == editor.outfit.profile.morphs.size() and cloak.skin.get_bind_count() == 163,"cloak retains linked fit shapes and rig: "+cut)
 					check(cloak.mesh.get_surface_count() == 2,"cloak has separately constructed border: "+cut)
 					var cloth_arrays: Array = cloak.mesh.surface_get_arrays(0)
 					var border_arrays: Array = cloak.mesh.surface_get_arrays(1)
@@ -373,5 +376,16 @@ func run() -> void:
 				editor.outfit.selections.Outerwear = "No cloak"
 				editor.outfit.apply()
 				check(not editor.parts["Skeleton3D/LongCloak"].visible and not editor.parts["Skeleton3D/ShortCloak"].visible,"removing outerwear hides both cuts")
+				for control in ["Base face","Defined cheekbones","Full cheeks","Larger eyes","Broad jaw"]:
+					for morph in editor.outfit.morphs:
+						editor.outfit.morphs[morph] = 1.0 if morph == control else 0.0
+					editor.outfit.apply()
+					editor.pivot.rotation.y = .25
+					editor.focus_face()
+					editor.refresh_controls()
+					for i in 5:
+						await process_frame
+					RenderingServer.force_draw(false)
+					check(root.get_texture().get_image().save_png(args[1]+"-"+control.to_lower().replace(" ","-")+".png") == OK,"render isolated facial construction: "+control)
 	print("Workshop failures: ",failures)
 	quit(0 if failures == 0 else 1)

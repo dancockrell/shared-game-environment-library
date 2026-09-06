@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Measure morphed rest-body stature independently from clothing and preserve it through export",
+  "summary": "Expand face construction with verified source targets and authored automatic variation caps",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
   "updated_at": "2026-09-06T07:06:18Z",
@@ -34,6 +34,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Seven additional CC0 target files match original Git blobs and SHA-256; all 25 core source files verified",
+      "Both rendered body suites passed with twelve linked controls; isolated face renders inspected; extreme cheek settings excluded from ordinary seeded generation by profile caps",
       "Rest-body envelope: full source/base and individual target extrema verified during compiler build; 47 female and 44 male extreme candidates retained",
       "Both rendered workshop runs and separately checked headless body runs passed; clothing independence, scale and grounding verified; synthetic wardrobe suite passed 20 assertions including malformed measurement atomicity",
       "Side vents and shared-grid normals: both rendered body suites passed, including seam continuity and triangle orientation; reviewed images remain construction prototypes",

@@ -12,7 +12,11 @@ const FACE_TARGETS := {
 	"Narrow chin":["chin/chin-width-decr.target"],
 	"Broad nose":["nose/nose-scale-horiz-incr.target"],
 	"Full lips":["mouth/mouth-upperlip-volume-incr.target","mouth/mouth-lowerlip-volume-incr.target"],
-	"Pointed ears":["ears/l-ear-shape-pointed.target","ears/r-ear-shape-pointed.target"]}
+	"Pointed ears":["ears/l-ear-shape-pointed.target","ears/r-ear-shape-pointed.target"],
+	"Defined cheekbones":["cheek/l-cheek-bones-incr.target","cheek/r-cheek-bones-incr.target"],
+	"Full cheeks":["cheek/l-cheek-volume-incr.target","cheek/r-cheek-volume-incr.target"],
+	"Larger eyes":["eyes/l-eye-scale-incr.target","eyes/r-eye-scale-incr.target"],
+	"Broad jaw":["chin/chin-width-incr.target"]}
 var shape_names: Array = ["Lean","Muscular"] + FACE_TARGETS.keys()
 var skeleton: Skeleton3D
 var skin: Skin
@@ -548,6 +552,7 @@ func build(sex: String) -> void:
 	profile.dyes.Cloak = [{"mesh":"Skeleton3D/ShortCloak","surface":0},{"mesh":"Skeleton3D/LongCloak","surface":0}]
 	profile.dyes["Cloak border"] = [{"mesh":"Skeleton3D/ShortCloak","surface":1},{"mesh":"Skeleton3D/LongCloak","surface":1}]
 	profile.measurement = body_height_samples(sex)
+	profile.variationCaps = {"Defined cheekbones":.22,"Full cheeks":.35,"Larger eyes":.5,"Broad jaw":.55}
 	for shape in shape_names:
 		profile.morphs[shape] = []
 	for mesh in skeleton.get_children():

@@ -382,12 +382,15 @@ func create_variation(seed_text: String) -> void:
 	recipe.variationSeed = seed_text
 	for key in recipe.outfit.morphs:
 		# Dyadic steps survive JSON and float32 mesh storage exactly.
-		recipe.outfit.morphs[key] = floori(variation_value(seed_text,"shape:"+key)*.65*1024)/1024.0
+		var cap: float = outfit.profile.get("variationCaps",{}).get(key,.65)
+		recipe.outfit.morphs[key] = floori(variation_value(seed_text,"shape:"+key)*cap*1024)/1024.0
 	# Keep species choice explicit, and avoid combining opposite face shapes.
 	if recipe.outfit.morphs.has("Pointed ears"):
 		recipe.outfit.morphs["Pointed ears"] = outfit.morphs["Pointed ears"]
 	if recipe.outfit.morphs.has("Oval face") and recipe.outfit.morphs.has("Square face"):
 		recipe.outfit.morphs["Oval face" if variation_value(seed_text,"face-family")<.5 else "Square face"] = 0.0
+	if recipe.outfit.morphs.has("Narrow chin") and recipe.outfit.morphs.has("Broad jaw"):
+		recipe.outfit.morphs["Narrow chin" if variation_value(seed_text,"jaw-family")<.5 else "Broad jaw"] = 0.0
 	for slot in outfit.profile.slots:
 		var names: Array = outfit.profile.slots[slot].keys()
 		names.sort()

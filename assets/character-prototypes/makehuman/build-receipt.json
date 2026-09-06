@@ -1,24 +1,24 @@
 {
   "bones": 163,
-  "compilerSha256": "3882dd41e6f13a946761a854c1a1e672a1b4dfeef88d128e60f79495c6eda29c",
-  "coreManifestSha256": "b433552d36cfaaee461336b77035faeae7342c2cd8be1fe906f0a7931bf063b3",
+  "compilerSha256": "8bf6ac1c6b13f91a5384a5cc8edf41b73be48c3ec696952a39050ad4f0404145",
+  "coreManifestSha256": "d3e648fa16d154fad02b1388d52d2e94ecfb7ee7556bb34e12de81e518d24c3e",
   "engine": "4.7.2-stable (official)",
   "files": [
     {
       "path": "female-source.glb",
-      "sha256": "7d7bdfa25af08f23ac016b48a6f22670cd885c8fee267cb50637ae0f54d38fb3"
+      "sha256": "8e31d542e86ecaa0492fa8d85935107492db03fd9a96350f6a0fd21db86b55c3"
     },
     {
       "path": "female-profile.json",
-      "sha256": "e8dff82573874924b377d4e8422a1d4a4ed70650080839113fcffb5e27a39df4"
+      "sha256": "6224d3fa448972633d3cdd07000003f3a39d058699f036d90da182f655ed3516"
     },
     {
       "path": "male-source.glb",
-      "sha256": "c35a747cfc07f6595143fb0f68175c7d746fc9de89d8a7e97941e8e395c6c4bf"
+      "sha256": "a53254886e59277ea8a2947195105a4c1e4abe826b2afbc9bdd7849450d32324"
     },
     {
       "path": "male-profile.json",
-      "sha256": "3c3ac8473604be4e4ac5c6877ebdd7da105451d24558727ca27b60f08a449545"
+      "sha256": "29e90bee778dae9256d0ee8676f1ec261f6780418d802a5ab6672b769aa0a022"
     }
   ],
   "license": "CC0-1.0",
@@ -35,7 +35,11 @@
     "Narrow chin",
     "Broad nose",
     "Full lips",
-    "Pointed ears"
+    "Pointed ears",
+    "Defined cheekbones",
+    "Full cheeks",
+    "Larger eyes",
+    "Broad jaw"
   ],
   "schemaVersion": 1,
   "status": "development-source-assembly-not-approved-game-art",
