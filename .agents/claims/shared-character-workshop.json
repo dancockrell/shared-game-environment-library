@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Bake profile-owned construction shapes into selected NPC export geometry while preserving skinning and source editability",
+  "summary": "Evaluate real sewing-pattern garment generation; primitive cloak/tabard construction is superseded by user direction",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
   "updated_at": "2026-09-06T08:21:00Z",

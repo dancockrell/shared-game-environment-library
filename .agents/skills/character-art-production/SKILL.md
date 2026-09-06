@@ -31,6 +31,8 @@ For source fitting, rigging, wardrobe profiles or export work, read [the impleme
 
 ## Construct clothing, not painted modern costumes
 
+For this user's wardrobe, use a genuine garment-generation system or build one around sewing patterns, seams and draping. Primitive assemblies and simple radial mesh shells are not an acceptable production technique. Preserve existing cloak/tabard studies as historical construction fixtures, not the basis for further finished costumes. Evaluate a maintained pattern generator before writing a new solver; Rust is an implementation option, not a reason to replace working fitting/export owners.
+
 Choose the actual cut and how it is worn: seams, panels, closures, sleeve/leg shapes, hem, layering and equipment attachment. A modern shirt with a period texture is still a modern shirt. Keep garment length independent from shoulder fit; changing a long cloak into a short one must not stretch its yoke down the torso.
 
 Fit garments in a common body coordinate system. Carry relevant body changes into clothing, footwear and species attachments. Explicitly author covered body regions and layer exclusions. Do not hide arbitrary skin until an intersection disappears, center each part independently, or claim arbitrary separates work when only one paired outfit has been fitted.

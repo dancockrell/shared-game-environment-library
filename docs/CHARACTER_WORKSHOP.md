@@ -127,6 +127,14 @@ Dyes multiply a copied standard material's original albedo color and retain its 
 
 ## Free source acquisition and completion gate
 
+### Current wardrobe direction: pattern generation, not primitive garments
+
+User correction, 2026-09-06: clothing production must use a genuine generator, or a generator built for the task. The radial cloak/tabard studies are superseded as a production method. Preserve their history and fitting tests; do not develop more finished costumes by extending those approximations. Existing modern clothes remain fitting fixtures. Good replacement textures cannot correct their cuts.
+
+First evaluation target: [GarmentCode](https://github.com/maria-korosteleva/GarmentCode), a parametric sewing-pattern framework. Its [code license](https://github.com/maria-korosteleva/GarmentCode/blob/main/LICENSE) was inspected: MIT, copyright Maria Korosteleva 2024. Its documented pipeline generates patterns from body/design measurements and drapes them through a separately installed [Warp-based simulator](https://github.com/maria-korosteleva/GarmentCode/blob/main/docs/Installation.md). The [running guide](https://github.com/maria-korosteleva/GarmentCode/blob/main/docs/Running_garmentcode.md) documents JSON sewing-pattern simulation and local GUI/CLI use. This is a researched candidate, not an installed or validated dependency. Dataset/body-model and simulator licenses must be checked separately; the code license is not blanket approval of those assets.
+
+Admission trial: produce a reference-led period shirt with actual front/back panels, sleeves, armholes, neckline and seams; fit it to both existing licensed bodies; inspect drape, closures and intersections; export a mesh with usable UVs into the existing skinning/wardrobe pipeline. Default modern garment samples do not pass that trial. Use offline cloth simulation rather than requiring every game NPC to simulate tailoring. Author faction-specific patterns and high-quality materials after proving this path. Extend or implement missing construction functions only from demonstrated gaps; do not start a duplicate character editor or wardrobe runtime.
+
 ### Selectable fitted hair — 2026-09-06 checkpoint
 
 The **Hairstyle** slot adds Braid, Long loose, Bob and Afro source meshes to both bodies, alongside their original Source default hair and a Bald option. These are four newly staged CC0 source styles, not newly approved character identities. The system subset now contains 145 original files. Every hair mesh shares the twelve fitting controls, transferred skin weights and Hair dye channel. The source files remain unchanged.
