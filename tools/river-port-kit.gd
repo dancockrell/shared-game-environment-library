@@ -411,7 +411,8 @@ func catalog_specs() -> Array:
 		["pine-shop-counter", "neutral_prop"], ["wooden-display-bin", "neutral_prop"],
 		["shield-hook-board", "neutral_prop"], ["wooden-park-bench", "neutral_prop"],
 		["gingham-picnic-table", "neutral_prop"],
-		["clinker-rowboat", "architecture"]
+		["clinker-rowboat", "architecture"],
+		["forge-bellows", "neutral_prop"]
 	]
 
 func attachment(parent: Node3D, name_value: String, pos: Vector3) -> Node3D:
@@ -1160,6 +1161,48 @@ func catalog_model(id: String) -> Node3D:
 		block(Vector3(1.0,1.03,0.38),Vector3(0.24,0.22,0.3),"iron",g)
 		beam(Vector3(1,0.9,0.5),Vector3(1,0.9,0.8),0.05,"iron",g)
 		attachment(g,"surface",Vector3(0,1.01,0))
+	elif id == "forge-bellows":
+		# Static great bellows: timber leaves, folded leather body, iron nozzle,
+		# freestanding trestle and lever. Socket positions support later rigging;
+		# neither motion nor live fire/workers are implied by this model.
+		material("bellows_leather", Color("49362b"), 0.94)
+		material("bellows_seam", Color("241e19"), 0.96)
+		var outline := PackedVector2Array([
+			Vector2(-0.12,-1.65), Vector2(0.12,-1.65),
+			Vector2(0.72,-0.7), Vector2(1.04,0.2),
+			Vector2(0.96,0.9), Vector2(0.6,1.3),
+			Vector2(-0.6,1.3), Vector2(-0.96,0.9),
+			Vector2(-1.04,0.2), Vector2(-0.72,-0.7)])
+		for z in [-0.7,0.85]:
+			for x in [-0.78,0.78]:
+				beam(Vector3(x,0,z),Vector3(x*0.85,0.92,z),0.16,"oak",g)
+				block(Vector3(x,0.07,z),Vector3(0.35,0.14,0.38),"oak",g)
+			beam(Vector3(-0.88,0.84,z),Vector3(0.88,0.84,z),0.18,"oak_light",g)
+		piece(solid_polygon(outline,0.13,0.025),Vector3(0,0.9,0),Vector3.ONE,"oak_light",g)
+		for fold in 7:
+			var inset := PackedVector2Array()
+			for point in outline:
+				inset.append(point * (0.96 if fold % 2 == 0 else 0.90))
+			piece(solid_polygon(inset,0.105,0.035),Vector3(0,1.025+fold*0.09,0),Vector3.ONE,"bellows_leather" if fold % 2 == 0 else "bellows_seam",g)
+		var leaf := node_group("UpperLeaf",Vector3(0,1.66,0),0,g)
+		piece(solid_polygon(outline,0.13,0.025),Vector3.ZERO,Vector3.ONE,"oak_light",leaf)
+		for z in [-0.6,0.65]:
+			block(Vector3(0,0.14,z),Vector3(1.5,0.06,0.07),"iron",leaf)
+			for x in [-0.65,0.65]:
+				cylinder(Vector3(x,0.18,z),0.035,0.025,"iron",leaf,8)
+		var nozzle := cylinder(Vector3(0,1.14,-1.87),0.12,0.68,"iron",g,16)
+		nozzle.rotation.x = PI/2
+		for x in [-1.3,1.3]:
+			beam(Vector3(x,0,0.6),Vector3(x,2.6,0.6),0.17,"oak",g)
+			beam(Vector3(x,0.3,-0.1),Vector3(x,1.25,0.6),0.11,"oak_light",g)
+		beam(Vector3(-1.4,2.6,0.6),Vector3(1.4,2.6,0.6),0.2,"oak",g)
+		beam(Vector3(0,2.68,-0.3),Vector3(0,2.68,2.25),0.12,"oak_light",g)
+		beam(Vector3(0,1.8,0.9),Vector3(0,2.68,0.9),0.05,"iron",g)
+		beam(Vector3(0,2.68,2.15),Vector3(0,1.05,2.15),0.035,"sand",g)
+		beam(Vector3(-0.32,1.05,2.15),Vector3(0.32,1.05,2.15),0.065,"oak",g)
+		attachment(g,"air_outlet",Vector3(0,1.14,-2.21))
+		attachment(g,"lever_pivot",Vector3(0,2.68,0.6))
+		attachment(g,"operator_handle",Vector3(0,1.05,2.15))
 	elif id == "anvil":
 		cylinder(Vector3(0,0.3,0),0.36,0.6,"oak",g,20)
 		block(Vector3(0,0.64,0),Vector3(0.6,0.12,0.4),"iron",g)

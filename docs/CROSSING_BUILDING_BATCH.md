@@ -1,5 +1,21 @@
 # Description-led Crossing building batch
 
+## Static great bellows
+
+The 100th candidate, forge-bellows, extends the existing native kit with
+timber leaves, a folded leather body, iron nozzle, trestle frame and pull
+lever. Air outlet, lever pivot and operator handle have measured sockets.
+UpperLeaf is a separate node for later rigging; no animation, operator,
+active fire or game state is baked into the scenery. Geometry is authored
+locally, with the existing licensed wood inputs and a plain leather material.
+No paid tools or generation credits were used.
+
+Front/rear renders were inspected. Leather folds, nozzle opening and pivot
+hardware still need polish; this is a consumer-review candidate, not final
+mechanical or historical reconstruction. Crossing's bellows-room description
+provides the use case; exact dimensions and mechanism are art-direction
+inferences. Character work remains separate.
+
 ## Focused review, not a growing slideshow
 
 Catalog rebuilds now support `--catalog --render-only clinker-rowboat` (a
