@@ -532,6 +532,9 @@ func build(sex: String) -> void:
 		fail("Could not save complete tailoring body")
 		character.free()
 		return
+	if not save_fitting_json(fitting_mesh,destination.path_join(sex+"-fitting-surface.json"),FileAccess.get_sha256(destination.path_join(sex+"-fitting-surface.res"))):
+		character.free()
+		return
 	for number in ["01","02"]:
 		var outfit_name: String = sex+"_casualsuit"+number
 		var deleted: Dictionary = proxy_data(source.path_join("clothes/%s/%s.mhclo" % [outfit_name,outfit_name])).delete
@@ -623,8 +626,61 @@ func build(sex: String) -> void:
 	file.close()
 	print("Prepared ",sex," fitted source geometry, ",skeleton.get_bone_count()," bones and ",shape_names.size()," linked morphology targets.")
 	character.free()
+func save_fitting_json(mesh: ArrayMesh, path: String, input_hash: String) -> bool:
+	# Portable offline collider; no new anatomy/fitting implementation here.
+	var vertices: Array = []
+	var triangles: Array = []
+	for surface in mesh.get_surface_count():
+		if mesh.surface_get_primitive_type(surface) != Mesh.PRIMITIVE_TRIANGLES:
+			fail("Fitting surface is not triangulated")
+			return false
+		var arrays := mesh.surface_get_arrays(surface)
+		var offset := vertices.size()
+		var points: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		for p in points:
+			if not p.is_finite():
+				fail("Nonfinite fitting vertex")
+				return false
+			vertices.append([p.x,p.y,p.z])
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+		if indices.is_empty():
+			for i in points.size():
+				indices.append(i)
+		if indices.size()%3 != 0:
+			fail("Incomplete fitting triangle")
+			return false
+		for i in range(0,indices.size(),3):
+			for j in 3:
+				if indices[i+j] < 0 or indices[i+j] >= points.size():
+					fail("Invalid fitting triangle index")
+					return false
+			# Godot's clockwise winding -> mathematical counterclockwise normal.
+			triangles.append([offset+indices[i],offset+indices[i+2],offset+indices[i+1]])
+	if vertices.is_empty() or triangles.is_empty():
+		fail("Empty fitting geometry; no dummy-renderer success claim")
+		return false
+	var output := FileAccess.open(path,FileAccess.WRITE)
+	if output == null:
+		fail("Cannot write portable fitting body")
+		return false
+	output.store_string(JSON.stringify({"schemaVersion":1,"units":"metres","upAxis":"Y","winding":"counterclockwise","pose":"source-rest-base-shape","status":"offline-fitting-surface-not-character-art","sourceMeshSha256":input_hash,"compilerSha256":FileAccess.get_sha256("res://prepare-character-model.gd"),"vertices":vertices,"triangles":triangles},"",true,true))
+	output.close()
+	print("Portable fitting body: ",vertices.size()," vertices, ",triangles.size()," triangles")
+	return true
+
 func run() -> void:
 	var args := OS.get_cmdline_user_args()
+	if args.size() == 3 and args[0] == "--export-fitting-surface":
+		if not args[1].is_absolute_path() or not args[2].is_absolute_path() or FileAccess.file_exists(args[2]):
+			printerr("Require absolute source and a new output path")
+			quit(2)
+			return
+		var existing := ResourceLoader.load(args[1],"ArrayMesh",ResourceLoader.CACHE_MODE_IGNORE) as ArrayMesh
+		if existing == null:
+			quit(2)
+			return
+		quit(0 if save_fitting_json(existing,args[2],FileAccess.get_sha256(args[1])) else 1)
+		return
 	if args.size() != 2:
 		quit(2)
 		return
@@ -640,7 +696,7 @@ func run() -> void:
 	if not failure:
 		var records := []
 		for sex in ["female","male"]:
-			for suffix in ["-source.glb","-profile.json","-fitting-surface.res"]:
+			for suffix in ["-source.glb","-profile.json","-fitting-surface.res","-fitting-surface.json"]:
 				var filename: String = sex+suffix
 				records.append({"path":filename,"sha256":FileAccess.get_sha256(destination.path_join(filename))})
 		var receipt := {"schemaVersion":1,"status":"development-source-assembly-not-approved-game-art",
