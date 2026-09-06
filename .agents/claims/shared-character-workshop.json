@@ -19,7 +19,7 @@
     "notes": "Own character tooling only; DR Companion owns scenery. No paid generation or source model redistribution."
   },
   "completion": {
-    "commit": null,
+    "commit": "722ed90",
     "checks": ["Real GLB import and editor render passed", "Visibility height and file roundtrip passed", "Hash mismatch malformed visibility and invalid scale rejected atomically", "Failed import preserves current model", "Blend-shape deformation and clothing compatibility not yet verified", "No generation credits used; no source models redistributed"]
   }
 }

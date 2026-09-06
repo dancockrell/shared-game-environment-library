@@ -67,4 +67,3 @@ func run() -> void:
 		check(root.get_texture().get_image().save_png(args[1]+".png") == OK,"render workshop")
 	print("Workshop failures: ",failures)
 	quit(0 if failures == 0 else 1)
-
