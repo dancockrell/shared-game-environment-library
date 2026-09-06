@@ -1214,6 +1214,36 @@ remain visible. These are construction findings, not an assertion of convincing
 real food or production-art admission. The component rosettes are not Boolean
 unions and must not be described as seamless or watertight assemblies.
 
+**Continuous fluting supersedes the intersecting cream lobes.** Both existing
+`lathe` and `lathe_spline` shapes accept optional `fluting: {count, depth}`.
+For meridian radius r and angle theta, the constructed radius is
+`r * (1 + depth * cos(count * theta))`. Count is 2..64, depth is 0..0.4,
+and angular sampling must provide at least eight segments per lobe. The positive
+radial scale preserves the meridian ordering. This extends the one existing
+lathe mesher; spline sampling still feeds that same path. Omission preserves
+the original circular section and source format. Bounds are measured from the
+resulting geometry, and normal directions account analytically for the angular
+derivative, not just the meridian slope. No vertex displacement after shading,
+overlapping lobe assembly or new engine shader is required.
+
+The pastry recipe uses six flutes at depth 0.22 and 96 angular segments. Each
+cream rosette is now one instance instead of seven intersecting lathe instances.
+The exact-position audit reports one component, 11,136 triangles and no collapsed
+faces, boundary edges, excess edge incidence, winding conflicts or invalid
+vertex fans for `piping.dollop`. This is connectivity evidence, not a general
+self-intersection certificate for arbitrary profiles. The conservative sampling
+still needs gameplay-distance optimization; do not mistake it for final LOD.
+
+Validation: 51 Rust tests and full CPU fixture workflow passed in
+`procedural/generated/reviews/20260906-131937-d0b28adec08b44aca5ecb52127e59d3a/report.json`.
+Added tests cover angular tangent/normal orthogonality, unit normals, pole caps,
+closing UV seam, radial bounds and rejected parameter/sampling ranges. Actual
+native capture `procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pastry-fluted.png`
+was reviewed after same-process reload in PID 30828. It removes the prior visible
+rosette joins and reads more like piped cream. Porous sponge, surface irregularity,
+crust/filling contacts and less uniform baking remain outstanding; this is not
+final food-art admission. Unity execution remains unverified.
+
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
 groups/repetition; exact rectangular aperture subdivision; strict geometry and
 allocation limits; portable mesh/instance representation; native engine adapters;

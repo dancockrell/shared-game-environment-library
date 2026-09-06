@@ -46,12 +46,21 @@ impl Default for MaterialSettings {
     }
 }
 #[derive(Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct LatheFluting {
+    pub count: u32,
+    /// Fraction of meridian radius; bounded so the radial map stays positive.
+    pub depth: f32,
+}
+#[derive(Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Shape {
     LatheSpline {
         profile: Vec<[[f32; 2]; 4]>,
         tolerance: f32,
         segments: u32,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        fluting: Option<LatheFluting>,
     },
     Sweep {
         sweep: Sweep,
@@ -86,6 +95,8 @@ pub enum Shape {
         smooth: bool,
         #[serde(default = "default_crease_angle")]
         crease_angle: f32,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        fluting: Option<LatheFluting>,
     },
     Extrude {
         polygon: Vec<[f32; 2]>,
@@ -374,6 +385,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
             profile,
             tolerance,
             segments,
+            fluting,
         } => {
             let sampled = sweep::sample_profile(profile, *tolerance)?;
             return mesh(
@@ -384,6 +396,7 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                         segments: *segments,
                         smooth: true,
                         crease_angle: 45.,
+                        fluting: fluting.clone(),
                     },
                     color: d.color,
                     material: d.material.clone(),
@@ -477,7 +490,17 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
             segments,
             smooth,
             crease_angle,
+            fluting,
         } => {
+            if let Some(f) = fluting {
+                if !(2..=64).contains(&f.count)
+                    || !f.depth.is_finite()
+                    || !(0. ..=0.4).contains(&f.depth)
+                    || *segments < f.count * 8
+                {
+                    return Err("Fluting requires 2..64 lobes, depth 0..0.4 and at least 8 segments per lobe".into());
+                }
+            }
             if !crease_angle.is_finite() || !(0. ..=180.).contains(crease_angle) {
                 return Err("Lathe crease_angle must be finite degrees in 0..180".into());
             }
@@ -546,7 +569,20 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                     let angle = |j: u32| {
                         std::f32::consts::TAU * ((j % segments) as f32) / (*segments as f32)
                     };
-                    let point = |p: [f32; 2], a: f32| [p[0] * a.cos(), p[1], p[0] * a.sin()];
+                    let section = |a: f32| match fluting {
+                        Some(f) => {
+                            let phase = f.count as f64 * a as f64;
+                            (
+                                1. + f.depth as f64 * phase.cos(),
+                                -f.depth as f64 * f.count as f64 * phase.sin(),
+                            )
+                        }
+                        None => (1., 0.),
+                    };
+                    let point = |p: [f32; 2], a: f32| {
+                        let radius = p[0] * section(a).0 as f32;
+                        [radius * a.cos(), p[1], radius * a.sin()]
+                    };
                     let a = point(pair[0], angle(i));
                     let b = point(pair[1], angle(i));
                     let c = point(pair[1], angle(i + 1));
@@ -559,6 +595,19 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
                     let uv = [[u0, v0], [u0, v1], [u1, v1], [u1, v0]];
                     let normal = |j: u32, meridian: [f64; 2]| {
                         let theta = angle(j);
+                        if fluting.is_some() {
+                            let (s, ds) = section(theta);
+                            let (sin, cos) = (theta as f64).sin_cos();
+                            // Orthogonal to both meridian and angular tangents
+                            // of P(r,y,theta) = (r*s*cos(theta), y, r*s*sin(theta)).
+                            let n = [
+                                meridian[0] * (cos + ds / s * sin),
+                                meridian[1] * s,
+                                meridian[0] * (sin - ds / s * cos),
+                            ];
+                            let length = n.iter().map(|v| v * v).sum::<f64>().sqrt();
+                            return n.map(|v| (v / length) as f32);
+                        }
                         [
                             meridian[0] as f32 * theta.cos(),
                             meridian[1] as f32,
@@ -1430,6 +1479,7 @@ mod tests {
                 segments: 32,
                 smooth: false,
                 crease_angle: default_crease_angle(),
+                fluting: None,
             },
             Shape::Extrude {
                 polygon: vec![[0., 0.], [2., 0.], [1., 1.]],
@@ -1449,6 +1499,57 @@ mod tests {
         }
     }
     #[test]
+    fn fluted_lathe_has_continuous_sections_and_correct_tangent_normals() {
+        let make = |count, depth, segments| {
+            mesh(
+                "fluted",
+                &Definition {
+                    shape: Shape::Lathe {
+                        profile: vec![[0., 0.], [1., 0.], [1., 2.], [0., 2.]],
+                        segments,
+                        smooth: true,
+                        crease_angle: 45.,
+                        fluting: Some(LatheFluting { count, depth }),
+                    },
+                    color: [1.; 4],
+                    material: MaterialSettings::default(),
+                },
+                10000,
+            )
+        };
+        let m = make(6, 0.2, 96).unwrap();
+        let mut seam = Vec::new();
+        for ((p, n), uv) in m.positions.iter().zip(&m.normals).zip(&m.uvs) {
+            assert!((n.iter().map(|x| x * x).sum::<f32>() - 1.).abs() < 1e-5);
+            if n[1].abs() > 0.5 {
+                assert_eq!(n[1].abs(), 1.);
+                continue;
+            }
+            let a = (uv[0] as f64 * std::f64::consts::TAU) % std::f64::consts::TAU;
+            let s = 1. + 0.2 * (6. * a).cos();
+            let ds = -1.2 * (6. * a).sin();
+            assert!((p[0].hypot(p[2]) as f64 - s).abs() < 1e-5);
+            let tangent = [ds * a.cos() - s * a.sin(), 0., ds * a.sin() + s * a.cos()];
+            assert!((0..3).map(|i| n[i] as f64 * tangent[i]).sum::<f64>().abs() < 1e-5);
+            if p[2] == 0. && p[0] > 1. {
+                seam.push(uv[0]);
+            }
+        }
+        assert!(seam.contains(&0.) && seam.contains(&1.));
+        assert_eq!(m.bounds.min[0], -1.2);
+        assert_eq!(m.bounds.max[0], 1.2);
+        for (count, depth, segments) in [
+            (1, 0.2, 96),
+            (65, 0.2, 512),
+            (6, -0.1, 96),
+            (6, 0.5, 96),
+            (6, f32::NAN, 96),
+            (6, 0.2, 47),
+        ] {
+            assert!(make(count, depth, segments).is_err());
+        }
+    }
+    #[test]
     fn smooth_lathe_preserves_caps_seams_and_uvs() {
         let make = |smooth| {
             mesh(
@@ -1459,6 +1560,7 @@ mod tests {
                         segments: 12,
                         smooth,
                         crease_angle: default_crease_angle(),
+                        fluting: None,
                     },
                     color: [1.; 4],
                     material: MaterialSettings::default(),
@@ -1503,6 +1605,7 @@ mod tests {
                         segments: 12,
                         smooth: true,
                         crease_angle,
+                        fluting: None,
                     },
                     color: [1.; 4],
                     material: MaterialSettings::default(),
@@ -1526,6 +1629,7 @@ mod tests {
             segments: 12,
             smooth: true,
             crease_angle: f32::NAN,
+            fluting: None,
         };
         assert!(compile(&recipe).unwrap_err().contains("crease_angle"));
     }

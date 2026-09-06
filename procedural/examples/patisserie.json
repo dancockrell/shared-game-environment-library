@@ -730,7 +730,7 @@
     "piping.dollop": {
       "shape": {
         "kind": "lathe_spline",
-        "segments": 40,
+        "segments": 96,
         "tolerance": 0.00008,
         "profile": [
           [
@@ -751,7 +751,11 @@
             [0.003, 0.029],
             [0, 0.033]
           ]
-        ]
+        ],
+        "fluting": {
+          "count": 6,
+          "depth": 0.22
+        }
       },
       "color": [0.65, 0.55, 0.4, 1],
       "material": {
@@ -5356,30 +5360,9 @@
               "step": [0, 0, 0],
               "yaw_step": 0.5235987756,
               "child": {
-                "kind": "transform",
-                "position": [0.105, 0.138, 0],
-                "child": {
-                  "kind": "group",
-                  "children": [
-                    {
-                      "kind": "part",
-                      "mesh": "piping.dollop",
-                      "scale": 0.8
-                    },
-                    {
-                      "kind": "repeat",
-                      "count": 6,
-                      "step": [0, 0, 0],
-                      "yaw_step": 1.0471975511965976,
-                      "child": {
-                        "kind": "part",
-                        "mesh": "piping.dollop",
-                        "position": [0.007, 0, 0],
-                        "scale": 0.55
-                      }
-                    }
-                  ]
-                }
+                "kind": "part",
+                "mesh": "piping.dollop",
+                "position": [0.105, 0.138, 0]
               }
             },
             {

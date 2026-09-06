@@ -780,6 +780,7 @@ mod tests {
                 segments: 32,
                 smooth: true,
                 crease_angle: 45.,
+                fluting: None,
             },
         };
         let m = mesh("hollow", &d, 10000).unwrap();
