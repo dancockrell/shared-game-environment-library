@@ -33,6 +33,9 @@ func run() -> void:
 		var appearance: Dictionary = actor.get_child(0).get_meta("appearance") if is_batch else actor.get_meta("appearance")
 		check(actor.find_child("Skeleton3D",true,false) != null,"standalone actor has rig")
 		for mesh in actor.find_children("*","MeshInstance3D",true,false):
+			if mesh.mesh == null:
+				check(mesh.skin == null and mesh.material_override == null and mesh.material_overlay == null,"unused visual resources are absent: "+str(mesh.name))
+				continue
 			check(mesh.mesh != null and mesh.get_active_material(0) != null,"standalone geometry and material: "+str(mesh.name))
 		editor.camera.size = appearance.height*1.5
 		editor.camera.position = Vector3(0,appearance.height*.6,appearance.height*3)
@@ -223,7 +226,11 @@ func run() -> void:
 		editor.model.transform = source_transform
 		source_rig.reset_bone_poses()
 		var actor_garment: MeshInstance3D = actor_body.get_node("Skeleton3D/Outfit02")
-		check(actor_garment.visible and not actor_body.get_node("Skeleton3D/Outfit01").visible,"built actor keeps selected wardrobe")
+		check(actor_garment.visible and actor_body.get_node("Skeleton3D/Outfit01").mesh == null,"built actor retains selected wardrobe without unused geometry")
+		var exported_geometry: Dictionary = actor.get_meta("export_geometry")
+		check(exported_geometry.retained_meshes < exported_geometry.source_meshes and exported_geometry.retained_vertices < exported_geometry.source_vertices,"export measurably reduces retained geometry")
+		check(editor.parts["Skeleton3D/Outfit01"].mesh != null,"export trimming preserves editable alternatives")
+		print("Selected export geometry: ",exported_geometry)
 		check(is_equal_approx(actor.scale.y,1.53/editor.source_height) and actor.rotation == Vector3.ZERO,"actor keeps height without preview rotation")
 		check(is_equal_approx(actor_garment.get_blend_shape_value(0),1.0),"actor keeps body shape")
 		var export_color: Color = actor_garment.get_active_material(0).albedo_color
@@ -233,6 +240,25 @@ func run() -> void:
 		check(actor.get_meta("appearance") == export_recipe,"actor embeds source and appearance provenance")
 		check(actor.find_children("*","Control",true,false).is_empty() and actor.find_children("*","Camera3D",true,false).is_empty(),"actor excludes workshop UI and camera")
 		actor.free()
+		var hidden_group := Node3D.new()
+		hidden_group.name = "HiddenExportFixture"
+		hidden_group.visible = false
+		editor.model.add_child(hidden_group)
+		var hidden_visual := MeshInstance3D.new()
+		hidden_visual.name = "Visual"
+		hidden_visual.mesh = BoxMesh.new()
+		hidden_visual.material_override = StandardMaterial3D.new()
+		hidden_group.add_child(hidden_visual)
+		var attachment := Node3D.new()
+		attachment.name = "Attachment"
+		attachment.position = Vector3(.1,.2,.3)
+		hidden_visual.add_child(attachment)
+		var nested_actor: Node3D = editor.build_character().instantiate()
+		var nested_visual := nested_actor.find_child("HiddenExportFixture",true,false).get_node("Visual") as MeshInstance3D
+		check(nested_visual.mesh == null and nested_visual.material_override == null and nested_visual.get_node("Attachment").position == attachment.position,"inherited-hidden geometry is trimmed without deleting attachment structure")
+		check(hidden_visual.mesh != null and hidden_visual.material_override != null,"inherited-hidden trimming leaves source resources intact")
+		nested_actor.free()
+		hidden_group.free()
 		editor.apply_recipe(export_recipe)
 		editor.export_character(args[1]+".scn")
 		check(FileAccess.file_exists(args[1]+".scn"),"export bundled Godot scene")
@@ -433,7 +459,10 @@ func run() -> void:
 					var hair_actor: Node3D = editor.build_character().instantiate()
 					for path in all_hair:
 						var exported_hair := hair_actor.find_child(path.get_file(),true,false) as MeshInstance3D
-						check(exported_hair != null and exported_hair.visible == (path in selected) and exported_hair.skin.get_bind_count() == 163 and exported_hair.mesh.get_blend_shape_count() == editor.outfit.profile.morphs.size(),"export retains selected fitted hairstyle: "+style+" / "+path)
+						if path in selected:
+							check(exported_hair != null and exported_hair.mesh != null and exported_hair.visible and exported_hair.skin.get_bind_count() == 163 and exported_hair.mesh.get_blend_shape_count() == editor.outfit.profile.morphs.size(),"export retains selected fitted hairstyle: "+style+" / "+path)
+						else:
+							check(exported_hair != null and exported_hair.mesh == null and exported_hair.skin == null,"export removes unselected hairstyle resources: "+style+" / "+path)
 					hair_actor.free()
 					var hair_error: String = editor.apply_recipe(JSON.parse_string(JSON.stringify(hair_recipe,"",true,true)))
 					var restored_hair: Dictionary = editor.make_recipe()

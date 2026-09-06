@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Fit reusable braid, long, bob and textured hairstyles on both bodies with complete headwear exclusions",
+  "summary": "Remove unused visual resources from portable NPC exports while preserving authoring recipes and rig structure",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T07:57:00Z",
+  "updated_at": "2026-09-06T08:06:00Z",
   "paths": [
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
@@ -34,6 +34,9 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Selected visual-resource export: both full rendered suites passed; both single-actor and both six-actor fresh rendered reloads passed; reviewed standalone images preserve selected appearance",
+      "Casual 02 retained geometry measured: female 22 to 8 meshes and 79350 to 23731 vertices; male 22 to 8 meshes and 84455 to 20388 vertices; not a frame-rate or LOD claim",
+      "Inherited-hidden parent fixture passed: remove mesh/material resources, preserve attachment transforms and source editor data; all hairstyle export checks passed",
       "Both full rendered workshop suites passed with zero failures, including every hairstyle selection, exclusion, recipe roundtrip and fitted PackedScene export; compiler and compiled output hashes verified",
       "Four original CC0 hairstyles staged for both bodies; 145 system source files verified; source geometry and fitting tables preserved",
       "Explicit cross-slot equipment exclusions implemented; 37 synthetic wardrobe checks passed including hat-style restoration and integer-weight JSON stability",

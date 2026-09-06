@@ -434,14 +434,41 @@ func build_character() -> PackedScene:
 			node.transform = rest_transforms[path]
 	# Freeze mutable appearance materials so later editor changes cannot recolor
 	# a previously built actor. Geometry and textures remain immutable resources.
+	var geometry := {"source_meshes":0,"retained_meshes":0,"source_vertices":0,"retained_vertices":0}
 	for part in body.find_children("*","MeshInstance3D",true,false):
 		if part.mesh == null:
 			continue
+		geometry.source_meshes += 1
+		var vertices := 0
+		for surface in part.mesh.get_surface_count():
+			vertices += part.mesh.surface_get_arrays(surface)[Mesh.ARRAY_VERTEX].size()
+		geometry.source_vertices += vertices
+		# The copy is not inside the scene tree yet, so is_visible_in_tree()
+		# cannot answer this. Respect inherited local visibility explicitly.
+		var ancestor: Node = part
+		var selected := true
+		while ancestor != actor and ancestor != null:
+			if ancestor is Node3D and not ancestor.visible:
+				selected = false
+			ancestor = ancestor.get_parent()
+		if not selected:
+			# Keep transform nodes and descendants intact, but release every visual
+			# resource. Appearance changes are rebuilt from the original recipe/source.
+			for surface in part.mesh.get_surface_count():
+				part.set_surface_override_material(surface,null)
+			part.material_override = null
+			part.material_overlay = null
+			part.mesh = null
+			part.skin = null
+			continue
+		geometry.retained_meshes += 1
+		geometry.retained_vertices += vertices
 		for surface in part.mesh.get_surface_count():
 			var material: Material = part.get_active_material(surface)
 			if material != null:
 				var owned_material: Material = material.duplicate()
 				part.set_surface_override_material(surface,owned_material)
+	actor.set_meta("export_geometry",geometry)
 	# The preview's turntable and temporary poses must not become bind poses.
 	for player in body.find_children("*","AnimationPlayer",true,false):
 		player.stop()
