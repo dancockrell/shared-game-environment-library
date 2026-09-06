@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Preflight embedded GLB bytes before Godot import, reject external references and malformed envelopes, and verify plugin script compilation headlessly",
+  "summary": "Verify native Godot package geometry, material pixels, placements and reuse; remove unreliable post-conversion node references and regression-test repeated imports",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T13:02:24Z",

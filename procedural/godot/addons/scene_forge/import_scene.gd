@@ -84,18 +84,15 @@ static func build_portable(path: String) -> Node3D:
 	var manifest_count := 0
 	for index in records.size():
 		var extras: Dictionary = records[index].get("extras", {})
-		var node: Node = state.get_scene_node(index)
-		# Godot's ImporterMesh conversion can invalidate get_scene_node entries.
-		# Resolve only exact unique engine-assigned names; ambiguous names fail.
-		if node == null:
-			var expected_name: String = imported_names[index]
-			var matches: Array = scene_nodes.filter(func(candidate: Node): return str(candidate.name) == expected_name)
-			if matches.size() == 1:
-				node = matches[0]
-		if node == null:
+		# Conversion can leave stale references that are non-null on later runs.
+		# Use only cached engine-assigned names, never post-conversion pointers.
+		var expected_name: String = imported_names[index]
+		var matches: Array = scene_nodes.filter(func(candidate: Node): return str(candidate.name) == expected_name)
+		if matches.size() != 1:
 			push_error("Cannot uniquely resolve portable node " + str(index))
 			root.free()
 			return null
+		var node: Node = matches[0]
 		for key in ["scene_forge_recipe_json", "scene_forge_asset_manifest", "scene_forge_export_id", "scene_forge_source_mesh", "scene_forge_source"]:
 			if extras.has(key):
 				node.set_meta(key, extras[key])

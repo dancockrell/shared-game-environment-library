@@ -1394,6 +1394,38 @@ reports the metadata pass and exit 0 with empty stderr. No graphical scene,
 saved-package, GUI interaction or Unity validation claim. Existing preview
 processes were not replaced; no paid generation, push or Actions run.
 
+#### Godot package persistence and stable node mapping
+
+`test_portable.gd` now accepts an optional fresh `.scn` output path. It refuses
+overwrite, requires available nonempty mesh arrays, assigns scene ownership,
+saves a PackedScene, reloads with cache bypass and compares all 92 placements.
+Snapshots include full mesh surface arrays, accumulated transforms, source IDs,
+recipe/manifest strings, unique mesh count, selected material properties
+(albedo, roughness, metallic, clearcoat and normal settings), and texture
+dimensions/format/mipmap state/SHA-256 for albedo, normal, roughness and metallic
+images. This is exact stored-data comparison, not visual rendering equivalence
+or complete coverage of every possible material property.
+
+A repeat run exposed stale-but-non-null Godot node references. The previous
+conditional fallback strategy is superseded: never read post-conversion
+`get_scene_node` pointers. All mapping now uses cached engine-assigned names
+and requires exactly one match. The earlier metadata pass alone was not enough
+to establish repeat reliability. This fixes the observed intermittent missing
+source IDs rather than tolerating missing metadata.
+
+Final `godot-package-final.log` in the `20260906-152000-...` review directory
+reports metadata PASS, package PASS with material pixels checked, and two
+additional same-process imports PASS. Output `portable-godot-004.scn` retains
+18 shared meshes for all 92 placements. Exit 0, empty stderr; sampled process
+RAM 131,141,632 bytes under the 1 GiB/30-second hidden BelowNormal diagnostic
+guard. No graphics backend was exercised. This portable ArrayMesh path retained
+its CPU buffers headlessly; it does not overturn the historical dummy-backend
+MultiMesh buffer gate in the separate compiled-JSON path.
+
+Rendered Godot appearance, UI interaction, fresh-process package loading,
+Unity and measured VRAM remain unverified. Existing previews were not replaced;
+no paid generation, push or Actions run.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository
