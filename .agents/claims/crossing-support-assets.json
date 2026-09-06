@@ -12,6 +12,7 @@
     "docs/verification/scene-forge-rounded-stock.png",
     "docs/verification/scene-forge-materials.png",
     "docs/verification/scene-forge-lathe-shading.png",
+    "docs/verification/scene-forge-check-report.json",
     "README.md",
     "tools/build-river-port.gd",
     "tools/river-port-kit.gd",
@@ -26,6 +27,7 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Single-command Scene Forge check run passed twice: 29 stages, six deterministic fixtures, six real renders and package reloads, dummy export refusal; source-hash stability gate passed; artistic approval remains pending",
       "Bounds and live inspection: 23 Rust tests, strict clippy, release build and real-graphics transformed bounds/apertures passed; dummy renderer now reports missing spatial data instead of default transforms",
       "Nested assembly transforms and per-instance authoring pointers: 22 Rust tests, strict clippy, release build, Godot scaled aperture/source-copy tests and graphics-backed source metadata disk reload passed",
       "Lathe smoothing and crease-angle controls: 19 Rust tests, strict clippy and release build passed; two real Godot renders inspected, horizontal banding corrected through profile normal blending",

@@ -1,0 +1,268 @@
+{
+  "started_utc": "2026-09-06T10:38:20.1094281Z",
+  "status": "passed",
+  "scope": "Compiler and Godot graphics-backed fixtures; not artistic admission, Unity certification or VRAM measurement",
+  "godot": "C:\\Users\\Admin\\Documents\\Codex\\2026-08-31\\referenced-chatgpt-conversation-this-is-an-4\\.local-tools\\godot-4.7.2\\Godot_v4.7.2-stable_win64.exe",
+  "steps": [
+    {
+      "exit_code": 0,
+      "name": "rust-tests",
+      "seconds": 0.3757411,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rust-tests.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rust-format",
+      "seconds": 0.095157,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rust-format.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rust-clippy",
+      "seconds": 0.1264574,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rust-clippy.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rust-release",
+      "seconds": 0.0981106,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rust-release.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "lathe-shading-compile",
+      "seconds": 0.0091979,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\lathe-shading-compile.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "lathe-shading-determinism",
+      "seconds": 0.0088294,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\lathe-shading-determinism.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "lathe-shading-render",
+      "seconds": 1.9306799,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\lathe-shading-render.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "lathe-shading-package",
+      "seconds": 0.5999978,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\lathe-shading-package.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "materials-compile",
+      "seconds": 0.0163653,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\materials-compile.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "materials-determinism",
+      "seconds": 0.0176301,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\materials-determinism.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "materials-render",
+      "seconds": 1.8121256,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\materials-render.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "materials-package",
+      "seconds": 0.6406775,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\materials-package.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rooms-compile",
+      "seconds": 0.0072376,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rooms-compile.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rooms-determinism",
+      "seconds": 0.0063971,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rooms-determinism.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rooms-render",
+      "seconds": 1.8123824,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rooms-render.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rooms-package",
+      "seconds": 0.581787,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rooms-package.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rounded-stock-compile",
+      "seconds": 0.0146666,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rounded-stock-compile.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rounded-stock-determinism",
+      "seconds": 0.0134201,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rounded-stock-determinism.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rounded-stock-render",
+      "seconds": 1.85944,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rounded-stock-render.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "rounded-stock-package",
+      "seconds": 0.6295941,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rounded-stock-package.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "transformed-assemblies-compile",
+      "seconds": 0.00757,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\transformed-assemblies-compile.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "transformed-assemblies-determinism",
+      "seconds": 0.0066742,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\transformed-assemblies-determinism.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "transformed-assemblies-render",
+      "seconds": 1.8247327,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\transformed-assemblies-render.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "transformed-assemblies-package",
+      "seconds": 0.5972748,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\transformed-assemblies-package.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "workshop-compile",
+      "seconds": 0.0082094,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\workshop-compile.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "workshop-determinism",
+      "seconds": 0.007305,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\workshop-determinism.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "workshop-render",
+      "seconds": 1.8219484,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\workshop-render.log"
+    },
+    {
+      "exit_code": 0,
+      "name": "workshop-package",
+      "seconds": 0.5821043,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\workshop-package.log"
+    },
+    {
+      "exit_code": 1,
+      "name": "reject-dummy-export",
+      "seconds": 0.1537038,
+      "log": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\reject-dummy-export.log"
+    }
+  ],
+  "fixtures": [
+    {
+      "render": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\lathe-shading.png",
+      "package_sha256": "8A1356329551B3F953FBC6E7610E3083EEA5674107AC68FC8AECD3D36A92B8A4",
+      "visual_review": "pending",
+      "instances": 4,
+      "name": "lathe-shading",
+      "package": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\lathe-shading.scn",
+      "shared_meshes": 4,
+      "estimated_geometry_bytes": 332032
+    },
+    {
+      "render": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\materials.png",
+      "package_sha256": "920FB9FA09BC96412B8C85CE3C0163999E313C3C66B3D9ECB1DA96B349D9ED2F",
+      "visual_review": "pending",
+      "instances": 8,
+      "name": "materials",
+      "package": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\materials.scn",
+      "shared_meshes": 5,
+      "estimated_geometry_bytes": 1562192
+    },
+    {
+      "render": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rooms.png",
+      "package_sha256": "298294B60FD0AEC11E02D4E51B224481F65404C70EC5CC19DA82EEF0260372B7",
+      "visual_review": "pending",
+      "instances": 4,
+      "name": "rooms",
+      "package": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rooms.scn",
+      "shared_meshes": 1,
+      "estimated_geometry_bytes": 18400
+    },
+    {
+      "render": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rounded-stock.png",
+      "package_sha256": "028028C6F7993C53DED40568C8C0615544C0C0B763FBE649C48F47D4E3011C02",
+      "visual_review": "pending",
+      "instances": 12,
+      "name": "rounded-stock",
+      "package": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\rounded-stock.scn",
+      "shared_meshes": 6,
+      "estimated_geometry_bytes": 869088
+    },
+    {
+      "render": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\transformed-assemblies.png",
+      "package_sha256": "4D946EAD5BBA38C84C5709B34F03CA19ED3FDDCE245CCC57B0631B94730652A6",
+      "visual_review": "pending",
+      "instances": 12,
+      "name": "transformed-assemblies",
+      "package": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\transformed-assemblies.scn",
+      "shared_meshes": 2,
+      "estimated_geometry_bytes": 38352
+    },
+    {
+      "render": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\workshop.png",
+      "package_sha256": "5D3979FDBB0A547A1B6E91D49DA24F927B50C2B8224F547798D0EE3CE079D989",
+      "visual_review": "pending",
+      "instances": 52,
+      "name": "workshop",
+      "package": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\generated\\reviews\\20260906-103820-419058f790cc42249e98e0ff1b762d98\\workshop.scn",
+      "shared_meshes": 8,
+      "estimated_geometry_bytes": 46528
+    }
+  ],
+  "source_hashes": {
+    "src\\lib.rs": "136D4EDBE967C6AB5B496AC4CBFC2681587A2E979674B56B1B55F0CB1CF7C5C4",
+    "src\\main.rs": "F612AC47C992A64B20731960BC85C09F427DE4E6BE6456FD083277D2847E27AF",
+    "src\\room.rs": "F9478C76C6DED25CF05ABD22B63CEF4524E29F2375D5DC3C46B4614FE34BBBBE",
+    "src\\rounded_box.rs": "5F749FE0B983B0017E871F1F0E941382509850B93A842641851B5D25197627F7",
+    "examples\\lathe-shading.json": "49CA90A7EB3FA956CF4C377F919397E52ADFFE9EF81D94D6BA950A9BB37CB1AF",
+    "examples\\materials.json": "209DAB8FB059DEB73C3D09695C553C0435927B47D8E7D20F742ECE579643DA59",
+    "examples\\rooms.json": "868CB41B243111E4C1E62C1A6F05F39971F2C7335514DD40A8F31345E1061D83",
+    "examples\\rounded-stock.json": "D1F9BCBF12950EB145B61BE7A6507ECA415EAE29EDBE37512C82FB92383A1D78",
+    "examples\\transformed-assemblies.json": "7005D696F6416CF05731FC7239F9CEA991D1F54FAF8DA0015BA784D12171F8B6",
+    "examples\\workshop.json": "C6C2FBCE1E0F2063A3A2959CF6D0E53E2F8ECAC3988D884A944D3C18D39A1305",
+    "godot\\addons\\scene_forge\\import_scene.gd": "009A62106FDF3741FB64FCE5C6318DB01E13396C96F4F349DE25DD572BDB157B",
+    "godot\\addons\\scene_forge\\plugin.cfg": "E081E1523669A5F45309816C281B254EC19568006B84CC903E78AE3DC4E3E9F9",
+    "godot\\addons\\scene_forge\\plugin.gd": "8A492599EC99B3DFC5219555CD72C30220C2AC22B2AB2F92CEBAADD582F780FC",
+    "unity\\Editor\\SceneForgeSmokeTest.cs": "AFC51EA24C6D6CFA48649D611DE89EF2667DA818873464514464A7D3724C1CEC",
+    "unity\\Editor\\SceneForgeWindow.cs": "7FAB6417505DBE1EA16F73211B39DD21EC8688E86A57B5D61811C1D7C3B252C3",
+    "Cargo.toml": "928ED7720A2825CB8EB3AC43D05148B157BC38505D9E279D6C2D13EE3B08B4EC",
+    "Cargo.lock": "9D77AC7D0C6B31C7B2CD0D067EBC71F2A3712D233BDC68AA62115E5B9FF6A00C",
+    "check-scene-forge.ps1": "0890ADC57C719AA7C6FC04B1B4CFE18EE1C5D62C5C83D9435059A3BFDDB9FB53",
+    "godot/test_import.gd": "4B2B2D96E9416246E5965C20B14AED8ECD0B0964A6A42B2F1582B33A616A55F9",
+    "godot/pack_scene.gd": "B82225BF60CE6314083419D7BA463AE342B974AD8F8E7AC0D346816EE11C3B8A"
+  },
+  "compiler_sha256": "36E0E0925A815F66061613747B496D0425DAAD8C6111A13AED1908437F478AE0",
+  "finished_utc": "2026-09-06T10:38:36.2967931Z"
+}

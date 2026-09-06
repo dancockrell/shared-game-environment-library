@@ -45,6 +45,35 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Repeatable technical and visual review run
+
+Run `procedural/check-scene-forge.ps1 -Godot <graphics-executable> -Cargo <cargo>`
+on Windows. This is the single validation entry point for the current fixtures:
+locked Rust tests, formatting, strict clippy, release compilation, byte-for-byte
+determinism for every example, actual Godot render/import checks and native
+package reload checks. It also requires the deliberately unsupported dummy-renderer
+export to fail without leaving a package. The graphics executable (not its console
+wrapper) is required so process ownership and timeout termination stay precise.
+
+Each run creates a fresh `procedural/generated/reviews/<time-and-id>/` directory
+containing compiled JSON, renders, packages, logs and a structured `report.json`.
+The report records source/compiler hashes, step times, exit codes, fixture mesh and
+instance counts, estimated geometry bytes and output locations. Changed source
+hashes during a run invalidate the result. Logs, failure reports and unfinished
+artifacts are retained for diagnosis. Godot runs sequentially, off-screen,
+BelowNormal priority, capped at 10 FPS, with a per-process timeout (default 90s).
+
+Every render starts with `visual_review: pending`, even when technical checks pass.
+The initial render inspection confirms the fixtures are visible but remain crude
+construction/operator tests, not attractive generated environments. The runner is
+not an aesthetic grader, a Unity test, a VRAM measurement or a world-completion
+certificate. Its purpose is to supply repeatable evidence for the next iteration.
+
+The retained [initial verification report](verification/scene-forge-check-report.json)
+records 29 passing technical stages across six fixtures. Its absolute artifact
+paths identify the local run; those generated binaries and images are not bundled
+with the report. Rerun the script to reproduce them on another machine.
+
 ### Bounds and live machine-readable inspection
 
 Compiled meshes now include local `bounds.min`/`bounds.max`. Every instance
