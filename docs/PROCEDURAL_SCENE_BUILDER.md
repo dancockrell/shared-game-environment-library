@@ -45,6 +45,45 @@ the budget is met. No paid generation or neural inference dependency is added.
 
 ## Implemented tool checkpoint
 
+### Rounded stock operator
+
+`rounded_box` adds controlled edge curvature to reusable stock without changing
+its declared outer footprint. Example shape:
+
+```json
+{"kind":"rounded_box","size":[6,3,4],"radius":0.35,"segments":6}
+```
+
+Dimensions are full extents in metres, centered at the origin as with `box`.
+Radius must be positive and strictly less than half every dimension. Segments
+range from 1 to 32; they subdivide each rounded strip, not the flat middle span.
+The implementation projects a boundary-aligned six-face grid onto a rectangular
+core dilated by a sphere, with analytic smooth normals and face-local UVs.
+It is original CPU code with no additional dependency. Shared named definitions
+and both engines' existing mesh format remain the only output path.
+
+The emitted vertex count is `36 * (2 * segments + 1)^2`, checked against the
+remaining budget before allocation. These are unshared vertices; geometric seams
+are closed, but this is not an indexed-vertex optimization or welded physics mesh.
+Tests check exact extents, radius surface distance, outward winding, unit normals,
+two incident triangles at every geometric edge, bad inputs, budget refusal,
+deterministic JSON and repeated mesh reuse. Precision-collapsed surfaces fail.
+
+`procedural/examples/rounded-stock.json` compares a sharp box with 0.08, 0.35 and
+0.9 metre rounding, plus repeated beams and plinths. The actual Godot render was
+inspected: narrow rounding preserves a crisp silhouette and broader rounding
+produces a smooth transition. The broad sample is intentionally exaggerated for
+diagnosis, not an instruction to make architecture pillow-like. This is a tool
+fixture, not approved environment art. Materials remain flat-color and uniformly
+rough; bespoke surface response and texture work are still missing.
+
+![Sharp to broad rounding, actual Godot diagnostic render](verification/scene-forge-rounded-stock.png)
+
+The Godot import test additionally compares positions, smooth normals (allowing
+0.001 storage quantization) and reversed triangle winding after packing and
+reinstantiating. Graphics-backed disk package verification remains necessary
+because a headless import cannot certify saved GPU instance buffers.
+
 Latest priority: build and harden the shared tool, not additional Crossing room
 content. Tool validation is a separate gate from room/art admission.
 

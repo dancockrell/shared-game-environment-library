@@ -2,6 +2,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 mod room;
+mod rounded_box;
 pub use room::{Opening, Room, Wall};
 pub type V3 = [f32; 3];
 type Result<T> = std::result::Result<T, String>;
@@ -28,6 +29,11 @@ pub enum Shape {
     },
     Box {
         size: V3,
+    },
+    RoundedBox {
+        size: V3,
+        radius: f32,
+        segments: u32,
     },
     Gable {
         width: f32,
@@ -166,6 +172,13 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
         color: d.color,
     };
     match &d.shape {
+        Shape::RoundedBox {
+            size,
+            radius,
+            segments,
+        } => {
+            rounded_box::build(&mut m, *size, *radius, *segments, max_vertices)?;
+        }
         Shape::Room { room } => {
             let boxes = room.boxes()?;
             m.apertures = room.apertures();

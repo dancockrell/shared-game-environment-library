@@ -5,10 +5,11 @@
   "summary": "Tool-only priority: harden shared Rust Scene Forge geometry, bounded workloads and engine exports; room expansion paused and characters separately owned",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-06T06:13:07.162Z",
+  "updated_at": "2026-09-06T10:05:00Z",
   "paths": [
     "procedural/",
     "docs/PROCEDURAL_SCENE_BUILDER.md",
+    "docs/verification/scene-forge-rounded-stock.png",
     "README.md",
     "tools/build-river-port.gd",
     "tools/river-port-kit.gd",
@@ -23,6 +24,8 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Rounded stock operator: 16 Rust tests, strict clippy and release build passed; actual offscreen Godot comparison inspected",
+      "Rounded stock: 12 instances/6 meshes imported; saved graphics-backed package buffers and bounds reloaded and verified; smooth-normal and winding import assertions passed",
       "Thin-box missing-face regression reproduced before fix; f64 normalization and scale-extreme regression passed",
       "Empty repeat workload pruning and collapsed box rejection added; shared tool work remains active",
       "Aperture metadata: Rust tests and Godot shared metadata reload, translation, rotation, scale and invalid-index checks passed; Unity consumer pending",

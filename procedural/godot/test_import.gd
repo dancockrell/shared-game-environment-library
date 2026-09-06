@@ -25,6 +25,26 @@ func _run() -> void:
 	for mesh_index in data.meshes.size():
 		var descriptors: Array = data.meshes[mesh_index].get("apertures", [])
 		var display: MultiMeshInstance3D = copy.get_child(mesh_index)
+		var spec: Dictionary = data.meshes[mesh_index]
+		var surface := display.multimesh.mesh.surface_get_arrays(0)
+		var positions: PackedVector3Array = surface[Mesh.ARRAY_VERTEX]
+		var normals: PackedVector3Array = surface[Mesh.ARRAY_NORMAL]
+		var indices: PackedInt32Array = surface[Mesh.ARRAY_INDEX]
+		assert(positions.size() * 3 == spec.positions.size())
+		assert(normals.size() == positions.size())
+		for vertex in positions.size():
+			var offset := vertex * 3
+			var expected_position := Vector3(spec.positions[offset], spec.positions[offset+1], spec.positions[offset+2])
+			var expected_normal := Vector3(spec.normals[offset], spec.normals[offset+1], spec.normals[offset+2])
+			assert(positions[vertex].is_equal_approx(expected_position))
+			# Godot stores octahedrally encoded normals: allow storage quantization,
+			# not smoothing loss or sign/mirroring errors.
+			assert(normals[vertex].distance_to(expected_normal) < 0.001)
+		assert(indices.size() == spec.indices.size())
+		for index in range(0, indices.size(), 3):
+			assert(indices[index] == spec.indices[index])
+			assert(indices[index+1] == spec.indices[index+2])
+			assert(indices[index+2] == spec.indices[index+1])
 		assert(display.multimesh.custom_aabb.size.length() > 0)
 		assert(display.get_meta("scene_forge_apertures") == descriptors)
 		if not descriptors.is_empty() and display.multimesh.instance_count > 1:
