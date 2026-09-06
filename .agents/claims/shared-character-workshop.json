@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Evaluate real sewing-pattern garment generation; primitive cloak/tabard construction is superseded by user direction",
+  "summary": "Build our shared procedural creature/character system for Godot and Unity; start with verified portable rigged export and a hashed manifest",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
   "updated_at": "2026-09-06T08:21:00Z",
@@ -15,6 +15,9 @@
     "tools/character-workshop.gd",
     "tools/character-workshop.tscn",
     "tools/test-character-workshop.gd",
+    "tools/addons/shared_character_builder/",
+    "tools/project.godot",
+    "integrations/unity/",
     "docs/CHARACTER_WORKSHOP.md",
     "tools/character-outfit.gd",
     "tools/test-character-outfit.gd",
@@ -34,6 +37,9 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Portable GLB checkpoint: both real-body headless suites passed; exact file hash, canonical appearance restore, 163-bone skeleton, retained meshes and six invalid-manifest cases verified",
+      "Godot import plugin parses and initializes in the editor; both portable packages rendered in fresh loads; source wardrobe remains rejected construction art",
+      "Unity adapter not executed: local version folder lacks Unity.exe and managed engine assemblies; 8 GB VRAM and native Unity behavior remain unverified",
       "Construction-shape baking: both full rendered body suites passed; independent vertex calculation and exact bone-weight comparisons passed; unclassified shapes retained",
       "41 synthetic wardrobe assertions passed; both single and both six-actor fresh rendered reloads passed; actual standalone renders inspected; compiler/output hashes verified",
       "Reviewed uncompressed tabard scenes: female 33039480 to 26667072 bytes, male 34018544 to 26853434 bytes; texture/rig/LOD optimization remains incomplete",

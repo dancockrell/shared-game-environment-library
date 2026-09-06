@@ -52,6 +52,7 @@ func _ready() -> void:
 	button(panel,"Save appearance",func(): file_dialog(true,"*.json",save_recipe))
 	button(panel,"Load appearance",func(): file_dialog(false,"*.json",load_recipe))
 	button(panel,"Export Godot character",func(): file_dialog(true,"*.scn",export_character))
+	button(panel,"Export portable character",func(): file_dialog(true,"*.glb",export_portable_character))
 	status = Label.new()
 	status.text = "Open a source model and its wardrobe profile.\nPreview does not grant publication approval."
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -582,6 +583,60 @@ func export_character(path: String) -> void:
 		return
 	character_built.emit(packed,make_recipe())
 	status.text = "Godot character exported with appearance and rig."
+
+func prepare_portable_nodes(node: Node) -> void:
+	for child in node.get_children():
+		prepare_portable_nodes(child)
+	if not node is MeshInstance3D or node.mesh != null:
+		return
+	# Keep attachment paths and transforms, without exporting invalid empty meshes.
+	var anchor := Node3D.new()
+	anchor.name = node.name
+	anchor.transform = node.transform
+	anchor.visible = node.visible
+	var parent := node.get_parent()
+	var index := node.get_index()
+	parent.remove_child(node)
+	parent.add_child(anchor)
+	parent.move_child(anchor,index)
+	for child in node.get_children():
+		node.remove_child(child)
+		anchor.add_child(child)
+	node.free()
+
+func export_portable_character(path: String) -> bool:
+	if not path.is_absolute_path() or path.get_extension().to_lower() != "glb":
+		status.text = "Choose an absolute .glb output path."
+		return false
+	var packed := build_character()
+	if packed == null:
+		status.text = "Open a usable character before exporting."
+		return false
+	var actor := packed.instantiate() as Node3D
+	prepare_portable_nodes(actor)
+	var document := GLTFDocument.new()
+	var state := GLTFState.new()
+	var result := document.append_from_scene(actor,state)
+	if result == OK:
+		result = document.write_to_filesystem(state,path)
+	var manifest := {"schemaVersion":1,"model":path.get_file(),"modelSha256":"","format":"glTF-2.0-binary","units":"metres","upAxis":"Y","appearance":actor.get_meta("appearance"),"geometry":actor.get_meta("export_geometry"),"artStatus":actor.get_meta("art_status")}
+	actor.free()
+	if result != OK:
+		status.text = "Portable model export failed."
+		return false
+	manifest.modelSha256 = FileAccess.get_sha256(path)
+	var file := FileAccess.open(path.get_basename()+".character.json",FileAccess.WRITE)
+	if file == null:
+		status.text = "Model written, but its character manifest could not be saved. Export is incomplete."
+		return false
+	file.store_string(JSON.stringify(manifest,"  ",true,true))
+	var file_error := file.get_error()
+	file.close()
+	if file_error != OK:
+		status.text = "Character manifest write failed. Export is incomplete."
+		return false
+	status.text = "Portable rigged model and character manifest exported."
+	return true
 
 func load_recipe(path: String) -> void:
 	var error := apply_recipe(JSON.parse_string(FileAccess.get_file_as_string(path)))

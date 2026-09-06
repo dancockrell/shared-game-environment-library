@@ -21,13 +21,22 @@ func run() -> void:
 	var editor := scene.instantiate()
 	root.add_child(editor)
 	await process_frame
-	if args[0].get_extension() == "scn":
-		var packed := ResourceLoader.load(args[0],"PackedScene",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
-		check(packed != null,"standalone exported actor loads")
-		if packed == null:
+	if args[0].get_extension() == "scn" or args[0].ends_with(".character.json"):
+		var actor: Node3D
+		if args[0].ends_with(".character.json"):
+			var result: Dictionary = preload("res://addons/shared_character_builder/character_package.gd").instantiate_package(args[0])
+			if result.error.is_empty():
+				actor = result.actor
+			else:
+				printerr(result.error)
+		else:
+			var packed := ResourceLoader.load(args[0],"PackedScene",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+			if packed != null:
+				actor = packed.instantiate() as Node3D
+		check(actor != null,"standalone exported actor loads")
+		if actor == null:
 			quit(1)
 			return
-		var actor := packed.instantiate() as Node3D
 		editor.stage.add_child(actor)
 		var is_batch := actor.name == "CharacterBatch"
 		var appearance: Dictionary = actor.get_child(0).get_meta("appearance") if is_batch else actor.get_meta("appearance")
@@ -281,6 +290,41 @@ func run() -> void:
 		hidden_group.free()
 		editor.apply_recipe(export_recipe)
 		editor.export_character(args[1]+".scn")
+		check(editor.export_portable_character(args[1]+"-portable.glb"),"export portable character package")
+		var portable_manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(args[1]+"-portable.character.json"))
+		check(portable_manifest.modelSha256 == FileAccess.get_sha256(args[1]+"-portable.glb"),"portable manifest binds exact model bytes")
+		check(editor.apply_recipe(portable_manifest.appearance).is_empty() and editor.make_recipe() == export_recipe,"portable manifest restores exact appearance through recipe validation")
+		var package_loader = preload("res://addons/shared_character_builder/character_package.gd")
+		var package_result: Dictionary = package_loader.instantiate_package(args[1]+"-portable.character.json")
+		check(package_result.error.is_empty(),"Godot integration imports verified portable package")
+		if not package_result.error.is_empty():
+			printerr(package_result.error)
+			quit(1)
+			return
+		var portable_actor: Node3D = package_result.actor
+		var portable_rig := portable_actor.find_child("Skeleton3D",true,false) as Skeleton3D
+		check(portable_rig != null and portable_rig.get_bone_count() == 163,"portable GLB preserves skeleton")
+		var portable_meshes := 0
+		for mesh in portable_actor.find_children("*","MeshInstance3D",true,false):
+			if mesh.mesh != null:
+				portable_meshes += 1
+		check(portable_meshes == portable_manifest.geometry.retained_meshes,"portable GLB contains only retained visual resources")
+		check(portable_actor.get_meta("art_status") == portable_manifest.artStatus,"Godot integration preserves art admission status")
+		var portable_packed := PackedScene.new()
+		check(portable_packed.pack(portable_actor) == OK,"Godot plugin can pack imported character")
+		var portable_copy := portable_packed.instantiate()
+		check(portable_copy.find_children("*","MeshInstance3D",true,false).size() == portable_meshes,"Godot packed import preserves all retained meshes")
+		portable_copy.free()
+		var bad_path := args[1]+"-invalid.character.json"
+		for changes in [{"model":"../other.glb"},{"model":"C:\\other.glb"},{"modelSha256":"0".repeat(64)},{"schemaVersion":2},{"units":"centimetres"},{"appearance":null}]:
+			var invalid: Dictionary = portable_manifest.duplicate(true)
+			invalid.merge(changes,true)
+			var bad_file := FileAccess.open(bad_path,FileAccess.WRITE)
+			bad_file.store_string(JSON.stringify(invalid))
+			bad_file.close()
+			check(not package_loader.read_package(bad_path).error.is_empty(),"portable package rejects invalid "+str(changes.keys()))
+		DirAccess.remove_absolute(bad_path)
+		portable_actor.free()
 		check(FileAccess.file_exists(args[1]+".scn"),"export bundled Godot scene")
 		check(ResourceLoader.get_dependencies(args[1]+".scn").is_empty(),"export has no external resource dependencies")
 		var reloaded := ResourceLoader.load(args[1]+".scn","PackedScene",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene

@@ -1,0 +1,6 @@
+{
+  "name": "SharedGames.CharacterBuilder.Editor",
+  "rootNamespace": "SharedGames.CharacterBuilder",
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

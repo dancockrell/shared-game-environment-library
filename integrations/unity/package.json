@@ -1,0 +1,7 @@
+{
+  "name": "com.sharedgames.character-builder",
+  "version": "0.1.0",
+  "displayName": "Shared Character Builder",
+  "description": "Verified portable character imports from the shared construction workshop. Requires Unity glTFast for GLB import.",
+  "unity": "6000.0"
+}
