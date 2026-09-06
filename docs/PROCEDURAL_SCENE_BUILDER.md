@@ -1244,6 +1244,17 @@ rosette joins and reads more like piped cream. Porous sponge, surface irregulari
 crust/filling contacts and less uniform baking remain outstanding; this is not
 final food-art admission. Unity execution remains unverified.
 
+Ground-contact review adds one rounded matte supporting board to the same
+pastry recipe (0.84 x 0.018 x 0.44 metres, centre Y=-0.009). Its top is Y=0,
+matching both plate bases; food geometry is unchanged. Lower-angle native review
+(azimuth 20, elevation 22 degrees) in the existing PID 30828 produced
+`procedural/generated/reviews/20260906-125338-e44dd4bf0e854f28a090f9293035b812/pastry-contact.png`.
+The capture confirms visible support and cast shadows. It also exposes uniform
+sponge and repeated rim shapes; the presentation change does not establish food
+material realism. The board is a review/serving prop, not an invented MUD room
+or a general collision/contact solver. Previous isolated renders remain useful
+for material comparison because this camera and framing differ.
+
 Deterministic CPU-side parametric mesh construction; reusable named geometry;
 groups/repetition; exact rectangular aperture subdivision; strict geometry and
 allocation limits; portable mesh/instance representation; native engine adapters;
