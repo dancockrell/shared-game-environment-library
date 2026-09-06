@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Expand fitted wardrobe with dress, formal clothing and headwear",
-  "status": "active",
+  "summary": "Fitted clothing components, headwear and NPC batch authoring",
+  "status": "completed",
   "claimed_at": "2026-09-06T03:30:00Z",
-  "updated_at": "2026-09-06T13:11:00Z",
+  "updated_at": "2026-09-06T13:31:00Z",
   "paths": [
     "tools/character-workshop.gd",
     "tools/character-workshop.tscn",
@@ -27,7 +27,18 @@
     "notes": "Own shared character tooling; DR Companion owns scenery. Free source assets obtained and staged. No paid generation. Broader builder remains unfinished: period wardrobe, face and creature construction, fit coverage and game integration."
   },
   "completion": {
-    "commit": null,
-    "checks": []
+    "commit": "0030198",
+    "checks": [
+      "Both rendered workshop suites: 85 checks each passed",
+      "Both six-actor standalone batch reviews: 69 checks each passed and renders inspected",
+      "Synthetic wardrobe suite: 15 checks passed",
+      "105 source files verified; repeat archive extraction passed with previous bytes preserved",
+      "Formal source clothing partition validated; independent dyes and headwear exclusion tested",
+      "Batch export retains stable authoring IDs, leaves narrative names blank and restores edited appearance",
+      "No paid generation; modern source clothes remain unapproved faction art",
+      "Staged whitespace and manual credential signature scan passed; full Gitleaks remains unavailable; one-command hook override only",
+      "git push failed: github.com:443 unreachable",
+      "Full cast likenesses, historical wardrobes, creature bodies and game integration remain unfinished"
+    ]
   }
 }
