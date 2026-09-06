@@ -3,9 +3,9 @@
   "task_id": "zero-budget-cross-project-strategy",
   "agent": "codex-olympus",
   "summary": "Index the completed browser-unlimited owl ornament for cross-project reuse",
-  "status": "active",
+  "status": "completed",
   "claimed_at": "2026-09-06T01:15:00Z",
-  "updated_at": "2026-09-06T01:53:19.484169+00:00",
+  "updated_at": "2026-09-06T08:53:19.484169+07:00",
   "paths": [
     "docs/CROSS_PROJECT_ASSET_STRATEGY.md"
   ],
@@ -16,11 +16,11 @@
     "notes": "Existing blocked reference publication claim preserved. No edits to its owned intake or license docs. Reuse existing ledger and contract; strategy is not a second asset approval manifest."
   },
   "completion": {
-    "commit": "66afd291ecc0a0d116db82bc706e49e54cd22a05",
+    "commit": "5cb13823d9e72ec26cfd9202bedcfe3de8333e92",
     "checks": [
-      "Documentation-only update reviewed against direct owner instruction",
-      "Body alternative inspected via native Godot FBX render; rejected",
-      "Olympus stage113 and app45 checks pass; no paid calls"
+      "Observed browser Generate Unlimited immediately before one image submission",
+      "Original PNG downloaded and native Godot floor texture reviewed",
+      "No paid or model generation calls"
     ]
   }
 }
