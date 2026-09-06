@@ -32,6 +32,20 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_seam_diagnostics_preserve_indices_and_rank_local_failure(self):
+        import numpy as np
+        points = np.array([[0.,0,0],[1,0,0],[0,0,0],[0,.02,0],[1,.001,0]])
+        data = {"stitches":[{"panels":["front","back"],"edgeIds":[8,3],"vertexPairs":[[1,1]]},
+                             {"panels":["front","back"],"edgeIds":[7,2],"vertexPairs":[[0,0],[1,1]]}]}
+        row = fitter.seam_diagnostics(data,{"front":0,"back":3},points)[0]
+        self.assertEqual(row["seamIndex"],1)
+        self.assertEqual(row["worstVertexIndices"],[0,3])
+        self.assertEqual(row["edgeIds"],[7,2])
+        self.assertEqual(row["worstPairOffset"],0)
+        self.assertAlmostEqual(row["maxGapMetres"],.02)
+        self.assertAlmostEqual(row["meanGapMetres"],.0105)
+        self.assertEqual(row["worstVertexXYZ"],points[[0,3]].tolist())
+
     def test_sleeve_alignment_is_rigid_mirrored_and_scale_independent(self):
         import numpy as np
         pose = {"units":"metres","upAxis":"Y","shoulderLeft":[.2,.6,.04],"wristLeft":[.47,.25,.21]}

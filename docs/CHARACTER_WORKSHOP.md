@@ -24,6 +24,21 @@ The first wearable four-panel bodice trial is rejected: severe edge distortion a
 
 #### Current correction: soft cloth is not a smooth rigid shell
 
+**Seam-failure isolation, 6 September:** no extra sleeve constraints or wider cuff are retained from this pass. Measured cuff circumference is now recorded by the pattern builder. The original cut is about 22.03 cm against a 15.75 cm measured wrist, so the hypothesis that this coat hit the author's bare-wrist minimum was disproved. A width-control change from 0.55 to 0.85 produced 34.04 cm openings and did not fix the large seam gap; the recipe is restored to 0.55.
+
+| Rejected bounded intervention | Run | Mean / maximum gap at 300 frames |
+|---|---|---|
+| Cuff-endpoint temporary surface guides | `20260906T144845863Z-vbd` | 1.052 / 59.152 mm |
+| Five guides along each sleeve seam | `20260906T145038952Z-vbd` | 1.309 / 56.865 mm |
+| Wider cuff, original guides restored | `20260906T145258580Z-vbd` | 1.340 / 56.328 mm |
+| Every sleeve seam pair temporarily surface-guided | `20260906T145439331Z-vbd` | 1.914 / 47.162 mm |
+
+The cuff-endpoint render was inspected and remains unapproved; none of these interventions is promoted to the implementation or runtime. Their raw outputs remain local evidence. More guides did not establish a better dressing state. The surviving changes add exact seam/edge identities, worst-pair vertex indices/positions and ranked per-seam errors to review and simulation history, including **frame 90 immediately before support release**. No physical parameters, cut, contact settings or guide behavior are changed relative to `7d35d20`.
+
+Fresh diagnostic `20260906T145707886Z-vbd`, 120 frames: right sleeve seam edges 3/0, pair offset 8, already has a 74.730 mm gap at frame 90; 74.811 mm at frame 91 and 73.634 mm at frame 120. Thus this run fails during initial sewing, not because release suddenly opens a previously closed sleeve. This shorter diagnostic is not compared as a final settled fit. Next inspect feasible panel initialization and the author's full body-region reference/drag sewing strategy; stop treating gravity settling or permanent pins as the primary fix. GPU nondeterminism remains material.
+
+Executed 27 actual pattern/body/review checks: 26 pass, unchanged mean-seam gate fails at 1.745 mm for this diagnostic. New unit checks verify noncontiguous global indices, edge labels, local maximum/mean and ranking. The guarded run took 12.20 s, sampled 485.77 MiB process and 4029 MiB whole GPU. A launch deferred for insufficient free RAM; after independent verification of 14.48 GiB free it ran through the unchanged guard. No paid calls, engine windows or improved-art claim. Previous canonical images remain the last reviewed construction state.
+
 **Measured 3D sleeve placement, 6 September:** measured inputs now retain shoulder/elbow/wrist coordinates and explicit mirrored-left pose scope. The coat builder aligns each sleeve's armhole-to-cuff direction to the actual shoulder-to-wrist vector with SciPy's [single-vector shortest-rotation operation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.transform.Rotation.align_vectors.html), preserving its armhole pivot. The scalar author `arm_pose_angle` still describes only XY inclination; the added rigid placement supplies the missing forward component. This is not elbow articulation, arbitrary asymmetric poses or motion fitting. Old coat measurement YAML must be regenerated; sleeveless inputs remain supported unchanged.
 
 The first implementation used author `Component.rotate_by`, whose `Panel.autonorm` reverses directed edges according to their relation to the world origin. Actual trial `male-coat-panels-04` / `20260906T144239586Z-vbd` collapsed sleeves into the armpits and is rejected, despite zero sampled penetrations deeper than 1 mm. That demonstrates why collision counts alone cannot approve clothing. The surviving implementation applies only rigid translation/rotation to the serialized pattern **after** author assembly; no upstream cache patch. Corrected `male-coat-panels-05` retains exactly the previous local cut vertices, edge definitions and stitch identities, 3786 vertices/6602 triangles after meshing, and the same 1.080091 square metres of fabric.

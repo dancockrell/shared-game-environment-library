@@ -282,6 +282,7 @@ def align_sleeves(garment, pattern, pose):
             panel["translation"] = (anchor+rotation.apply(np.asarray(panel["translation"])-anchor)).tolist()
             panel["rotation"] = (rotation*Rotation.from_euler("xyz",panel["rotation"],degrees=True)).as_euler("xyz",degrees=True).tolist()
         evidence[side] = {"armholeBeforeCm":anchor.tolist(),
+            "cuffCircumferenceCm":float(sleeve.interfaces["out"].edges.length()),
             "armholeAfterCm":anchor.tolist(),
             "cuffBeforeCm":cuff.tolist(),
             "cuffAfterCm":(anchor+rotation.apply(cuff-anchor)).tolist(),

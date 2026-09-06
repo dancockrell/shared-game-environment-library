@@ -161,6 +161,21 @@ def dressing_supports(data, body, offsets, placed):
     return supports
 
 
+def seam_diagnostics(data, offsets, positions):
+    """Preserve seam/edge identity and the exact worst pair, not only an average."""
+    import numpy as np
+    rows = []
+    for index,seam in enumerate(data["stitches"]):
+        indices = np.asarray(seam["vertexPairs"],dtype=int)+np.asarray([offsets[n] for n in seam["panels"]])
+        distances = np.linalg.norm(positions[indices[:,0]]-positions[indices[:,1]],axis=1)
+        worst = int(np.argmax(distances))
+        rows.append({"seamIndex":index,"panels":seam["panels"],"edgeIds":seam["edgeIds"],
+            "maxGapMetres":float(distances[worst]),"meanGapMetres":float(distances.mean()),
+            "worstPairOffset":worst,"worstVertexIndices":indices[worst].tolist(),
+            "worstVertexXYZ":positions[indices[worst]].tolist()})
+    return sorted(rows,key=lambda row:(-row["maxGapMetres"],row["seamIndex"]))
+
+
 def solve(args):
     global wp
     import numpy as np
@@ -282,13 +297,14 @@ def solve(args):
                 wp.capture_launch(graph_run)
             else:
                 frame()
-            if number % 10 == 0 or number == args.frames-1:
+            if number % 10 == 0 or number == 89 or number == args.frames-1:
                 positions = state0.particle_q.numpy()
                 if not np.isfinite(positions).all() or np.max(abs(positions)) > 3:
                     raise ValueError("Fitting diverged; stopped bounded study")
                 gap = np.linalg.norm(positions[pairs[:,0]] - positions[pairs[:,1]], axis=1)
                 item = {"frame": number+1, "maxSeamGapMetres": float(gap.max()),
-                        "meanSeamGapMetres": float(gap.mean()), "restLengthFraction": fraction}
+                        "meanSeamGapMetres": float(gap.mean()), "restLengthFraction": fraction,
+                        "worstSeams":seam_diagnostics(data,offsets,positions)[:5]}
                 count = int(contacts.soft_contact_count.numpy()[0])
                 if count > contacts.soft_contact_max:
                     raise ValueError("Body contact buffer overflow; reject incomplete contact solve")
@@ -408,7 +424,7 @@ def review(args):
         "minimumSampledBodyDistanceMetres":float(signed.min()),
         "bodyPenetrationSamplesOver1mm":int(np.count_nonzero(signed < -.001)),
         "sampleCount":len(queries), "sampling":"cloth vertices and triangle centroids; not continuous triangle/body or self-intersection certification",
-        "seams":result["history"][-1]}
+        "seams":result["history"][-1],"seamDetails":seam_diagnostics(data,offsets,points)}
     if "bodySdfDistancesMetres" in result:
         metrics["bodySdfAudit"] = audit_body_field(result,queries,signed)
     args.output.mkdir(parents=True)
