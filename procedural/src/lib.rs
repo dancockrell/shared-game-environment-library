@@ -63,6 +63,10 @@ pub enum Shape {
         profile: Vec<[[f32; 2]; 4]>,
         tolerance: f32,
         segments: u32,
+        /// Optional local-space circle chord-error budget. Segments is the cap.
+        /// Fluted profiles require an independent curvature bound and reject it.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        radial_tolerance: Option<f32>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         fluting: Option<LatheFluting>,
     },
@@ -360,6 +364,53 @@ fn quad(m: &mut Mesh, a: V3, b: V3, c: V3, d: V3) -> Result<()> {
     triangle(m, a, b, c)?;
     triangle(m, a, c, d)
 }
+fn radial_segment_count(radius: f32, tolerance: f32, cap: u32) -> Result<u32> {
+    if !radius.is_finite()
+        || radius <= 0.
+        || !tolerance.is_finite()
+        || tolerance <= 0.
+        || !(3..=512).contains(&cap)
+    {
+        return Err("Invalid radial tolerance, radius or segment cap".into());
+    }
+    // Sagitta = r*(1-cos(pi/n)); this equivalent form avoids cancellation.
+    // Maximum Bezier control radius bounds every sampled meridian radius.
+    (3..=cap)
+        .find(|n| {
+            let half_angle = std::f64::consts::PI / (2. * f64::from(*n));
+            2. * f64::from(radius) * half_angle.sin().powi(2) <= f64::from(tolerance)
+        })
+        .ok_or_else(|| "Segment cap cannot meet requested radial tolerance".into())
+}
+
+#[cfg(test)]
+mod radial_budget_tests {
+    use super::radial_segment_count;
+
+    #[test]
+    fn chooses_minimum_segments_meeting_circle_error() {
+        for radius in [0.001_f32, 0.01, 0.17, 1.] {
+            let error = radius * 0.001;
+            let n = radial_segment_count(radius, error, 512).unwrap();
+            let sagitta = |count: u32| {
+                f64::from(radius) * (1. - (std::f64::consts::PI / f64::from(count)).cos())
+            };
+            assert!(sagitta(n) <= f64::from(error));
+            assert!(n == 3 || sagitta(n - 1) > f64::from(error));
+        }
+    }
+
+    #[test]
+    fn rejects_impossible_and_nonfinite_budgets() {
+        for error in [0., -1., f32::NAN, f32::INFINITY, 0.0000001] {
+            assert!(radial_segment_count(1., error, 32).is_err());
+        }
+        assert!(radial_segment_count(0., 0.1, 32).is_err());
+        assert!(radial_segment_count(1., 0.1, 2).is_err());
+        assert!(radial_segment_count(1., 0.1, 513).is_err());
+    }
+}
+
 fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
     if [d.material.roughness, d.material.metallic]
         .iter()
@@ -390,15 +441,29 @@ fn mesh(name: &str, d: &Definition, max_vertices: usize) -> Result<Mesh> {
             profile,
             tolerance,
             segments,
+            radial_tolerance,
             fluting,
         } => {
             let sampled = sweep::sample_profile(profile, *tolerance)?;
+            let segments = if let Some(error) = radial_tolerance {
+                if fluting.is_some() {
+                    return Err("Radial tolerance is not supported for fluted profiles".into());
+                }
+                let radius = profile
+                    .iter()
+                    .flatten()
+                    .map(|p| p[0])
+                    .fold(0.0_f32, f32::max);
+                radial_segment_count(radius, *error, *segments)?
+            } else {
+                *segments
+            };
             return mesh(
                 name,
                 &Definition {
                     shape: Shape::Lathe {
                         profile: sampled,
-                        segments: *segments,
+                        segments,
                         smooth: true,
                         crease_angle: 45.,
                         fluting: fluting.clone(),

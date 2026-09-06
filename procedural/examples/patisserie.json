@@ -4,6 +4,7 @@
     "service.plate": {
       "shape": {
         "kind": "lathe_spline",
+        "radial_tolerance": 0.0003,
         "segments": 96,
         "tolerance": 0.00015,
         "profile": [
@@ -798,6 +799,7 @@
     "pie.crust": {
       "shape": {
         "kind": "lathe_spline",
+        "radial_tolerance": 0.0003,
         "segments": 96,
         "tolerance": 0.00012,
         "profile": [
@@ -1425,6 +1427,7 @@
     "pie.filling": {
       "shape": {
         "kind": "lathe_spline",
+        "radial_tolerance": 0.0003,
         "segments": 96,
         "tolerance": 0.00012,
         "profile": [

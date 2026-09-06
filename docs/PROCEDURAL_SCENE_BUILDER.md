@@ -1273,6 +1273,41 @@ watchdog. The manifest adds 2,168 bytes to the previous GLB. Nine binary-audit
 tests (including root/duplicate/admission cases), five planner tests, ten profile
 tests and syntax checks pass. No Godot restart, paid generation, push or Actions.
 
+#### Error-bounded circular tessellation
+
+Rust `lathe_spline` now optionally accepts `radial_tolerance` in local metres.
+Without it, `segments` retains its exact legacy meaning. With it, `segments`
+is a hard cap and the compiler chooses the smallest integer n from 3..cap
+satisfying `2*r*sin(pi/(2*n))^2 <= radial_tolerance`. Maximum radius among the
+Bezier control points bounds the meridian's radius. The stable sagitta form
+avoids subtracting nearly equal cosine values. Cap/invalid-budget failures are
+errors, not silent quality reduction. Fluted profiles reject this option:
+circular sagitta does not bound their additional radial oscillations.
+
+This bounds circular-ring chord error only, separately from existing meridian
+profile tolerance. It does not certify total triangulated surface, normal,
+screen-space or world-space error after instance scaling. It does not simplify
+an already exported mesh or discard the editable spline. Artist opt-in and
+render review remain required; this is not a blanket polygon-reduction policy.
+
+The canonical patisserie fixture opts in for only plate/crust/filling at
+0.0003 m. Triangle counts: plate 14,016 -> 7,738; crust 19,392 -> 9,696;
+filling 9,984 -> 4,680. These reduce the corresponding 11-mesh pie set from
+71,376 to 50,098 unique triangles (about 29.8%); other parts retain their
+authored tessellation. New authoring field survives canonical recipe storage.
+
+CPU receipt `20260906-152000-0d5661e97d564e389bd9fa2333de4802` passed 59 Rust
+tests, strict clippy, formatting, release build, deterministic fixtures and
+independent connectivity checks across all 38 stages. New tests check minimal
+segment choice and reject impossible/non-finite budgets. The same receipt's
+`blender-radial-001` rendered the complete 92-instance/18-mesh cake-and-pie
+fixture and reloaded its source successfully: 22.20 seconds, sampled process
+RAM 1,215,307,776 bytes, hidden CPU/two threads under the existing watchdog.
+Actual image inspected: silhouettes remain smooth at that framing, but no
+matched-camera pixel-error certification or final food-art approval. This
+geometry checkpoint has not yet been rebaked/revalidated in Godot or Unity.
+No paid generation, Godot restart, push or Actions run.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository
