@@ -617,6 +617,27 @@ established by the small fixture.
 
 ## Licensing and research
 
+### Porous food: evidence and next implementation boundary, 6 September 2026
+
+Read sections 3.1–3.2 and the results/discussion excerpt of
+[Venu, Bosak and Padron-Griffe, Procedural Multiscale Geometry Modeling using Implicit Functions (2025)](https://arxiv.org/html/2504.09553v1).
+The method generates particles from seeded grid cells, bounds neighbor searches
+using particle radius, and supports spatially varying structures. Its performance
+depends on representation; mesh extraction remains an acknowledged limitation.
+Do not claim its renderer timings as Scene Forge results. No implementation was
+downloaded or licensed into this repository. The older Procedural Bread Making
+and Realistic Modeling of Porous Materials PDFs were located but their full-text
+fetches failed; their methods are not recorded as read.
+
+Our next experiment, not implemented: a bounded cavity field intersecting a host
+surface, compiled to the existing portable mesh format. Start with a small crumb
+coupon, not a city-scale volume. Define pore spacing and radii in metres; preserve
+seed, bounds and source parameters. Validate neighboring-cell coverage against
+brute force, then closed extracted boundaries, outward normals, budgets and native
+close-up appearance. Reject invisible painted-dot substitutes and claims of
+porosity from color alone. Keep the existing lathe/sweep path for smooth pastry.
+This is a research decision, not a new shipped operator or a final-art gate.
+
 Current core geometry is original first-principles code. serde/serde_json and
 their locked transitive dependencies require a distribution notice audit.
 Cargo.lock pins exact downloads. Do not copy code from a paper or repository
