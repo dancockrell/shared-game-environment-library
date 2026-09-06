@@ -74,6 +74,49 @@ def validate_pattern(spec):
             "dartStitches": sum(s[0]["panel"] == s[1]["panel"] for s in stitches)}
 
 
+def orient_sewn_faces(data):
+    """Use sewn connectivity for coherent normals without welding render vertices."""
+    import numpy as np
+    import networkx as nx
+    import trimesh
+    offsets,points,faces,ranges = {},[],[],{}
+    for name,panel in data["panels"].items():
+        offsets[name] = len(points)
+        start = len(faces)
+        faces.extend((np.asarray(panel["triangles"])+len(points)).tolist())
+        ranges[name] = (start,len(faces))
+        points.extend(panel["placedXYZ"])
+    graph = nx.Graph()
+    for seam in data["stitches"]:
+        a,b = seam["panels"]
+        graph.add_edges_from((offsets[a]+i,offsets[b]+j) for i,j in seam["vertexPairs"])
+    representatives = np.arange(len(points))
+    for component in nx.connected_components(graph):
+        representatives[list(component)] = min(component)
+    original = np.asarray(faces)
+    sewn = representatives[original]
+    if np.any(np.sort(sewn,axis=1)[:,1:] == np.sort(sewn,axis=1)[:,:-1]):
+        raise ValueError("Sewing creates a degenerate triangle")
+    topology = trimesh.Trimesh(vertices=points,faces=sewn,process=False)
+    trimesh.repair.fix_winding(topology)
+    if not topology.is_winding_consistent:
+        raise ValueError("Sewn garment is not consistently orientable")
+    flipped = np.any(topology.faces != sewn,axis=1)
+    corrected = original.copy()
+    corrected[flipped] = corrected[flipped,::-1]
+    # This constructor uses Y-up and +Z front. Fix the remaining global sign
+    # against its named front torso, not the volume of an open garment.
+    front = np.concatenate([np.arange(a,b) for n,(a,b) in ranges.items() if "ftorso" in n])
+    t = np.asarray(points)[corrected[front]]
+    if np.cross(t[:,1]-t[:,0],t[:,2]-t[:,0])[:,2].sum() < 0:
+        corrected = corrected[:,::-1]
+        flipped = ~flipped
+    for name,(a,b) in ranges.items():
+        data["panels"][name]["triangles"] = (corrected[a:b]-offsets[name]).tolist()
+    return {"method":"Trimesh fix_winding on seam equivalence topology; separate vertices retained",
+            "flippedTriangles":int(flipped.sum()),"frontAxis":"+Z"}
+
+
 def mesh_panels(directory, resolution_cm, fitting_body=None):
     """Use the author's constrained triangulation and matched edge sampling.
 
@@ -117,6 +160,7 @@ def mesh_panels(directory, resolution_cm, fitting_body=None):
                                  "edgeIds": [stitch.edge_1, stitch.edge_2]})
         if len(left) != len(right):
             raise ValueError("Unmatched seam vertex counts")
+    data["sewnOrientation"] = orient_sewn_faces(data)
     metrics = validate_mesh(data)
     (directory / "panel-mesh.json").write_text(json.dumps(data, indent=2, allow_nan=False))
     fig.savefig(directory / "triangulated-panels.png", dpi=130)
@@ -466,7 +510,7 @@ def build(args):
         "metrics": metrics, "meshMetrics": mesh_metrics, "cpuThreadLimitRequested": 1,
         "elapsedSeconds": time.perf_counter() - start,
         "versions": {p: importlib.metadata.version(p) for p in
-                     ("numpy", "scipy", "svgpathtools", "CairoSVG", "matplotlib", "cffi", "pycparser", "cgal", "libigl")},
+                     ("numpy", "scipy", "svgpathtools", "CairoSVG", "matplotlib", "cffi", "pycparser", "cgal", "libigl", "trimesh", "networkx")},
         "unverified": ["character-specific cut and body", "lining, structural reinforcement and closures",
                        "3D fit", "self-contact in motion", "engine garment integration"],
     }

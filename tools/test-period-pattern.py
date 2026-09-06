@@ -32,6 +32,38 @@ MESH = json.loads((REVIEW / "panel-mesh.json").read_text())
 
 
 class ActualPatternTests(unittest.TestCase):
+    def test_sewn_orientation_is_consistent_and_repair_is_idempotent(self):
+        import networkx as nx
+        import numpy as np
+        from collections import defaultdict
+        offsets,count = {},0
+        for name,p in MESH["panels"].items():
+            offsets[name] = count
+            count += len(p["restXY"])
+        graph = nx.Graph()
+        for s in MESH["stitches"]:
+            graph.add_edges_from((offsets[s["panels"][0]]+a,offsets[s["panels"][1]]+b) for a,b in s["vertexPairs"])
+        mapping = np.arange(count)
+        for group in nx.connected_components(graph):
+            mapping[list(group)] = min(group)
+        edges = defaultdict(list)
+        for name,p in MESH["panels"].items():
+            for face in mapping[np.asarray(p["triangles"])+offsets[name]]:
+                for a,b in zip(face,np.roll(face,-1)):
+                    edges[tuple(sorted((a,b)))].append((a,b))
+        for occurrences in edges.values():
+            self.assertLessEqual(len(occurrences),2)
+            if len(occurrences)==2:
+                self.assertEqual(occurrences[0],occurrences[1][::-1])
+        repeat = copy.deepcopy(MESH)
+        self.assertEqual(builder.orient_sewn_faces(repeat)["flippedTriangles"],0)
+        self.assertEqual(repeat,MESH)
+        # Deliberately reverse one panel; topology repair must recover exactly.
+        first = next(iter(repeat["panels"].values()))
+        first["triangles"] = [f[::-1] for f in first["triangles"]]
+        self.assertGreater(builder.orient_sewn_faces(repeat)["flippedTriangles"],0)
+        self.assertEqual(repeat,MESH)
+
     def test_seam_diagnostics_preserve_indices_and_rank_local_failure(self):
         import numpy as np
         points = np.array([[0.,0,0],[1,0,0],[0,0,0],[0,.02,0],[1,.001,0]])
