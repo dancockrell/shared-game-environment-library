@@ -875,6 +875,19 @@ measured occluded portions, not another uniform root offset. Both diagnostics
 preserve the source hash; lighting guards pass, and the isolated render completes
 in 4.58 seconds. No final material, collision or game export approval.
 
+**Lash direction revision 03:** Skin-normal Z no longer overrides authored
+upper/lower elevation. Deterministic sub-strand spacing jitter and length
+variation replace the regular pattern; nominal upper/lower lengths are 6/3.5 mm
+before variation, root radius 45 micrometres. All 184 recorded initial directions
+pass the upper-positive/lower-negative Z check. The actual
+`lash-strands-03/skin-cheek.png` shows faint lower lashes but remains inadequate;
+this is not a successful realism solution. Do not keep increasing physical
+dimensions to compensate. Next isolate sampling/denoising loss at this projected
+fiber width and compare against native curve rendering or a properly baked
+coverage representation. The two guarded CPU views completed, with 48.62 seconds
+for the close crop. Source/lighting guards pass; 32 Python passes/one Blender-only
+skip. Pose, eye-margin attachment and runtime quality remain unapproved.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

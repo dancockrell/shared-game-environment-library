@@ -98,7 +98,8 @@ def construct_lash_strands(source, destination):
             lengths.append(lengths[-1]+(Vector(b['world_m'])-Vector(a['world_m'])).length)
         roots = []
         for i in range(count):
-            fraction = (i+.5)/count
+            jitter = .22*math.sin(i*2.399963+(.7 if center.x>0 else 1.9))
+            fraction = (i+.5+jitter)/count
             distance = fraction*lengths[-1]
             j = next(j for j in range(len(arc)-1) if lengths[j+1]>=distance)
             t = (distance-lengths[j])/(lengths[j+1]-lengths[j])
@@ -113,9 +114,13 @@ def construct_lash_strands(source, destination):
             total = sum(w.values())
             assert total>0
             w = {name:value/total for name,value in w.items()}
-            length = (.0045 if upper else .0025)*(.65+.35*math.sin(math.pi*fraction))
-            direction = (normal*.6+Vector(((fraction-.5)*.3,-.7,
-                .65 if upper else -.45))).normalized()
+            length = (.006 if upper else .0035)*(.65+.35*math.sin(math.pi*fraction))
+            length *= .88+.12*math.sin(i*1.7+.4)
+            # Skin normals near the rim can oppose the intended lid direction.
+            # Use only their horizontal component; author upper/lower elevation.
+            horizontal = Vector((normal.x,normal.y,0))
+            direction = (horizontal*.45+Vector(((fraction-.5)*.3,-.7,
+                .8 if upper else -.9))).normalized()
             root_record = {'position_m':list(root),'weights':w,'length_m':length,
                 'source_root_m':list(original_root),'source_signed_clearance_m':signed_root,
                 'surface_normal':list(normal),'direction':list(direction)}
@@ -123,12 +128,12 @@ def construct_lash_strands(source, destination):
             first = len(verts)
             for k in range(9):
                 u = k/8
-                curl = Vector((0,0,.3 if upper else -.2))
+                curl = Vector((0,0,.25 if upper else -.2))
                 position = root+length*(direction*u+curl*u*u)
                 tangent = (direction+2*curl*u).normalized()
                 side = tangent.cross(Vector((1,0,0))).normalized()
                 across = tangent.cross(side).normalized()
-                radius = .000035*(1-.95*u)
+                radius = .000045*(1-.95*u)
                 for s in range(4):
                     angle = s*math.tau/4
                     verts.append(position+radius*(math.cos(angle)*side+math.sin(angle)*across))
