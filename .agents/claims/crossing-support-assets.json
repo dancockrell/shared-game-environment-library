@@ -3,9 +3,9 @@
   "task_id": "crossing-support-assets",
   "agent": "codex",
   "summary": "User-directed pivot to illustrated pixel-art sprite production and curated 2D animation; preserve historical 3D research",
-  "status": "active",
+  "status": "completed",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-07T14:00:00Z",
+  "updated_at": "2026-09-07T15:42:00Z",
   "paths": [
     "tools/sync-source-archives.ps1",
     "archives/dr-companion-pre-sprite/",
@@ -35,8 +35,9 @@
     "notes": "Owner Pirate Island Work verified notLoaded/interrupted. Extend its clean benchmark watchdog with pinned prerequisite provisioning and CMake toolchain wiring; preserve author solver and OpenVDB sources. Existing Workshop review integration remains narrow; no second editor or solver."
   },
   "completion": {
-    "commit": null,
+    "commit": "0466b9d",
     "checks": [
+      "User-directed preservation checkpoint: 5105 archived DR files, all SHA256 reverified; no source deletion. Builder deferred, not completed. Closing claim releases research paths. Sprite candidates are not runtime-admitted. Payload local-only; no push or Actions.",
       "Cyberpunk adult study: canonical workshop export passes, eight meshes/one skin, source binary and mesh/skin JSON unchanged in Blender compatibility copy. Actual CPU look-03 full-body render inspected; grounded after excluding hidden bone display helper. Python syntax passes. Not photorealism approval; static hardware and unbaked new materials remain Blender-only. No source character tooling changed, no paid calls or push.",
       "Crust/cut checkpoint 20260906-224748-89ea0e7f7f32464c848acfded33b0cc3: 62 Rust tests, six audit tests and 41 CPU stages passed; eleven existing fixture outputs byte identical. Cut maximum and 3292 plane vertices verified. Actual Blender render/reload inspected, 17.03 s and 1119481856 sampled process bytes; rejected as food art. Four closed graph components, not self-intersection or wall-thickness certification. No Godot launch, GPU render, push or Actions.",
       "Continuous room UVs: run 20260906-123121-c3bd93acdf3147719a9f3238033bbe30 passed 46 Rust tests, six audit tests and 32 CPU stages. Metric edge distances, upright wall mapping and shared-vertex UV continuity checked. Independent nine-fixture triangle/normal/placement/aperture comparison unchanged. Room vertices 944 to 440 and 366 to 186 with unchanged triangle counts. No engine/material visual or VRAM claim.",
