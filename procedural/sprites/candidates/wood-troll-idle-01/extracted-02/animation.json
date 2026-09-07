@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "runtimeAdmission": false,
+  "title": "Wood troll restrained idle — southeast, candidate",
+  "fps": 6,
+  "scale": 0.34,
+  "anchorConvention": "Manual midpoint between planted feet, relative to trimmed pixels; frame 2 head-tilt top crop differs by 2px, no rescaling",
+  "images": [
+    {
+      "path": "cell_00_00.png",
+      "width": 287,
+      "height": 449,
+      "sha256": "27a84b9028c0f266b4b5379b7e1a7fc1c7a666c1d2537ca8323efda44035fc9a"
+    },
+    {
+      "path": "cell_00_01.png",
+      "width": 287,
+      "height": 449,
+      "sha256": "99d70bb8f2a209d2a92543539c45de36089a0a1c4b5adcdb5cc265149ffe4c41"
+    },
+    {
+      "path": "cell_00_02.png",
+      "width": 288,
+      "height": 447,
+      "sha256": "c99072a8f9d9b28836faa1ec73aa6e6ea45932e7e557db999251d8e7d398063a"
+    },
+    {
+      "path": "cell_01_00.png",
+      "width": 287,
+      "height": 449,
+      "sha256": "571c9bbcb7ca18064607dd2d6c5c86c023a718e16ef9bf2faf0f7c34f11868ec"
+    },
+    {
+      "path": "cell_01_01.png",
+      "width": 287,
+      "height": 449,
+      "sha256": "d68f7618f0cffece1dd0c7b099f2000c7e02f0bf08cc93992b4415ceaac00bf6"
+    },
+    {
+      "path": "cell_01_02.png",
+      "width": 286,
+      "height": 449,
+      "sha256": "80e89d30dc0b50053573378f542f1dbf95d6aa68554de7effc9263c2f3129a45"
+    }
+  ],
+  "frames": [
+    {
+      "imageIndex": 0,
+      "rect": [
+        0,
+        0,
+        287,
+        449
+      ],
+      "anchor": [
+        171,
+        432
+      ],
+      "durationMs": 2200
+    },
+    {
+      "imageIndex": 1,
+      "rect": [
+        0,
+        0,
+        287,
+        449
+      ],
+      "anchor": [
+        171,
+        432
+      ],
+      "durationMs": 200
+    },
+    {
+      "imageIndex": 2,
+      "rect": [
+        0,
+        0,
+        288,
+        447
+      ],
+      "anchor": [
+        171,
+        430
+      ],
+      "durationMs": 200
+    },
+    {
+      "imageIndex": 3,
+      "rect": [
+        0,
+        0,
+        287,
+        449
+      ],
+      "anchor": [
+        171,
+        432
+      ],
+      "durationMs": 120
+    },
+    {
+      "imageIndex": 4,
+      "rect": [
+        0,
+        0,
+        287,
+        449
+      ],
+      "anchor": [
+        171,
+        432
+      ],
+      "durationMs": 200
+    },
+    {
+      "imageIndex": 5,
+      "rect": [
+        0,
+        0,
+        286,
+        449
+      ],
+      "anchor": [
+        171,
+        432
+      ],
+      "durationMs": 600
+    }
+  ]
+}

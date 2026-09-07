@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1536,
+    1024
+  ],
+  "columns": 3,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    507,
+    1024
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      506,
+      1008,
+      1536
+    ],
+    [
+      0,
+      506,
+      1004,
+      1536
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        506,
+        507
+      ],
+      "trim_rect_in_cell": [
+        114,
+        34,
+        401,
+        483
+      ],
+      "source_trim_rect": [
+        114,
+        34,
+        401,
+        483
+      ],
+      "size": [
+        287,
+        449
+      ],
+      "rgba_sha256": "83959c658f878efef0640afa5f73ce3c67c1a3efbe9c156d89413c972a4d32b0",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "27a84b9028c0f266b4b5379b7e1a7fc1c7a666c1d2537ca8323efda44035fc9a"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        506,
+        0,
+        1008,
+        507
+      ],
+      "trim_rect_in_cell": [
+        106,
+        34,
+        393,
+        483
+      ],
+      "source_trim_rect": [
+        612,
+        34,
+        899,
+        483
+      ],
+      "size": [
+        287,
+        449
+      ],
+      "rgba_sha256": "4465b750bdcf00f32f9cc170d9563ab15f6c39056948bf600ce0909149b4c2a3",
+      "components_before_filter": 12,
+      "components_kept": 12,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "99d70bb8f2a209d2a92543539c45de36089a0a1c4b5adcdb5cc265149ffe4c41"
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "file": "cell_00_02.png",
+      "source_rect": [
+        1008,
+        0,
+        1536,
+        507
+      ],
+      "trim_rect_in_cell": [
+        109,
+        36,
+        397,
+        483
+      ],
+      "source_trim_rect": [
+        1117,
+        36,
+        1405,
+        483
+      ],
+      "size": [
+        288,
+        447
+      ],
+      "rgba_sha256": "d18723ce0d431807066f3481f07209932ca51195104cab999e1b1bbf355d5796",
+      "components_before_filter": 6,
+      "components_kept": 6,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "c99072a8f9d9b28836faa1ec73aa6e6ea45932e7e557db999251d8e7d398063a"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        507,
+        506,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        114,
+        25,
+        401,
+        474
+      ],
+      "source_trim_rect": [
+        114,
+        532,
+        401,
+        981
+      ],
+      "size": [
+        287,
+        449
+      ],
+      "rgba_sha256": "edd6a563b126097f4fc29cbf0c3b0f21e3cd4cca7fdab34c561047d78ca6c239",
+      "components_before_filter": 4,
+      "components_kept": 4,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "571c9bbcb7ca18064607dd2d6c5c86c023a718e16ef9bf2faf0f7c34f11868ec"
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        506,
+        507,
+        1004,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        106,
+        25,
+        393,
+        474
+      ],
+      "source_trim_rect": [
+        612,
+        532,
+        899,
+        981
+      ],
+      "size": [
+        287,
+        449
+      ],
+      "rgba_sha256": "c660b0165044a96cd20006dfc5b74e69109bd90264c7f89a0dfcf45e944f0287",
+      "components_before_filter": 11,
+      "components_kept": 11,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "d68f7618f0cffece1dd0c7b099f2000c7e02f0bf08cc93992b4415ceaac00bf6"
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "file": "cell_01_02.png",
+      "source_rect": [
+        1004,
+        507,
+        1536,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        107,
+        25,
+        393,
+        474
+      ],
+      "source_trim_rect": [
+        1111,
+        532,
+        1397,
+        981
+      ],
+      "size": [
+        286,
+        449
+      ],
+      "rgba_sha256": "f3f99352bcb70e12c0b5abf0a664e3af37d13708fb11c220e0870eb8f95daf99",
+      "components_before_filter": 5,
+      "components_kept": 5,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "80e89d30dc0b50053573378f542f1dbf95d6aa68554de7effc9263c2f3129a45"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\wood-troll-idle-01\\source-02.png",
+  "source_sha256": "31fc090eced1093e3b0ed230f2b28ccb09d3a2717deb10c92b2b65d904233389",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
