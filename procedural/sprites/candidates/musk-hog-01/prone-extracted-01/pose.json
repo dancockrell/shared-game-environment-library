@@ -1,0 +1,15 @@
+{
+  "schemaVersion":1,
+  "runtimeAdmission":false,
+  "creature":"musk hog",
+  "pose":"prone",
+  "requiresAuthoritativeState":"prone",
+  "notEvidenceFor":["death","wound","sleep","stun","attack","travel"],
+  "image":{"path":"cell_00_00.png","width":749,"height":438,"sha256":"48849e4d38411c9294fa725a27828be94475a948a66f208cb29155f568f1ca06"},
+  "crop":[0,0,749,438],
+  "anchor":[405,398],
+  "anchorConvention":"Manual body-ground estimate in trimmed pixels; native standing/prone scale comparison pending",
+  "source":"../prone-magenta-01.png",
+  "sourceSha256":"7484cb98cc6516f30361c490bc0c60a028f60a591d6025e5b18ead97098c433f",
+  "identityReference":"../idle-magenta-01.png"
+}

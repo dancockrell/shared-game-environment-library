@@ -58,3 +58,26 @@ actual rendered stage and aligned filmstrip at0.16 source scale. Snout remains
 readable, no visible magenta halo against moss, ground silhouette stays stable;
 closed-eye pose is restrained. This is a source review, not runtime admission.
 Browser closed after capture; no running server/Godot or Actions.
+
+## Prone resting candidate contract
+
+Same ordinary musk hog identity, camera, coarse brown-gray bristles, broad flat
+snout, small tusks and lighting as idle source. Single full-body pose lying
+low on ground, legs folded/tucked, head alert and eyes open. No wound, blood,
+death, stun or sleep inference. Flat magenta key, no scenery or shadows; source
+only until authoritative prone state can select it. Do not replace living idle
+or use merely because a creature is stale or missing from assessment.
+
+Exact built-in prompt (input `idle-magenta-01.png` as identity reference):
+
+Use case: identity-preserve. Image1 is identity and style reference of ONE ordinary musk hog shown in four idle poses. Generate ONE new full-body sprite of that exact same brown-gray scruffy squat hog in a PRONE RESTING pose, lying low with belly against ground and four legs folded/tucked beside its body, head still alert, both eyes open and broad flat snout visible. Alive, not sleeping, not stunned, not wounded, not dead. Retain short coarse bristles, little ears, short tail, tiny ivory tusks, body proportions, brown-gray fur pattern, down-right facing and fixed elevated three-quarter gameplay camera, same top-left soft light and dark defined pixel outline. Do not turn into a different species or baby pig. Detailed earthy crisp shaded pixel art identical to reference, no smooth3D. Single character centered generously in square canvas, full tail and all body edges visible; no grid and no multiple poses. Flat solid vivid magenta #FF00FF everywhere outside the animal, no cast shadow, no floor, no scenery, no text. No injury marks, blood, closed eyes or special effects.
+
+Generated2026-09-08 via built-in image_gen, no paid external API. Source
+`prone-magenta-01.png` SHA256
+`7484cb98cc6516f30361c490bc0c60a028f60a591d6025e5b18ead97098c433f`.
+Extracted with same existing helper, `--columns 1 --rows 1 --min-component-pixels 1`.
+One749x438 RGBA cell, no cut warnings, no removed small pixels. Six retained
+components include tiny detached bristle pixels. Source review: intact alert
+hog, same fur and small-tusk identity, legs tucked under low body; no death
+or wound cues. Camera/head proportion needs native comparison before admission.
+`prone-extracted-01/pose.json` carries candidate-only placement metadata.
