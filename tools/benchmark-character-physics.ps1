@@ -11,6 +11,7 @@ param(
     [string]$RetargetSource,
     [string]$CMake,
     [string]$Vcpkg,
+    [string]$PkgConfig,
     [switch]$InstallRetargetDependencies,
     [switch]$DependencyDryRun
 )
@@ -23,6 +24,8 @@ if ($isRetargetConfigure -and ($isFitting -or $ReviewResult -or $Device -ne 'cpu
 if ($InstallRetargetDependencies -and (-not $isRetargetConfigure -or -not $Vcpkg)) { throw 'Dependency installation requires RetargetSource, CPU and Vcpkg.' }
 if ($DependencyDryRun -and -not $InstallRetargetDependencies) { throw 'DependencyDryRun requires InstallRetargetDependencies.' }
 if ($Vcpkg -and -not $isRetargetConfigure) { throw 'Vcpkg is only supported for retarget work.' }
+if ($PkgConfig -and -not $InstallRetargetDependencies) { throw 'PkgConfig override requires dependency installation.' }
+if ($PkgConfig) { $pkgConfigPath = (Resolve-Path -LiteralPath $PkgConfig).Path }
 if ($CMake -and -not $isRetargetConfigure) { throw 'CMake requires RetargetSource.' }
 if (-not $isFitting -and $Iterations -ne 10) { throw 'Iterations override is only supported for measured-pattern fitting.' }
 if ($ReviewResult -and (-not $isFitting -or $Device -ne 'cuda:0')) { throw 'Depth review requires pattern/body inputs and GPU resource monitoring.' }
@@ -62,6 +65,9 @@ if ($isRetargetConfigure) {
         $arguments = @('install',"--x-manifest-root=$manifestRoot", "--x-install-root=$dependencyRoot", '--triplet=x64-windows',
             "--x-buildtrees-root=$dependencyRoot/buildtrees", "--x-packages-root=$dependencyRoot/packages")
         if ($DependencyDryRun) { $arguments += '--dry-run' }
+        # KEEP_ENV_VARS is not part of vcpkg's ABI hash. Do not reuse/publish
+        # binary-cache entries built with an untracked helper override.
+        if ($PkgConfig) { $arguments += '--binarysource=clear' }
     } elseif ($Vcpkg) {
         $toolchain = Join-Path (Split-Path $vcpkgPath -Parent) 'scripts/buildsystems/vcpkg.cmake'
         if (-not (Test-Path -LiteralPath $toolchain)) { throw 'Missing vcpkg CMake toolchain.' }
@@ -88,6 +94,10 @@ $startInfo.RedirectStandardError = $true
 $startInfo.Environment['CMAKE_BUILD_PARALLEL_LEVEL'] = '1'
 $startInfo.Environment['OMP_NUM_THREADS'] = '1'
 $startInfo.Environment['VCPKG_MAX_CONCURRENCY'] = '1'
+if ($PkgConfig) {
+    $startInfo.Environment['PKG_CONFIG'] = $pkgConfigPath
+    $startInfo.Environment['VCPKG_KEEP_ENV_VARS'] = 'PKG_CONFIG'
+}
 $process = [System.Diagnostics.Process]::new()
 $process.StartInfo = $startInfo
 if (-not $process.Start()) { throw 'Could not start upstream benchmark.' }
@@ -129,7 +139,10 @@ try {
         }
         $gpuNow = Get-GpuSample
         $samples.Add([pscustomobject][ordered]@{seconds=$watch.Elapsed.TotalSeconds; processTreeWorkingSetMiB=$treeWorkingSet/1MB; wholeGpuUsedMiB=$gpuNow})
-        if ($treeWorkingSet -gt 2GB -or ($null -ne $gpuNow -and $gpuNow -gt 8192)) {
+        # CPU-only provisioning/configuration cannot allocate CUDA memory.
+        # Keep reporting shared GPU use, but do not kill CPU work for another
+        # application's allocations. CUDA fitting/review keeps its GPU guard.
+        if ($treeWorkingSet -gt 2GB -or ($Device -eq 'cuda:0' -and $null -ne $gpuNow -and $gpuNow -gt 8192)) {
             $resourceStopped = $true
             $terminationReason = 'sampled-memory-pressure'
             $process.Kill($true)
@@ -156,6 +169,10 @@ if ($isRetargetConfigure) {
         $packageInfo.dependencyInstallRoot = $dependencyRoot
         $packageInfo.dependencyDryRun = [bool]$DependencyDryRun
     }
+    if ($PkgConfig) {
+        $packageInfo.pkgConfig = $pkgConfigPath
+        $packageInfo.pkgConfigSha256 = (Get-FileHash -LiteralPath $pkgConfigPath).Hash.ToLower()
+    }
 } else {
     $packageOutput = & $pythonPath -X utf8 -c $packageCode
     $packageInfo = if ($LASTEXITCODE -eq 0) { $packageOutput | ConvertFrom-Json } else { $null }
@@ -179,6 +196,7 @@ $receipt = [ordered]@{
 if ($InstallRetargetDependencies) {
     $receipt.purpose = if ($DependencyDryRun) { 'Pinned retarget prerequisite resolution only; no installation or solver execution' } else { 'Pinned retarget prerequisite installation; no solver execution or art admission' }
 }
+if ($PkgConfig) { $receipt.childEnvironment.PKG_CONFIG = $pkgConfigPath }
 $receipt | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $output 'receipt.json') -Encoding utf8
 Write-Output "Receipt: $output/receipt.json"
 Write-Output "Upstream exit: $exitCode; timeout: $timedOut; elapsed: $($watch.Elapsed.TotalSeconds)s"

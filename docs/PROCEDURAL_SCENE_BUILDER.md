@@ -1402,6 +1402,45 @@ not a new cloth method or weakened checksum. Parser and two invalid-input
 rejection checks pass; toolchain configuration and full installation remain
 unverified. No engine, render, push or Actions was invoked.
 
+**Helper-download gate cleared:** Installed the 50,014-byte Windows wheel
+`pkgconf==2.3.0.post2` into the existing isolated CPU environment, without other
+dependency changes. PyPI wheel SHA-256
+`a2b650c8b34e402f5e32c06684d95b0c7ebbbb45d17642f5401b625f889d0e6f` was supplied
+in the download URL; native executable reports 2.3.0 and hashes to
+`1ba9d9178bcaa896d0aea29d3798161d15dc3abe346371e15221de1e30b94a3b`.
+Packaging MIT license inspected; upstream [pkgconf permission notice](https://raw.githubusercontent.com/pkgconf/pkgconf/pkgconf-2.3.0/COPYING)
+permits redistribution with its notice. No binary is shipped by this repo.
+The existing runner's `-PkgConfig <native-executable>` records its hash and
+sets only child `PKG_CONFIG`/`VCPKG_KEEP_ENV_VARS`. Vcpkg otherwise clears this
+override on Windows. Binary caching is disabled for this untracked environment
+override; do not imply its value participates in vcpkg's ABI hash.
+
+Run `20260907T123642991Z-vbd` reproduced the missing archive before explicit
+environment forwarding was added. Corrected run `20260907T123757850Z-vbd`
+installed zstd, zlib, snappy, lz4 and blosc (plus the two CMake helper packages),
+then the system-free-memory guard stopped it after 75.88 seconds during
+liblzma compilation. Peak sampled process tree 204.28 MiB; subsequent free RAM
+was about 4.10 GiB. Owned vcpkg PID 9720 was absent. Dependencies remain partial;
+no retargeter configuration, solve or new render is claimed.
+
+Earlier CPU run `20260907T123609734Z-vbd` was stopped because unrelated whole-GPU
+use exceeded 10 GiB despite only 24.64 MiB process use. The GPU termination
+condition now applies only to CUDA jobs; CPU work still reports GPU samples
+and retains its RAM/timeout guards. This is not permission to weaken CUDA
+fitting or rendered-review limits. Override scope rejection and syntax pass.
+
+The old baseline selected liblzma 5.6.0. Replaced the dependency baseline with
+verified vcpkg `2024.04.26`, commit
+`943c5ef1c8f6b5e6ced092b242c8299caae2ff01`, whose inspected liblzma manifest is
+5.4.4. [Upstream XZ's incident notice](https://tukaani.org/xz-backdoor/)
+identifies compromised 5.6.0/5.6.1 release tarballs. The inspected old port uses
+a GitHub source snapshot and CMake, not those release tarballs; this is not
+evidence that this machine was compromised. Nonetheless that release line is
+not retained. Liblzma was not registered as installed; interrupted build files
+remain diagnostic cache data. The revised baseline has not been installed or
+security-certified. Resume the existing bounded install after RAM recovers,
+then verify the actual package versions before configuring the author source.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
