@@ -861,6 +861,20 @@ the nearest skin patch is the correct eyelid rim. Source input and lighting
 guards pass; ordinary Python has 32 passes/one Blender-only skip. The bounded CPU
 job completed with 51.13 seconds for the close crop. No final art admission.
 
+**Visibility diagnosis:** `--lash-occlusion` samples root/mid/tip centers of all
+184 evaluated strands against skin-only front and oblique rays. Actual front
+occluded counts are 12/54/26; oblique counts 50/66/28. Skin occlusion therefore
+does not explain the near-total visual loss. These are skin-only tests, not full
+scene visibility. `--lash-isolation-review` hides other geometry and uses a
+diagnostic emissive fiber material, leaving actual strand geometry unchanged.
+The inspected `lash-isolation-01` image reveals recognizable upper arcs but tiny,
+nearly point-like lower lashes and a mechanically regular upper pattern. The
+isolated image confirms geometry exists; it does not validate natural appearance.
+Next address projected shape, variation and sampling/coverage together with the
+measured occluded portions, not another uniform root offset. Both diagnostics
+preserve the source hash; lighting guards pass, and the isolated render completes
+in 4.58 seconds. No final material, collision or game export approval.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

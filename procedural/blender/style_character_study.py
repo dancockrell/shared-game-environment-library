@@ -173,6 +173,43 @@ def construct_lash_strands(source, destination):
             'four-sided fibers; no game export validation']}
 
 
+def audit_lash_occlusion(source,destination):
+    """Measure skin occlusion of actual posed strand centers from front/side."""
+    destination.mkdir(parents=True,exist_ok=False)
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    bpy.ops.wm.open_mainfile(filepath=str(source))
+    dg = bpy.context.evaluated_depsgraph_get()
+    body = bpy.data.objects['Body03'].evaluated_get(dg)
+    mesh = body.to_mesh()
+    tree = BVHTree.FromPolygons([body.matrix_world@v.co for v in mesh.vertices],
+        [tuple(p.vertices) for p in mesh.polygons])
+    lashes = bpy.data.objects['Study_rooted_lashes'].evaluated_get(dg)
+    lm = lashes.to_mesh()
+    assert len(lm.vertices)==184*36
+    points = [lashes.matrix_world@v.co for v in lm.vertices]
+    results = []
+    for name,direction in [('front',Vector((0,-1,0))),('oblique',Vector((-.7,-1,0)).normalized())]:
+        records = []
+        for strand in range(184):
+            samples = []
+            for ring in (0,4,8):
+                center = sum(points[strand*36+ring*4:strand*36+ring*4+4],Vector())/4
+                hit,normal,face,distance = tree.ray_cast(center+direction, -direction,1)
+                near,normal,_,_ = tree.find_nearest(center)
+                samples.append({'ring':ring,'position_m':list(center),
+                    'skin_occluded':hit is not None and distance < .99995,
+                    'signed_nearest_skin_m':(center-near).dot(normal)})
+            records.append(samples)
+        results.append({'view':name,'strands':records,
+            'occluded_counts':[sum(s[k]['skin_occluded'] for s in records) for k in range(3)]})
+    body.to_mesh_clear()
+    lashes.to_mesh_clear()
+    assert hashlib.sha256(source.read_bytes()).hexdigest()==digest
+    (destination/'occlusion.json').write_text(json.dumps({'source_sha256':digest,
+        'views':results,'scope':'skin-only rays, not full scene visibility'},indent=2))
+    print('LASH_OCCLUSION',[(r['view'],r['occluded_counts']) for r in results])
+
+
 def lighting_state(scene):
     """Capture illumination and color management independently of camera poses."""
     world = scene.world
@@ -555,7 +592,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
-                 skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False):
+                 skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
+                 lash_isolation=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -569,6 +607,15 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if lash_isolation:
+        for obj in scene.objects:
+            if obj.type in ('MESH','CURVES'):
+                obj.hide_render = obj.name != 'Study_rooted_lashes'
+        p = bpy.data.objects['Study_rooted_lashes'].data.materials[0].node_tree.nodes.get('Principled BSDF')
+        p.inputs['Emission Color'].default_value = (1,.5,.1,1)
+        p.inputs['Emission Strength'].default_value = 1
+        changes.append({'experiment':'isolated emissive lash visibility diagnostic',
+            'limitation':'not final material or full-scene appearance'})
     if lash_strands:
         changes.append(construct_lash_strands(source,destination))
         bpy.ops.wm.save_as_mainfile(filepath=str(destination/'lash-strands.blend'))
@@ -850,6 +897,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     if skin_detail or skin_normals or skin_subdivision or lash_fit or lash_strands:
         views.append(('skin-cheek',eye_center+Vector((-.035,-.005,-.035)),
                       Vector((-.15,-1,0)),.075))
+    if lash_isolation:
+        views = [('isolated-lashes',eye_center,Vector((0,-1,0)),.12)]
     if groom_pose:
         target = eye_center + Vector((0,0,.03))
         views = [('head-turned', target, Vector((0,-1,.05)),.38),
@@ -909,6 +958,12 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--lash-isolation-review':
+    review_saved(Path(args[0]),Path(args[1]),lash_isolation=True)
+    sys.exit(0)
+if len(args) == 3 and args[2] == '--lash-occlusion':
+    audit_lash_occlusion(Path(args[0]),Path(args[1]))
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--lash-strands-review':
     review_saved(Path(args[0]),Path(args[1]),lash_strands=True)
     sys.exit(0)
