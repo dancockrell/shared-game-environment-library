@@ -995,6 +995,27 @@ surface collision proof. 32 ordinary Python tests passed, one Blender-only
 test skipped; the actual Blender audit exited zero (measurement completed,
 not collision acceptance). No push, Actions or paid service used.
 
+**Finite-radius clearance correction:** Revision 07 reserves each ring's actual
+radius plus 20 micrometres against nearest skin, re-querying after displacement
+for up to four iterations and rejecting unresolved clearance. Fresh saved-mesh
+audit `lash-surface-07/occlusion.json` measures **zero negative distances among
+6,624 vertices**, minimum 22.354764 micrometres. Front/oblique center occlusion
+remains 0/0/0 and 53/0/0. This fixes the measured vertex penetration only, not
+between-vertex surface intersection or posed collision. Actual whole-eye render
+inspected: preserves revision 06 appearance; regular lashes and dark eye rim
+remain art defects. Next investigate the rim and eye/skin interface rather
+than treating this small clearance fix as a face-quality breakthrough.
+
+Render exited zero in 55.50 seconds under CPU/two-thread, 100-second/3-GiB
+guards. Peak-memory aggregation overflowed Int32, so its reported peak is
+invalid; use explicitly Int64 operands in subsequent job monitoring. Separate
+guard comparisons remained active. Relative output was written by Blender to
+`C:/procedural/generated/reviews/cyberpunk-adult-002/lash-strands-07/whole-eye.png`;
+that exact file was recovered into the review directory without overwriting
+another file. The review caller now resolves input/output paths absolutely
+before opening Blender data. 32 tests pass, one Blender-only skip. No final
+art, game export, publication or arbitrary-pose acceptance is claimed.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

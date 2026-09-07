@@ -145,6 +145,18 @@ def construct_lash_strands(source, destination):
                 front_hit,_,_,_ = surface.ray_cast(Vector((position.x,-1,position.z)),Vector((0,1,0)),2)
                 if front_hit is not None:
                     position.y = min(position.y,front_hit.y-.00015)
+                # Reserve the complete ring radius, not just center clearance.
+                # Re-query after projection because the nearest triangle may
+                # change around the eyelid. Bound iteration and reject failure.
+                radius = .000045*(.85+.15*math.sin(i*2.1))*(1-.95*u)
+                for clearance_iteration in range(4):
+                    near,skin_normal,_,_ = surface.find_nearest(position)
+                    clearance = (position-near).dot(skin_normal)
+                    if clearance >= radius+.00002:
+                        break
+                    position += skin_normal*(radius+.000025-clearance)
+                near,skin_normal,_,_ = surface.find_nearest(position)
+                assert (position-near).dot(skin_normal) >= radius+.000019
                 centers.append(position)
             root_record['corrected_centers_m'] = [list(p) for p in centers]
             for k,position in enumerate(centers):
@@ -688,6 +700,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
                  opening_overlay=False):
     """Review saved geometry; record every optional experimental modification."""
+    # Blender interprets render-relative paths differently from pathlib.
+    source, destination = source.resolve(), destination.resolve()
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     bpy.ops.wm.open_mainfile(filepath=str(source))
