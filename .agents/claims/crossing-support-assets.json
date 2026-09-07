@@ -7,6 +7,8 @@
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-07T14:00:00Z",
   "paths": [
+    "tools/benchmark-character-physics.ps1",
+    "tools/retarget-dependencies/",
     "tools/iterate-character-build.ps1",
     "tools/character-workshop.gd",
     "tools/test-character-workshop.gd",
@@ -28,7 +30,7 @@
   "coordination": {
     "depends_on": [],
     "conflicts_with": [],
-    "notes": "Narrow read-only build-review panel added to existing Workshop and focused tests. Owner task Pirate Island Work verified notLoaded with interrupted prior turn; tracked editor files clean before integration. Preserve all compiler, body, fitting and export behavior; no solver edits or second editor."
+    "notes": "Owner Pirate Island Work verified notLoaded/interrupted. Extend its clean benchmark watchdog with pinned prerequisite provisioning and CMake toolchain wiring; preserve author solver and OpenVDB sources. Existing Workshop review integration remains narrow; no second editor or solver."
   },
   "completion": {
     "commit": null,

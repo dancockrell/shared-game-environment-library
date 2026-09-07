@@ -1368,6 +1368,40 @@ install command will not fix the previously measured Boost gate. Nothing was
 installed, no compiler/solver/render was started, and no new garment result
 was produced in this investigation. Existing failed fits remain rejected.
 
+**Pinned provisioning checkpoint:** `tools/benchmark-character-physics.ps1`
+now accepts `-Vcpkg <exe> -InstallRetargetDependencies`, with optional
+`-DependencyDryRun`, alongside its existing CPU `-RetargetSource` and `-Python`
+inputs. It consumes `tools/retarget-dependencies/vcpkg.json`, pinned to the
+verified vcpkg `2024.03.25` tag commit, for Boost iostreams, TBB, Blosc and zlib.
+The author OpenVDB stays outside this manifest. Install/build/package outputs
+use `~/.cache/cf/dependencies`, not the Visual Studio installation or source
+tree. For subsequent configuration, supply `-Vcpkg` and `-CMake` without the
+install switch: the existing runner supplies the toolchain and installed root,
+with implicit manifest installation disabled. Configuration with this wiring
+has not yet passed; dependencies must finish first.
+
+The same watchdog controls provisioning: one vcpkg build at a time, existing
+2-GiB process-tree and timeout limits, plus a newly sampled 8-GiB free-system-RAM
+floor during execution. This new pressure branch is not fault-injected yet.
+Receipts distinguish dependency resolution/installation from solver execution
+and preserve manifest hash, executable version and child thread settings.
+Microsoft's [manifest instructions](https://learn.microsoft.com/en-us/vcpkg/concepts/manifest-mode)
+describe the installation entry point; no dependency binaries are committed.
+
+Dry run `20260907T123125390Z-vbd` resolved the package graph successfully in
+30.25 seconds. Its purpose label predates the explicit dependency wording;
+the recorded `--dry-run` invocation is authoritative. Actual installation
+`20260907T123220526Z-vbd` exited 1 after 32.53 seconds with sampled process-tree
+peak 288.25 MiB. The old installed helper script requests
+`mingw-w64-x86_64-pkgconf-1~2.1.0-1-any.pkg.tar.zst`; all six mirrors returned
+404 during zstd packaging. Only vcpkg CMake helper packages were registered.
+The owned process IDs were absent after completion. This is not a solver or
+art result. Next resolve the package-manager helper runtime (or a verified
+compatible pkg-config executable via its documented `PKG_CONFIG` override),
+not a new cloth method or weakened checksum. Parser and two invalid-input
+rejection checks pass; toolchain configuration and full installation remain
+unverified. No engine, render, push or Actions was invoked.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
