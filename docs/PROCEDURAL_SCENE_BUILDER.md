@@ -1283,6 +1283,19 @@ not tested in this checkpoint. Python tests: 34 passed, one skip. The 3-mm colla
 render remains pending; shared free memory was volatile, so no heavy retry here.
 No unrelated processes touched, paid operations, push or Actions.
 
+**Live memory guard exercised:** Pending 3-mm collar attempt in
+`collar-clearance-03` again stopped when shared free memory crossed the floor;
+no completed render/visual comparison is claimed. Existing iteration runner
+negative test `20260907T121252895Z-2dc0d052` used NoRender and a deliberately
+small ProcessMemoryMiB=256 cap. Wardrobe 41, textiles 14 and sewing 31 assertions
+passed; build-1 was stopped with started=true, passed=false,
+stopReason=process-memory, sampled working set 289,648,640 bytes. This verifies
+live owned-process termination and truthful failed receipt, not a successful
+character build. Sampling permits overshoot; this is not a hard OS memory quota.
+Process inspection found only a separately existing prior-day keep-open pastry
+preview, which was left untouched. Partial outputs remain as failed evidence.
+No new asset acceptance, push or Actions.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
