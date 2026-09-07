@@ -1,5 +1,11 @@
 # Town Green South 01
 
+## Revision 02 — active review source
+
+source-02.png supersedes source-01.png for placement review, not deletion. Built-in edit, same dimensions. Visually inspected: lower clipped hedge runs now read distinctly from tree canopies; center remains open. Camera/style largely preserved. No additional inhabitants or structures. Exact edit prompt:
+
+Edit this Town Green South pixel-art game background. Preserve the fixed high three-quarter camera, image dimensions, finely clustered pixel-art style, green palette, broad central grass area, daylight and foreground opening. Change ONLY the perimeter landscaping to read as a maintained medieval town park rather than deep woodland: reduce overlapping tree crowns, retain several mature broadleaf shade trees with visible individual trunks, replace dense irregular undergrowth with clearly recognizable low dense clipped leafy hedges in separated runs. Keep generous gaps so the park does not become a sealed hedge enclosure. Preserve grass passage out of the foreground between trees. Do not add buildings, benches, statues, fountains, signs, fences, people, birds, text, UI, water or new roads. Detailed elegant pixel art, not blurry painting, no 3D toy diorama. Keep center available for independently rendered characters.
+
 2026-09-07, built-in image generation. No external paid API. Raw source preserved as source-01.png; hash and original room evidence in room.json. No reference image supplied on this generation.
 
 ## Review

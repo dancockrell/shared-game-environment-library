@@ -1,7 +1,7 @@
 {
   "schemaVersion":1,"id":"dr-1-16","title":"The Crossing, Town Green South","status":"candidate","runtimeAdmission":false,
   "source":{"game":"DragonRealms","roomBinding":"1-16","descriptionId":"1::Town Green South","descriptionHash":"a0e1b5cd1070402b","description":"A gap in the stand of lunat trees leads south into Lunat Shade Road. In that general direction lie Berolt's Dry Goods, the Town Hall, the soaring presence of the Temple, the Provincial Bank and other key structures. A few loafers loll on the grass, watching those entering and leaving the Green. Sparrows, jays and other birds call to one another from the treetops, flitting back and forth between their nests and roosts in the dense hedges bordering the park.","evidence":"DR Companion room-prompts-priority.json and src/data/map/1.json room 16"},
-  "image":{"path":"source-01.png","width":1536,"height":1024,"sha256":"d655d11f11e245cb307f8758f86ccd1ba794e561839d154dabddb38591d3e8ef"},
+  "image":{"path":"source-02.png","width":1536,"height":1024,"sha256":"a2b74edc3770de5aff4869c205979443a2263febedef2676be8fc51ce4b3ab6a"},
   "coordinates":"normalized-image-top-left","camera":"fixed-high-three-quarter",
   "floor":[[0.28,0.31],[0.58,0.19],[0.69,0.30],[0.76,0.54],[0.53,0.66],[0.29,0.58]],
   "anchors":[
@@ -18,5 +18,5 @@
     {"direction":"northwest","command":"northwest","to":"1-225","presentation":"off-camera","anchor":null}
   ],
   "placementAuthority":"Artist-estimated ground polygon and anchors. No server-coordinate or image-compass claim.",
-  "limitations":["Reads partly as woodland rather than civic park; review before admission.","Lunat tree form is artistic interpretation, not established botany.","Foreground gap is illustrative; screen orientation of all six exits remains unreviewed.","People and birds omitted for separate future sprites.","Flat plate, no independently occluding foliage or time-of-day variants."]
+  "limitations":["Second source uses distinct clipped hedge runs; game-scale review still required.","Lunat tree form is artistic interpretation, not established botany.","Foreground gap is illustrative; screen orientation of all six exits remains unreviewed.","People and birds omitted for separate future sprites.","Flat plate, no independently occluding foliage or time-of-day variants."]
 }
