@@ -12,6 +12,57 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 
 
+def audit_lash_boundaries(source, destination):
+    """Expose existing strip boundaries with source correspondence, not guessed roots."""
+    destination.mkdir(parents=True,exist_ok=False)
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    bpy.ops.wm.open_mainfile(filepath=str(source))
+    lash = bpy.data.objects['Lashes01']
+    body = bpy.data.objects['Body03'].evaluated_get(bpy.context.evaluated_depsgraph_get())
+    skin = body.to_mesh()
+    tree = BVHTree.FromPolygons([body.matrix_world@v.co for v in skin.vertices],
+        [tuple(p.vertices) for p in skin.polygons])
+    evaluated = lash.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    mesh = evaluated.to_mesh()
+    assert len(mesh.vertices) == len(lash.data.vertices)
+    points = [evaluated.matrix_world@v.co for v in mesh.vertices]
+    edges = {}
+    for face in mesh.polygons:
+        ids = list(face.vertices)
+        for a,b in zip(ids,ids[1:]+ids[:1]):
+            key = tuple(sorted((a,b)))
+            edges[key] = edges.get(key,0)+1
+    adjacency = {}
+    for (a,b), count in edges.items():
+        if count == 1:
+            adjacency.setdefault(a,[]).append(b)
+            adjacency.setdefault(b,[]).append(a)
+    assert adjacency and all(len(v)==2 for v in adjacency.values()), 'Non-loop strip boundary'
+    unseen = set(adjacency)
+    loops = []
+    while unseen:
+        start = min(unseen)
+        order, previous, current = [],None,start
+        while current not in order:
+            order.append(current)
+            unseen.remove(current)
+            candidates = sorted(n for n in adjacency[current] if n != previous)
+            previous,current = current,candidates[0]
+        assert current == start
+        loops.append([{'vertex':i,'world_m':list(points[i]),
+            'skin_distance_m':tree.find_nearest(points[i])[3],
+            'weights':{lash.vertex_groups[g.group].name:g.weight for g in lash.data.vertices[i].groups}}
+            for i in order])
+    body.to_mesh_clear()
+    evaluated.to_mesh_clear()
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == digest
+    report = {'source_sha256':digest,'loops':loops,'source_unchanged':True,
+        'scope':'ordered strip perimeter, not yet classified into anatomical root/tip paths'}
+    (destination/'lash-boundaries.json').write_text(json.dumps(report,indent=2))
+    print('LASH_BOUNDARIES',[(len(loop),min(p['skin_distance_m'] for p in loop),
+        max(p['skin_distance_m'] for p in loop)) for loop in loops])
+
+
 def lighting_state(scene):
     """Capture illumination and color management independently of camera poses."""
     world = scene.world
@@ -745,6 +796,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--lash-boundaries':
+    audit_lash_boundaries(Path(args[0]),Path(args[1]))
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--lash-fit-review':
     review_saved(Path(args[0]),Path(args[1]),lash_fit=True)
     sys.exit(0)

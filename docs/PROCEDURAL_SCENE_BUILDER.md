@@ -815,6 +815,20 @@ curves, preserving anatomical upper/lower-lid distinctions and rig correspondenc
 The input hash is unchanged, 32 tests pass, and the bounded CPU job completed;
 no collision, pose or runtime export certification is implied.
 
+**Source lash boundary mapping:** `--lash-boundaries` inspects the preserved
+pre-fitting source lashes against the evaluated smooth skin and writes ordered
+boundary loops with original vertex IDs, world-space coordinates, nearest-skin
+distances and original bone weights. The actual run `lash-boundaries-01` finds
+four closed, degree-two perimeter loops of 32/30/32/30 vertices. Mirrored loop
+distance maxima are approximately 7.023/4.734 mm, with near-skin sections around
+0.010..0.45 mm. This supplies traceable source correspondence for root-path
+construction; it is not yet an anatomical upper/lower-lid classification or a
+finished lash generator. No source bytes change, no render is fabricated and no
+asset is admitted. The bounded single-thread inspection completed in under five
+seconds. Ordinary Python reports 32 passes/one Blender-only skip. Next classify
+the four root arcs, validate their location visually and derive tapered strands
+with interpolated root weights rather than use the rejected nearest-skin fit.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
