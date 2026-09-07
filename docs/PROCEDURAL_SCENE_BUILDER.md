@@ -1016,6 +1016,27 @@ another file. The review caller now resolves input/output paths absolutely
 before opening Blender data. 32 tests pass, one Blender-only skip. No final
 art, game export, publication or arbitrary-pose acceptance is claimed.
 
+**Eye-rim isolation:** Two explicit diagnostic modes in the existing saved-review
+caller establish the next failure source without changing the production
+candidate. `--eye-material-ids` replaces visible geometry materials with opaque
+unlit IDs (skin red, outer eyes cyan, other geometry purple; assignments recorded).
+`eye-material-ids-01/whole-eye.png` shows uninterrupted outer-eye coverage under
+the problematic band, not a separate visible lash strip or uncovered gap.
+Corneas are deliberately opaque in this diagnostic; it is not a beauty render.
+Then `--eye-shadow-diagnostic` changes only Body03.visible_shadow to false.
+Actual `eye-shadow-01/whole-eye.png` removes the broad black upper band, confirming
+body-cast shadow as its dominant source. The shadowless eye looks exposed and
+is **rejected as a production fix**. Preserve real lid shadow; next investigate
+scleral transport and the lid/tear interface with appropriate research rather
+than globally disabling shadows. Source hashes and lighting guards pass.
+
+Both CPU/two-thread jobs exited zero. ID render: 8.92 s, sampled peak process
+1,735,933,952 bytes; shadow diagnostic: 53.30 s, 1,765,277,696 bytes. Monitoring
+uses explicit Int64 peak operands, correcting the previous command's overflow.
+32 Python tests passed, one Blender-only skip; image inspection is diagnostic
+evidence, not character acceptance. No production source bytes, wardrobe solver,
+game exports, remote publication or Actions changed.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

@@ -698,7 +698,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
-                 opening_overlay=False):
+                 opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False):
     """Review saved geometry; record every optional experimental modification."""
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
@@ -714,6 +714,36 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if eye_shadow_diagnostic:
+        body = bpy.data.objects['Body03']
+        previous = body.visible_shadow
+        body.visible_shadow = False
+        changes.append({'experiment':'isolate body cast shadow at eye interface',
+            'object':body.name,'previous_visible_shadow':previous,
+            'visible_shadow':False,'limitation':'diagnostic only; not a production shadow fix'})
+    if eye_material_ids:
+        assignments = []
+        for obj in scene.objects:
+            if obj.type not in ('MESH','CURVE','CURVES') or obj.hide_render:
+                continue
+            color = ((1,.15,.15,1) if obj.name == 'Body03' else
+                     (0,.7,1,1) if obj.name.endswith('_outer') else
+                     (1,.7,0,1) if obj.name.endswith('_iris') else
+                     (.02,.02,.02,1) if obj.name.endswith('_pupil') else
+                     (.7,0,1,1))
+            material = bpy.data.materials.new('Diagnostic ID '+obj.name)
+            material.use_nodes = True
+            nodes = material.node_tree.nodes
+            nodes.clear()
+            output = nodes.new('ShaderNodeOutputMaterial')
+            emission = nodes.new('ShaderNodeEmission')
+            emission.inputs['Color'].default_value = color
+            material.node_tree.links.new(emission.outputs[0],output.inputs['Surface'])
+            obj.data.materials.clear()
+            obj.data.materials.append(material)
+            assignments.append({'object':obj.name,'color':list(color)})
+        changes.append({'experiment':'unlit opaque object IDs for eye interface',
+            'assignments':assignments,'limitation':'diagnostic only; cornea made opaque'})
     if opening_overlay:
         record = json.loads((source.parent.parent/'eye-opening-01/eye-opening.json').read_text())
         assert record['source_sha256']==digest
@@ -1099,7 +1129,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                 'textures': [{'name': n.image.name, 'size': list(n.image.size),
                     'color_space': n.image.colorspace_settings.name}
                     for n in mat.node_tree.nodes if n.type == 'TEX_IMAGE' and n.image]})
-    scene.cycles.samples = 24
+    scene.cycles.samples = 4 if eye_material_ids else 24
     scene.cycles.time_limit = 40
     scene.cycles.device = 'CPU'
     scene.render.threads_mode = 'FIXED'
@@ -1131,6 +1161,12 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--eye-shadow-diagnostic':
+    review_saved(Path(args[0]),Path(args[1]),whole_eye=True,eye_shadow_diagnostic=True)
+    sys.exit(0)
+if len(args) == 3 and args[2] == '--eye-material-ids':
+    review_saved(Path(args[0]),Path(args[1]),whole_eye=True,eye_material_ids=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--lash-strands-eye':
     review_saved(Path(args[0]),Path(args[1]),lash_strands=True,whole_eye=True)
     sys.exit(0)
