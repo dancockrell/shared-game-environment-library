@@ -657,6 +657,20 @@ Blender reported a 227.24 MB internal peak on the final view (not whole-process
 memory or VRAM). All 32 Python tests and whitespace checks pass. No paid service,
 Godot UI, catalog publication, push or Actions run was used.
 
+**Head attachment checkpoint:** `--groom-attachment-audit` extends this same
+caller with one shared head-bone transform for the guide object and growth mesh.
+It checks all 89,691 evaluated strand points across five local-axis head poses,
+preserves the input hash and restores the initial pose before saving. Initial
+`groom-attachment-01` failed the unchanged 50-micrometre rigidity gate: one pose
+departed by 103.37 micrometres. Revision 02 disables the redundant Surface Deform
+stage for this rigid shared-coordinate attachment (not for future deforming
+scalp fitting); maximum binding/pose error falls to 0.747 micrometres. The passed
+editable result is `groom-attachment-02/attached-groom.blend`. This proves bounded
+rigid head following, not scalp collision, secondary dynamics, facial morph
+following, game export or artistic completion. No new render was made in this
+attachment checkpoint; unchanged-rest geometry is measured, not a posed visual
+approval. The source groom and failed receipt remain preserved.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

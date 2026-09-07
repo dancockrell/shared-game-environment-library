@@ -12,6 +12,68 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 
 
+def attach_groom_audit(source, destination):
+    """Bind guide and growth coordinates together; test actual evaluated strands."""
+    from mathutils import Matrix
+    destination.mkdir(parents=True, exist_ok=False)
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    bpy.ops.wm.open_mainfile(filepath=str(source))
+    groom = bpy.data.objects['cyberpunk hair']
+    scalp = bpy.data.objects['cyber punk growth mesh']
+    rigs = {m.object for m in bpy.data.objects['Eyes'].modifiers if m.type == 'ARMATURE'}
+    assert len(rigs) == 1
+    rig = next(iter(rigs))
+    bone = rig.pose.bones['head']
+    def points():
+        bpy.context.view_layer.update()
+        obj = groom.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        assert len(obj.data.points) < 500000
+        return [obj.matrix_world @ p.position for p in obj.data.points]
+    baseline = points()
+    # Both guide and scalp coordinates move rigidly together in this study.
+    # Surface deformation is reserved for actual scalp-shape changes.
+    groom.modifiers['Surface Deform'].show_viewport = False
+    groom.modifiers['Surface Deform'].show_render = False
+    anchor = bpy.data.objects.new('Study_groom_head_attachment', None)
+    bpy.context.scene.collection.objects.link(anchor)
+    follow = anchor.constraints.new('COPY_TRANSFORMS')
+    follow.target, follow.subtarget = rig, bone.name
+    bpy.context.view_layer.update()
+    for obj in (groom, scalp):
+        original = obj.matrix_world.copy()
+        obj.parent = anchor
+        obj.matrix_parent_inverse = anchor.matrix_world.inverted()
+        obj.matrix_world = original
+    bound = points()
+    assert len(bound) == len(baseline)
+    bind_error = max((a-b).length for a,b in zip(bound, baseline))
+    rest_head = rig.matrix_world @ bone.matrix
+    saved = bone.matrix_basis.copy()
+    tests = []
+    try:
+        for axis, angle in [('X',.3), ('X',-.3), ('Y',.3), ('Z',.4), ('Z',-.4)]:
+            bone.matrix_basis = saved @ Matrix.Rotation(angle,4,axis)
+            actual = points()
+            assert len(actual) == len(bound), 'Pose changed groom topology'
+            transform = rig.matrix_world @ bone.matrix @ rest_head.inverted()
+            error = max((a-transform@b).length for a,b in zip(actual,bound))
+            tests.append({'axis':axis,'radians':angle,'maximum_error_m':error})
+    finally:
+        bone.matrix_basis = saved
+        bpy.context.view_layer.update()
+    worst = max([bind_error]+[t['maximum_error_m'] for t in tests])
+    receipt = {'source_sha256':digest,'points':len(bound),'binding_error_m':bind_error,
+        'poses':tests,'maximum_error_m':worst,'threshold_m':.00005,
+        'passed':worst <= .00005,'attachment':'shared head-bone transform for guides and growth mesh',
+        'limitations':['rigid hair only; no secondary motion','scalp fit and collision unvalidated',
+                        'Blender-only; no game export','source CC-BY-SA; research only']}
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == digest
+    (destination/'attachment-audit.json').write_text(json.dumps(receipt,indent=2))
+    assert receipt['passed'], 'Groom attachment rigid-motion gate failed'
+    bpy.ops.wm.save_as_mainfile(filepath=str(destination/'attached-groom.blend'))
+    print('GROOM_ATTACHMENT_PASS', worst)
+
+
 def append_demo_groom():
     """Quarantined CC-BY-SA author groom; never an admitted CC0 catalog asset."""
     from mathutils import Matrix
@@ -466,6 +528,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--groom-attachment-audit':
+    attach_groom_audit(Path(args[0]),Path(args[1]))
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--eye-pose-audit':
     audit_eye_motion(Path(args[0]),Path(args[1]))
     sys.exit(0)
