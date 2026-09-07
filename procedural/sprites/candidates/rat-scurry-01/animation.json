@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "title": "Rat scurry — candidate, not runtime approved",
+  "runtimeAdmission": false,
+  "image": {"path":"source-01.png","width":1254,"height":1254,"sha256":"d251d7cfb3177585d7fb88ac13f92bf871e6ab509d3f153a1b9fd6f2fd3d6f16"},
+  "fps": 6,
+  "scale": 0.25,
+  "anchorConvention": "body-ground estimate in frame-local source pixels",
+  "frames": [
+    {"rect":[0,0,627,627],"anchor":[404,400]},
+    {"rect":[627,0,627,627],"anchor":[329,426]},
+    {"rect":[0,627,627,627],"anchor":[410,303]},
+    {"rect":[627,627,627,627],"anchor":[340,335]}
+  ]
+}
