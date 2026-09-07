@@ -1037,6 +1037,30 @@ uses explicit Int64 peak operands, correcting the previous command's overflow.
 evidence, not character acceptance. No production source bytes, wardrobe solver,
 game exports, remote publication or Actions changed.
 
+**Sclera transport experiment (not a rim fix):** Read the complete Chiang,
+Kutz and Burley SIGGRAPH 2016 paper, [Practical and Controllable Subsurface
+Scattering for Production Path Tracing](https://disneyanimation.com/publications/practical-and-controllable-subsurface-scattering-for-production-path-tracing/).
+Its apparent-color/scattering-distance parameterization and path-traced approach
+motivate testing the existing renderer, not implementing a duplicate integrator.
+It supplies no anatomical sclera calibration. The attempted Blender manual fetch
+failed; do not claim it was read. The paper PDF is local research evidence, not
+an admitted redistributable asset.
+
+`--sclera-transport` modifies only the outer eye material's Principled scattering
+component: Random Walk, weight 1, scale 0.0005 m, RGB radius (1, 0.8, 0.6).
+These are explicitly artist-selected experimental distances. The corneal glass
+mix, geometry, camera, lights and body cast shadow remain; the mode rejects a
+shadow-disabled input. Actual `sclera-transport-01/whole-eye.png` inspected:
+the broad dark upper band persists. **Reject as a solution to the rim**; do not
+increase scattering merely to wash out contact shadow. Next measure lid/globe
+spacing and investigate the wet lid interface. This experiment does not prove
+scattering irrelevant or give physiological optical coefficients.
+
+CPU/two-thread render exited zero in 50.78 s, sampled process peak 1,698,770,944
+bytes. Source and lighting guards passed; 32 Python tests passed, one
+Blender-only skip. Full face, clothes, posed integration and game export remain
+unfinished. No push, Actions, paid service or new renderer dependency.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

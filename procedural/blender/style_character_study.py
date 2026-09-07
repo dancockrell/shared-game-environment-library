@@ -698,7 +698,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
-                 opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False):
+                 opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
+                 sclera_transport=False):
     """Review saved geometry; record every optional experimental modification."""
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
@@ -714,6 +715,21 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if sclera_transport:
+        material = bpy.data.materials['Study_sclera_limbus_cornea']
+        p = next(n for n in material.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+        before = {'method':p.subsurface_method,
+            'weight':p.inputs['Subsurface Weight'].default_value,
+            'scale':p.inputs['Subsurface Scale'].default_value,
+            'radius':list(p.inputs['Subsurface Radius'].default_value)}
+        p.subsurface_method = 'RANDOM_WALK'
+        p.inputs['Subsurface Weight'].default_value = 1
+        p.inputs['Subsurface Scale'].default_value = .0005
+        p.inputs['Subsurface Radius'].default_value = (1,.8,.6)
+        assert bpy.data.objects['Body03'].visible_shadow, 'Use shadowed candidate, not diagnostic'
+        changes.append({'experiment':'sclera random-walk scattering', 'before':before,
+            'after':{'method':'RANDOM_WALK','weight':1,'scale':.0005,'radius':[1,.8,.6]},
+            'limitation':'artist-selected test distances, not measured scleral optical coefficients'})
     if eye_shadow_diagnostic:
         body = bpy.data.objects['Body03']
         previous = body.visible_shadow
@@ -1161,6 +1177,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--sclera-transport':
+    review_saved(Path(args[0]),Path(args[1]),whole_eye=True,sclera_transport=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--eye-shadow-diagnostic':
     review_saved(Path(args[0]),Path(args[1]),whole_eye=True,eye_shadow_diagnostic=True)
     sys.exit(0)
