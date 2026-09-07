@@ -685,6 +685,18 @@ The two CPU renders completed within the 120-second/3-GiB process guard, with
 24 samples, two threads and below-normal priority. The input hash is unchanged;
 32 Python tests pass. No posed collision or export approval is implied.
 
+**Scalp isolation:** `--scalp-isolation-review` repeats the exact posed rear
+camera with only the author groom hidden. The actual `scalp-isolation-01` image
+retains the broad mottled scalp region, but loses the sharp short-strand nape
+fringe. Thus the broad patch belongs to the underlying head appearance, while
+the fringe belongs to groom coverage; neither should be diagnosed as solely a
+groom placement error. Next inspect the head's source texture and shader inputs
+before replacing its scalp treatment, then measure short-guide/root clearance.
+The existing source appearance is not final skin. This diagnostic changes no
+source asset or shader, preserves the input hash, completes in 15.21 seconds of
+reported render time and passes all 32 Python tests. It is evidence for the next
+revision, not an improved or admitted character.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

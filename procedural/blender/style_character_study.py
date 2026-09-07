@@ -375,7 +375,7 @@ def construct_fitted_eyes(eyes):
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
-                 demo_groom=False, groom_pose=False):
+                 demo_groom=False, groom_pose=False, scalp_isolation=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -388,6 +388,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if scalp_isolation:
+        bpy.data.objects['cyberpunk hair'].hide_render = True
+        changes.append({'experiment':'isolate underlying head without author groom',
+            'only_change':'cyberpunk hair hide_render=True'})
     if groom_pose:
         from mathutils import Matrix
         anchor = bpy.data.objects['Study_groom_head_attachment']
@@ -493,6 +497,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
         target = eye_center + Vector((0,0,.03))
         views = [('head-turned', target, Vector((0,-1,.05)),.38),
                  ('head-rear', target, Vector((0,1,.1)),.38)]
+        if scalp_isolation:
+            views = views[1:]
     if geometry_eye or eye_light:
         front = sorted([p for p in points if p.x > 0],key=lambda p:p.y)[:8]
         target = sum(front,Vector())/len(front)
@@ -542,6 +548,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--scalp-isolation-review':
+    review_saved(Path(args[0]),Path(args[1]),groom_pose=True,scalp_isolation=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--groom-pose-review':
     review_saved(Path(args[0]),Path(args[1]),groom_pose=True)
     sys.exit(0)
