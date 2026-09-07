@@ -900,6 +900,21 @@ pass; the bounded CPU render took 44.04 seconds, and ordinary Python reports
 32 passes/one Blender-only skip. No completed hair-rendering research claim or
 finished lash approval is made from this limited diagnostic.
 
+**Whole-eye representation comparison:** `--lash-curve-compare` reloads one
+saved input twice and renders the whole negative-X eye at 0.065 m orthographic
+scale. The second view replaces the evaluated mesh with 184 native curves/1,656
+points computed from exactly the mesh ring centers and measured radii, retaining
+the material. Both actual `lash-curve-compare-01` images were inspected. Native
+curves do not materially improve the result. The full view instead exposes the
+placement error: strands appear on the eyelid surface above/below the rim, not
+convincingly at the eye-opening edge. **Reject proximity-selected strip arcs as
+the root authority.** Next recover the actual eye-opening boundary from the body
+topology and verify it visually. Do not continue tuning coverage to compensate
+for this incorrect attachment. Curve output is an evaluated-pose diagnostic,
+not independently rigged. Both source/lighting guards pass; ordinary Python has
+32 passes/one Blender-only skip. Bounded CPU comparison completed without a push
+or runtime export claim.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

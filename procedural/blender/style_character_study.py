@@ -598,7 +598,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
-                 lash_isolation=False, raw_lashes=False):
+                 lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -612,6 +612,32 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if native_lashes:
+        original = bpy.data.objects['Study_rooted_lashes']
+        evaluated = original.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        mesh = evaluated.to_mesh()
+        assert len(mesh.vertices) == 184*36
+        curves = bpy.data.hair_curves.new('Study native lash centerlines')
+        curves.add_curves([9]*184)
+        radius = curves.attributes.get('radius') or curves.attributes.new('radius','FLOAT','POINT')
+        maximum_radius = 0
+        for strand in range(184):
+            for ring in range(9):
+                points = [evaluated.matrix_world@mesh.vertices[strand*36+ring*4+j].co for j in range(4)]
+                center = sum(points,Vector())/4
+                index = strand*9+ring
+                curves.points[index].position = center
+                radius.data[index].value = sum((p-center).length for p in points)/4
+                maximum_radius = max(maximum_radius,radius.data[index].value)
+        evaluated.to_mesh_clear()
+        obj = bpy.data.objects.new('Study_native_lashes',curves)
+        scene.collection.objects.link(obj)
+        curves.materials.append(original.data.materials[0])
+        original.hide_render = True
+        changes.append({'experiment':'native curves from evaluated mesh ring centers',
+            'curves':184,'points':1656,'maximum_radius_m':maximum_radius,
+            'material_unchanged':True,'limitation':'evaluated-pose derivative, not independently rigged'})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'native-lashes.blend'))
     if raw_lashes:
         changes.append({'experiment':'lash crop without denoising',
             'previous_denoising':scene.cycles.use_denoising,'denoising':False,
@@ -912,6 +938,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     if raw_lashes:
         views = [('skin-cheek',eye_center+Vector((-.035,-.005,-.035)),
                   Vector((-.15,-1,0)),.075)]
+    if whole_eye:
+        left = [p for p in points if p.x < 0]
+        target = sum(left,Vector())/len(left)
+        views = [('whole-eye',target,Vector((-.15,-1,0)),.065)]
     if groom_pose:
         target = eye_center + Vector((0,0,.03))
         views = [('head-turned', target, Vector((0,-1,.05)),.38),
@@ -971,6 +1001,12 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--lash-curve-compare':
+    root = Path(args[1])
+    root.mkdir(parents=True,exist_ok=False)
+    review_saved(Path(args[0]),root/'mesh',whole_eye=True)
+    review_saved(Path(args[0]),root/'curves',whole_eye=True,native_lashes=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--lash-raw-review':
     review_saved(Path(args[0]),Path(args[1]),raw_lashes=True)
     sys.exit(0)
