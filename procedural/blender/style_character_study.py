@@ -63,6 +63,102 @@ def audit_lash_boundaries(source, destination):
         max(p['skin_distance_m'] for p in loop)) for loop in loops])
 
 
+def construct_lash_strands(source, destination):
+    """Bounded tapered mesh strands rooted in measured source strip arcs."""
+    import math
+    audit_path = source.parent.parent/'lash-boundaries-01/lash-boundaries.json'
+    audit = json.loads(audit_path.read_text())
+    assert audit['source_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
+    arcs = []
+    for loop in audit['loops']:
+        eligible = [p['skin_distance_m'] < .0005 for p in loop]
+        start = next(i for i in range(len(loop)) if eligible[i] and not eligible[i-1])
+        arc = []
+        for offset in range(len(loop)):
+            i = (start+offset)%len(loop)
+            if not eligible[i]:
+                break
+            arc.append(loop[i])
+        assert len(arc)>=10
+        arcs.append(sorted(arc,key=lambda p:p['world_m'][0]))
+    lash = bpy.data.objects['Lashes01']
+    verts,faces,weights,records = [],[],[],[]
+    for arc in arcs:
+        center = sum((Vector(p['world_m']) for p in arc),Vector())/len(arc)
+        same_side = [a for a in arcs if (sum(p['world_m'][0] for p in a)>0)==(center.x>0)]
+        # Floating-point Vector averages are float32; compare with tolerance.
+        upper = center.z >= max(sum(p['world_m'][2] for p in a)/len(a) for a in same_side)-1e-6
+        count = 60 if upper else 32
+        lengths = [0.0]
+        for a,b in zip(arc,arc[1:]):
+            lengths.append(lengths[-1]+(Vector(b['world_m'])-Vector(a['world_m'])).length)
+        roots = []
+        for i in range(count):
+            fraction = (i+.5)/count
+            distance = fraction*lengths[-1]
+            j = next(j for j in range(len(arc)-1) if lengths[j+1]>=distance)
+            t = (distance-lengths[j])/(lengths[j+1]-lengths[j])
+            root = Vector(arc[j]['world_m']).lerp(Vector(arc[j+1]['world_m']),t)
+            w = {name:(1-t)*arc[j]['weights'].get(name,0)+t*arc[j+1]['weights'].get(name,0)
+                 for name in set(arc[j]['weights'])|set(arc[j+1]['weights'])}
+            total = sum(w.values())
+            assert total>0
+            w = {name:value/total for name,value in w.items()}
+            length = (.0045 if upper else .0025)*(.65+.35*math.sin(math.pi*fraction))
+            root_record = {'position_m':list(root),'weights':w,'length_m':length}
+            roots.append(root_record)
+            first = len(verts)
+            for k in range(9):
+                u = k/8
+                position = root+Vector(((fraction-.5)*length*.35*u,-length*u,
+                    (1 if upper else -1)*length*.35*u*u))
+                tangent = Vector(((fraction-.5)*.35,-1,(1 if upper else -1)*.7*u)).normalized()
+                side = tangent.cross(Vector((1,0,0))).normalized()
+                across = tangent.cross(side).normalized()
+                radius = .000035*(1-.95*u)
+                for s in range(4):
+                    angle = s*math.tau/4
+                    verts.append(position+radius*(math.cos(angle)*side+math.sin(angle)*across))
+                    weights.append(w)
+            for k in range(8):
+                for s in range(4):
+                    a = first+4*k+s
+                    b = first+4*k+(s+1)%4
+                    faces.append((a,b,b+4,a+4))
+            faces.append(tuple(first+s for s in reversed(range(4))))
+            faces.append(tuple(first+32+s for s in range(4)))
+        records.append({'upper':upper,'side':'positive_x' if center.x>0 else 'negative_x',
+            'source_root_vertices':[p['vertex'] for p in arc],'strands':roots})
+    assert sum(r['upper'] for r in records)==2 and len(verts)<10000
+    mesh = bpy.data.meshes.new('Study rooted lashes')
+    mesh.from_pydata(verts,[],faces)
+    mesh.update()
+    obj = bpy.data.objects.new('Study_rooted_lashes',mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    for name in sorted({name for w in weights for name in w}):
+        group = obj.vertex_groups.new(name=name)
+        for i,w in enumerate(weights):
+            if w.get(name,0)>0:
+                group.add([i],w[name],'REPLACE')
+    rig = next(m.object for m in lash.modifiers if m.type=='ARMATURE')
+    obj.modifiers.new('Inherited lash rig','ARMATURE').object = rig
+    material = bpy.data.materials.new('Study dark lash fibers')
+    material.use_nodes = True
+    p = material.node_tree.nodes.get('Principled BSDF')
+    p.inputs['Base Color'].default_value = (.012,.006,.004,1)
+    p.inputs['Roughness'].default_value = .4
+    mesh.materials.append(material)
+    for face in mesh.polygons:
+        face.use_smooth = True
+    lash.hide_render = True
+    (destination/'lash-strands.json').write_text(json.dumps({'arcs':records,
+        'source_sha256':audit['source_sha256'],'vertices':len(verts),'faces':len(faces)},indent=2))
+    return {'experiment':'source-rooted tapered lash mesh','vertices':len(verts),'faces':len(faces),
+        'strands':sum(len(r['strands']) for r in records),
+        'limitations':['root arc proximity heuristic requires review','rig pose and collision unvalidated',
+            'four-sided fibers; no game export validation']}
+
+
 def lighting_state(scene):
     """Capture illumination and color management independently of camera poses."""
     world = scene.world
@@ -445,7 +541,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
-                 skin_normals=False, skin_subdivision=False, lash_fit=False):
+                 skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -459,6 +555,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if lash_strands:
+        changes.append(construct_lash_strands(source,destination))
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'lash-strands.blend'))
     if lash_fit:
         body = bpy.data.objects['Body03']
         evaluated = body.evaluated_get(bpy.context.evaluated_depsgraph_get())
@@ -732,9 +831,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
-    if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals or skin_subdivision or lash_fit:
+    if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals or skin_subdivision or lash_fit or lash_strands:
         views = views[:1]
-    if skin_detail or skin_normals or skin_subdivision or lash_fit:
+    if skin_detail or skin_normals or skin_subdivision or lash_fit or lash_strands:
         views.append(('skin-cheek',eye_center+Vector((-.035,-.005,-.035)),
                       Vector((-.15,-1,0)),.075))
     if groom_pose:
@@ -796,6 +895,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--lash-strands-review':
+    review_saved(Path(args[0]),Path(args[1]),lash_strands=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--lash-boundaries':
     audit_lash_boundaries(Path(args[0]),Path(args[1]))
     sys.exit(0)

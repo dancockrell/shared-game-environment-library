@@ -829,6 +829,25 @@ seconds. Ordinary Python reports 32 passes/one Blender-only skip. Next classify
 the four root arcs, validate their location visually and derive tapered strands
 with interpolated root weights rather than use the rejected nearest-skin fit.
 
+**Rooted strand construction:** `--lash-strands-review` consumes the hash-matched
+boundary receipt, selects contiguous arcs within 0.5 mm of skin, and distinguishes
+upper/lower arcs by height within each side. It constructs 60 upper/32 lower
+strands per eye: 184 tapered four-sided tubes, 6,624 vertices, nine rings each,
+35-micrometre root radius, nominal upper/lower lengths 4.5/2.5 mm. Root positions,
+source IDs, interpolated normalized weights and lengths remain editable in
+`lash-strands.json`; original cards are hidden, not deleted. A fresh reload passes
+weight normalization and shows maximum rest-rig departure 0.121 micrometres.
+
+Both actual `lash-strands-01` views were inspected. The repeated card streaks are
+gone, but the replacement lashes are barely visible, so **the visual result is
+rejected**. Proximity alone does not certify that a root lies outside the lid;
+projection toward the camera also foreshortens the strands. Next measure root
+clearance and local lid direction before adjusting curl/visibility. Do not call
+these anatomical attachments or final lashes. The actual review exercised the
+new lighting guard successfully, and both input/review lighting records are
+preserved. Ordinary Python: 32 passed/one Blender-only skip. Bounded CPU render
+completed; no game export or posed collision validation.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
