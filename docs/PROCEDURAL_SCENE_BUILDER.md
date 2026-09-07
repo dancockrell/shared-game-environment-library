@@ -729,6 +729,18 @@ uniform scattering adjustment. The saved source is unchanged, CPU render took
 confirmed the skin-specific random-walk option; full manual fetch failed, so no
 claim of a newly completed paper review or calibrated skin model is made.
 
+**Diagnostic light revision:** `--skin-light-review` preserves skin and geometry
+and uses a neutral 0.45 m area key at (-0.8,-1.2,2.1), no colored rim/fill, and
+neutral world strength 0.04. Both actual closeups were inspected. The initial
+180 W key (`skin-light-01`) washes out the lit side; changing only power to 45 W
+(`skin-light-02`) retains more tonal detail and reveals nose, cheek and jaw form.
+The old soft lighting was concealing form, but the revised image still has a
+smooth mannequin-like surface, weak lip detail and no convincing fine skin
+response. This is a better diagnostic, not finished portrait lighting or skin.
+Use this fixed condition for the next surface-detail comparison; do not infer
+photorealism from stronger shadows. Both bounded CPU renders completed in about
+16 seconds, source hashes remained unchanged and all 32 Python tests passed.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

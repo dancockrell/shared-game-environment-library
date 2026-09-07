@@ -376,7 +376,7 @@ def construct_fitted_eyes(eyes):
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
-                 skin_transport=False):
+                 skin_transport=False, diagnostic_light=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -389,6 +389,28 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if diagnostic_light:
+        before = []
+        for obj in scene.objects:
+            if obj.type != 'LIGHT':
+                continue
+            before.append({'name':obj.name,'energy':obj.data.energy,
+                'color':list(obj.data.color),'size':obj.data.size,
+                'position':list(obj.location)})
+            obj.data.energy = 0
+        light = bpy.data.objects['Neutral portrait softbox']
+        light.data.energy = 45
+        light.data.color = (1,1,1)
+        light.data.size = .45
+        light.location = (-.8,-1.2,2.1)
+        light.rotation_euler = (Vector((0,0,1.55))-light.location).to_track_quat('-Z','Y').to_euler()
+        world = scene.world.node_tree.nodes['Background']
+        world.inputs[0].default_value = (.18,.18,.18,1)
+        world.inputs[1].default_value = .04
+        changes.append({'experiment':'neutral directional skin diagnostic','previous_lights':before,
+            'key_watts':45,'key_size_m':.45,'world_strength':.04,
+            'limitation':'diagnostic light, not final presentation or calibrated capture'})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'diagnostic-light.blend'))
     if skin_transport:
         mat = bpy.data.objects['Body03'].data.materials[0]
         p = next(n for n in mat.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
@@ -523,7 +545,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
-    if source_skin or skin_transport:
+    if source_skin or skin_transport or diagnostic_light:
         views = views[:1]
     if groom_pose:
         target = eye_center + Vector((0,0,.03))
@@ -580,6 +602,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--skin-light-review':
+    review_saved(Path(args[0]),Path(args[1]),diagnostic_light=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--skin-transport-review':
     review_saved(Path(args[0]),Path(args[1]),skin_transport=True)
     sys.exit(0)
