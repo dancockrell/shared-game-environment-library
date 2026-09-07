@@ -1,0 +1,18 @@
+{
+  "schemaVersion":1,"runtimeAdmission":false,
+  "title":"Field goblin restrained blink — candidate for DR gameplay review",
+  "fps":6,"scale":0.2,
+  "anchorConvention":"Same manual midpoint between planted shoes [166,533] in all trimmed frames; no rescaling",
+  "images":[
+    {"path":"cell_00_00.png","width":296,"height":556,"sha256":"69d4a0f23ffdf794ee83f418e6563a855e58d3400ec672d67ab35a1355bf1691"},
+    {"path":"cell_00_01.png","width":296,"height":556,"sha256":"1b79dbf9f71389b9b2a8a489bedd849a890686bf612e1773fb2d01f134638d58"},
+    {"path":"cell_01_00.png","width":296,"height":556,"sha256":"3e341e4b164d9ecf7d9e05cb92d0fedf1b48092b7d35b72ce4ff4b377f7f4096"},
+    {"path":"cell_01_01.png","width":296,"height":556,"sha256":"96cacaa608d0884d2ab5fc540ffe079d57d7d02e7785161515bec018e38703f2"}
+  ],
+  "frames":[
+    {"imageIndex":0,"rect":[0,0,296,556],"anchor":[166,533],"durationMs":2600},
+    {"imageIndex":1,"rect":[0,0,296,556],"anchor":[166,533],"durationMs":100},
+    {"imageIndex":2,"rect":[0,0,296,556],"anchor":[166,533],"durationMs":140},
+    {"imageIndex":3,"rect":[0,0,296,556],"anchor":[166,533],"durationMs":220}
+  ]
+}
