@@ -1,0 +1,15 @@
+{
+  "schemaVersion":1,"runtimeAdmission":false,"title":"Michael SE — rejected alternating-gait experiment","fps":6,"scale":0.079,
+  "images":[
+    {"path":"cell_00_00.png","sha256":"8b6e2acac8b870ab4eda9b7e55d86d57a59c131f0dc2b205517973d846298f5c","width":271,"height":507},
+    {"path":"cell_00_01.png","sha256":"4f0c8bcf74e466d2716ef7e8ede7cb1bbb95e2018ec0d88083aae46a30b3ea09","width":210,"height":492},
+    {"path":"cell_01_00.png","sha256":"dd8f04f670ee016c3881b13393584c20c51749915796c742ed4ebcd1ad495d6d","width":254,"height":504},
+    {"path":"cell_01_01.png","sha256":"4392b3c4ed67543720ee0db126f8f675239e683ac4519ea08a2216973f3e1999","width":210,"height":494}
+  ],
+  "frames":[
+    {"imageIndex":0,"rect":[0,0,271,507],"anchor":[152,493]},
+    {"imageIndex":1,"rect":[0,0,210,492],"anchor":[130,487]},
+    {"imageIndex":2,"rect":[0,0,254,504],"anchor":[132,493]},
+    {"imageIndex":3,"rect":[0,0,210,494],"anchor":[129,489]}
+  ]
+}

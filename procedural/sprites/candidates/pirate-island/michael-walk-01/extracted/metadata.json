@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 2,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    618,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      624,
+      1254
+    ],
+    [
+      0,
+      626,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        624,
+        618
+      ],
+      "trim_rect_in_cell": [
+        213,
+        57,
+        484,
+        564
+      ],
+      "source_trim_rect": [
+        213,
+        57,
+        484,
+        564
+      ],
+      "size": [
+        271,
+        507
+      ],
+      "rgba_sha256": "4e63a7dfda8f33ced1f565aa8050fc4508eb334f9a161b5c78b2ea6b09a3b33a",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "8b6e2acac8b870ab4eda9b7e55d86d57a59c131f0dc2b205517973d846298f5c"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        624,
+        0,
+        1254,
+        618
+      ],
+      "trim_rect_in_cell": [
+        141,
+        63,
+        351,
+        555
+      ],
+      "source_trim_rect": [
+        765,
+        63,
+        975,
+        555
+      ],
+      "size": [
+        210,
+        492
+      ],
+      "rgba_sha256": "542ff0b43615caefd4e8c3ff7e0813db76b083c94d99eec39aec517d6d322730",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "4f0c8bcf74e466d2716ef7e8ede7cb1bbb95e2018ec0d88083aae46a30b3ea09"
+    },
+    {
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        618,
+        626,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        233,
+        54,
+        487,
+        558
+      ],
+      "source_trim_rect": [
+        233,
+        672,
+        487,
+        1176
+      ],
+      "size": [
+        254,
+        504
+      ],
+      "rgba_sha256": "d99a38e3e3d0fc26e93a1f0e7ce6536c2a030eb0b1754435044aca2b5d678a31",
+      "components_before_filter": 3,
+      "components_kept": 3,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "dd8f04f670ee016c3881b13393584c20c51749915796c742ed4ebcd1ad495d6d"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        626,
+        618,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        140,
+        58,
+        350,
+        552
+      ],
+      "source_trim_rect": [
+        766,
+        676,
+        976,
+        1170
+      ],
+      "size": [
+        210,
+        494
+      ],
+      "rgba_sha256": "88420ed5b1903eb366b01c4276f1ee5e9f65e1f80443077059e608c097fc48ea",
+      "components_before_filter": 3,
+      "components_kept": 3,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "4392b3c4ed67543720ee0db126f8f675239e683ac4519ea08a2216973f3e1999"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\michael-walk-01\\corrected-source.png",
+  "source_sha256": "370f9080d5e2bd76be729adb08aa077a6ab5e0eb78971600d5c5ff23576c059a",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
