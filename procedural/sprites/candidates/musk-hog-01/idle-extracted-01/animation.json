@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "runtimeAdmission": false,
+  "title": "Musk hog restrained snout twitch and blink candidate",
+  "fps": 6,
+  "scale": 0.16,
+  "anchorConvention": "Manual body-ground estimate in trimmed source pixels, fixed scale",
+  "images": [
+    {"path":"cell_00_00.png","width":382,"height":337,"sha256":"f30db2b55dfdcf77be7d5cf726564a1672f07f909343b716a2167a0f88831e11"},
+    {"path":"cell_00_01.png","width":382,"height":337,"sha256":"4256634941cc9cba36cf7be75676bb3bebf6f6869a2d8647db5bfa74e8404c28"},
+    {"path":"cell_01_00.png","width":382,"height":338,"sha256":"bcff20ad89eb694fc9d9ce1f54abfd794309984ac401f7d37dd17f86bd5504f7"},
+    {"path":"cell_01_01.png","width":382,"height":338,"sha256":"6ab5c5756c6780f63fff09d55900a301273b021f1de97bd4bf8013963f30b0ad"}
+  ],
+  "frames": [
+    {"imageIndex":0,"rect":[0,0,382,337],"anchor":[205,312],"durationMs":2100},
+    {"imageIndex":1,"rect":[0,0,382,337],"anchor":[205,312],"durationMs":160},
+    {"imageIndex":2,"rect":[0,0,382,338],"anchor":[205,313],"durationMs":120},
+    {"imageIndex":3,"rect":[0,0,382,338],"anchor":[205,313],"durationMs":180}
+  ]
+}
