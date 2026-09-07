@@ -2,6 +2,25 @@
 
 ## Current authority and scope
 
+**Superseding presentation direction, 7 September 2026:** The user explicitly
+requests generated detailed illustrated pixel-art sprites and curated 2D
+animation instead of 3D for this game's presentation. Use the supplied Cattle
+Trail rider sheet as a style/workflow reference, not as DragonRealms content.
+The realistic cyberpunk 3D character benchmark is no longer a prerequisite for
+this task's game-art production. Stop retargeter/cloth research here unless
+explicitly needed again; retain code, studies, provenance and other owners'
+work. This decision does not silently change Pirate Island's separate authority.
+
+The active pipeline is approved reference -> sprite candidate -> clean alpha,
+frame/direction/action selection and stable foot anchors -> playback review ->
+admitted engine asset. A generated sheet is not automatically a valid animation.
+Keep graph topology, confirmed room transitions, typed tethers, live UI and game
+state authoritative; sprite motion is presentation only. Prefer single-subject,
+single-action inputs for video animation. No new paid-service authorization is
+implied. `procedural/sprites/candidates/adventurer-walk-01/GENERATION.md` records
+the first fantasy adaptation and its known defects; no runtime replacement yet.
+
+**Preserved historical 3D scope, not the current presentation mandate:**
 User direction, 6 September 2026: a Rust procedural generator, usable as Godot
 and Unity plugins, for item parts, items, rooms, buildings, landscape and towns.
 No neural network dependency, permanent server, paid services or unlicensed
@@ -1476,6 +1495,16 @@ for first execution, bound thread count below its configured 16, and separately
 inspect the generated SDF/body and garment output before using it on the adult
 cyberpunk target. Dependency installation remains partial and the corrected
 baseline still awaits adequate system memory.
+
+**Retarget dependency closeout at the sprite pivot:** Last background install
+`20260907T124948569Z-vbd` exited zero in 47.47 seconds. Core TBB was installed
+without optional hwloc/TBBBind after its old Autoconf helper returned 404;
+OpenVDB requests core TBB. The preceding 180-second batch timed out after
+retaining completed packages; its verified-terminal restart continued safely.
+These are prerequisite results only: no author retargeter configure/build/solve
+has passed. No vcpkg process remained at the pivot inspection. Preserve the
+manifest change as completed research setup; do not restart this direction
+automatically under the superseded 3D character objective.
 
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
