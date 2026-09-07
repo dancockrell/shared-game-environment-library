@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "status": "candidate",
   "runtimeAdmission": false,
+  "consumerAdmission": {"project":"DR Companion","commit":"fe601382","scope":"Reviewed static alive-prone pose only, selected by confirmed status. Shared generic admission remains separate."},
   "pose": "alive-prone",
   "identity": "wood troll",
   "direction": "southeast",
