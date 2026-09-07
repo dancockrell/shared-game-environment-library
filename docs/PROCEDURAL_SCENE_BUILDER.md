@@ -1441,6 +1441,42 @@ remain diagnostic cache data. The revised baseline has not been installed or
 security-certified. Resume the existing bounded install after RAM recovers,
 then verify the actual package versions before configuring the author source.
 
+**Read-only benchmark input audit while RAM is constrained:** No compiler was
+launched with free RAM below the existing 8-GiB floor. Inspected the actual
+`Goblin_Jacket/setup.json` and its six referenced inputs in the pinned author
+source. Avatar: 5,214 vertices/10,252 triangular faces, SHA-256
+`03c320122937e2e9e58b9ec3530a06ce25af224be3c0f021124259040c229fdb`.
+Puffer garment: 3,112 vertices/6,120 triangular faces, SHA-256
+`d08e3ce75080487a8fa947b97c2e61e77c992e84f01a5efbf142158ff958c500`.
+Neither has invalid indices, indexed edges with more than two incident faces,
+or inconsistent shared-edge orientation. Both are open: avatar 106 boundary
+edges, jacket 108. This is edge-incidence analysis, not vertex-manifold,
+self-intersection or geometric-degeneracy certification.
+
+The avatar has only 5,002 unique exact positions. Reindexing by position for
+analysis leaves 106 boundary edges and creates 210 edges with more than two
+incident faces. Therefore do not automatically weld or substitute this source
+as a certified closed signed-distance collider. The author example's own SDF
+construction needs evaluation; no source geometry was changed. The garment
+has no exact-position duplicates and no such edge-incidence problem.
+
+Each skeleton has 15 vertices and 14 edges. Textual directed-edge comparison
+differs; inspected `GarmentSolver::read_meshes` and `are_same_edges` establish
+the intended undirected comparison, followed by assigning the source edge
+array to the target. Reversed edge direction is not a reason to rewrite the
+example. The supplied weight matrix is 15 by 5,214, entirely finite and within
+[0,1]; every vertex column sums to exactly one in the numerical audit, with
+zero unweighted columns. Thus this particular example should use its supplied
+weights, not the missing-file distance fallback observed in another example.
+Original source joint indexing must survive any later adapter.
+
+These input checks make the first benchmark more interpretable; they do not
+prove solver feasibility or art quality. Preserve the unchanged author case
+for first execution, bound thread count below its configured 16, and separately
+inspect the generated SDF/body and garment output before using it on the adult
+cyberpunk target. Dependency installation remains partial and the corrected
+baseline still awaits adequate system memory.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
