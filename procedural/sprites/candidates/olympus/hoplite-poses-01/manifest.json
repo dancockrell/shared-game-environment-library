@@ -1,0 +1,49 @@
+{
+  "status": "candidate_not_runtime",
+  "generator": "built-in image_gen",
+  "files": [
+    {
+      "file": "combat-poses.png",
+      "source": "exec-486083ba-118e-40e7-a9d7-7c8bbf80c7ca.png",
+      "sha256": "29a88cbf7d1a41a0ab39f9b7885191cb9d949123f2b7adc2ae3cab4d52ce9483"
+    },
+    {
+      "file": "personality-poses.png",
+      "source": "exec-f7c52de9-c91b-463c-b455-80017d909eda.png",
+      "sha256": "af36cd7e421030afe041e9c64c4e1e6f2a863d8c5b88052e5e66bcb5fe1c3612"
+    },
+    {
+      "file": "rejected-checkerboard.png",
+      "source": "exec-11edd552-486f-494e-abac-a9db1ba00e05.png",
+      "sha256": "5781536cdf7c7673548584da89f623061dd412b34c6772dc67d8080d2cd4f8b9"
+    }
+  ],
+  "combat_actions": [
+    "upright_guard",
+    "low_guard",
+    "advance_a",
+    "advance_b",
+    "long_thrust",
+    "overhand_windup",
+    "overhand_strike",
+    "shield_bash",
+    "frontal_recoil",
+    "backstep",
+    "kneeling_recovery",
+    "victory"
+  ],
+  "personality_actions": [
+    "scan",
+    "equipment_adjust",
+    "pivot",
+    "exhausted_rest",
+    "kneeling_rise",
+    "rally"
+  ],
+  "review": {
+    "combat": "RGBA, diverse poses but grid overlap/clipping and equipment drift need correction; not sequence",
+    "personality": "RGB magenta, six static poses; rally spear crosses equal-row boundary; equipment-adjust pose does not visibly tighten correct strap",
+    "transparency_correction": "REJECTED: RGB painted checkerboard, not alpha; do not light-key ivory costume"
+  },
+  "admitted_clips": 0
+}

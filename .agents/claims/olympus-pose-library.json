@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "olympus-pose-library",
+  "agent": "Olympus",
+  "summary": "Share rich Hoplite pose candidates and explicit review status",
+  "status": "completed",
+  "claimed_at": "2026-09-07T15:53:15.999226+00:00",
+  "paths": [
+    "procedural/sprites/candidates/olympus/hoplite-poses-01/"
+  ],
+  "completion": {
+    "commit": null,
+    "checks": [
+      "Three raw source files copied with SHA256 provenance",
+      "RGB versus RGBA verified; false-alpha correction rejected",
+      "Native Godot six-pose chroma preview inspected",
+      "Local contribution only; no remote upload"
+    ]
+  }
+}
