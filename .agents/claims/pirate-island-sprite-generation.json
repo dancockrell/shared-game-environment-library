@@ -8,5 +8,5 @@
   "updated_at": "2026-09-07T16:00:00Z",
   "paths": ["procedural/sprites/candidates/pirate-island/"],
   "coordination": {"notes": "Shared local sprite area broadcast to eight product tasks. No other product assets edited. Built-in image generation only; no paid API fallback."},
-  "completion": {"commit": "26f5c1e", "checks": ["Generated sources visually inspected: candidate review only, not user approval", "Pillow dimensions and alpha checked: Michael RGBA passed; shoreline original and edit RGB failed transparency", "SHA256 recorded for all three preserved PNGs", "git diff --cached --check passed; commit secret scan passed", "Eight product coordination messages delivered", "Local generation checkpoint only; runtime extraction and animation not performed; no push"]}
+  "completion": {"commit": "dde0950", "checks": ["Six troop cutouts extracted using existing Cattle Trail helper; no components discarded and zero gutter warnings", "Source images, extraction bounds and hashes preserved", "Three male idle cutouts inspected and integrated by game commit 9df39f0", "Female cutouts pending visual review; no final art or animation approval", "52 Rust tests and actual headless island scene pass", "Local checkpoint; not pushed"]}
 }
