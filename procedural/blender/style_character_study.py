@@ -179,7 +179,7 @@ def construct_fitted_eyes(eyes):
                 'rigid eye attachment; eyelid contact and export not validated']}
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
-                 eye_light=False, render_review=True):
+                 eye_light=False, render_review=True, hair_texture=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -192,6 +192,24 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if hair_texture:
+        hair = bpy.data.objects['Hair_braid01']
+        material = hair.data.materials[0]
+        nodes, links = material.node_tree.nodes, material.node_tree.links
+        p = next(n for n in nodes if n.type == 'BSDF_PRINCIPLED')
+        incoming = list(p.inputs['Base Color'].links)
+        assert len(incoming) == 1 and incoming[0].from_node.type == 'MIX'
+        mix = incoming[0].from_node
+        assert mix.blend_type == 'MULTIPLY'
+        texture = next(n for n in nodes if n.type == 'TEX_IMAGE')
+        before = list(mix.inputs[7].default_value)
+        links.new(texture.outputs['Color'],p.inputs['Base Color'])
+        changes.append({'experiment':'restore original hair texture without dark dye',
+            'object':hair.name,'removed_linear_multiplier':before,
+            'image':texture.image.name,'size':list(texture.image.size),
+            'roughness_unchanged':p.inputs['Roughness'].default_value,
+            'limitation':'original texture contains baked highlights; not physical fiber shading'})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'hair-texture-study.blend'))
     if geometry_eye:
         changes.append(construct_fitted_eyes(eyes))
         bpy.ops.wm.save_as_mainfile(filepath=str(destination/'geometry-eye-study.blend'))
@@ -311,10 +329,11 @@ args = sys.argv[sys.argv.index('--') + 1:]
 if len(args) == 3 and args[2] == '--eye-pose-audit':
     audit_eye_motion(Path(args[0]),Path(args[1]))
     sys.exit(0)
-if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study', '--geometry-eye-build'):
+if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study', '--geometry-eye-build', '--hair-texture-study'):
     review_saved(Path(args[0]), Path(args[1]), args[2] == '--eye-study',
                  args[2] == '--layered-eye-study', args[2] in ('--geometry-eye-study','--geometry-eye-build'),
-                 args[2] == '--eye-light-study', args[2] != '--geometry-eye-build')
+                 args[2] == '--eye-light-study', args[2] != '--geometry-eye-build',
+                 args[2] == '--hair-texture-study')
     sys.exit(0)
 if len(args) != 2:
     raise ValueError('Expected source, fresh output directory and optional --review-only')

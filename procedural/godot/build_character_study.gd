@@ -29,7 +29,9 @@ func run() -> void:
 	recipe.outfit.morphs["Lean"] = 0.15
 	recipe.outfit.dyes["Formal top"] = "101820ff"
 	recipe.outfit.dyes["Formal bottom"] = "11131bff"
-	recipe.outfit.dyes["Hair"] = "141a23ff"
+	# The source is already dark hair. Multiplying it by near-black suppressed
+	# its strand detail in the inspected benchmark; white preserves source color.
+	recipe.outfit.dyes["Hair"] = "ffffffff"
 	var error: String = editor.apply_recipe(recipe)
 	if not error.is_empty():
 		push_error(error)

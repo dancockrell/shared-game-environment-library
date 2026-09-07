@@ -625,6 +625,38 @@ established by the small fixture.
 
 ### Adult cyberpunk character benchmark, 7 September 2026
 
+#### Hair source-detail checkpoint
+
+The active source braid has 4,771 vertices / 5,518 polygons and a CC0 diffuse
+atlas with visible fine strands and baked highlights. Its `.mhmat` names a
+litsphere-based appearance, not a calibrated physically based hair shader.
+The exported texture is 1024-square. Inspection of the actual Blender graph
+found its color multiplied by linear RGB approximately (0.0070, 0.0103, 0.0168),
+strongly suppressing the source detail.
+
+`--hair-texture-study` in the existing review caller bypasses only that dye
+multiplier, preserving mesh, alpha, roughness 0.85, camera and lights. All three
+`cyberpunk-adult-002/hair-texture-01` renders were inspected: fine texture is
+more visible, but the broad locks and baked shine remain unconvincing for the
+realism target. This is an improvement in source-detail retention, not final
+hair approval. The saved input remains unchanged and the receipt records the
+removed multiplier. The 28 Python tests and script compilation pass.
+
+The benchmark recipe now uses white hair tint to retain its already-dark source
+texture, rather than multiplying by another near-black color. A fresh headless
+canonical workshop export at `cyberpunk-adult-003/character.glb` was inspected:
+the hair material retains its texture and has baseColorFactor (1,1,1,1).
+This new GLB is the canonical base assembly, not a claim that the Blender optical
+studies, extra hardware or shader graph have been exported into it. No compiler
+or other character-owner implementation was changed.
+
+Research: [PBRT 4e, Scattering from Hair, geometry and scattering sections](https://pbr-book.org/4ed/Reflection_Models/Scattering_from_Hair).
+Its model distinguishes scattering along and around a fiber and includes internal
+transmission/absorption; a diffuse textured mesh does not reproduce those effects.
+No PBRT source was copied or new renderer introduced. Next hair construction
+needs explicit fiber directions and appropriate geometry before adopting a fiber
+shader; do not infer strand tangents blindly from unrelated atlas UV directions.
+
 #### Fixed-light inspection and eye hypothesis
 
 **Current optical binding checkpoint:** The earlier nearest-source weight transfer
