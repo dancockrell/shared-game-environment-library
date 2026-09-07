@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "task_id": "pirate-cthulhu-female-audit",
+  "agent": "Codex cthulhu_female",
+  "summary": "Audit existing ordinary female living cultist sprite and recruitment presentation contract",
+  "status": "completed",
+  "claimed_at": "2026-09-07T18:05:23Z",
+  "updated_at": "2026-09-07T18:09:00Z",
+  "paths": ["procedural/sprites/candidates/pirate-island/troops-01/CTHULHU-FEMALE-REVIEW.md"],
+  "coordination": {"depends_on": [], "conflicts_with": [], "notes": "Parent owns runtime integration. Colonial and pirate audits are separate agents. Read-only image inspection; no generation, asset modification, runtime edits or commit."},
+  "completion": {"commit": null, "checks": ["passed: live Pillow/NumPy/SciPy source dimensions, PNG and RGBA SHA256, alpha histogram, four-connected component count and visible magenta test", "passed: source-size visual review female and male cultist PNGs", "passed: claim JSON parse and git diff --check", "not_run: engine-scale rendered comparison; no visible Godot approval", "Parent instructed no agent commit; two new files handed off for integration commit"]}
+}
