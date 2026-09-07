@@ -973,6 +973,28 @@ The single-view job completed in 52.243 seconds, peak sampled process memory
 failure. Source/lighting guards pass. Ordinary Python: 32 passed/one Blender-only
 skip. No push, Actions, paid service or visible Godot lifecycle changes.
 
+**Lash grouping revision and finite-width failure:** Revision 06 varies length
+and radius and adds gentle three-strand grouping plus outward tip splay without
+changing measured contour roots. `--lash-strands-eye` constructs and renders
+only the complete eye, avoiding the unnecessary portrait render during local
+shape iteration. The recovered job is terminal with
+`CHARACTER_SAVED_REVIEW_PASS`; `lash-strands-06/whole-eye.png` was inspected.
+The fan and variation are visible but still too regular for final art; the
+hard dark eye rim and inadequate surrounding skin/brow treatment also remain.
+Do not interpret this as face or character approval.
+
+Fresh reload `lash-surface-06/occlusion.json` preserves the prior center-ray
+results (front 0/0/0, oblique 53/0/0). The evaluator now additionally checks
+every evaluated mesh vertex against the actual skin. This exposes **58 of
+6,624 vertices with negative signed clearance**, minimum -0.0000173267102923 m
+(about 17.33 micrometres penetration), despite the center-only pass. Preserve
+the failed evidence. Next correct finite-radius clearance along the existing
+strand construction, not merely the centerline; subsequently check intervening
+faces and meaningful poses. Nearest signed vertex distances are not a closed
+surface collision proof. 32 ordinary Python tests passed, one Blender-only
+test skipped; the actual Blender audit exited zero (measurement completed,
+not collision acceptance). No push, Actions or paid service used.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

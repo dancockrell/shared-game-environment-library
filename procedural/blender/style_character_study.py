@@ -121,7 +121,7 @@ def construct_lash_strands(source, destination):
             assert total>0
             w = {name:value/total for name,value in w.items()}
             length = (.006 if upper else .0035)*(.65+.35*math.sin(math.pi*fraction))
-            length *= .88+.12*math.sin(i*1.7+.4)
+            length *= .78+.22*math.sin(i*1.7+.4)
             # Skin normals near the rim can oppose the intended lid direction.
             # Use only their horizontal component; author upper/lower elevation.
             horizontal = Vector((normal.x,normal.y,0))
@@ -137,6 +137,11 @@ def construct_lash_strands(source, destination):
                 u = k/8
                 curl = Vector((0,0,.25 if upper else -.2))
                 position = root+length*(direction*u+curl*u*u)
+                # Three-strand groups converge gently near tips, with outward
+                # fan curvature; roots remain on the measured contour.
+                group_fraction = (3*(i//3)+1.5)/count
+                group_x = arc[0]['world_m'][0]+group_fraction*(arc[-1]['world_m'][0]-arc[0]['world_m'][0])
+                position.x += (.55*(group_x-root.x)+(fraction-.5)*length*.65)*u*u
                 front_hit,_,_,_ = surface.ray_cast(Vector((position.x,-1,position.z)),Vector((0,1,0)),2)
                 if front_hit is not None:
                     position.y = min(position.y,front_hit.y-.00015)
@@ -147,7 +152,7 @@ def construct_lash_strands(source, destination):
                 tangent = (centers[min(8,k+1)]-centers[max(0,k-1)]).normalized()
                 side = tangent.cross(Vector((1,0,0))).normalized()
                 across = tangent.cross(side).normalized()
-                radius = .000045*(1-.95*u)
+                radius = .000045*(.85+.15*math.sin(i*2.1))*(1-.95*u)
                 for s in range(4):
                     angle = s*math.tau/4
                     verts.append(position+radius*(math.cos(angle)*side+math.sin(angle)*across))
@@ -206,6 +211,13 @@ def audit_lash_occlusion(source,destination):
     lm = lashes.to_mesh()
     assert len(lm.vertices)==184*36
     points = [lashes.matrix_world@v.co for v in lm.vertices]
+    # Center samples can clear skin while the finite-width tube penetrates it.
+    # Inspect every evaluated vertex too; this still does not certify faces,
+    # intervening surface points, eye collisions, or arbitrary poses.
+    vertex_clearances = []
+    for point in points:
+        near,normal,_,_ = tree.find_nearest(point)
+        vertex_clearances.append((point-near).dot(normal))
     results = []
     for name,direction in [('front',Vector((0,-1,0))),('oblique',Vector((-.7,-1,0)).normalized())]:
         records = []
@@ -225,7 +237,12 @@ def audit_lash_occlusion(source,destination):
     lashes.to_mesh_clear()
     assert hashlib.sha256(source.read_bytes()).hexdigest()==digest
     (destination/'occlusion.json').write_text(json.dumps({'source_sha256':digest,
-        'views':results,'scope':'skin-only rays, not full scene visibility'},indent=2))
+        'views':results,
+        'mesh_vertex_clearance':{'count':len(vertex_clearances),
+            'negative_count':sum(value<0 for value in vertex_clearances),
+            'minimum_signed_m':min(vertex_clearances),
+            'signed_distances_m':vertex_clearances},
+        'scope':'skin-only rays and vertex distances, not full surface or scene visibility'},indent=2))
     print('LASH_OCCLUSION',[(r['view'],r['occluded_counts']) for r in results])
 
 
@@ -1037,7 +1054,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
         left = [p for p in points if p.x < 0]
         target = sum(left,Vector())/len(left)
         views = [('whole-eye',target,Vector((-.15,-1,0)),.065)]
-    if lash_strands:
+    if lash_strands and not whole_eye:
         left = [p for p in points if p.x < 0]
         target = sum(left,Vector())/len(left)
         views = views[:1]+[('whole-eye',target,Vector((-.15,-1,0)),.065)]
@@ -1100,6 +1117,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--lash-strands-eye':
+    review_saved(Path(args[0]),Path(args[1]),lash_strands=True,whole_eye=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--whole-eye-review':
     review_saved(Path(args[0]),Path(args[1]),whole_eye=True)
     sys.exit(0)

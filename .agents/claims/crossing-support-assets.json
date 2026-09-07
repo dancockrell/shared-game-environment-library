@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Evaluate licensed complete groom and head attachment in existing study caller; preserve canonical body and garment owner",
+  "summary": "Refine and evaluate actual character-study eye, lash and groom geometry in the existing Blender caller; preserve canonical body and garment owner",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-07T09:50:53Z",
@@ -25,7 +25,7 @@
   "coordination": {
     "depends_on": [],
     "conflicts_with": [],
-    "notes": "Character claim and uncommitted character files excluded; existing environment kit and catalog only."
+    "notes": "Study changes confined to procedural Blender caller and its canonical scene-builder documentation. Shared-character-workshop owns compiler, body sources, wardrobe fitting and export tools; those paths remain unchanged."
   },
   "completion": {
     "commit": null,
