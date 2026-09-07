@@ -1311,6 +1311,19 @@ run does not demonstrate a memory saving from disabling denoising. Preflight
 free memory was 19,487,868 KiB; prior stopped runs remain incomplete evidence.
 34 Python tests pass, one skip. No push, Actions, paid operation or source change.
 
+**Fit sampling subdivision rejected:** Optional `--refine` on the same collar
+operation adds one SIMPLE subdivision level before Shrinkwrap, preserving the
+source mesh and using the existing group/1.5-mm clearance. Actual
+`collar-clearance-05/back.png` inspected: slivers remain and jacket shading becomes
+uneven. Fresh `collar-interface-04` measures 49 skin-before-garment rays and 89
+uncovered, only marginally below the prior 52/89. Reject as production improvement;
+global garment densification does not solve the local collar constraint and
+adds a shading regression. Do not promote this optional study as a default.
+Next investigate explicit collar-region constraints/topology rather than another
+clearance or whole-garment density increase. CPU render 30.01 s, peak sampled
+process 2,963,664,896 bytes; 34 Python tests pass, one skip. Saved modifier stack
+and rejected evidence retained; no source changes, push, Actions or paid service.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
