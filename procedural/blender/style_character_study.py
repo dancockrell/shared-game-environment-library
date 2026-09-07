@@ -43,6 +43,12 @@ def construct_fitted_eyes(eyes):
     outer_mat.name = 'Study_sclera_limbus_cornea'
     nodes, links = outer_mat.node_tree.nodes, outer_mat.node_tree.links
     sclera = next(n for n in nodes if n.type == 'BSDF_PRINCIPLED')
+    # The legacy eye atlas includes a painted iris. Reusing it on the outer
+    # surface duplicates that iris beside the refracted internal one.
+    # Neutral pigment isolates region separation; vein synthesis is not yet here.
+    for link in list(sclera.inputs['Base Color'].links):
+        links.remove(link)
+    sclera.inputs['Base Color'].default_value = (.62,.60,.55,1)
     sclera.inputs['Roughness'].default_value = .22
     sclera.inputs['IOR'].default_value = 1.37
     glass = nodes.new('ShaderNodeBsdfGlass')
@@ -122,8 +128,10 @@ def construct_fitted_eyes(eyes):
     eyes.hide_render = True
     eyes.hide_set(True)
     return {'experiment':'continuous corneal cap and recessed iris', 'eyes':records,
+            'sclera_albedo_linear':[.62,.60,.55],
             'limitations':['generic analytic shape, not captured anatomy',
-                'projection retains baked source texture shading',
+                'iris projection retains baked source texture shading',
+                'neutral sclera lacks veins and regional pigmentation',
                 'rest weights copied; pose and export not validated']}
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,

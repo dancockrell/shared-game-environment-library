@@ -1,7 +1,7 @@
 import math
 import unittest
 from collections import Counter
-from eye_geometry import construct_eye
+from eye_geometry import construct_eye, hermite_profile
 
 
 class EyeGeometryTests(unittest.TestCase):
@@ -33,9 +33,24 @@ class EyeGeometryTests(unittest.TestCase):
     def test_cap_continuity_and_clearance(self):
         model = construct_eye()
         p = model['parameters']
-        a,b = p['cap_coefficients_m']
-        self.assertAlmostEqual(a+b, p['sag_m'])
-        self.assertAlmostEqual((2*a+4*b)/p['aperture_m'], p['boundary_slope'])
+        r = p['cap_radius_m']
+        self.assertAlmostEqual(r-math.sqrt(r*r-p['aperture_m']**2),p['sag_m'])
+        y0,y1,s0,s1,width = p['limbus_hermite']
+        self.assertEqual(hermite_profile(0,y0,y1,s0,s1,width),(y0,s0))
+        y,s = hermite_profile(1,y0,y1,s0,s1,width)
+        self.assertAlmostEqual(y,y1)
+        self.assertAlmostEqual(s,s1)
+        self.assertTrue(all(hermite_profile(k/64,y0,y1,s0,s1,width)[1]>0 for k in range(65)))
+        # A spherical clear aperture has positive meridional curvature;
+        # the retired quartic failed this near its edge despite passing C1.
+        for k in range(101):
+            x = p['aperture_m']*k/100
+            self.assertGreater(r*r/(r*r-x*x)**1.5,0)
+        cap = [model['outer']['vertices'][0]] + [
+            model['outer']['vertices'][1+k*p['segments']] for k in range(12)]
+        slopes = [(b[1]-a[1])/(b[0]-a[0]) for a,b in zip(cap,cap[1:])]
+        self.assertTrue(all(b>a>0 for a,b in zip(slopes,slopes[1:])),
+                        'Actual clear-cap mesh must not reverse curvature')
         self.assertGreaterEqual(model['minimum_axial_iris_clearance_m'], .0001)
         for part in ('outer','iris','pupil'):
             self.assertTrue(all(math.isfinite(v) for p in model[part]['vertices'] for v in p))

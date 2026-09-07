@@ -627,6 +627,41 @@ established by the small fixture.
 
 #### Fixed-light inspection and eye hypothesis
 
+**Current curvature/region revision (supersedes the quartic below):** The clear
+aperture now uses a spherical cap derived from the existing aperture and sag,
+with positive meridional curvature. A Hermite band outside that aperture connects
+it to the globe with matching endpoint positions and tangents; the limbus opacity
+transition occupies that band. The old quartic passed positional/tangent checks
+but reversed curvature within the transmitting region. It is retired, not kept
+as a second production mode. Regression checks now examine the actual cap mesh's
+increasing radial slopes, not merely a formula or watertightness.
+
+`geometry-eye-04` retains baseline lights and textures and replaces only the
+profile/transition construction. Inspected face/front/oblique renders show the
+previous oblique reflection streak becoming rounded. The doubled iris outline
+remained. `geometry-eye-05` then removes the original painted-iris atlas from
+the outer sclera's base color only; the recessed iris still uses it. All three
+revision-05 views were inspected; frontal and oblique close-ups no longer show
+the duplicate colored outline. Neutral sclera is an
+explicit incomplete material: it lacks veins and regional pigmentation and must
+not be presented as final realism. Parameters and neutral linear albedo are
+included in the saved study receipt. No source mesh/compiler change or admission.
+
+Research read: [Berard et al., Lightweight Eye Capture Using a Parametric Model,
+2016](https://la.disneyresearch.com/publication/parametereyes/), sections 4–7,
+including eyeball fitting, iris synthesis and vein construction. Its eye-shape
+prior is fitted from captured examples; we have not obtained or licensed that
+dataset and do not claim to reproduce its learned model. Its separate treatment
+of limbus, iris and sclera supports region-specific inputs. The vein method uses
+branching curves with varying thickness/depth and a learned appearance model;
+that is a candidate for subsequent work, not an implemented feature. The local
+PDF is a read-only research cache, excluded from Git and not redistributed.
+
+All 28 Python tests pass. Fresh Blender reload of revision 05 confirms six eye
+meshes / 14,022 vertices, normalized weights, armature references, and an unlinked
+outer base-color input. Source-hash checks remain in the renderer. These do not
+prove pose fit, eyelid contact, export parity, or human anatomical accuracy.
+
 **Separated-geometry checkpoint:** `eye_geometry.py`, called by the existing
 Blender character study's `--geometry-eye-study`, now constructs a closed outer
 eye with named sclera/limbus/cornea regions, a recessed annular iris, and separate

@@ -6,6 +6,15 @@ are separate internal surfaces. The caller supplies fitted placement and UVs.
 import math
 
 
+def hermite_profile(t, y0, y1, slope0, slope1, width):
+    """Position and radial slope of a finite transition band."""
+    y = (2*t**3-3*t*t+1)*y0 + (t**3-2*t*t+t)*width*slope0
+    y += (-2*t**3+3*t*t)*y1 + (t**3-t*t)*width*slope1
+    slope = ((6*t*t-6*t)*y0 + (3*t*t-4*t+1)*width*slope0
+             + (-6*t*t+6*t)*y1 + (3*t*t-2*t)*width*slope1)/width
+    return y, slope
+
+
 def construct_eye(radius=0.015, aperture=0.0058, sag=0.0023,
                   iris_depth=0.0003, segments=96):
     values = (radius, aperture, sag, iris_depth)
@@ -17,20 +26,31 @@ def construct_eye(radius=0.015, aperture=0.0058, sag=0.0023,
     if type(segments) is not int or not 32 <= segments <= 192:
         raise ValueError('Eye tessellation outside bounded study envelope')
     depth = radius * 0.9
-    theta0 = math.asin(aperture/radius)
-    # Quartic cap: apex slope=0, boundary position and slope match ellipsoid.
-    slope = depth*aperture/(radius*radius*math.cos(theta0))
-    a = 2*sag - slope*aperture/2
-    b = slope*aperture/2 - sag
-    if a <= 0 or 2*a+4*b <= 0:
-        raise ValueError('Corneal cap would fold')
-    center_y = sag + depth*math.cos(theta0)
+    if sag >= aperture:
+        raise ValueError('Corneal cap must remain below a hemisphere')
+    # Preserve apex/aperture/sag, but remove the old quartic's central
+    # curvature reversal. Blend to sclera OUTSIDE the clear aperture.
+    cap_radius = (aperture*aperture+sag*sag)/(2*sag)
+    cap_slope = aperture/(cap_radius-sag)
+    blend_radius = aperture*1.15
+    theta0 = math.asin(blend_radius/radius)
+    center_y = sag + depth*math.sqrt(1-(aperture/radius)**2)
+    end_y = center_y-depth*math.cos(theta0)
+    end_slope = depth*blend_radius/(radius*radius*math.cos(theta0))
+    width = blend_radius-aperture
+    blend_args = (sag,end_y,cap_slope,end_slope,width)
+    if min(hermite_profile(k/64,*blend_args)[1] for k in range(65)) < 0:
+        raise ValueError('Limbus transition would reverse its axial slope')
     verts, weights = [(0., 0., 0.)], [1.]
     rings = []
     for k in range(1, 13):
         t = k/12
-        rings.append((aperture*t, a*t*t+b*t**4,
-                      1 if t <= 0.85 else 1-((t-.85)/.15)**2*(3-2*(t-.85)/.15)))
+        r = aperture*t
+        rings.append((r,cap_radius-math.sqrt(cap_radius*cap_radius-r*r),1.))
+    for k in range(1,9):
+        t = k/8
+        rings.append((aperture+t*width,hermite_profile(t,*blend_args)[0],
+                      1-t*t*(3-2*t)))
     for k in range(1, 36):
         angle = theta0+(math.pi-theta0)*k/36
         rings.append((radius*math.sin(angle), center_y-depth*math.cos(angle), 0.))
@@ -78,5 +98,7 @@ def construct_eye(radius=0.015, aperture=0.0058, sag=0.0023,
                                                for j in range(segments)]},
             'parameters': {'radius_m':radius,'aperture_m':aperture,'sag_m':sag,
                 'iris_depth_m':iris_depth,'segments':segments,
-                'cap_coefficients_m':[a,b], 'boundary_slope':slope},
+                'profile':'spherical clear cap with external Hermite limbus',
+                'cap_radius_m':cap_radius,'limbus_radius_m':blend_radius,
+                'limbus_hermite':[sag,end_y,cap_slope,end_slope,width]},
             'minimum_axial_iris_clearance_m':min(v[1]-sag for v in iris)}
