@@ -64,23 +64,29 @@ def audit_lash_boundaries(source, destination):
 
 
 def construct_lash_strands(source, destination):
-    """Bounded tapered mesh strands rooted in measured source strip arcs."""
+    """Bounded tapered strands rooted in the verified visible eye contour."""
     import math
-    audit_path = source.parent.parent/'lash-boundaries-01/lash-boundaries.json'
+    from mathutils.kdtree import KDTree
+    audit_path = source.parent.parent/'eye-opening-01/eye-opening.json'
     audit = json.loads(audit_path.read_text())
     assert audit['source_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
     arcs = []
-    for loop in audit['loops']:
-        eligible = [p['skin_distance_m'] < .0005 for p in loop]
-        start = next(i for i in range(len(loop)) if eligible[i] and not eligible[i-1])
-        arc = []
-        for offset in range(len(loop)):
-            i = (start+offset)%len(loop)
-            if not eligible[i]:
-                break
-            arc.append(loop[i])
-        assert len(arc)>=10
-        arcs.append(sorted(arc,key=lambda p:p['world_m'][0]))
+    source_body = bpy.data.objects['Body03']
+    nearest = KDTree(len(source_body.data.vertices))
+    for v in source_body.data.vertices:
+        nearest.insert(source_body.matrix_world@v.co,v.index)
+    nearest.balance()
+    for eye in audit['eyes']:
+        for label in ('upper','lower'):
+            arc = []
+            for row in eye['rows']:
+                position = Vector(row[label]['world_m'])
+                _,index,distance = nearest.find(position)
+                assert distance < .005
+                vertex = source_body.data.vertices[index]
+                arc.append({'world_m':list(position),'vertex':index,
+                    'weights':{source_body.vertex_groups[g.group].name:g.weight for g in vertex.groups}})
+            arcs.append(arc)
     lash = bpy.data.objects['Lashes01']
     verts,faces,weights,records = [],[],[],[]
     body = bpy.data.objects['Body03'].evaluated_get(bpy.context.evaluated_depsgraph_get())
@@ -146,7 +152,7 @@ def construct_lash_strands(source, destination):
             faces.append(tuple(first+s for s in reversed(range(4))))
             faces.append(tuple(first+32+s for s in range(4)))
         records.append({'upper':upper,'side':'positive_x' if center.x>0 else 'negative_x',
-            'source_root_vertices':[p['vertex'] for p in arc],'strands':roots})
+            'source_body_weight_vertices':[p['vertex'] for p in arc],'strands':roots})
     assert sum(r['upper'] for r in records)==2 and len(verts)<10000
     body.to_mesh_clear()
     mesh = bpy.data.meshes.new('Study rooted lashes')
@@ -172,9 +178,9 @@ def construct_lash_strands(source, destination):
     lash.hide_render = True
     (destination/'lash-strands.json').write_text(json.dumps({'arcs':records,
         'source_sha256':audit['source_sha256'],'vertices':len(verts),'faces':len(faces)},indent=2))
-    return {'experiment':'source-rooted tapered lash mesh','vertices':len(verts),'faces':len(faces),
+    return {'experiment':'eye-opening-rooted tapered lash mesh','vertices':len(verts),'faces':len(faces),
         'strands':sum(len(r['strands']) for r in records),
-        'limitations':['root arc proximity heuristic requires review','rig pose and collision unvalidated',
+        'limitations':['front-visible contour, nearest base-body weight transfer','rig pose and collision unvalidated',
             'four-sided fibers; no game export validation']}
 
 
@@ -1023,6 +1029,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
         left = [p for p in points if p.x < 0]
         target = sum(left,Vector())/len(left)
         views = [('whole-eye',target,Vector((-.15,-1,0)),.065)]
+    if lash_strands:
+        left = [p for p in points if p.x < 0]
+        target = sum(left,Vector())/len(left)
+        views = views[:1]+[('whole-eye',target,Vector((-.15,-1,0)),.065)]
     if groom_pose:
         target = eye_center + Vector((0,0,.03))
         views = [('head-turned', target, Vector((0,-1,.05)),.38),

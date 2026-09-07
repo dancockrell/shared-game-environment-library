@@ -930,6 +930,19 @@ remain visible in this diagnostic for comparison. The single-thread contour
 inspection completed in under eight seconds; bounded CPU render took 54.93
 seconds. Source/lighting guards pass, with 32 Python passes/one Blender-only skip.
 
+**Contour-rooted revision 04:** The existing strand builder now consumes the
+hash-matched eye-opening receipt instead of the rejected strip boundary. It
+retains nearest base-body vertex IDs for weight transfer and normalizes the
+interpolated weights. Fresh reload verifies all weights and maximum rest-rig
+departure 0.121 micrometres. The actual `lash-strands-04/whole-eye.png` remains
+unconvincing: visible strand sections still emerge on the lid surface. Correcting
+the root contour alone does not keep the entire curved strand outside skin.
+Do not declare this an attachment fix. Next measure signed clearance along every
+strand segment and correct full-path collision rather than only the root.
+The original assets and source hash remain unchanged; lighting guards pass,
+32 Python tests pass/one Blender-only skip. The bounded CPU job completed,
+including 62.97 seconds of closeup render overhead. No final art or posed approval.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
