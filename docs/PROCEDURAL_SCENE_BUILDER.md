@@ -888,6 +888,18 @@ coverage representation. The two guarded CPU views completed, with 48.62 seconds
 for the close crop. Source/lighting guards pass; 32 Python passes/one Blender-only
 skip. Pose, eye-margin attachment and runtime quality remain unapproved.
 
+**Raw sampling diagnostic:** `--lash-raw-review` renders the same saved geometry,
+material, lighting and cheek camera with denoising disabled. The actual
+`lash-raw-01/skin-cheek.png` remains noisy and does not reveal a convincing lower
+lash silhouette. This is not a converged reference, so it does not prove that
+denoising is harmless or that sampling is the sole cause. The cheek camera also
+cuts off much of the upper eyelid: stop using that crop to judge the complete lash
+assembly. Next center a dedicated view on the whole eye and compare native curve
+rendering against the same saved strand centerlines. The source/lighting guards
+pass; the bounded CPU render took 44.04 seconds, and ordinary Python reports
+32 passes/one Blender-only skip. No completed hair-rendering research claim or
+finished lash approval is made from this limited diagnostic.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

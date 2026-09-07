@@ -598,7 +598,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
-                 lash_isolation=False):
+                 lash_isolation=False, raw_lashes=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -612,6 +612,11 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if raw_lashes:
+        changes.append({'experiment':'lash crop without denoising',
+            'previous_denoising':scene.cycles.use_denoising,'denoising':False,
+            'limitation':'bounded sample/time budget, not converged reference'})
+        scene.cycles.use_denoising = False
     if lash_isolation:
         for obj in scene.objects:
             if obj.type in ('MESH','CURVES'):
@@ -904,6 +909,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                       Vector((-.15,-1,0)),.075))
     if lash_isolation:
         views = [('isolated-lashes',eye_center,Vector((0,-1,0)),.12)]
+    if raw_lashes:
+        views = [('skin-cheek',eye_center+Vector((-.035,-.005,-.035)),
+                  Vector((-.15,-1,0)),.075)]
     if groom_pose:
         target = eye_center + Vector((0,0,.03))
         views = [('head-turned', target, Vector((0,-1,.05)),.38),
@@ -963,6 +971,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--lash-raw-review':
+    review_saved(Path(args[0]),Path(args[1]),raw_lashes=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--lash-isolation-review':
     review_saved(Path(args[0]),Path(args[1]),lash_isolation=True)
     sys.exit(0)
