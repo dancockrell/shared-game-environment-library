@@ -1,0 +1,465 @@
+{
+  "schemaVersion": 1,
+  "status": "copied-and-hash-verified",
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\pirate-island-work",
+  "destination": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\archives\\pirate-island-pre-sprite\\character-design-session",
+  "sourcePaths": [
+    "outputs/assets",
+    "outputs/prompts",
+    "outputs/colonial-character-variants.md",
+    "outputs/colonial-five-character-improvement-review.md",
+    "outputs/fox-female-hero-production-design.md",
+    "outputs/pirate-female-hero-production-design.md",
+    "outputs/pirate-island-faction-system-current-authority.md",
+    "outputs/provisional-female-hero-designs.md"
+  ],
+  "files": [
+    {
+      "path": "outputs/assets/characters/admiral-silas-blackwake.png",
+      "bytes": 2722677,
+      "sha256": "9e069635d1eab1eccb2aa24b162be9d735ff275f6dc4c4629d7cb30669688a4a"
+    },
+    {
+      "path": "outputs/assets/characters/beatrix-calder.png",
+      "bytes": 2463748,
+      "sha256": "a713b26d7ca338c223d3ab592a87ce4db0e2713c51312906f80fae6de0496440"
+    },
+    {
+      "path": "outputs/assets/characters/captain-michael.png",
+      "bytes": 2572835,
+      "sha256": "46b306548a36ad7833d6b760ecdadb61f2d416ca7d4f214e1b60f3a1fadc010b"
+    },
+    {
+      "path": "outputs/assets/characters/character-art-manifest.json",
+      "bytes": 41088,
+      "sha256": "76ef12c3c945fd5831154ef3270e8c0b96cf2f2ebf368e55f400020f2acc8429"
+    },
+    {
+      "path": "outputs/assets/characters/dagan-brine.png",
+      "bytes": 2525600,
+      "sha256": "30fce3246e510b6e4df8d8e0d46637a64872429c14ea66b555e06748c924f626"
+    },
+    {
+      "path": "outputs/assets/characters/doctor-orfeo-venn.png",
+      "bytes": 2276235,
+      "sha256": "e5294006425b12c34a4ec3992637d24a50e439e614e15f387bbf9167b1db26b4"
+    },
+    {
+      "path": "outputs/assets/characters/evelyn-mourne.png",
+      "bytes": 2513529,
+      "sha256": "1ef3edba8f85edb96e63d352e50ab5289a167f3c35a3045f10e42dc2a786be92"
+    },
+    {
+      "path": "outputs/assets/characters/gideon-vale.png",
+      "bytes": 1846928,
+      "sha256": "5d510e80e7dc81c3cce6f6fe2d28a90f5d0b5fba253622d75667c6dbb2c7a6a0"
+    },
+    {
+      "path": "outputs/assets/characters/jonah-rook.png",
+      "bytes": 2354085,
+      "sha256": "887c6428c8daa0c9bb545d3edafd709578a7e3e1e9fc1518bf754892a303018f"
+    },
+    {
+      "path": "outputs/assets/characters/lady-isolde-marr.png",
+      "bytes": 2096400,
+      "sha256": "e3a6662e05fdab082b52f403f574cca8547534691fcc47f352af9e78f0a24980"
+    },
+    {
+      "path": "outputs/assets/characters/mirelle-voss.png",
+      "bytes": 2382551,
+      "sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497"
+    },
+    {
+      "path": "outputs/assets/characters/nerissa-gale.png",
+      "bytes": 2598653,
+      "sha256": "14ebc01fddb685603488bd9a8d620a539097f1fdd059afd12070bfc86b2c08f7"
+    },
+    {
+      "path": "outputs/assets/characters/sabine-coil.png",
+      "bytes": 2219085,
+      "sha256": "2accacff82d0b24cead1dcb5464a07211fac7f55a47762d18ae87d797b1eb3c0"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/aoi-ten-v1.png",
+      "bytes": 2918435,
+      "sha256": "98707e2d985f2d8c166ae369ec957213306d0804e8d17c454108d2361872264b"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v1.png",
+      "bytes": 2144949,
+      "sha256": "dd89030cc0bb33ebddbf874bebd77921c817a99edef41ec45375ada0b3df27e6"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v10.png",
+      "bytes": 2463748,
+      "sha256": "a713b26d7ca338c223d3ab592a87ce4db0e2713c51312906f80fae6de0496440"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v11.png",
+      "bytes": 2441494,
+      "sha256": "292a9d7a74070dca7e89c29c958d44820ac1cf9a704abfef27fddbd178dcb085"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v12.png",
+      "bytes": 2628396,
+      "sha256": "0d9e4629fb2eb927eeb696fc76755276de04b29dccc29bf4c3cd6903d82d7752"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v13.png",
+      "bytes": 2542714,
+      "sha256": "9016d506c53d72387ee64e53eb6c0b1b57beb8ec155daca8e38ce20da15b284c"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v2.png",
+      "bytes": 2742425,
+      "sha256": "b492d312565d4e273dbee61f33628c506f7646dd949be53059643539cfaeb972"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v3.png",
+      "bytes": 2647165,
+      "sha256": "2083f644c3bafd72049856e4f52bc4379f5827fd4ac99f1b2fa656fc018744c9"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v4.png",
+      "bytes": 2828045,
+      "sha256": "25b8c3eb04b92bf8b9468b6f0fba16f161be37bd090218e51914d2d0a4c22531"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v5.png",
+      "bytes": 2698569,
+      "sha256": "f925e312f15106cee560718c17fc61209837f38edd9f994758e1654118e69ce0"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v6.png",
+      "bytes": 2918062,
+      "sha256": "9b74f35c273e3d76eec6e75c95030ff384ebb1782df9f6a41c957f5f43633119"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v7.png",
+      "bytes": 2931556,
+      "sha256": "61bb3bdf2f16283ef5244067d94894921909ef336430caf76d8605cb5878f71e"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v8.png",
+      "bytes": 2759713,
+      "sha256": "d8dccffbe4cddbcac4b68e8029353d006894919a638b289803eb861fd8047c86"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/beatrix-calder-v9.png",
+      "bytes": 2664553,
+      "sha256": "391052257e150cce77829197bb67c7d894e69a56a4282f47c786fe173fd7c76f"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/clara-morrow-v1.png",
+      "bytes": 2546598,
+      "sha256": "05bcd38edd08869aedf608d10f7e9d9325489b43414e9bfe4613e53f64bfed47"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/clara-morrow-v2.png",
+      "bytes": 2610896,
+      "sha256": "9ca1b79c67c837f27eb1b2f28bc48827a6d716d4d7a05f3093a502f247bc3c2b"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/clara-morrow-v3.png",
+      "bytes": 2545849,
+      "sha256": "30808a1a72999b92065ccc7da3c15311d9a1db3b971c01c36e9a26c3aad45f5e"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/hotaru-jin-v1.png",
+      "bytes": 2581091,
+      "sha256": "c8ffe5d4dd629db8b6f64e3a8f050ec0daea76c58695f7270abed9fb31e3fa37"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/inez-rake-v1.png",
+      "bytes": 2505478,
+      "sha256": "db0af85e604d9cb287b1daa5028bae6c8183021755854d932fd441553914b767"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/mara-quell-v1.png",
+      "bytes": 2547669,
+      "sha256": "b05b87493e096400a5d284febef9fac2857d86e5baf30d60aebff61d7191d5e8"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/marisol-ortez-v1.png",
+      "bytes": 2765521,
+      "sha256": "1bbd0352e4db3c0db3939f9d79c3d196cd5fadf7ce7312b2c7262f274265385d"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/marisol-ortez-v2.png",
+      "bytes": 3025791,
+      "sha256": "5649a7c908b8d31393099b5f14820e369924c684f2b055fbdc6a7d7665968f25"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/marisol-ortez-v3.png",
+      "bytes": 2932929,
+      "sha256": "d58419c3e5b5f6650cd803e69040d94202b1e39d0c8396d3a36830f4696eb373"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/marisol-ortez-v4.png",
+      "bytes": 2858170,
+      "sha256": "8e6ee874fa6cdc12eef20da42caff012a9676e29237ae04734a81e0a7f183f04"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/mercy-vane-v1.png",
+      "bytes": 2445500,
+      "sha256": "90cf511109966c45e11d09d5c2c20333dbd4f45e0ac0ca3f1d5d91948b9b4a79"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/natsume-rei-v1.png",
+      "bytes": 2612210,
+      "sha256": "f64bca7aaf1c4afad8129fa8b5bf80d0ae850dd1c0054dffed29937753ffb27c"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/odette-mercer-v1.png",
+      "bytes": 2677939,
+      "sha256": "b9a3ec3a0e74549a36e2c653431aec9649292a2fe2bdfbf144dc78e4de53086e"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/odette-mercer-v2.png",
+      "bytes": 2731864,
+      "sha256": "5a90146748cc3f5363865551b58f9ff84c5a98ec75ff50c4730d9c099ebc4b6c"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/odette-mercer-v3.png",
+      "bytes": 2678801,
+      "sha256": "b8219625f98b963dda2a61ff1808535afb5b41ce92c1035a04c4226dabbe49b3"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/pippa-cinder-v1.png",
+      "bytes": 2628140,
+      "sha256": "61a9b2b1ff89d9347503a76526d91896579f7b2a6a013a986e7d266adb6c1142"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/rosamund-pike-v1.png",
+      "bytes": 2551933,
+      "sha256": "0a80f097f1bd078ff84f2c8f6e1a5249a2274c8cce173fa71809799aee72b033"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/rosamund-pike-v2.png",
+      "bytes": 2668400,
+      "sha256": "0f7fbf1464f44ba3529fb38a0345927eab60a27011f395f0b904dfdb0180ede7"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/rosamund-pike-v3.png",
+      "bytes": 2755084,
+      "sha256": "a57b35d732461aa54c95f556ff2dd8aadf0eac0179c28b735c70f29c101ed70d"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/rosamund-pike-v4.png",
+      "bytes": 2865537,
+      "sha256": "f49e2812ca4eac9738689ac913108e894f9d01655bce4a5f52100f5e097aa929"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/rosamund-pike-v5.png",
+      "bytes": 2552813,
+      "sha256": "02aef21d92076c7d7c243197791bd41f44d9d0e12164397c37cf07ef3ba6bb93"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/shiori-kaga-v1.png",
+      "bytes": 2529318,
+      "sha256": "8fda71e7f601f3c53073cb7cf11a0f9ed9fcd28e9007c1c498d5ade373c4b4f4"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/tamsin-key-v1.png",
+      "bytes": 2891857,
+      "sha256": "c95d650d838df9c8b2a483122447e2d65ac7eb18edc98268ad4fdef78c495a23"
+    },
+    {
+      "path": "outputs/assets/characters/provisional/tomoe-kiri-v1.png",
+      "bytes": 2805869,
+      "sha256": "8e310aebb7d1ae5ba70478c3166185c2b55aee6659604791d699e9121549ac52"
+    },
+    {
+      "path": "outputs/prompts/aoi-ten-v1.md",
+      "bytes": 3247,
+      "sha256": "c109d6a83ccf58109fc9085e3eaf33a8c4922e9571808fe603032f66929a7f7c"
+    },
+    {
+      "path": "outputs/prompts/beatrix-calder-v11.md",
+      "bytes": 1588,
+      "sha256": "d4a76ba272246d4e93f5402384d9708bda3ee090f3ed9ba59c1cde13a170888e"
+    },
+    {
+      "path": "outputs/prompts/beatrix-calder-v12.md",
+      "bytes": 3002,
+      "sha256": "3b2e256aa948a57bff65c034d03415698c3d64db92ee5f2433076bd5110a2948"
+    },
+    {
+      "path": "outputs/prompts/beatrix-calder-v13.md",
+      "bytes": 1586,
+      "sha256": "bd2a348bab9ec7f958f7ab8113f043c86ff607d5917f63e7082dceacfae118a7"
+    },
+    {
+      "path": "outputs/prompts/beatrix-calder-v3.md",
+      "bytes": 3869,
+      "sha256": "b8a4e20c23c8dc3ea26b509916b40e5d0bc3bce7cdbd001d399a813cb09a11fe"
+    },
+    {
+      "path": "outputs/prompts/beatrix-calder-v6.md",
+      "bytes": 1938,
+      "sha256": "8cc82d233a824f75f74fa1eb3375df042aebad0466781141590b3503b70380dc"
+    },
+    {
+      "path": "outputs/prompts/beatrix-calder-v7.md",
+      "bytes": 2242,
+      "sha256": "477092eaa3ff3b287b8b57498349709672595ca7f5192e85dd06e644fa991f85"
+    },
+    {
+      "path": "outputs/prompts/beatrix-calder-v8.md",
+      "bytes": 2512,
+      "sha256": "021325fbc2008acc22f19cfc5ee750805f19e8c555ab9762cdc032760d78b4cd"
+    },
+    {
+      "path": "outputs/prompts/clara-morrow-v1.md",
+      "bytes": 1932,
+      "sha256": "0a3e079f5a306c495d25b80016c79ee7e4faf2415defa712bf028a4185b4c8b6"
+    },
+    {
+      "path": "outputs/prompts/clara-morrow-v2.md",
+      "bytes": 1265,
+      "sha256": "abbf0d81af01492397b3c50bbd310a9a77aed0d5d9c3e98b90e2b9b24d7cf6f9"
+    },
+    {
+      "path": "outputs/prompts/clara-morrow-v3.md",
+      "bytes": 3225,
+      "sha256": "4ea682d81c772a6bc2f4a19e00af2cf2f4a81568a954d5cd2eace8be0509bb94"
+    },
+    {
+      "path": "outputs/prompts/hotaru-jin-v1.md",
+      "bytes": 3330,
+      "sha256": "9e6a20ebcac6ffa371364c64c960a174cf5ba4268ebb11d4df90d2613d7b7bc1"
+    },
+    {
+      "path": "outputs/prompts/inez-rake-v1.md",
+      "bytes": 2985,
+      "sha256": "74dbdb060deafb6460ad143a2acf8f9888eecfb4e046b6d98cfb40f9da3e8673"
+    },
+    {
+      "path": "outputs/prompts/mara-quell-v1.md",
+      "bytes": 2970,
+      "sha256": "7344baedadce152e5611d2d7f5e7d157c5db9a2db1ad3c5e39dfdf530e405333"
+    },
+    {
+      "path": "outputs/prompts/marisol-ortez-v1.md",
+      "bytes": 1998,
+      "sha256": "735d123386ca9d1596da268a32b4c14b8adec0affa9e98443b753a85bc0998ca"
+    },
+    {
+      "path": "outputs/prompts/marisol-ortez-v2.md",
+      "bytes": 1219,
+      "sha256": "1c94cc0cd114de2ecd7118d2412a1f3bdc5d0a7c0a5a0d9bc0c36b787411f97b"
+    },
+    {
+      "path": "outputs/prompts/marisol-ortez-v3.md",
+      "bytes": 870,
+      "sha256": "4404928ad86ef4cd78bf2fb11a6d8dd2b84d840a09999d8c70c7a6e99a5f192b"
+    },
+    {
+      "path": "outputs/prompts/marisol-ortez-v4.md",
+      "bytes": 3331,
+      "sha256": "5cb7e95d7e2dab9abe9036cfd5e0c6cebcc96a9ebd393024ca807b888c3effb9"
+    },
+    {
+      "path": "outputs/prompts/mercy-vane-v1.md",
+      "bytes": 3237,
+      "sha256": "33d0e28deea8484d67bce247ccb471abf21f374d22fa570ed0941c63fb86b054"
+    },
+    {
+      "path": "outputs/prompts/natsume-rei-v1.md",
+      "bytes": 3241,
+      "sha256": "69e12ce179775e4679f0461a2609dcdc069efbf5035be64e5f7cdbefb098f25f"
+    },
+    {
+      "path": "outputs/prompts/odette-mercer-v1.md",
+      "bytes": 1900,
+      "sha256": "990a70a91f9c4d537255e3a2fef3f5577569ce409d32270c9ebf34c99f916287"
+    },
+    {
+      "path": "outputs/prompts/odette-mercer-v2.md",
+      "bytes": 1203,
+      "sha256": "cecae621199973561e44cfb42fae5ecff950f2f323cb5026da17b75c4fa97640"
+    },
+    {
+      "path": "outputs/prompts/odette-mercer-v3.md",
+      "bytes": 3046,
+      "sha256": "78380f777b7f4e046714cb1bb0a4e9f660393c40a8cc183854aa06d9e9e590a7"
+    },
+    {
+      "path": "outputs/prompts/pippa-cinder-v1.md",
+      "bytes": 3076,
+      "sha256": "9925127cb3bf3144f9a8f16035aae48518194a2b829052f868df0020d768a661"
+    },
+    {
+      "path": "outputs/prompts/rosamund-pike-v1.md",
+      "bytes": 2083,
+      "sha256": "53e3f00fd62ab17f13bd85d3e1122501d6f259b40a583202094fff2c76fe136e"
+    },
+    {
+      "path": "outputs/prompts/rosamund-pike-v2.md",
+      "bytes": 1182,
+      "sha256": "a821046fb5065b30bf5aee7a6c2669f2c92cda07538d2ee84972e515518736d7"
+    },
+    {
+      "path": "outputs/prompts/rosamund-pike-v3.md",
+      "bytes": 1001,
+      "sha256": "37d60886c19d81a75fcf580dc0b77adf7915684a52e6300da54da6f16fd5865e"
+    },
+    {
+      "path": "outputs/prompts/rosamund-pike-v4.md",
+      "bytes": 1335,
+      "sha256": "3b8a6ac7d8b0c11ca5d904fe43b8ef900dd68cd702353b03fd73b9bf711586e8"
+    },
+    {
+      "path": "outputs/prompts/rosamund-pike-v5.md",
+      "bytes": 3320,
+      "sha256": "d5280c4b9c523a2259702f152656b50dbe83d1b41a50a18f0301176f70e614cb"
+    },
+    {
+      "path": "outputs/prompts/shiori-kaga-v1.md",
+      "bytes": 3225,
+      "sha256": "b9ed787bc54d291ab58592f7126ade68504b5e342359e8ca3969c20d092b09b2"
+    },
+    {
+      "path": "outputs/prompts/tamsin-key-v1.md",
+      "bytes": 3240,
+      "sha256": "6e2a63881b77d70488b3cbb4dd497b954f18a0f6011603b91324c0203f2a16f1"
+    },
+    {
+      "path": "outputs/prompts/tomoe-kiri-v1.md",
+      "bytes": 3377,
+      "sha256": "0e53553119efec9114cf6a6c845804bc3e80dd95f0778a35f6ffd7829fdd7b07"
+    },
+    {
+      "path": "outputs/colonial-character-variants.md",
+      "bytes": 8404,
+      "sha256": "09486767d417f53f823f5649db324b803b062c30219efaf89ab5ce1f5eee5196"
+    },
+    {
+      "path": "outputs/colonial-five-character-improvement-review.md",
+      "bytes": 3277,
+      "sha256": "e99854123ca6c069a7592c330f19021a6649012c06b801533d2c33c5676ff590"
+    },
+    {
+      "path": "outputs/fox-female-hero-production-design.md",
+      "bytes": 47814,
+      "sha256": "bd3a086be56cc6c66ee4f75f123dff5b33cb730dd435117ea7469743302277ff"
+    },
+    {
+      "path": "outputs/pirate-female-hero-production-design.md",
+      "bytes": 53876,
+      "sha256": "d42a850f7f39e867921cddedd6166eaf21c0d7c77de5316de11e771efbf0a39d"
+    },
+    {
+      "path": "outputs/pirate-island-faction-system-current-authority.md",
+      "bytes": 167123,
+      "sha256": "cf3e2d7f4fec4fba671eb5670ed37555b6952a104c0e69ae31d81118137467b5"
+    },
+    {
+      "path": "outputs/provisional-female-hero-designs.md",
+      "bytes": 35571,
+      "sha256": "35e8bcb653317301b8d832224f2097c288ac948d7cdfd4640ef6bfffaaba123f"
+    }
+  ],
+  "sourceDeleted": false,
+  "runtimeAdmission": false
+}

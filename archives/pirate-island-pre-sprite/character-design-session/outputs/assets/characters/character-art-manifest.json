@@ -1,0 +1,889 @@
+{
+  "schema_version": 1,
+  "shared_library": {
+    "repository": "https://github.com/dancockrell/shared-game-environment-library",
+    "reference_pack_id": "character-support.illustrated-adult-adventurers.v1",
+    "reference_pack_path": "resource_packs/character-support/illustrated-adult-adventurers/pack.json",
+    "exchange_policy": "Search shared assets before new production; contribute useful originals, combinations and alterations with exact source ancestry and transformations. This project owns character identity and approval. Shared reference exports do not imply runtime approval.",
+    "local_export_status": "ten candidate concepts and one style input exported; not published",
+    "regeneration": "In the shared repository, run tools/import-character-references.mjs with this manifest, then rebuild the existing resource-pack ledger."
+  },
+  "project": "Pirate Island",
+  "asset_class": "character_portrait_production_anchors",
+  "generator": "OpenAI built-in image generation tool",
+  "source_thread_id": "01a06ab0-f752-73f1-865e-72e98827992e",
+  "approved_on": "2026-09-05",
+  "approval_scope": "The five female Cthulhu heroes, five male Cthulhu heroes, and final Captain Michael image are approved as the actual character photos.",
+  "usage_contract": {
+    "identity": "Use each image as the current portrait and identity anchor for the named character.",
+    "transfer": "Preserve the face, apparent age, body type, primary costume, signature prop, and overall silhouette in later production art and models.",
+    "not_locked": "The painted pose, studio-like framing, exact background, and small ornamental details do not constrain every later shot.",
+    "publication": "Installed locally in the design guide; not published remotely."
+  },
+  "scale_contract": {
+    "adult_female_height": "Approximately 4 feet 10 inches through 5 feet 3 inches; 5 feet 3 inches is the hard normal maximum.",
+    "adult_male_height": "Approximately 5 feet 9 inches through 6 feet 4 inches.",
+    "male_role_gradient": "Nimble, quick, precise, or cerebral men tend toward the lower end; physical bruisers rise toward the upper end according to degree.",
+    "composition_intent": "The visible male-female height mismatch is deliberate and must be preserved in model sheets, party lineups, dialogue, romance staging, and combat.",
+    "adult_presentation": "Short adult women retain adult facial structure, anatomy, posture, costume, voice, behavior, and social role; height never implies child coding."
+  },
+  "assets": [
+    {
+      "character": "Captain Michael",
+      "title": "The One-Man Industrial Revolution",
+      "file": "captain-michael.png",
+      "source_file": "exec-eaf2c982-d422-4d33-a07e-5a72e8563b41.png",
+      "sha256": "46B306548A36AD7833D6B760ECDADB61F2D416CA7D4F214E1B60F3A1FADC010B",
+      "status": "approved_character_photo",
+      "visual_contract": "Clearly adult man around twenty; slim, lean, wiry; broad black hat, long dark captain's coat, cream shirt, navy waistcoat, red Argentine-style sash, saber, revolver, fitted boots, shipwreck context, and integrated alternate-1870s steam apparatus."
+    },
+    {
+      "character": "Mirelle Voss",
+      "title": "The Oracle",
+      "file": "mirelle-voss.png",
+      "source_file": "exec-cc23e274-a98f-4279-8ec3-986db50ad9a3.png",
+      "sha256": "3394CAA1A58D88F92BFA31BEE60EC4641F6FE05B0CEA54480055ED6D40609497",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Lady Isolde Marr",
+      "title": "The Dark Duelist",
+      "file": "lady-isolde-marr.png",
+      "source_file": "exec-911f48f8-2cb6-4937-949e-4078504d02da.png",
+      "sha256": "E3A6662E05FDAB082B52F403F574CCA8547534691FCC47F352AF9E78F0A24980",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Nerissa Gale",
+      "title": "The Sea Witch",
+      "file": "nerissa-gale.png",
+      "source_file": "exec-503c8054-42a8-4ba0-920d-e5989afdfe8b.png",
+      "sha256": "14EBC01FDDB685603488BD9A8D620A539097F1FDD059AFD12070BFC86B2C08F7",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Sabine Coil",
+      "title": "The Beast Mistress",
+      "file": "sabine-coil.png",
+      "source_file": "exec-e44ea39c-f438-4992-a4c5-3de3b250fa2c.png",
+      "sha256": "2ACCACFF82D0B24CEAD1DCB5464A07211FAC7F55A47762D18AE87D797B1EB3C0",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Evelyn Mourne",
+      "title": "The Dollmaker",
+      "file": "evelyn-mourne.png",
+      "source_file": "exec-965c1b3d-a503-4751-987a-2dfcef2ce1c6.png",
+      "sha256": "1EF3EDBA8F85EDB96E63D352E50AB5289A167F3C35A3045F10E42DC2A786BE92",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Gideon Vale",
+      "title": "The High Priest",
+      "file": "gideon-vale.png",
+      "source_file": "exec-45556280-4609-4304-818d-b4c27f191c59.png",
+      "sha256": "5D510E80E7DC81C3CCE6F6FE2D28A90F5D0B5FBA253622D75667C6DBB2C7A6A0",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Admiral Silas Blackwake",
+      "title": "The Drowned Warlord",
+      "file": "admiral-silas-blackwake.png",
+      "source_file": "exec-23310c3a-2ed0-479b-8bed-3c02360f5ead.png",
+      "sha256": "9E069635D1EAB1ECCB2AA24B162BE9D735FF275F6DC4C4629D7CB30669688A4A",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Doctor Orfeo Venn",
+      "title": "The Mad Doctor",
+      "file": "doctor-orfeo-venn.png",
+      "source_file": "exec-d6ebb084-14ad-46b2-84ed-c6bf62e11626.png",
+      "sha256": "E5294006425B12C34A4EC3992637D24A50E439E614E15F387BBF9167B1DB26B4",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Jonah Rook",
+      "title": "The Gravekeeper",
+      "file": "jonah-rook.png",
+      "source_file": "exec-0287a24d-6622-445d-b89b-8c1ba62ae619.png",
+      "sha256": "887C6428C8DAA0C9BB545D3EDAFD709578A7E3E1E9FC1518BF754892A303018F",
+      "status": "approved_character_photo"
+    },
+    {
+      "character": "Dagan Brine",
+      "title": "The Deep Hunter",
+      "file": "dagan-brine.png",
+      "source_file": "exec-53a568e8-bd33-4e5e-bf23-6be286d2652d.png",
+      "sha256": "30FCE3246E510B6E4DF8D8E0D46637A64872429C14EA66B555E06748C924F626",
+      "status": "approved_character_photo"
+    }
+  ],
+  "retained_variant_collections": [
+    {
+      "schema_version": 1,
+      "recorded_date": "2026-09-05",
+      "project": "Pirate Island",
+      "retention_request": "keep all the last ten as variants",
+      "ordering": "Frozen snapshot of the ten newest provisional PNG files by LastWriteTimeUtc descending when the request was handled. File timestamps are not claimed as vendor generation timestamps.",
+      "retention_policy": {
+        "preserve_original_paths": true,
+        "overwrite_allowed": false,
+        "delete_allowed": false,
+        "retention_is_runtime_admission": false,
+        "automatic_runtime_selection": false
+      },
+      "provenance_limits": {
+        "generator": "Built-in image generation, according to local prompt records",
+        "model_version": null,
+        "vendor_output_id": null,
+        "license_terms_snapshot": null,
+        "note": "Missing vendor metadata has not been inferred. A revision contract is not represented as a verbatim tool prompt."
+      },
+      "latest_ten_ids": [
+        "beatrix-calder-v13",
+        "rosamund-pike-v5",
+        "clara-morrow-v3",
+        "marisol-ortez-v4",
+        "odette-mercer-v3",
+        "beatrix-calder-v12",
+        "rosamund-pike-v4",
+        "rosamund-pike-v3",
+        "marisol-ortez-v3",
+        "rosamund-pike-v2"
+      ],
+      "previous_review_pass_ids": [
+        "beatrix-calder-v11",
+        "odette-mercer-v2",
+        "marisol-ortez-v3",
+        "clara-morrow-v2",
+        "rosamund-pike-v4"
+      ],
+      "assets": [
+        {
+          "id": "beatrix-calder-v13",
+          "bytes": 2542714,
+          "width": 887,
+          "height": 1774,
+          "sha256": "9016d506c53d72387ee64e53eb6c0b1b57beb8ec155daca8e38ce20da15b284c",
+          "last_write_utc": "2026-09-05T12:25:27.8666068Z",
+          "path": "outputs/assets/characters/provisional/beatrix-calder-v13.png",
+          "character_id": "beatrix-calder",
+          "version": 13,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/beatrix-calder-v12.png",
+          "prompt_record_path": "outputs/prompts/beatrix-calder-v13.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "rosamund-pike-v5",
+          "bytes": 2552813,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "02aef21d92076c7d7c243197791bd41f44d9d0e12164397c37cf07ef3ba6bb93",
+          "last_write_utc": "2026-09-05T12:23:31.0341196Z",
+          "path": "outputs/assets/characters/provisional/rosamund-pike-v5.png",
+          "character_id": "rosamund-pike",
+          "version": 5,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/rosamund-pike-v4.png",
+          "prompt_record_path": "outputs/prompts/rosamund-pike-v5.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "clara-morrow-v3",
+          "bytes": 2545849,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "30808a1a72999b92065ccc7da3c15311d9a1db3b971c01c36e9a26c3aad45f5e",
+          "last_write_utc": "2026-09-05T12:22:36.7220227Z",
+          "path": "outputs/assets/characters/provisional/clara-morrow-v3.png",
+          "character_id": "clara-morrow",
+          "version": 3,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/clara-morrow-v2.png",
+          "prompt_record_path": "outputs/prompts/clara-morrow-v3.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "marisol-ortez-v4",
+          "bytes": 2858170,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "8e6ee874fa6cdc12eef20da42caff012a9676e29237ae04734a81e0a7f183f04",
+          "last_write_utc": "2026-09-05T12:20:08.2179199Z",
+          "path": "outputs/assets/characters/provisional/marisol-ortez-v4.png",
+          "character_id": "marisol-ortez",
+          "version": 4,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/marisol-ortez-v3.png",
+          "prompt_record_path": "outputs/prompts/marisol-ortez-v4.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "odette-mercer-v3",
+          "bytes": 2678801,
+          "width": 887,
+          "height": 1774,
+          "sha256": "b8219625f98b963dda2a61ff1808535afb5b41ce92c1035a04c4226dabbe49b3",
+          "last_write_utc": "2026-09-05T12:16:58.6507824Z",
+          "path": "outputs/assets/characters/provisional/odette-mercer-v3.png",
+          "character_id": "odette-mercer",
+          "version": 3,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/odette-mercer-v2.png",
+          "prompt_record_path": "outputs/prompts/odette-mercer-v3.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "beatrix-calder-v12",
+          "bytes": 2628396,
+          "width": 887,
+          "height": 1774,
+          "sha256": "0d9e4629fb2eb927eeb696fc76755276de04b29dccc29bf4c3cd6903d82d7752",
+          "last_write_utc": "2026-09-05T12:14:46.8490437Z",
+          "path": "outputs/assets/characters/provisional/beatrix-calder-v12.png",
+          "character_id": "beatrix-calder",
+          "version": 12,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/beatrix-calder-v11.png",
+          "prompt_record_path": "outputs/prompts/beatrix-calder-v12.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "rosamund-pike-v4",
+          "bytes": 2865537,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "f49e2812ca4eac9738689ac913108e894f9d01655bce4a5f52100f5e097aa929",
+          "last_write_utc": "2026-09-05T12:05:04.5938394Z",
+          "path": "outputs/assets/characters/provisional/rosamund-pike-v4.png",
+          "character_id": "rosamund-pike",
+          "version": 4,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten",
+            "previous-review-pass"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/rosamund-pike-v3.png",
+          "prompt_record_path": "outputs/prompts/rosamund-pike-v4.md",
+          "prompt_record_kind": "recorded-revision-contract",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "rosamund-pike-v3",
+          "bytes": 2755084,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "a57b35d732461aa54c95f556ff2dd8aadf0eac0179c28b735c70f29c101ed70d",
+          "last_write_utc": "2026-09-05T11:59:52.8190913Z",
+          "path": "outputs/assets/characters/provisional/rosamund-pike-v3.png",
+          "character_id": "rosamund-pike",
+          "version": 3,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/rosamund-pike-v2.png",
+          "prompt_record_path": "outputs/prompts/rosamund-pike-v3.md",
+          "prompt_record_kind": "recorded-revision-contract",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "marisol-ortez-v3",
+          "bytes": 2932929,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "d58419c3e5b5f6650cd803e69040d94202b1e39d0c8396d3a36830f4696eb373",
+          "last_write_utc": "2026-09-05T11:57:02.4944783Z",
+          "path": "outputs/assets/characters/provisional/marisol-ortez-v3.png",
+          "character_id": "marisol-ortez",
+          "version": 3,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten",
+            "previous-review-pass"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/marisol-ortez-v2.png",
+          "prompt_record_path": "outputs/prompts/marisol-ortez-v3.md",
+          "prompt_record_kind": "recorded-revision-contract",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "rosamund-pike-v2",
+          "bytes": 2668400,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "0f7fbf1464f44ba3529fb38a0345927eab60a27011f395f0b904dfdb0180ede7",
+          "last_write_utc": "2026-09-05T11:55:24.7039667Z",
+          "path": "outputs/assets/characters/provisional/rosamund-pike-v2.png",
+          "character_id": "rosamund-pike",
+          "version": 2,
+          "status": "user-retained-variant",
+          "groups": [
+            "latest-ten"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/rosamund-pike-v1.png",
+          "prompt_record_path": "outputs/prompts/rosamund-pike-v2.md",
+          "prompt_record_kind": "recorded-revision-contract",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "beatrix-calder-v11",
+          "bytes": 2441494,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "292a9d7a74070dca7e89c29c958d44820ac1cf9a704abfef27fddbd178dcb085",
+          "last_write_utc": "2026-09-05T11:29:09.5089316Z",
+          "path": "outputs/assets/characters/provisional/beatrix-calder-v11.png",
+          "character_id": "beatrix-calder",
+          "version": 11,
+          "status": "user-retained-variant",
+          "groups": [
+            "previous-review-pass"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/beatrix-calder-v10.png",
+          "prompt_record_path": "outputs/prompts/beatrix-calder-v11.md",
+          "prompt_record_kind": "recorded-revision-contract",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "odette-mercer-v2",
+          "bytes": 2731864,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "5a90146748cc3f5363865551b58f9ff84c5a98ec75ff50c4730d9c099ebc4b6c",
+          "last_write_utc": "2026-09-05T11:46:32.6277522Z",
+          "path": "outputs/assets/characters/provisional/odette-mercer-v2.png",
+          "character_id": "odette-mercer",
+          "version": 2,
+          "status": "user-retained-variant",
+          "groups": [
+            "previous-review-pass"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/odette-mercer-v1.png",
+          "prompt_record_path": "outputs/prompts/odette-mercer-v2.md",
+          "prompt_record_kind": "recorded-revision-contract",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        },
+        {
+          "id": "clara-morrow-v2",
+          "bytes": 2610896,
+          "width": 1023,
+          "height": 1537,
+          "sha256": "9ca1b79c67c837f27eb1b2f28bc48827a6d716d4d7a05f3093a502f247bc3c2b",
+          "last_write_utc": "2026-09-05T11:52:31.4277792Z",
+          "path": "outputs/assets/characters/provisional/clara-morrow-v2.png",
+          "character_id": "clara-morrow",
+          "version": 2,
+          "status": "user-retained-variant",
+          "groups": [
+            "previous-review-pass"
+          ],
+          "parent_image_path": "outputs/assets/characters/provisional/clara-morrow-v1.png",
+          "prompt_record_path": "outputs/prompts/clara-morrow-v2.md",
+          "prompt_record_kind": "recorded-revision-contract",
+          "production_admission": {
+            "status": "not-admitted-by-this-ledger",
+            "runtime_ready": false,
+            "selected": false
+          },
+          "verification": {
+            "file_hash_size_and_png_dimensions": "verified",
+            "parent_and_prompt_paths": "verified",
+            "visual_review": "not-performed-during-retention"
+          }
+        }
+      ],
+      "approved_identity_reference": {
+        "id": "beatrix-calder-v10",
+        "bytes": 2463748,
+        "width": 1023,
+        "height": 1537,
+        "sha256": "a713b26d7ca338c223d3ab592a87ce4db0e2713c51312906f80fae6de0496440",
+        "last_write_utc": "2026-09-05T11:25:14.4347510Z",
+        "path": "outputs/assets/characters/beatrix-calder.png",
+        "same_bytes_as": "outputs/assets/characters/provisional/beatrix-calder-v10.png",
+        "status": "previously-approved-identity-reference",
+        "production_admission": "not-changed-by-retention"
+      }
+    }
+  ],
+  "candidate_collections": [
+    {
+      "id": "pirate-female-hero-concepts-2026-09-05",
+      "recorded_date": "2026-09-05",
+      "status": "unreviewed-by-user-concept-candidate",
+      "scope": "Five proposed pirate female hero illustrations",
+      "generator": "OpenAI built-in image generation tool",
+      "model_version": null,
+      "source_thread_id": "01a06ab0-f752-73f1-865e-72e98827992e",
+      "reference_usage": "style-only; not identity transfer",
+      "license_terms_snapshot": null,
+      "assets": [
+        {
+          "id": "mara-quell-v1",
+          "bytes": 2547669,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "b05b87493e096400a5d284febef9fac2857d86e5baf30d60aebff61d7191d5e8",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-1ab16a9e-fa8c-4433-8a6f-3944aef62b74.png",
+          "source_file": "exec-1ab16a9e-fa8c-4433-8a6f-3944aef62b74.png",
+          "last_write_utc": "2026-09-05T13:49:55.2233256Z",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/mara-quell-v1.png",
+          "character_id": "mara-quell",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/mara-quell-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Parent agent visually inspected inline; no user approval or specific production-readiness finding supplied."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        },
+        {
+          "id": "inez-rake-v1",
+          "bytes": 2505478,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "db0af85e604d9cb287b1daa5028bae6c8183021755854d932fd441553914b767",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-7d5cc1c3-74b6-4512-8e4b-3c346a4919fa.png",
+          "source_file": "exec-7d5cc1c3-74b6-4512-8e4b-3c346a4919fa.png",
+          "last_write_utc": "2026-09-05T13:50:54.5501123Z",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/inez-rake-v1.png",
+          "character_id": "inez-rake",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/inez-rake-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Parent agent visually inspected inline; no user approval or specific production-readiness finding supplied."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        },
+        {
+          "id": "pippa-cinder-v1",
+          "bytes": 2628140,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "61a9b2b1ff89d9347503a76526d91896579f7b2a6a013a986e7d266adb6c1142",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-429a0831-cfbe-40e4-932f-4125d8cbcd73.png",
+          "source_file": "exec-429a0831-cfbe-40e4-932f-4125d8cbcd73.png",
+          "last_write_utc": "2026-09-05T13:52:21.4648298Z",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/pippa-cinder-v1.png",
+          "character_id": "pippa-cinder",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/pippa-cinder-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Parent agent visually inspected inline; no user approval or specific production-readiness finding supplied."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        },
+        {
+          "id": "tamsin-key-v1",
+          "bytes": 2891857,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "c95d650d838df9c8b2a483122447e2d65ac7eb18edc98268ad4fdef78c495a23",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-34952806-eb44-4882-83df-2e17047226b6.png",
+          "source_file": "exec-34952806-eb44-4882-83df-2e17047226b6.png",
+          "last_write_utc": "2026-09-05T13:53:20.1887086Z",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/tamsin-key-v1.png",
+          "character_id": "tamsin-key",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/tamsin-key-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Parent agent visually inspected inline; no user approval or specific production-readiness finding supplied."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        },
+        {
+          "id": "mercy-vane-v1",
+          "bytes": 2445500,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "90cf511109966c45e11d09d5c2c20333dbd4f45e0ac0ca3f1d5d91948b9b4a79",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-53a93e55-c3ac-4829-a72e-d468d065bc60.png",
+          "source_file": "exec-53a93e55-c3ac-4829-a72e-d468d065bc60.png",
+          "last_write_utc": "2026-09-05T13:54:19.7638902Z",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/mercy-vane-v1.png",
+          "character_id": "mercy-vane",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/mercy-vane-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Parent agent visually inspected inline; no user approval or specific production-readiness finding supplied."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "fox-female-hero-concepts-2026-09-05",
+      "recorded_date": "2026-09-05",
+      "status": "unreviewed-by-user-concept-candidate",
+      "scope": "Five proposed fox female hero illustrations",
+      "generator": "OpenAI built-in image generation tool",
+      "model_version": null,
+      "source_thread_id": "01a06ab0-f752-73f1-865e-72e98827992e",
+      "reference_usage": "style-only; not identity transfer",
+      "license_terms_snapshot": null,
+      "assets": [
+        {
+          "id": "shiori-kaga-v1",
+          "bytes": 2529318,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "8fda71e7f601f3c53073cb7cf11a0f9ed9fcd28e9007c1c498d5ade373c4b4f4",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-1f5e0ded-001a-41ef-9230-b8458291b367.png",
+          "last_write_utc": "2026-09-05T13:19:04.6864840Z",
+          "source_file": "exec-1f5e0ded-001a-41ef-9230-b8458291b367.png",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/shiori-kaga-v1.png",
+          "character_id": "shiori-kaga",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/shiori-kaga-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Thread has some slack; preserve this as a correction note rather than claim exact thread mechanics."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        },
+        {
+          "id": "natsume-rei-v1",
+          "bytes": 2612210,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "f64bca7aaf1c4afad8129fa8b5bf80d0ae850dd1c0054dffed29937753ffb27c",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-57cb7b92-d639-4136-a4e2-95d7909f9e04.png",
+          "last_write_utc": "2026-09-05T13:21:28.7265177Z",
+          "source_file": "exec-57cb7b92-d639-4136-a4e2-95d7909f9e04.png",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/natsume-rei-v1.png",
+          "character_id": "natsume-rei",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/natsume-rei-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Parent agent visually reviewed for concept presentation; no further specific finding supplied."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        },
+        {
+          "id": "hotaru-jin-v1",
+          "bytes": 2581091,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "c8ffe5d4dd629db8b6f64e3a8f050ec0daea76c58695f7270abed9fb31e3fa37",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-46525764-8cef-42fd-818a-ab72bde0d765.png",
+          "last_write_utc": "2026-09-05T13:24:35.7781317Z",
+          "source_file": "exec-46525764-8cef-42fd-818a-ab72bde0d765.png",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/hotaru-jin-v1.png",
+          "character_id": "hotaru-jin",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/hotaru-jin-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Single-tail read is mostly clear; confirm visibility in later production views."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        },
+        {
+          "id": "aoi-ten-v1",
+          "bytes": 2918435,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "98707e2d985f2d8c166ae369ec957213306d0804e8d17c454108d2361872264b",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-1451b91a-3cbb-4ce0-9080-f1ced6c792f7.png",
+          "last_write_utc": "2026-09-05T13:25:37.0013495Z",
+          "source_file": "exec-1451b91a-3cbb-4ce0-9080-f1ced6c792f7.png",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/aoi-ten-v1.png",
+          "character_id": "aoi-ten",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/aoi-ten-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Parent agent visually reviewed for concept presentation; no further specific finding supplied."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        },
+        {
+          "id": "tomoe-kiri-v1",
+          "bytes": 2805869,
+          "width": 1024,
+          "height": 1536,
+          "sha256": "8e310aebb7d1ae5ba70478c3166185c2b55aee6659604791d699e9121549ac52",
+          "source_path": "C:/Users/Admin/.codex/generated_images/01a06ab0-f752-73f1-865e-72e98827992e/exec-9147d1be-9977-4e67-a645-c12bc310fca4.png",
+          "last_write_utc": "2026-09-05T13:26:35.9303671Z",
+          "source_file": "exec-9147d1be-9977-4e67-a645-c12bc310fca4.png",
+          "source_verification": "Exported candidate SHA-256 matches vendor output bytes.",
+          "path": "outputs/assets/characters/provisional/tomoe-kiri-v1.png",
+          "character_id": "tomoe-kiri",
+          "version": 1,
+          "status": "unreviewed-by-user-concept-candidate",
+          "style_reference_path": "outputs/assets/characters/mirelle-voss.png",
+          "style_reference_sha256": "3394caa1a58d88f92bfa31bee60ec4641f6fe05b0cea54480055ed6d40609497",
+          "prompt_record_path": "outputs/prompts/tomoe-kiri-v1.md",
+          "prompt_record_kind": "recorded-exact-generation-prompt",
+          "visual_review": {
+            "reviewer": "parent production agent",
+            "status": "reviewed-for-concept-presentation",
+            "observation": "Parent agent visually reviewed for concept presentation; no further specific finding supplied."
+          },
+          "production_admission": {
+            "status": "not-admitted",
+            "runtime_ready": false,
+            "selected": false,
+            "user_approved": false
+          }
+        }
+      ]
+    }
+  ],
+  "rejected_explorations": [
+    {
+      "source_file": "exec-9d010f49-a4b4-49a0-9803-228996755743.png",
+      "reason": "First female exploration was explicitly rejected as off direction."
+    },
+    {
+      "source_file": "exec-5a8e302a-9289-4e02-93eb-c2dc0d6237e8.png",
+      "reason": "Second female exploration was explicitly rejected as off direction."
+    },
+    {
+      "source_file": "exec-0080868c-6339-496b-aa36-7fdd5a5aeb82.png",
+      "reason": "Captain Michael appeared too old and broad."
+    },
+    {
+      "source_file": "exec-181628ef-4ba7-4514-8b90-a6410e0cf9c3.png",
+      "reason": "Captain Michael's auxiliary mechanical arm appeared to hang loose rather than function as integrated equipment."
+    }
+  ]
+}

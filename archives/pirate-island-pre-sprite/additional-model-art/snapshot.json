@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "status": "copied-and-hash-verified",
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-model-art",
+  "destination": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\archives\\pirate-island-pre-sprite\\additional-model-art",
+  "sourcePaths": [
+    "work\\art\\magnific\\betty\\rig_input_plate_family_v1.json",
+    "work\\art\\vendor\\magnific\\betty-3d\\N2cYw4m6D9\\manifest.json"
+  ],
+  "files": [
+    {
+      "path": "work/art/magnific/betty/rig_input_plate_family_v1.json",
+      "bytes": 4867,
+      "sha256": "11c26fa5c0b522e0b547a5f73d8f619bff0eac120b629b07705fd3d9085e55c1"
+    },
+    {
+      "path": "work/art/vendor/magnific/betty-3d/N2cYw4m6D9/manifest.json",
+      "bytes": 2158,
+      "sha256": "a4e010d6b7b97e57ee5355e114a959b271fb3d9325d150059b623520fa82cfab"
+    }
+  ],
+  "sourceDeleted": false,
+  "runtimeAdmission": false
+}

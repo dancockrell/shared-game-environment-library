@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "status": "copied-and-hash-verified",
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-08-31\\referenced-chatgpt-conversation-this-is-an-4",
+  "destination": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\archives\\pirate-island-pre-sprite\\early-game-art",
+  "sourcePaths": [
+    "work/art"
+  ],
+  "files": [
+    {
+      "path": "work/art/battle-ui.png",
+      "bytes": 2590356,
+      "sha256": "c4a5985f65dfe3c86004957a4112b8b3d0eaa76ddd4eeb86bca47418ad9b4dbf"
+    },
+    {
+      "path": "work/art/betty-keyframes.png",
+      "bytes": 2171987,
+      "sha256": "f2a0782f8f7cf668de9f0b55c189aaa84545b40e24a814babf01267a49633d6d"
+    },
+    {
+      "path": "work/art/elven-tomb.png",
+      "bytes": 2841872,
+      "sha256": "629542ce2c5d5f2dd88abdd0cc2dbd5383027f4433807e5ebd687eab83086351"
+    },
+    {
+      "path": "work/art/estate-household-gameplay-v1.png",
+      "bytes": 3009545,
+      "sha256": "ba7e9321cac44533f2ea1acd4e894c5b8fa63ff4b3fbe1da6bc48fe62055ff60"
+    },
+    {
+      "path": "work/art/heroine-roster.png",
+      "bytes": 2430987,
+      "sha256": "941598cea80e8172618e492e773f13b08bb868b8e4a5592906183cb943900f26"
+    },
+    {
+      "path": "work/art/home-estate.png",
+      "bytes": 2727097,
+      "sha256": "a7738d3e48bd0e973040e7d58737c9f5a041e4a0763936181d8f6327c3488337"
+    },
+    {
+      "path": "work/art/island-map-revised.png",
+      "bytes": 3098266,
+      "sha256": "1d624d643ce139a4960d321fafb6f428213bbb61e2ea93fde29fb3c4763d0245"
+    },
+    {
+      "path": "work/art/island-map.png",
+      "bytes": 3126571,
+      "sha256": "332c3c482cf62344ed0999dc0618973287bf2da8bfa24a00aa97b13556d0d2ab"
+    },
+    {
+      "path": "work/art/jungle-route-gameplay-v1.png",
+      "bytes": 3112358,
+      "sha256": "0bc338b3f94762467112e8123372a7adcf12eac4212ea010fc96efacf507ac43"
+    },
+    {
+      "path": "work/art/world-visual-grammar-v1.png",
+      "bytes": 3077231,
+      "sha256": "e73d9e85996916ffced775f6bcae46fa1e1b790f489efa6ad5a480f2944cbf3d"
+    },
+    {
+      "path": "work/art/magnific/betty/betty-body-direction-gpt2.png",
+      "bytes": 1101563,
+      "sha256": "b16b0eeeaa346c8d57fa496b3318595ebfc4f393b3e698983b6b066931e71e76"
+    },
+    {
+      "path": "work/art/magnific/betty/betty-equipment-reference-seedream.jpg",
+      "bytes": 181026,
+      "sha256": "63dcef95b50235aa20e67a6ff102e937580b620c09df87af4a444d4dffb2a940"
+    },
+    {
+      "path": "work/art/magnific/betty/betty-palette-reference-seedream.png",
+      "bytes": 1190183,
+      "sha256": "6d88c35b83b7a6a2d73280991f9a431b34919f10750a37486c13b0df29fb4424"
+    },
+    {
+      "path": "work/art/magnific/betty/rig_input_plate_family_v1.json",
+      "bytes": 4813,
+      "sha256": "3b17b7cd76d71923c74ba9c2fccb68feffdf564ecf79f452f606ec09d529f431"
+    },
+    {
+      "path": "work/art/magnific/betty/animation/betty-ready-idle-wan3-candidate.mp4",
+      "bytes": 4724804,
+      "sha256": "db98af21149b831723bde460220154b30d50f9bcc6200b1ad6728da0e51af282"
+    },
+    {
+      "path": "work/art/reference-pack-50/01-betty-identity-master.png",
+      "bytes": 2973513,
+      "sha256": "8aa8cd92a45030c9e728a0ba5ae7076ec074cc2e6abd109eaf1dad7db26169e6"
+    },
+    {
+      "path": "work/art/reference-pack-50/02-ayla-identity-master.png",
+      "bytes": 2928226,
+      "sha256": "a56f3cbd7b5bc03c184ec3ef8a89ba6b5130aacb24d2a17b88f8263ae5e1b0e3"
+    },
+    {
+      "path": "work/art/reference-pack-50/03-vix-identity-master.png",
+      "bytes": 2798879,
+      "sha256": "ce0477bf705cad59b72cef6525b3183425e9831d48a72a87dc5ec3c7bb8dc428"
+    },
+    {
+      "path": "work/art/reference-pack-50/04-grisha-identity-master.png",
+      "bytes": 2888763,
+      "sha256": "bf423c12498b0705395f8a3ad572f0aa5acb2490e85a798bdd679eb77bd851ad"
+    },
+    {
+      "path": "work/art/reference-pack-50/05-isabella-identity-master.png",
+      "bytes": 2560840,
+      "sha256": "5145c1d9afceeaa61012ce4932e457ca27f45f70bc17ab22ebbe47ef8bd5aef7"
+    },
+    {
+      "path": "work/art/vendor/magnific/betty-3d/N2cYw4m6D9/betty_candidate_v1.glb",
+      "bytes": 28645652,
+      "sha256": "acc0b4f4316b41e70d9bf7254d945724c524ecf9b920d6ae3f2be660d20b218c"
+    },
+    {
+      "path": "work/art/vendor/magnific/betty-3d/N2cYw4m6D9/manifest.json",
+      "bytes": 2105,
+      "sha256": "521c712cd48590eae54c4d405967e04c59bb7659120041c9cedd6c48edd1927f"
+    }
+  ],
+  "sourceDeleted": false,
+  "runtimeAdmission": false
+}

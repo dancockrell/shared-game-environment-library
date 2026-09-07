@@ -2,11 +2,12 @@
   "schema_version": 1,
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
-  "summary": "Improve shared garment builder with research-backed fitting and bounded author-retargeter feasibility checks; preserve rejected fixtures and existing construction owner",
+  "summary": "Preserve Pirate Island legacy artwork and shelved 3D builder in shared archive; production now uses 2D sprites",
   "status": "active",
   "claimed_at": "2026-09-06T03:30:00Z",
   "updated_at": "2026-09-06T23:00:00Z",
   "paths": [
+    "archives/pirate-island-pre-sprite/",
     ".agents/skills/character-art-production/",
     "tools/character-production.mjs",
     "tools/test-character-production.mjs",
