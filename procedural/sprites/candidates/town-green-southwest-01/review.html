@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sprite room placement review</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101817;color:#eee7d8;font:16px system-ui}header{padding:20px 28px;border-bottom:1px solid #40514b}h1{font-size:24px;margin:5px 0}small{color:#e7bd72}main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;padding:20px}aside{line-height:1.6}button,select{font:inherit;padding:8px;color:#eee7d8;background:#263a34;border:1px solid #8aa596;border-radius:5px;max-width:100%}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:3px solid #ffdb83}label{display:block;margin:14px 0}svg{display:block;width:100%;height:auto;background:#070b09;touch-action:manipulation}#floor{fill:#66cbb3;fill-opacity:.12;stroke:#89d9c2;stroke-width:3;stroke-dasharray:8 6}#markers text{fill:#fff4d8;paint-order:stroke;stroke:#111;stroke-width:4;font-size:18px;font-weight:700}#markers circle{fill:#deb75e;stroke:#fff3ce;stroke-width:2}#status{min-height:3em;color:#e7bd72}li{margin-bottom:10px}p{overflow-wrap:anywhere}@media(max-width:850px){main{grid-template-columns:1fr}aside{max-width:none}}
+</style>
+<header><small>DR COMPANION · SPRITE WORKSHOP · NOT LIVE GAMEPLAY</small><h1 id="title"></h1><span>Candidate layout — no runtime admission</span></header>
+<main><section><svg id="board" role="img" aria-label="Room art with placement probes"><image id="art" width="100%" height="100%"/><polygon id="floor"/><g id="markers"></g></svg><p id="status" role="status">Choose a marker, then click clear floor to place it. Use the arrow buttons for precise adjustments.</p></section>
+<aside><h2>Placement review</h2><label>Selected marker <select id="selected"></select></label>
+<div aria-label="Move selected marker"><button data-dx="0" data-dy="-0.01" aria-label="Move up">↑</button> <button data-dx="-0.01" data-dy="0" aria-label="Move left">←</button> <button data-dx="0.01" data-dy="0" aria-label="Move right">→</button> <button data-dx="0" data-dy="0.01" aria-label="Move down">↓</button></div>
+<label><input id="overlays" type="checkbox" checked> Show floor and probes</label><button id="reset">Reset positions</button> <button id="save">Export layout JSON</button>
+<h3>Confirmed map data</h3><p id="exits"></p><h3>Authored room description</h3><p id="description"></p><details><summary>Limits of this preview</summary><ul id="limits"></ul></details></aside></main>
+<script>
+const original={"schemaVersion":1,"id":"dr-1-23","title":"The Crossing, Town Green Southwest","status":"candidate","runtimeAdmission":false,"source":{"game":"DragonRealms","roomBinding":"1-23","descriptionId":"1::Town Green Southwest","description":"The hedgerow to the west meets the row of tall lunat trees that separates the Town Green from the commercial traffic on Lunat Shade Road due south. The growth is especially dense here, with no way to slip past either of the living fences. The small thorns on the hedges, to keep out stray livestock in search of prime pasture, look daunting in any case.","evidence":"DR Companion public/roomtext/1.json from room-prompts-priority.json and room-place-map.json; exits from src/data/map/1.json"},"image":{"path":"source-01.png","width":1536,"height":1024,"sha256":"9358a842c8e0be20f9c83da4d5831bd531787129cd04bcd2698f07f11c96b476"},"coordinates":"normalized-image-top-left","camera":"fixed-high-three-quarter","floor":[[0.28,0.52],[0.8,0.28],[0.93,0.55],[0.78,0.85],[0.4,0.77]],"anchors":[{"id":"player","label":"Illustrative player floor position","point":[0.5,0.62],"kind":"spawn"},{"id":"encounter-a","label":"Illustrative encounter A","point":[0.68,0.58],"kind":"spawn"},{"id":"encounter-b","label":"Illustrative encounter B","point":[0.4,0.6],"kind":"spawn"}],"exits":[{"direction":"north","command":"north","to":"1-225","presentation":"off-camera","anchor":null},{"direction":"northeast","command":"northeast","to":"1-14","presentation":"off-camera","anchor":null},{"direction":"east","command":"east","to":"1-16","presentation":"off-camera","anchor":null},{"direction":"west","command":"west","to":"1-22","presentation":"off-camera","anchor":null}],"placementAuthority":"Artist-estimated illustration probes, not runtime spawn coordinates. Actual graph transitions remain authoritative.","limitations":["Source prose describes impassable hedge/tree boundaries, but recorded graph includes a west exit. Preserve that graph edge; the image does not establish its screen position or invent a hedge gate.","Lunat tree morphology, exact corner silhouette and lighting are artistic interpretation.","No independent foliage layers, inhabitants, time variants or animation. Source review is not final user approval."]}; const room=structuredClone(original);
+const inside=function inside(point, polygon) {
+  let hit = false
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const a = polygon[i], b = polygon[j]
+    if ((a[1] > point[1]) !== (b[1] > point[1]) &&
+        point[0] < (b[0] - a[0]) * (point[1] - a[1]) / (b[1] - a[1]) + a[0]) hit = !hit
+  }
+  return hit
+};
+const $=id=>document.getElementById(id), ns='http://www.w3.org/2000/svg';
+$('title').textContent=room.title; $('description').textContent=room.source.description;
+$('board').setAttribute('viewBox','0 0 '+room.image.width+' '+room.image.height);
+$('art').setAttribute('href',room.image.path);
+$('exits').textContent=room.exits.map(e=>e.direction+' → '+e.to+' ('+e.presentation+')').join('; ') || 'No exits in source record.';
+for(const limit of [room.placementAuthority,...room.limitations]){const li=document.createElement('li');li.textContent=limit;$('limits').append(li)}
+for(const a of room.anchors){const o=document.createElement('option');o.value=a.id;o.textContent=a.label;$('selected').append(o)}
+$('floor').setAttribute('points',room.floor.map(p=>p[0]*room.image.width+','+p[1]*room.image.height).join(' '));
+function draw(){ $('markers').replaceChildren(); for(const a of room.anchors){const g=document.createElementNS(ns,'g');g.setAttribute('transform','translate('+a.point[0]*room.image.width+' '+a.point[1]*room.image.height+')');const c=document.createElementNS(ns,'circle');c.setAttribute('r',a.id===$('selected').value?13:9);const t=document.createElementNS(ns,'text');t.setAttribute('y',-22);t.setAttribute('text-anchor','middle');t.textContent=a.label;g.append(c,t);$('markers').append(g)}}
+function move(p){p=p.map(n=>Math.round(n*10000)/10000);if(!inside(p,room.floor)){$('status').textContent='Placement rejected: outside the reviewed clear floor.';return}const a=room.anchors.find(a=>a.id===$('selected').value);a.point=p;draw();$('status').textContent=a.label+': '+a.point.join(', ')+'. Local review only; export to keep changes.'}
+$('board').addEventListener('click',e=>{const p=new DOMPoint(e.clientX,e.clientY).matrixTransform($('board').getScreenCTM().inverse());move([p.x/room.image.width,p.y/room.image.height])});
+document.querySelectorAll('[data-dx]').forEach(b=>b.onclick=()=>{const p=room.anchors.find(a=>a.id===$('selected').value).point;move([p[0]+Number(b.dataset.dx),p[1]+Number(b.dataset.dy)])});
+$('selected').onchange=draw;
+$('overlays').onchange=()=>{for(const id of ['floor','markers'])$(id).style.display=$('overlays').checked?'':'none'};
+$('reset').onclick=()=>{room.anchors=structuredClone(original.anchors);draw();$('status').textContent='Original positions restored.'};
+$('save').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(room,null,2)+'\n'],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=room.id+'-review.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$('status').textContent='Layout export requested. Candidate status unchanged.'};
+draw();
+</script></html>
