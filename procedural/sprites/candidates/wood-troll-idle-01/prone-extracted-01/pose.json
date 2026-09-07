@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "status": "candidate",
+  "runtimeAdmission": false,
+  "pose": "alive-prone",
+  "identity": "wood troll",
+  "direction": "southeast",
+  "url": "cell_00_00.png",
+  "imageSize": [
+    1428,
+    612
+  ],
+  "crop": [
+    0,
+    0,
+    1428,
+    612
+  ],
+  "anchor": [
+    780,
+    390
+  ],
+  "referenceWidth": 660,
+  "sha256": "ca0a7c4f1ad29ffca13e04f0d0bcdb36f520238b936b86e200da8b1f7f289e44",
+  "source": "../prone-source-01.png",
+  "sourceSha256": "b66c6629d1cb39c8f06e22fed920ab5e0811047e47dbcb945dc68fafa38b5b56",
+  "standingReference": {
+    "path": "../extracted-02/cell_00_00.png",
+    "width": 287,
+    "height": 449,
+    "anchor": [
+      171,
+      432
+    ],
+    "sha256": "27a84b9028c0f266b4b5379b7e1a7fc1c7a666c1d2537ca8323efda44035fc9a"
+  },
+  "calibration": {
+    "method": "Manual comparison of face/nose and large hands, not auto fit-to-width. Existing offline reviewer canvas used with same source pixels, no edits or resampling to saved art.",
+    "standingReviewScale": 0.34,
+    "proneReviewScale": 0.14784848484848487,
+    "standingRenderedSize": [
+      97.58,
+      152.66
+    ],
+    "proneRenderedSize": [
+      211.1276,
+      90.4833
+    ],
+    "rejectedReferenceWidth": 800,
+    "reason": "800 made face/hands look small beside standing pose.660 better matches broad head and massive hands while horizontal body is longer than standing projected height.",
+    "anchorMeaning": "Manual belly/torso projected ground point, not feet or source image center."
+  },
+  "constraints": [
+    "Only confirmed prone posture may select this pose.",
+    "Eyes remain open; no wounds, death, sleep, hit or stun inference.",
+    "Same bark skin, mossy grey fur, ragged waistcloth, root nose and upper-left light.",
+    "No knockdown/fall/get-up transition supplied.",
+    "Needs mounted client scale/overlap and confirmed-state/fallback QA before runtime admission."
+  ]
+}

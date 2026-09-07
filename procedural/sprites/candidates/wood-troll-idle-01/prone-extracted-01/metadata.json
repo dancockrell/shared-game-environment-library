@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1536,
+    1024
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1024
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1536
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        58,
+        211,
+        1486,
+        823
+      ],
+      "source_trim_rect": [
+        58,
+        211,
+        1486,
+        823
+      ],
+      "size": [
+        1428,
+        612
+      ],
+      "rgba_sha256": "20560636d80ee26e5dc9f2dd6905721edbc3dfcd8fec76c09ab0a7ab8996e512",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "ca0a7c4f1ad29ffca13e04f0d0bcdb36f520238b936b86e200da8b1f7f289e44"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\wood-troll-idle-01\\prone-source-01.png",
+  "source_sha256": "b66c6629d1cb39c8f06e22fed920ab5e0811047e47dbcb945dc68fafa38b5b56",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
