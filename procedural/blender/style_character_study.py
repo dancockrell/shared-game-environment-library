@@ -303,11 +303,24 @@ def audit_eye_opening(source,destination):
                     else: outside=middle
                 hit,normal,face,_ = skin.ray_cast(Vector((x,-1,outside)),Vector((0,1,0)),2)
                 assert hit is not None
+                eye_near,eye_normal,eye_face,eye_distance = globe.find_nearest(hit)
+                axial_hit,_,_,_ = globe.ray_cast(Vector((x,-1,outside)),Vector((0,1,0)),2)
                 edges.append({'world_m':list(hit),'normal':list(normal),'evaluated_face':face,
+                              'nearest_globe_m':list(eye_near),'nearest_globe_face':eye_face,
+                              'globe_distance_m':eye_distance,
+                              'signed_globe_distance_m':(hit-eye_near).dot(eye_normal),
+                              'axial_globe_gap_m':axial_hit.y-hit.y if axial_hit else None,
                               'z_bracket_m':abs(outside-inside)})
             rows.append({'x':x,'lower':edges[0],'upper':edges[1]})
         assert len(rows)>20
-        results.append({'eye':eye.name,'rows':rows})
+        distances = [row[side]['globe_distance_m'] for row in rows for side in ('upper','lower')]
+        results.append({'eye':eye.name,'rows':rows,
+            'lid_globe_distance_m':{'minimum':min(distances),'maximum':max(distances),
+                'mean':sum(distances)/len(distances)},
+            'by_lid':{side:{
+                'mean_distance_m':sum(row[side]['globe_distance_m'] for row in rows)/len(rows),
+                'over_half_mm':sum(row[side]['globe_distance_m']>.0005 for row in rows),
+                'sample_count':len(rows)} for side in ('upper','lower')}})
     assert len(results)==2 and hashlib.sha256(source.read_bytes()).hexdigest()==digest
     (destination/'eye-opening.json').write_text(json.dumps({'source_sha256':digest,'eyes':results,
         'scope':'front-visible occlusion contour, not anatomical wet-line or rig binding'},indent=2))

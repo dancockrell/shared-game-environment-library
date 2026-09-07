@@ -1061,6 +1061,24 @@ bytes. Source and lighting guards passed; 32 Python tests passed, one
 Blender-only skip. Full face, clothes, posed integration and game export remain
 unfinished. No push, Actions, paid service or new renderer dependency.
 
+**Measured lid/globe interface:** Extended the existing eye-opening audit, not
+a second fitting pipeline, to retain nearest globe point/face, unsigned and
+normal-signed distance, and front-axis globe depth for every measured skin
+contour point. `eye-interface-01/eye-opening.json` reloads the unchanged
+revision-07 candidate and samples 51 columns per eye. Upper contour mean
+nearest distance is approximately 0.448918 mm (14/51 over 0.5 mm); lower is
+0.019188 mm (1/51 over 0.5 mm), with near-identical opposite-eye results.
+Maximum nearest distance is 2.251 mm; upper front-axis separation reaches
+2.951 mm. Many other samples are effectively coincident. These are visible
+occlusion-contour measurements, **not an anatomical wet-line identification**
+or proof that every separation is incorrect. The upper/lower disparity supports
+testing local upper-interface fitting; a global eyeball-forward adjustment
+would also disturb the close lower interface. Original geometry is unchanged.
+Per-lid counts/means are now part of subsequent audit receipts, alongside raw
+points so downstream fitting can operate on measured geometry. 32 Python tests
+pass, one Blender-only skip. No new beauty render or art acceptance in this
+measurement checkpoint; prior shadow diagnosis remains the visual evidence.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
