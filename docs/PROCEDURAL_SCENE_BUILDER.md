@@ -623,6 +623,53 @@ established by the small fixture.
 
 ## Licensing and research
 
+### Adult cyberpunk character benchmark, 7 September 2026
+
+User now requests an explicitly adult, 18-year-old human woman, realistic,
+wearing cyberpunk clothing, using our real model. Treat this as a raised
+capability benchmark, not permission to substitute an AI picture or certify
+age from appearance. The requested age is authoring intent. Existing human
+source topology is reused; no anatomy made from primitive assemblies.
+
+`procedural/godot/build_character_study.gd` is a narrow caller of the existing
+character workshop: prepared female source/profile, 1.68 m target stature,
+restrained face controls, fitted formal separates, braid hair, no cloak/hat,
+dark dyes and the existing portable exporter. Source and profile are unchanged.
+`procedural/blender/style_character_study.py` performs look development on that
+export: source skin textures, restrained subsurface response, matte technical
+garment finish and garment-raycast-supported hard-surface interface hardware.
+This is a single requested art study, not a replacement wardrobe generator.
+The hardware remains static and is not skin-bound; the new finish is not baked
+into portable textures. The styled deliverable is the saved Blender scene.
+
+Blender 4.5 rejects Godot's required KHR_node_visibility extension. The study
+creates a compatibility copy only after asserting all affected nodes are empty
+leaves without geometry/camera/children. Binary mesh/texture payload and the
+original export remain unchanged. Populated hidden nodes are explicitly refused.
+Early invalid dye arguments were rejected by the canonical validator before
+export; corrected dyes include the required eight-digit RGBA string.
+
+Initial actual renders are retained under `procedural/generated/reviews/` in
+`cyberpunk-adult-001` and `cyberpunk-adult-002`. The first had overly shiny
+clothes and a bob obscuring the face. The next uses matte finish and braid.
+Ground framing was also corrected to use evaluated skinned vertices referenced
+by polygons from visible objects, excluding Blender's hidden bone-display
+icosphere. Actual `cyberpunk-adult-002/look-03/full-body.png` was inspected:
+feet now meet the floor and the face is visible. The compatibility copy preserves
+the complete binary chunk, mesh definitions and skin definitions exactly:
+eight meshes, one skin, original GLB SHA-256
+`5bfc6ad326cccbc3f8c5e329ddefa89cdebf6580028a8530bfc8840742b790c7`.
+The final CPU render and Python syntax check pass; no full character-regression
+suite or animation-fit test was run for these study callers. This study does not meet the
+photorealism benchmark: face/hair fidelity, garment construction detail, pose,
+convincing cyberpunk design and complete rigged accessory integration remain
+unfinished. A recolored formal suit plus interface hardware is a starting
+costume study, not a completed cyberpunk wardrobe system.
+
+This costume is explicitly outside normal DragonRealms wardrobe admission.
+No existing consumer rules, character sources or active garment-builder code
+were changed. No paid generation or GitHub Actions is needed for the study.
+
 ### Realism research update, 7 September 2026
 
 **Current decision:** improve construction and material response, not resolution

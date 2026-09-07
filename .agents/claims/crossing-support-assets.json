@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Extend existing porous construction with original-boundary crust clearance and subsequent cut planes; test field semantics and extraction without changing legacy defaults",
+  "summary": "User-requested adult cyberpunk character study using canonical workshop APIs and existing fitted body/wardrobe; own procedural study callers only, preserve active character-builder work",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-06T22:41:00Z",
@@ -30,6 +30,7 @@
   "completion": {
     "commit": null,
     "checks": [
+      "Cyberpunk adult study: canonical workshop export passes, eight meshes/one skin, source binary and mesh/skin JSON unchanged in Blender compatibility copy. Actual CPU look-03 full-body render inspected; grounded after excluding hidden bone display helper. Python syntax passes. Not photorealism approval; static hardware and unbaked new materials remain Blender-only. No source character tooling changed, no paid calls or push.",
       "Crust/cut checkpoint 20260906-224748-89ea0e7f7f32464c848acfded33b0cc3: 62 Rust tests, six audit tests and 41 CPU stages passed; eleven existing fixture outputs byte identical. Cut maximum and 3292 plane vertices verified. Actual Blender render/reload inspected, 17.03 s and 1119481856 sampled process bytes; rejected as food art. Four closed graph components, not self-intersection or wall-thickness certification. No Godot launch, GPU render, push or Actions.",
       "Continuous room UVs: run 20260906-123121-c3bd93acdf3147719a9f3238033bbe30 passed 46 Rust tests, six audit tests and 32 CPU stages. Metric edge distances, upright wall mapping and shared-vertex UV continuity checked. Independent nine-fixture triangle/normal/placement/aperture comparison unchanged. Room vertices 944 to 440 and 366 to 186 with unchanged triangle counts. No engine/material visual or VRAM claim.",
       "Conforming room boundaries: run 20260906-122748-617c1f275457457eb45294ebbaaed12c passed 45 Rust tests, six audit tests and 32 CPU stages. All 40 fixture meshes now have closed oriented exact-position graphs; two formerly failing room meshes each have one component and zero topology findings. Opening descriptors preserved; material volume, grid budget and precision collapse checked. Retained pre-fix room rejected by new closure gate with exit 1. No engine render or general Boolean claim.",
