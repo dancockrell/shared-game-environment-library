@@ -12,6 +12,23 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 
 
+def lighting_state(scene):
+    """Capture illumination and color management independently of camera poses."""
+    world = scene.world
+    background = world.node_tree.nodes.get('Background') if world and world.use_nodes else None
+    return {'lights':[{'name':o.name,'type':o.data.type,'energy':o.data.energy,
+            'color':list(o.data.color),'matrix_world':[list(row) for row in o.matrix_world],
+            'hide_render':o.hide_render,'size':getattr(o.data,'size',None)}
+        for o in sorted(scene.objects,key=lambda o:o.name) if o.type == 'LIGHT'],
+        'world':{'name':world.name if world else None,
+            'color':list(background.inputs[0].default_value) if background else None,
+            'strength':background.inputs[1].default_value if background else None},
+        'color_management':{'view_transform':scene.view_settings.view_transform,
+            'look':scene.view_settings.look,'exposure':scene.view_settings.exposure,
+            'gamma':scene.view_settings.gamma},
+        'scope':'study area lights and Background world; not arbitrary shader graph equivalence'}
+
+
 def attach_groom_audit(source, destination):
     """Bind guide and growth coordinates together; test actual evaluated strands."""
     from mathutils import Matrix
@@ -385,6 +402,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     scene = bpy.context.scene
     assert json.loads(scene['requested_character'])['age'] == 18
     bpy.context.view_layer.update()
+    input_lighting = lighting_state(scene)
     cam = scene.camera
     height = cam.data.ortho_scale / 1.16
     ground = bpy.data.objects['Plane'].location.z + 0.005
@@ -701,6 +719,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     scene.render.threads_mode = 'FIXED'
     scene.render.threads = 2
     records = []
+    review_lighting = lighting_state(scene)
+    if not (diagnostic_light or eye_light):
+        assert review_lighting == input_lighting, 'Unrequested lighting change in asset study'
     if not render_review:
         views = []
     for name, target, direction, scale in views:
@@ -711,12 +732,13 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
         scene.render.resolution_y = 640 if name == 'face-front' else 850
         scene.render.filepath = str(destination / (name + '.png'))
         bpy.ops.render.render(write_still=True)
+        assert lighting_state(scene) == review_lighting, 'Lighting changed during view render'
         records.append({'view':name, 'camera_position':list(cam.location),
             'target':list(target), 'orthographic_scale':scale})
     assert hashlib.sha256(source.read_bytes()).hexdigest() == digest
     (destination/'review.json').write_text(json.dumps({'source_blend_sha256':digest,
         'views':records,'materials':diagnostics,'source_unchanged':True,
-        'changes':changes,
+        'changes':changes,'input_lighting':input_lighting,'review_lighting':review_lighting,
         'rendered':render_review,
         'scope':'fixed-light saved-asset review; only explicitly listed changes',
         'art_approval':'pending'},indent=2))

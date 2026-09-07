@@ -625,6 +625,18 @@ established by the small fixture.
 
 ### Adult cyberpunk character benchmark, 7 September 2026
 
+**Lighting continuity:** Saved-asset review receipts now include input and review
+light transforms, energy, color, size, render visibility, simple Background world
+values, and view transform/look/exposure/gamma. Non-lighting studies assert that
+this state remains unchanged, and each rendered view checks it again. Camera
+motion is deliberately excluded. A factory-scene Blender regression passed:
+camera movement preserves the record; light-energy and exposure changes differ;
+restoration matches. Ordinary Python: 32 passed, one Blender-only test skipped;
+the skipped test was separately executed successfully in Blender. This is not a
+complete arbitrary-world-shader fingerprint, animation-track audit or diagnosis
+of the user's unidentified skeleton clip. No new render was required for this
+state-capture test; the per-render assertion still needs a subsequent real review.
+
 #### Hair source-detail checkpoint
 
 **Complete-groom alternative:** `--author-groom-study` now evaluates Daniel
