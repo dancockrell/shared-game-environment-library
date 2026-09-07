@@ -915,6 +915,21 @@ not independently rigged. Both source/lighting guards pass; ordinary Python has
 32 passes/one Blender-only skip. Bounded CPU comparison completed without a push
 or runtime export claim.
 
+**Verified visible eye contour:** `--eye-opening` compares actual evaluated
+skin/globe first-hit order across 63 horizontal samples and 129 vertical samples,
+then refines each visible interval edge through 14 bisections. The current source
+produces 51 valid rows per eye, each with upper/lower world positions, evaluated
+skin face IDs, normals and bracket widths. Ambiguous/disconnected intervals fail
+rather than silently producing a root path. This is a frontal occlusion contour,
+not proof of the anatomical wet line or a pose-invariant construction rule.
+`--eye-opening-review` overlays the hash-matched paths on the actual whole-eye
+render. The inspected `eye-opening-review-01/whole-eye.png` traces the eye opening
+closely, unlike the rejected outer lash-strip arcs. This is a viable geometric
+reference for the next lash-root revision, not final lash approval. Source cards
+remain visible in this diagnostic for comparison. The single-thread contour
+inspection completed in under eight seconds; bounded CPU render took 54.93
+seconds. Source/lighting guards pass, with 32 Python passes/one Blender-only skip.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

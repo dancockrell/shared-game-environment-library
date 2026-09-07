@@ -215,6 +215,62 @@ def audit_lash_occlusion(source,destination):
     print('LASH_OCCLUSION',[(r['view'],r['occluded_counts']) for r in results])
 
 
+def audit_eye_opening(source,destination):
+    """Recover front-visible eye opening from actual skin/globe ray order."""
+    destination.mkdir(parents=True,exist_ok=False)
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    bpy.ops.wm.open_mainfile(filepath=str(source))
+    dg = bpy.context.evaluated_depsgraph_get()
+    def surface(obj):
+        obj = obj.evaluated_get(dg)
+        mesh = obj.to_mesh()
+        points = [obj.matrix_world@v.co for v in mesh.vertices]
+        tree = BVHTree.FromPolygons(points,[tuple(p.vertices) for p in mesh.polygons])
+        obj.to_mesh_clear()
+        return tree,points
+    skin,_ = surface(bpy.data.objects['Body03'])
+    results = []
+    for eye in sorted((o for o in bpy.context.scene.objects if o.name.startswith('Study_eye_')
+                       and o.name.endswith('_outer')),key=lambda o:o.name):
+        globe,points = surface(eye)
+        xmin,xmax = min(p.x for p in points),max(p.x for p in points)
+        zmin,zmax = min(p.z for p in points),max(p.z for p in points)
+        def visible(x,z):
+            origin = Vector((x,-1,z))
+            hit,_,_,distance = globe.ray_cast(origin,Vector((0,1,0)),2)
+            if hit is None:
+                return False,None
+            body_hit,_,_,body_distance = skin.ray_cast(origin,Vector((0,1,0)),2)
+            return body_hit is None or distance<body_distance,hit
+        rows = []
+        for i in range(1,64):
+            x = xmin+(xmax-xmin)*i/64
+            zs = [zmin+(zmax-zmin)*j/128 for j in range(129)]
+            flags = [visible(x,z)[0] for z in zs]
+            active = [j for j,value in enumerate(flags) if value]
+            if not active:
+                continue
+            lo,hi = min(active),max(active)
+            assert lo>0 and hi<128 and all(flags[j] for j in range(lo,hi+1)), 'Ambiguous eye opening'
+            edges = []
+            for outside,inside in [(zs[lo-1],zs[lo]),(zs[hi+1],zs[hi])]:
+                for _ in range(14):
+                    middle = (outside+inside)/2
+                    if visible(x,middle)[0]: inside=middle
+                    else: outside=middle
+                hit,normal,face,_ = skin.ray_cast(Vector((x,-1,outside)),Vector((0,1,0)),2)
+                assert hit is not None
+                edges.append({'world_m':list(hit),'normal':list(normal),'evaluated_face':face,
+                              'z_bracket_m':abs(outside-inside)})
+            rows.append({'x':x,'lower':edges[0],'upper':edges[1]})
+        assert len(rows)>20
+        results.append({'eye':eye.name,'rows':rows})
+    assert len(results)==2 and hashlib.sha256(source.read_bytes()).hexdigest()==digest
+    (destination/'eye-opening.json').write_text(json.dumps({'source_sha256':digest,'eyes':results,
+        'scope':'front-visible occlusion contour, not anatomical wet-line or rig binding'},indent=2))
+    print('EYE_OPENING_ROWS',[(r['eye'],len(r['rows'])) for r in results])
+
+
 def lighting_state(scene):
     """Capture illumination and color management independently of camera poses."""
     world = scene.world
@@ -598,7 +654,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
-                 lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False):
+                 lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
+                 opening_overlay=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -612,6 +669,30 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if opening_overlay:
+        record = json.loads((source.parent.parent/'eye-opening-01/eye-opening.json').read_text())
+        assert record['source_sha256']==digest
+        material = bpy.data.materials.new('Eye opening diagnostic green')
+        material.use_nodes=True
+        p=material.node_tree.nodes.get('Principled BSDF')
+        p.inputs['Emission Color'].default_value=(.02,1,.1,1)
+        p.inputs['Emission Strength'].default_value=1
+        for eye in record['eyes']:
+            for side in ('upper','lower'):
+                curve=bpy.data.curves.new(eye['eye']+side,'CURVE')
+                curve.dimensions='3D'
+                curve.bevel_depth=.00008
+                curve.bevel_resolution=1
+                spline=curve.splines.new('POLY')
+                spline.points.add(len(eye['rows'])-1)
+                for point,row in zip(spline.points,eye['rows']):
+                    v=Vector(row[side]['world_m'])+Vector((0,-.0001,0))
+                    point.co=(*v,1)
+                obj=bpy.data.objects.new(curve.name,curve)
+                scene.collection.objects.link(obj)
+                curve.materials.append(material)
+        changes.append({'experiment':'visible eye-opening contour overlay',
+            'limitation':'diagnostic contour, not anatomical lash root approval'})
     if native_lashes:
         original = bpy.data.objects['Study_rooted_lashes']
         evaluated = original.evaluated_get(bpy.context.evaluated_depsgraph_get())
@@ -1001,6 +1082,12 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--eye-opening-review':
+    review_saved(Path(args[0]),Path(args[1]),whole_eye=True,opening_overlay=True)
+    sys.exit(0)
+if len(args) == 3 and args[2] == '--eye-opening':
+    audit_eye_opening(Path(args[0]),Path(args[1]))
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--lash-curve-compare':
     root = Path(args[1])
     root.mkdir(parents=True,exist_ok=False)
