@@ -1296,6 +1296,21 @@ Process inspection found only a separately existing prior-day keep-open pastry
 preview, which was left untouched. Partial outputs remain as failed evidence.
 No new asset acceptance, push or Actions.
 
+**3-mm collar comparison completed, not better:** Optional `--raw` fifth
+argument disables denoising for a noisy diagnostic without changing sample count
+or model detail. `collar-clearance-04/back.png` inspected after memory recovered:
+edge slivers remain. Fresh `collar-interface-03` reports 54 skin-before-garment
+rays and 88 uncovered, versus 52/89 for the 1.5-mm study. Larger offset does not
+resolve the issue; keep 1.5 mm as the better tested candidate and investigate
+intervening collar surface/selection rather than increasing clearance blindly.
+No artistic acceptance. Raw noise limits fine comparison, but the slivers and
+fresh geometry audit agree that this is not a clean repair.
+
+Job completed in 25.54 s with sampled process peak 3,095,773,184 bytes, so this
+run does not demonstrate a memory saving from disabling denoising. Preflight
+free memory was 19,487,868 KiB; prior stopped runs remain incomplete evidence.
+34 Python tests pass, one skip. No push, Actions, paid operation or source change.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

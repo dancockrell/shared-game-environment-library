@@ -759,7 +759,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
                  sclera_transport=False, upper_eye_fit=False, full_character=False, full_view=None,
                  studio_review=False, body_surface_isolation=False, collar_clearance=False,
-                 collar_offset=.0015):
+                 collar_offset=.0015, raw_render=False):
     """Review saved geometry; record every optional experimental modification."""
     if collar_clearance:
         collar_offset = validate_collar_offset(collar_offset)
@@ -782,6 +782,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if raw_render:
+        scene.cycles.use_denoising = False
+        changes.append({'experiment':'raw render without denoising',
+            'limitation':'noisy diagnostic; not beauty quality or lower geometry detail'})
     if collar_clearance:
         body = bpy.data.objects['Body03']
         top = bpy.data.objects['FormalTop']
@@ -1384,6 +1388,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 5 and args[2] == '--collar-clearance' and args[4] == '--raw':
+    review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view='back',
+                 studio_review=True,collar_clearance=True,collar_offset=float(args[3]),raw_render=True)
+    sys.exit(0)
 if len(args) == 4 and args[2] == '--collar-clearance':
     review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view='back',
                  studio_review=True,collar_clearance=True,collar_offset=float(args[3]))
