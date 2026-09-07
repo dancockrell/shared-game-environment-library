@@ -1,4 +1,8 @@
 tools/.godot/
+# Local preservation payload; tracked receipt records every file hash.
+archives/dr-companion-pre-sprite/public/
+archives/dr-companion-pre-sprite/data/
+archives/dr-companion-pre-sprite/docs/
 procedural/target/
 procedural/generated/
 procedural/godot/.godot/

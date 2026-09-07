@@ -7,6 +7,8 @@
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-07T14:00:00Z",
   "paths": [
+    "tools/sync-source-archives.ps1",
+    "archives/dr-companion-pre-sprite/",
     "tools/benchmark-character-physics.ps1",
     "tools/retarget-dependencies/",
     "tools/iterate-character-build.ps1",

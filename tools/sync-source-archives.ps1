@@ -1,7 +1,11 @@
 [CmdletBinding()]
 param(
     [string[]]$SourceId,
-    [string]$ManifestPath = "catalog/source-intake-manifest.json"
+    [string]$ManifestPath = "catalog/source-intake-manifest.json",
+    [string]$SnapshotSource,
+    [string]$SnapshotDestination,
+    [string[]]$SnapshotPaths,
+    [switch]$WriteSnapshot
 )
 
 $ErrorActionPreference = 'Stop'
@@ -11,6 +15,37 @@ function Assert-RelativePath([string]$Value, [string]$Name) {
     if ([System.IO.Path]::IsPathRooted($Value) -or $Value -match '(^|[\\/])\.\.([\\/]|$)') {
         throw "$Name must be a repository-relative path."
     }
+}
+
+# Local preservation uses the same archive owner; never delete live sources.
+if ($SnapshotSource) {
+    if ($SourceId -or -not $SnapshotDestination -or -not $SnapshotPaths) { throw 'Snapshot requires source, destination and explicit relative paths only.' }
+    $sourceRoot = (Resolve-Path -LiteralPath $SnapshotSource).Path
+    $destinationRoot = [IO.Path]::GetFullPath($SnapshotDestination)
+    if ($destinationRoot.TrimEnd('\').Equals($sourceRoot.TrimEnd('\'),[StringComparison]::OrdinalIgnoreCase) -or $destinationRoot.StartsWith($sourceRoot.TrimEnd('\')+'\',[StringComparison]::OrdinalIgnoreCase)) { throw 'Archive must be outside source.' }
+    $records = @()
+    foreach ($relative in $SnapshotPaths) {
+        Assert-RelativePath $relative 'Snapshot path'
+        $sourcePath = Join-Path $sourceRoot $relative
+        if (-not (Test-Path -LiteralPath $sourcePath)) { throw "Missing snapshot source: $relative" }
+        foreach ($file in @(Get-ChildItem -LiteralPath $sourcePath -Recurse -File)) {
+            $rel = [IO.Path]::GetRelativePath($sourceRoot,$file.FullName)
+            $target = Join-Path $destinationRoot $rel
+            $hash = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($WriteSnapshot) {
+                New-Item -ItemType Directory -Force -Path (Split-Path $target -Parent) | Out-Null
+                if (Test-Path -LiteralPath $target) {
+                    if ((Get-FileHash -LiteralPath $target).Hash.ToLowerInvariant() -ne $hash) { throw "Archive collision: $rel" }
+                } else { Copy-Item -LiteralPath $file.FullName -Destination $target }
+                if ((Get-FileHash -LiteralPath $target).Hash.ToLowerInvariant() -ne $hash) { throw "Copy verification failed: $rel" }
+            }
+            $records += [ordered]@{path=$rel.Replace('\','/');bytes=$file.Length;sha256=$hash}
+        }
+    }
+    $receipt = [ordered]@{schemaVersion=1;status=if($WriteSnapshot){'copied-and-hash-verified'}else{'report-only'};source=$sourceRoot;destination=$destinationRoot;sourcePaths=$SnapshotPaths;files=$records;sourceDeleted=$false;runtimeAdmission=$false}
+    if ($WriteSnapshot) { $receipt | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $destinationRoot 'snapshot.json') -Encoding utf8 }
+    [pscustomobject]@{status=$receipt.status;files=$records.Count;bytes=($records|Measure-Object bytes -Sum).Sum;destination=$destinationRoot} | ConvertTo-Json
+    return
 }
 
 $manifest = Get-Content -Raw -LiteralPath $ManifestPath | ConvertFrom-Json
