@@ -671,6 +671,20 @@ following, game export or artistic completion. No new render was made in this
 attachment checkpoint; unchanged-rest geometry is measured, not a posed visual
 approval. The source groom and failed receipt remain preserved.
 
+**Posed visual evaluation:** `--groom-pose-review` reloads that saved attachment,
+applies a recorded 0.4-radian local-Z head rotation, and renders front/rear head
+closeups with unchanged materials and lights. `groom-pose-01` was inspected:
+this rig axis produces a head tilt, not a yaw turn. The hair follows the tilt and
+the front silhouette remains coherent. The rear closeup exposes a mottled pale
+scalp region, an abrupt dark nape boundary and a poorly integrated transition
+from short sides to the long crown. The full-body rear image had concealed the
+severity. **Reject finished hair/skin integration.** Next inspect the underlying
+scalp texture and short-strand coverage separately before changing their fit;
+the screenshot alone does not establish which layer causes the boundary.
+The two CPU renders completed within the 120-second/3-GiB process guard, with
+24 samples, two threads and below-normal priority. The input hash is unchanged;
+32 Python tests pass. No posed collision or export approval is implied.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

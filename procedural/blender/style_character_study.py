@@ -375,7 +375,7 @@ def construct_fitted_eyes(eyes):
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
-                 demo_groom=False):
+                 demo_groom=False, groom_pose=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -388,6 +388,16 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if groom_pose:
+        from mathutils import Matrix
+        anchor = bpy.data.objects['Study_groom_head_attachment']
+        constraint = anchor.constraints[0]
+        bone = constraint.target.pose.bones[constraint.subtarget]
+        bone.matrix_basis = bone.matrix_basis @ Matrix.Rotation(.4,4,'Z')
+        bpy.context.view_layer.update()
+        changes.append({'experiment':'saved groom attachment posed closeups',
+            'bone':bone.name,'local_axis':'Z','radians':.4,
+            'limitation':'single rigid pose; no collision or export certification'})
     if demo_groom:
         changes.append(append_demo_groom())
         bpy.ops.wm.save_as_mainfile(filepath=str(destination/'author-groom-study.blend'))
@@ -479,6 +489,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
+    if groom_pose:
+        target = eye_center + Vector((0,0,.03))
+        views = [('head-turned', target, Vector((0,-1,.05)),.38),
+                 ('head-rear', target, Vector((0,1,.1)),.38)]
     if geometry_eye or eye_light:
         front = sorted([p for p in points if p.x > 0],key=lambda p:p.y)[:8]
         target = sum(front,Vector())/len(front)
@@ -528,6 +542,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--groom-pose-review':
+    review_saved(Path(args[0]),Path(args[1]),groom_pose=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--groom-attachment-audit':
     attach_groom_audit(Path(args[0]),Path(args[1]))
     sys.exit(0)
