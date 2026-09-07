@@ -1167,6 +1167,25 @@ per-view resource handling/framing and prioritize full garment/character work
 over further isolated eye polishing. 32 Python tests pass, one Blender-only skip.
 No push, Actions, paid service or visible engine window.
 
+**Bounded full-character views completed:** Full review now fits the camera
+against evaluated visible mesh/curve bounds, excluding stage Plane/Icosphere,
+and projects those bounds through the actual camera aspect with 8% margin.
+This replaces guessed full-body scale and includes the groom. An optional fourth
+CLI argument selects front, three-quarter or back, enabling separate bounded
+processes without duplicating review logic. The three `full-character-02-*`
+jobs completed with their own receipts; actual PNGs all inspected. Front and
+three-quarter retain hair/feet in frame; chest shading is uneven and garment
+construction remains inadequate. Back is too dark under the inherited frontal
+diagnostic lighting to evaluate rear garment fit. Do not call that a successful
+rear-art review just because the image exists. Next use an explicit neutral
+multi-view review-light setup, preserving the original lighting as evidence.
+
+Sequential CPU/two-thread jobs: front 26.43 s / 2,945,855,488 peak sampled process
+bytes; three-quarter 24.79 s / 2,924,130,304; back 33.19 s / 2,913,357,824.
+Each stayed within its separate 100-second/3-GiB guard; this does not prove an
+arbitrary multi-view process memory bound. 32 Python tests passed, one skip.
+No geometry changes, art acceptance, game export, push or Actions in this pass.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

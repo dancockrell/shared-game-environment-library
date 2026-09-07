@@ -712,7 +712,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
-                 sclera_transport=False, upper_eye_fit=False, full_character=False):
+                 sclera_transport=False, upper_eye_fit=False, full_character=False, full_view=None):
     """Review saved geometry; record every optional experimental modification."""
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
@@ -1161,6 +1161,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if full_character:
         views[0] = ('front',full_target,Vector((0,-1,.02)),height*1.16)
+        if full_view is not None:
+            assert full_view in ('front','three-quarter','back')
+            views = [v for v in views if v[0] == full_view]
     if eye_study or layered_eye:
         views = views[:1]
     if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals or skin_subdivision or lash_fit or lash_strands:
@@ -1220,11 +1223,31 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     if not render_review:
         views = []
     for name, target, direction, scale in views:
+        if full_character:
+            dg = bpy.context.evaluated_depsgraph_get()
+            bounds = [obj.evaluated_get(dg).matrix_world@Vector(corner)
+                for obj in scene.objects
+                if obj.type in ('MESH','CURVES','CURVE') and obj.visible_get()
+                and not obj.hide_render and obj.name not in ('Plane','Icosphere')
+                for corner in obj.evaluated_get(dg).bound_box]
+            assert bounds
+            target = Vector(tuple((min(p[k] for p in bounds)+max(p[k] for p in bounds))/2 for k in range(3)))
         cam.location = target + direction.normalized() * height * 2.5
         cam.rotation_euler = (target - cam.location).to_track_quat('-Z', 'Y').to_euler()
         cam.data.ortho_scale = scale
         scene.render.resolution_x = 640
         scene.render.resolution_y = 640 if name == 'face-front' else 850
+        if full_character:
+            bpy.context.view_layer.update()
+            cam.data.ortho_scale = 1
+            frame = cam.data.view_frame(scene=scene)
+            width = max(p.x for p in frame)-min(p.x for p in frame)
+            vertical = max(p.y for p in frame)-min(p.y for p in frame)
+            inverse = cam.matrix_world.inverted()
+            projected = [inverse@p for p in bounds]
+            scale = 1.08*max(2*max(abs(p.x) for p in projected)/width,
+                             2*max(abs(p.y) for p in projected)/vertical)
+            cam.data.ortho_scale = scale
         scene.render.filepath = str(destination / (name + '.png'))
         bpy.ops.render.render(write_still=True)
         assert lighting_state(scene) == review_lighting, 'Lighting changed during view render'
@@ -1240,6 +1263,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 4 and args[2] == '--full-character-review':
+    review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view=args[3])
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--full-character-review':
     review_saved(Path(args[0]),Path(args[1]),full_character=True)
     sys.exit(0)
