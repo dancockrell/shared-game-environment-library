@@ -7,6 +7,7 @@
   "claimed_at": "2026-09-06T03:10:00Z",
   "updated_at": "2026-09-07T09:50:53Z",
   "paths": [
+    "tools/iterate-character-build.ps1",
     "tools/character-workshop.gd",
     "tools/test-character-workshop.gd",
     "procedural/",

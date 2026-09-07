@@ -1267,6 +1267,22 @@ pressure. Revision-02 visual comparison is **unrun**, not an improvement claim.
 Resume rendering only after shared-machine headroom recovers; do not interfere
 with other users' processes. Source and previous 1.5-mm evidence preserved.
 
+**Shared iteration memory protection:** Extended the existing
+`tools/iterate-character-build.ps1`, not a parallel job runner. Defaults now
+include ProcessMemoryMiB=4096 and MinimumFreeMemoryMiB=8192. Before each stage,
+insufficient system memory produces a failed receipt with started=false; during
+execution sampled process/system limits and timeout have explicit stop reasons.
+Jobs run BelowNormal and exceptional exits clean up only the owned process tree.
+Limits and sampled metrics are recorded, not presented as VRAM measurements.
+
+PowerShell parsing passed. Negative preflight run
+`20260907T121014512Z-106e6534` requested 65536 MiB free on this 32-GiB machine:
+receipt status failed, first stage started=false, stopReason=system-memory-preflight.
+No engine launched. Live process-memory termination and the full build suite are
+not tested in this checkpoint. Python tests: 34 passed, one skip. The 3-mm collar
+render remains pending; shared free memory was volatile, so no heavy retry here.
+No unrelated processes touched, paid operations, push or Actions.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

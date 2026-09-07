@@ -2,6 +2,8 @@ param(
     [Parameter(Mandatory=$true)][string]$GodotPath,
     [ValidateRange(1,10)][int]$Iterations = 1,
     [ValidateRange(10,1800)][int]$StageTimeoutSeconds = 300,
+    [ValidateRange(256,16384)][int]$ProcessMemoryMiB = 4096,
+    [ValidateRange(1024,262144)][int]$MinimumFreeMemoryMiB = 8192,
     [switch]$NoRender
 )
 $ErrorActionPreference = 'Stop'
@@ -28,6 +30,8 @@ $receipt = [ordered]@{
     requestedIterations=$Iterations; rendered=(!$NoRender); status='running'
     visualAdmission='pending-human-review'; vramBytes=$null
     memoryMetric='sampled process working set bytes, not VRAM or guaranteed peak'
+    processMemoryLimitBytes=([long]$ProcessMemoryMiB*1MB)
+    minimumFreeMemoryBytes=([long]$MinimumFreeMemoryMiB*1MB)
     stages=$stages; results=@()
 }
 function Save-Receipt {
@@ -35,6 +39,12 @@ function Save-Receipt {
 }
 function Invoke-Stage([string]$Name,[string]$Script,[string[]]$Tail,[bool]$Headless) {
     Write-Output "Running $Name"
+    $freeBytes = [long](Get-CimInstance Win32_OperatingSystem -ErrorAction Stop).FreePhysicalMemory*1KB
+    if ($freeBytes -lt $receipt.minimumFreeMemoryBytes) {
+        $stages.Add([ordered]@{name=$Name; passed=$false; started=$false; stopReason='system-memory-preflight'; freeMemoryBytes=$freeBytes})
+        Save-Receipt
+        throw "$Name not launched: insufficient shared-machine memory."
+    }
     $startInfo = [Diagnostics.ProcessStartInfo]::new()
     $startInfo.FileName = $enginePath
     $startInfo.WorkingDirectory = $repoPath
@@ -51,15 +61,29 @@ function Invoke-Stage([string]$Name,[string]$Script,[string[]]$Tail,[bool]$Headl
     $watch = [Diagnostics.Stopwatch]::StartNew()
     $sampledMemory = 0L
     $timedOut = $false
+    $stopReason = $null
+    $lastSystemMemoryCheck = 0.0
+    $started = $false
     try {
         if (!$process.Start()) { throw "Could not start $Name" }
+        $started = $true
+        $process.PriorityClass = 'BelowNormal'
         $stdout = $process.StandardOutput.ReadToEndAsync()
         $stderr = $process.StandardError.ReadToEndAsync()
         while (!$process.WaitForExit(200)) {
             $process.Refresh()
-            if (!$process.HasExited) { $sampledMemory = [Math]::Max($sampledMemory,$process.WorkingSet64) }
+            if (!$process.HasExited) { $sampledMemory = [Math]::Max([long]$sampledMemory,[long]$process.WorkingSet64) }
+            if ($sampledMemory -gt $receipt.processMemoryLimitBytes) { $stopReason = 'process-memory' }
+            if ($watch.Elapsed.TotalSeconds-$lastSystemMemoryCheck -ge 1) {
+                $freeBytes = [long](Get-CimInstance Win32_OperatingSystem -ErrorAction Stop).FreePhysicalMemory*1KB
+                $lastSystemMemoryCheck = $watch.Elapsed.TotalSeconds
+                if ($freeBytes -lt $receipt.minimumFreeMemoryBytes) { $stopReason = 'system-memory' }
+            }
             if ($watch.Elapsed.TotalSeconds -gt $StageTimeoutSeconds) {
                 $timedOut = $true
+                $stopReason = 'timeout'
+            }
+            if ($null -ne $stopReason) {
                 $process.Kill($true)
                 $process.WaitForExit()
                 break
@@ -68,12 +92,16 @@ function Invoke-Stage([string]$Name,[string]$Script,[string[]]$Tail,[bool]$Headl
         $log = $stdout.GetAwaiter().GetResult() + "`n" + $stderr.GetAwaiter().GetResult()
         $exitCode = $process.ExitCode
         [IO.File]::WriteAllText((Join-Path $runRoot ($Name+'.log')),$log)
-        $passed = (!$timedOut -and $exitCode -eq 0 -and $log -notmatch 'SCRIPT ERROR|(?m)^FAIL ')
-        $stages.Add([ordered]@{name=$Name; passed=$passed; exitCode=$exitCode; timedOut=$timedOut; seconds=[Math]::Round($watch.Elapsed.TotalSeconds,3); sampledWorkingSetBytes=$sampledMemory; assertionsPassed=([regex]::Matches($log,'(?m)^PASS ')).Count; engineErrorLines=@($log -split "`n" | Where-Object { $_ -match '^ERROR:' } | Sort-Object -Unique); log=$Name+'.log'})
+        $passed = ($null -eq $stopReason -and $exitCode -eq 0 -and $log -notmatch 'SCRIPT ERROR|(?m)^FAIL ')
+        $stages.Add([ordered]@{name=$Name; passed=$passed; started=$true; stopReason=$stopReason; exitCode=$exitCode; timedOut=$timedOut; seconds=[Math]::Round($watch.Elapsed.TotalSeconds,3); sampledWorkingSetBytes=$sampledMemory; assertionsPassed=([regex]::Matches($log,'(?m)^PASS ')).Count; engineErrorLines=@($log -split "`n" | Where-Object { $_ -match '^ERROR:' } | Sort-Object -Unique); log=$Name+'.log'})
         Save-Receipt
         if (!$passed) { throw "$Name failed; inspect its log in $runRoot" }
         Write-Output "$Name passed ($([Math]::Round($watch.Elapsed.TotalSeconds,1)) seconds)"
     } finally {
+        if ($started -and !$process.HasExited) {
+            $process.Kill($true)
+            $process.WaitForExit()
+        }
         $watch.Stop()
         $process.Dispose()
     }
