@@ -1079,6 +1079,31 @@ points so downstream fitting can operate on measured geometry. 32 Python tests
 pass, one Blender-only skip. No new beauty render or art acceptance in this
 measurement checkpoint; prior shadow diagnosis remains the visual evidence.
 
+**Upper-sclera fitting rejected visually:** `--upper-eye-fit` uses the measured
+upper contour, a compact 3-mm support kernel and at most 1-mm front-axis shift.
+Positive-transmission cornea/limbus vertices and the lower half are excluded;
+source points and all changed vertex IDs/displacements are retained. Actual
+`upper-eye-fit-01/whole-eye.png` inspected: the heavy band persists and an inner
+upper crease appears. **Reject this shape as a production improvement.** Render
+completed in 51.10 s, sampled peak process 1,623,879,680 bytes.
+
+The initial experiment omitted edited-model persistence; fixed in the existing
+caller by saving `upper-eye-fit.blend`. `--upper-eye-fit-build` performs the same
+construction without rendering, enabling bounded build/reload evaluation.
+Rebuilt `upper-eye-fit-02` displacement receipt is byte-identical to revision 01
+(SHA256 C3DBF31FAB6B2CF28A3BA644B4F58EBF70697D52303EE70FAFF5AEC7244A334D).
+Fresh reload audit `eye-interface-fit-01` reduces upper mean distance from
+0.449 mm to approximately 0.265 mm, while lower means remain unchanged. This
+numeric improvement does not override the visual rejection; rest-pose localized
+globe deformation also lacks eye-rotation acceptance. 32 tests passed, one skip.
+
+App integration boundary: the actual editor is `tools/character-workshop.gd`,
+already providing source/profile import, appearance save/load and character
+export. These Blender study operations are not yet exposed in that UI. Preserve
+the active shared-character-workshop owner; no second editor or fitting solver
+is introduced. Saved editable results and reproducible build-only operations
+are prerequisites, not proof of an integrated user-facing workflow.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

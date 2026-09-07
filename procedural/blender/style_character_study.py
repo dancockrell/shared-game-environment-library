@@ -712,7 +712,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
-                 sclera_transport=False):
+                 sclera_transport=False, upper_eye_fit=False):
     """Review saved geometry; record every optional experimental modification."""
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
@@ -728,6 +728,49 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if upper_eye_fit:
+        audit = json.loads((source.parent.parent/'eye-interface-02/eye-opening.json').read_text())
+        assert audit['source_sha256'] == digest
+        fit_records = []
+        for eye in audit['eyes']:
+            obj = bpy.data.objects[eye['eye']]
+            inverse = obj.matrix_world.inverted()
+            apex = obj.matrix_world@obj.data.vertices[0].co
+            transmission = obj.data.attributes['corneal_transmission']
+            controls = [row['upper'] for row in eye['rows']
+                        if row['upper']['signed_globe_distance_m']>.0001]
+            moved = []
+            for vertex in obj.data.vertices:
+                position = obj.matrix_world@vertex.co
+                if position.z <= apex.z or transmission.data[vertex.index].value > 0:
+                    continue
+                total, shift = 0.,0.
+                for control in controls:
+                    distance = (position-Vector(control['nearest_globe_m'])).length
+                    if distance >= .003:
+                        continue
+                    t = distance/.003
+                    weight = (1-t*t)**2
+                    target = min(0.,control['world_m'][1]-control['nearest_globe_m'][1]+.0001)
+                    shift += weight*max(-.001,target)
+                    total += weight
+                shift /= max(1.,total)
+                if abs(shift)>1e-9:
+                    original = list(position)
+                    position.y += shift
+                    vertex.co = inverse@position
+                    moved.append({'vertex':vertex.index,'source_world_m':original,'shift_y_m':shift})
+            obj.data.update()
+            fit_records.append({'eye':obj.name,'moved':moved})
+        (destination/'upper-eye-fit.json').write_text(json.dumps({
+            'source_sha256':digest,'support_radius_m':.003,'max_shift_m':.001,
+            'eyes':fit_records},indent=2))
+        changes.append({'experiment':'bounded upper sclera contour fit',
+            'moved_vertices':[len(r['moved']) for r in fit_records],
+            'limitations':['front-axis fit only','rest pose only; eye rotations not certified',
+                'not anatomical reconstruction; cornea and lower half excluded']})
+        # Preserve actual edited geometry, not just a preview and displacement log.
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'upper-eye-fit.blend'))
     if sclera_transport:
         material = bpy.data.materials['Study_sclera_limbus_cornea']
         p = next(n for n in material.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
@@ -1190,6 +1233,12 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--upper-eye-fit-build':
+    review_saved(Path(args[0]),Path(args[1]),whole_eye=True,upper_eye_fit=True,render_review=False)
+    sys.exit(0)
+if len(args) == 3 and args[2] == '--upper-eye-fit':
+    review_saved(Path(args[0]),Path(args[1]),whole_eye=True,upper_eye_fit=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--sclera-transport':
     review_saved(Path(args[0]),Path(args[1]),whole_eye=True,sclera_transport=True)
     sys.exit(0)
