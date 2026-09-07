@@ -1254,6 +1254,19 @@ bytes under the 4-GiB/8-GiB-free-system guard. 32 Python tests passed, one skip.
 Next refine collar-edge coverage and test pose response before accepting this
 modifier as part of a character build. No push, Actions or paid service.
 
+**Collar clearance parameter and resource stop:** The existing operation accepts
+an optional fourth argument in metres, constrained to 0.0005–0.004; default
+remains 0.0015. Validation occurs before scene loading/output creation and rejects
+NaN, infinity, wrong types and out-of-range values. The selected group threshold
+and modifier offset share this parameter; receipts retain the actual value.
+Two tests execute the actual pure validation function without importing Blender:
+34 tests pass, one Blender-only skip. Attempted 0.003-m comparison was immediately
+terminated by the shared-memory guard; subsequent system reading was 2,382,636
+KiB free. No Blender process remained, and no restart was attempted under that
+pressure. Revision-02 visual comparison is **unrun**, not an improvement claim.
+Resume rendering only after shared-machine headroom recovers; do not interfere
+with other users' processes. Source and previous 1.5-mm evidence preserved.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

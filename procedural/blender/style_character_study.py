@@ -744,6 +744,12 @@ def construct_fitted_eyes(eyes):
                 'neutral sclera lacks veins and regional pigmentation',
                 'rigid eye attachment; eyelid contact and export not validated']}
 
+def validate_collar_offset(value):
+    if type(value) not in (int,float) or not .0005 <= value <= .004:
+        raise ValueError('Collar study clearance must be 0.5 to 4 mm')
+    return float(value)
+
+
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
@@ -752,8 +758,11 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
                  sclera_transport=False, upper_eye_fit=False, full_character=False, full_view=None,
-                 studio_review=False, body_surface_isolation=False, collar_clearance=False):
+                 studio_review=False, body_surface_isolation=False, collar_clearance=False,
+                 collar_offset=.0015):
     """Review saved geometry; record every optional experimental modification."""
+    if collar_clearance:
+        collar_offset = validate_collar_offset(collar_offset)
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
     destination.mkdir(parents=True, exist_ok=False)
@@ -791,7 +800,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
         for index,point in enumerate(points):
             near,normal,_,distance = skin.find_nearest(point)
             if point.z>zmax-.07 and abs(point.x)<.1 and normal.y>.3 and distance<.015:
-                if (point-near).dot(normal)<.0015:
+                if (point-near).dot(normal)<collar_offset:
                     selected.append(index)
         evaluated.to_mesh_clear()
         assert selected
@@ -801,10 +810,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
         modifier.target = body
         modifier.wrap_method = 'NEAREST_SURFACEPOINT'
         modifier.wrap_mode = 'OUTSIDE_SURFACE'
-        modifier.offset = .0015
+        modifier.offset = collar_offset
         modifier.vertex_group = group.name
         changes.append({'experiment':'existing shrinkwrap rear collar clearance',
-            'selected_vertices':selected,'offset_m':.0015,
+            'selected_vertices':selected,'offset_m':collar_offset,
             'limitations':['rest-pose spatial selection','masked body normals can be ambiguous',
                 'not full cloth contact or animation acceptance']})
         bpy.context.view_layer.update()
@@ -1375,6 +1384,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 4 and args[2] == '--collar-clearance':
+    review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view='back',
+                 studio_review=True,collar_clearance=True,collar_offset=float(args[3]))
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--collar-clearance':
     review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view='back',
                  studio_review=True,collar_clearance=True)
