@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "runtimeAdmission": false,
+  "action": "idle",
+  "facing": "down-right",
+  "reviewedBy": "Codex",
+  "reviewedAt": "2026-09-08",
+  "experiment": "IDLE_EXPERIMENT.md",
+  "candidates": [
+    {"file":"idle-02.png","sha256":"4b45d91d71821c11695cd34a781f1dfe0edff09fa5c846d2c9739996b6fe02c0","status":"rejected","reason":"RGB with painted checkerboard; no alpha channel"},
+    {"file":"idle-03.png","sha256":"e7f5fe11bfa8666564e68c0251f852bd253d7f3eb248784af67dab6b7a83069c","status":"rejected","reason":"Background-only cleanup still returned RGB with painted checkerboard"}
+  ],
+  "motionAcceptance": "not_run_after_alpha_failure",
+  "nextStep": "Use a reliably transparent single-pose workflow or source-native sprite editing; do not repeat the failed cleanup prompt or ship these checkerboards."
+}
