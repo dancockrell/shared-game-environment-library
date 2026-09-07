@@ -1,5 +1,9 @@
 # Shared character workshop
 
+## Pirate Island consumer direction — 7 September 2026
+
+The user explicitly shelved **all 3D art for Pirate Island** and selected a **2D pixel-sprite pipeline at the supplied elevated three-quarter perspective**. Stop Pirate Island model generation, garment simulation, retargeter builds and 3D-to-sprite baking. The canonical consumer decision is `project-42-pirate-island-rpg/docs/VISUAL_AUTHORITY_AND_3D_ENTRY_GATE.md`, adopted in commit `b79b2df`, with the original approved images/video and source ledger. Its historical filename does not authorize 3D work. The earlier exact painted character target below may inform identity/costume but is superseded as Pirate Island's rendering and production acceptance target. Preserve this shared research and tooling; do not erase it or automatically change DragonRealms/DR Companion's direction. Historical next-build instructions below are not authorization to resume Pirate Island 3D production.
+
 Reusable production instructions live in `.agents/skills/character-art-production/SKILL.md`. They preserve faction-specific art direction while using this shared implementation.
 
 ## Shared-machine execution rule — user clarification, 6 September 2026
