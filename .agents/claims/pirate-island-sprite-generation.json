@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "task_id": "pirate-island-sprite-generation",
+  "agent": "Pirate Island Work",
+  "summary": "Generate Michael pixel-art direction candidates in the existing shared 2D library",
+  "status": "active",
+  "claimed_at": "2026-09-07T16:00:00Z",
+  "updated_at": "2026-09-07T16:00:00Z",
+  "paths": ["procedural/sprites/candidates/pirate-island/"],
+  "coordination": {"notes": "Shared local sprite area broadcast to eight product tasks. No other product assets edited. Built-in image generation only; no paid API fallback."},
+  "completion": {"commit": null, "checks": []}
+}
