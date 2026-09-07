@@ -12,6 +12,56 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 
 
+def audit_eye_motion(source, destination):
+    """Measure optical-part deformation against rigid eye motion; no art approval."""
+    destination.mkdir(parents=True, exist_ok=False)
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    bpy.ops.wm.open_mainfile(filepath=str(source))
+    scene = bpy.context.scene
+    objects = [o for o in scene.objects if o.name.startswith('Study_eye_')]
+    assert len(objects) == 6
+    rigs = {m.object for o in objects for m in o.modifiers if m.type == 'ARMATURE'}
+    assert len(rigs) == 1
+    rig = next(iter(rigs))
+    assert rig is not None
+    saved = {b.name:b.matrix_basis.copy() for b in rig.pose.bones}
+    rest = {o.name:[o.matrix_world@v.co for v in o.data.vertices] for o in objects}
+    tests = []
+    try:
+        for name, axis, angle in [('eye_L',2,.25),('eye_L',2,-.25),
+                                  ('eye_R',0,.2),('eye_R',0,-.2),('head',2,.2)]:
+            for b in rig.pose.bones:
+                b.matrix_basis = saved[b.name]
+            from mathutils import Matrix
+            rig.pose.bones[name].matrix_basis = saved[name] @ Matrix.Rotation(angle,4,'XYZ'[axis])
+            bpy.context.view_layer.update()
+            dg = bpy.context.evaluated_depsgraph_get()
+            parts = []
+            for obj in objects:
+                bone = rig.pose.bones[obj['source_eye_bone']]
+                transform = (rig.matrix_world @ bone.matrix @
+                             bone.bone.matrix_local.inverted() @ rig.matrix_world.inverted())
+                evaluated = obj.evaluated_get(dg)
+                mesh = evaluated.to_mesh()
+                error = max(((evaluated.matrix_world@v.co)-(transform@p)).length
+                            for v,p in zip(mesh.vertices,rest[obj.name]))
+                evaluated.to_mesh_clear()
+                parts.append({'object':obj.name,'max_rigid_departure_m':error})
+            tests.append({'bone':name,'local_axis':axis,'angle_radians':angle,'parts':parts})
+    finally:
+        for b in rig.pose.bones:
+            b.matrix_basis = saved[b.name]
+        bpy.context.view_layer.update()
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == digest
+    worst = max(p['max_rigid_departure_m'] for t in tests for p in t['parts'])
+    (destination/'pose-audit.json').write_text(json.dumps({
+        'source_sha256':digest,'source_unchanged':True,'poses':tests,
+        'maximum_rigid_departure_m':worst,'rigid_gate_m':.00005,
+        'rigid_gate_passed':worst <= .00005,
+        'scope':'five local-axis poses; optical rigidity only, not eyelid collision or art approval'},indent=2))
+    print('EYE_POSE_AUDIT_COMPLETE',worst,'rigid_gate_passed',worst <= .00005)
+
+
 def construct_fitted_eyes(eyes):
     """Exercise analytic eye geometry against this verified rest-pose source."""
     sys.path.insert(0, str(Path(__file__).parent))
@@ -94,16 +144,10 @@ def construct_fitted_eyes(eyes):
             assert len(obj.vertex_groups) == 0
             for source_group in eyes.vertex_groups:
                 obj.vertex_groups.new(name=source_group.name)
-            # Source includes small eyelid-bone blends on four vertices per eye.
-            # Preserve them through an explicit nearest-source transfer, rather
-            # than silently claiming all vertices were rigid eye weights.
-            buckets = {}
-            for vertex,position in enumerate(world):
-                nearest = min(indices,key=lambda i:(points[i]-position).length_squared)
-                for g in eyes.data.vertices[nearest].groups:
-                    buckets.setdefault((g.group,g.weight),[]).append(vertex)
-            for (bone,weight),vertices in buckets.items():
-                obj.vertex_groups[bone].add(vertices,weight,'REPLACE')
+            # Optical components must move together. Source eyelid blends made
+            # the new surfaces deform differently in the measured pose audit.
+            # Keep the original source untouched; bind constructed optics rigidly.
+            obj.vertex_groups[group].add(list(range(len(world))),1,'REPLACE')
             uvs = [uv_at(v) for v in world]
             uv = mesh.uv_layers.new(name='Source_projected_UV')
             for poly in mesh.polygons:
@@ -122,7 +166,7 @@ def construct_fitted_eyes(eyes):
                     item.value = {'cornea':1,'limbus':2,'sclera':3}[label]
         records.append({'side':sign,'apex_world_m':list(apex),
             'source_bone':eyes.vertex_groups[group].name,
-            'weight_transfer':'nearest source vertex, including eyelid blends',
+            'weight_transfer':'rigid optical parts on verified dominant source eye bone',
             'parameters':model['parameters'],
             'minimum_axial_iris_clearance_m':model['minimum_axial_iris_clearance_m']})
     eyes.hide_render = True
@@ -132,10 +176,10 @@ def construct_fitted_eyes(eyes):
             'limitations':['generic analytic shape, not captured anatomy',
                 'iris projection retains baked source texture shading',
                 'neutral sclera lacks veins and regional pigmentation',
-                'rest weights copied; pose and export not validated']}
+                'rigid eye attachment; eyelid contact and export not validated']}
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
-                 eye_light=False):
+                 eye_light=False, render_review=True):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -242,6 +286,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     scene.render.threads_mode = 'FIXED'
     scene.render.threads = 2
     records = []
+    if not render_review:
+        views = []
     for name, target, direction, scale in views:
         cam.location = target + direction.normalized() * height * 2.5
         cam.rotation_euler = (target - cam.location).to_track_quat('-Z', 'Y').to_euler()
@@ -256,15 +302,19 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     (destination/'review.json').write_text(json.dumps({'source_blend_sha256':digest,
         'views':records,'materials':diagnostics,'source_unchanged':True,
         'changes':changes,
+        'rendered':render_review,
         'scope':'fixed-light saved-asset review; only explicitly listed changes',
         'art_approval':'pending'},indent=2))
-    print('CHARACTER_SAVED_REVIEW_PASS')
+    print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
-if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study'):
+if len(args) == 3 and args[2] == '--eye-pose-audit':
+    audit_eye_motion(Path(args[0]),Path(args[1]))
+    sys.exit(0)
+if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study', '--geometry-eye-build'):
     review_saved(Path(args[0]), Path(args[1]), args[2] == '--eye-study',
-                 args[2] == '--layered-eye-study', args[2] == '--geometry-eye-study',
-                 args[2] == '--eye-light-study')
+                 args[2] == '--layered-eye-study', args[2] in ('--geometry-eye-study','--geometry-eye-build'),
+                 args[2] == '--eye-light-study', args[2] != '--geometry-eye-build')
     sys.exit(0)
 if len(args) != 2:
     raise ValueError('Expected source, fresh output directory and optional --review-only')

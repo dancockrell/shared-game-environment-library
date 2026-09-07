@@ -627,6 +627,27 @@ established by the small fixture.
 
 #### Fixed-light inspection and eye hypothesis
 
+**Current optical binding checkpoint:** The earlier nearest-source weight transfer
+is superseded for newly constructed optical parts. A saved-scene `--eye-pose-audit`
+tests five local-axis eye/head rotations and compares every optical vertex with
+its expected rigid eye-bone transform. Revision 05 failed the explicit 0.05 mm
+rigidity gate at 0.10035 mm maximum departure. Source eyelid influences were
+deforming the newly separated surfaces. Generated cornea/iris/pupil parts now
+bind to their verified dominant eye bone only; original source weights remain
+untouched. Revision 06 passes at 0.000488 mm maximum departure. The five poses
+are a narrow numerical check, not natural-gaze or eyelid-intersection approval.
+
+The existing construction/review caller also accepts `--geometry-eye-build` to
+save geometry and a receipt without rendering. Its receipt explicitly says
+`rendered: false`; it is not a substitute for visual admission. This permits fast
+binding iterations without rerendering unchanged rest geometry. Fresh loads of
+revisions 05 and 06 confirmed exactly identical local vertex arrays on all six
+new eye meshes. No new render was made for this weights-only change. The 28
+Python tests, script compilation and source-hash checks pass. Initial audit call
+used an invalid Blender rotation-axis argument, failed before producing results,
+and was corrected; `eye-pose-02` and `eye-pose-03` are the completed before/after
+audits. All jobs were background CPU jobs; no Godot UI or Actions activity.
+
 **Current curvature/region revision (supersedes the quartic below):** The clear
 aperture now uses a spherical cap derived from the existing aperture and sag,
 with positive meridional curvature. A Hermite band outside that aperture connects
