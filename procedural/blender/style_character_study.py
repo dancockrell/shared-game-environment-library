@@ -8,8 +8,126 @@ import struct
 from pathlib import Path
 import bpy
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
+from mathutils.geometry import barycentric_transform
 
-def review_saved(source, destination, eye_study=False, layered_eye=False):
+
+def construct_fitted_eyes(eyes):
+    """Exercise analytic eye geometry against this verified rest-pose source."""
+    sys.path.insert(0, str(Path(__file__).parent))
+    from eye_geometry import construct_eye
+    evaluated = eyes.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    assert len(eyes.data.vertices) == len(evaluated.data.vertices) == 96
+    points = [eyes.matrix_world @ v.co for v in eyes.data.vertices]
+    assert max((p-evaluated.matrix_world @ v.co).length
+               for p,v in zip(points,evaluated.data.vertices)) < 1e-5, 'Rest pose required'
+    eyes.data.calc_loop_triangles()
+    triangles = list(eyes.data.loop_triangles)
+    tree = BVHTree.FromPolygons(points, [tuple(t.vertices) for t in triangles],
+                               all_triangles=True)
+    source_uv = eyes.data.uv_layers.active.data
+
+    def uv_at(point):
+        hit, _, index, _ = tree.ray_cast(Vector((point.x, -.3, point.z)), Vector((0,1,0)))
+        if hit is None:
+            return (0.5,0.5)
+        t = triangles[index]
+        uv = [Vector((*source_uv[i].uv,0)) for i in t.loops]
+        return barycentric_transform(hit, *(points[i] for i in t.vertices), *uv)[:2]
+
+    iris_mat = eyes.data.materials[0].copy()
+    iris_mat.name = 'Study_iris_source_pigment'
+    p = next(n for n in iris_mat.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+    p.inputs['Specular IOR Level'].default_value = 0
+    outer_mat = eyes.data.materials[0].copy()
+    outer_mat.name = 'Study_sclera_limbus_cornea'
+    nodes, links = outer_mat.node_tree.nodes, outer_mat.node_tree.links
+    sclera = next(n for n in nodes if n.type == 'BSDF_PRINCIPLED')
+    sclera.inputs['Roughness'].default_value = .22
+    sclera.inputs['IOR'].default_value = 1.37
+    glass = nodes.new('ShaderNodeBsdfGlass')
+    glass.inputs['Roughness'].default_value = .025
+    glass.inputs['IOR'].default_value = 1.37
+    weight = nodes.new('ShaderNodeAttribute')
+    weight.attribute_name = 'corneal_transmission'
+    mix = nodes.new('ShaderNodeMixShader')
+    links.new(weight.outputs['Fac'], mix.inputs[0])
+    links.new(sclera.outputs[0], mix.inputs[1])
+    links.new(glass.outputs[0], mix.inputs[2])
+    links.new(mix.outputs[0], next(n for n in nodes if n.type == 'OUTPUT_MATERIAL').inputs['Surface'])
+    black = bpy.data.materials.new('Study_pupil_backing')
+    black.use_nodes = True
+    p = black.node_tree.nodes.get('Principled BSDF')
+    p.inputs['Base Color'].default_value = (.001,.001,.001,1)
+    p.inputs['Specular IOR Level'].default_value = 0
+    records = []
+    for sign in (-1,1):
+        indices = [i for i,p in enumerate(points) if p.x*sign > 0]
+        front = sorted(indices, key=lambda i:points[i].y)[:8]
+        apex = sum((points[i] for i in front),Vector())/len(front)
+        apex.y = min(points[i].y for i in indices)
+        groups = [{(g.group, round(g.weight,6)) for g in eyes.data.vertices[i].groups}
+                  for i in indices]
+        group = max(groups[0], key=lambda item:item[1])[0]
+        assert eyes.vertex_groups[group].name.startswith('eye_')
+        assert all(dict(g).get(group,0) > .96 for g in groups), 'Unexpected eye weighting'
+        radius = (max(points[i].x for i in indices)-min(points[i].x for i in indices))/2
+        model = construct_eye(radius=radius)
+        for part, material in [('outer',outer_mat),('iris',iris_mat),('pupil',black)]:
+            data = model[part]
+            world = [apex+Vector(v) for v in data['vertices']]
+            inverse = eyes.matrix_world.inverted()
+            mesh = bpy.data.meshes.new(f'Study_eye_{sign}_{part}')
+            mesh.from_pydata([inverse@v for v in world],[],data['faces'])
+            mesh.update()
+            mesh.materials.append(material)
+            obj = eyes.copy()
+            obj.data = mesh
+            obj.name = mesh.name
+            bpy.context.scene.collection.objects.link(obj)
+            assert len(obj.vertex_groups) == 0
+            for source_group in eyes.vertex_groups:
+                obj.vertex_groups.new(name=source_group.name)
+            # Source includes small eyelid-bone blends on four vertices per eye.
+            # Preserve them through an explicit nearest-source transfer, rather
+            # than silently claiming all vertices were rigid eye weights.
+            buckets = {}
+            for vertex,position in enumerate(world):
+                nearest = min(indices,key=lambda i:(points[i]-position).length_squared)
+                for g in eyes.data.vertices[nearest].groups:
+                    buckets.setdefault((g.group,g.weight),[]).append(vertex)
+            for (bone,weight),vertices in buckets.items():
+                obj.vertex_groups[bone].add(vertices,weight,'REPLACE')
+            uvs = [uv_at(v) for v in world]
+            uv = mesh.uv_layers.new(name='Source_projected_UV')
+            for poly in mesh.polygons:
+                poly.use_smooth = True
+                for loop in poly.loop_indices:
+                    uv.data[loop].uv = uvs[mesh.loops[loop].vertex_index]
+            obj['eye_region'] = part
+            obj['construction_parameters'] = json.dumps(model['parameters'])
+            obj['source_eye_bone'] = eyes.vertex_groups[group].name
+            if part == 'outer':
+                attribute = mesh.attributes.new('corneal_transmission','FLOAT','POINT')
+                for item,w in zip(attribute.data,data['transmission']):
+                    item.value = w
+                region = mesh.attributes.new('eye_region','INT','FACE')
+                for item,label in zip(region.data,data['regions']):
+                    item.value = {'cornea':1,'limbus':2,'sclera':3}[label]
+        records.append({'side':sign,'apex_world_m':list(apex),
+            'source_bone':eyes.vertex_groups[group].name,
+            'weight_transfer':'nearest source vertex, including eyelid blends',
+            'parameters':model['parameters'],
+            'minimum_axial_iris_clearance_m':model['minimum_axial_iris_clearance_m']})
+    eyes.hide_render = True
+    eyes.hide_set(True)
+    return {'experiment':'continuous corneal cap and recessed iris', 'eyes':records,
+            'limitations':['generic analytic shape, not captured anatomy',
+                'projection retains baked source texture shading',
+                'rest weights copied; pose and export not validated']}
+
+def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
+                 eye_light=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -22,6 +140,18 @@ def review_saved(source, destination, eye_study=False, layered_eye=False):
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if geometry_eye:
+        changes.append(construct_fitted_eyes(eyes))
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'geometry-eye-study.blend'))
+    if eye_light:
+        assert any(o.name.startswith('Study_eye_') for o in scene.objects)
+        for obj in scene.objects:
+            if obj.type == 'LIGHT' and obj.data.type == 'AREA':
+                changes.append({'light':obj.name,'size_before':obj.data.size,
+                                'size_after':obj.data.size/3,
+                                'power_unchanged':obj.data.energy})
+                obj.data.size /= 3
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'eye-light-study.blend'))
     if layered_eye:
         # Isolate the optical-layer hypothesis; this is not captured corneal
         # anatomy or an iris reconstruction. Preserve the source rig/UVs.
@@ -77,6 +207,13 @@ def review_saved(source, destination, eye_study=False, layered_eye=False):
     ]
     if eye_study or layered_eye:
         views = views[:1]
+    if geometry_eye or eye_light:
+        front = sorted([p for p in points if p.x > 0],key=lambda p:p.y)[:8]
+        target = sum(front,Vector())/len(front)
+        target.y = min(p.y for p in points)
+        views = views[:1] + [
+            ('eye-front',target,Vector((0,-1,0)),.085),
+            ('eye-oblique',target,Vector((.55,-1,.06)),.085)]
     diagnostics = []
     for obj in scene.objects:
         if obj.type != 'MESH' or not obj.visible_get() or obj.name == 'Plane':
@@ -116,9 +253,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False):
     print('CHARACTER_SAVED_REVIEW_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
-if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study'):
+if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study'):
     review_saved(Path(args[0]), Path(args[1]), args[2] == '--eye-study',
-                 args[2] == '--layered-eye-study')
+                 args[2] == '--layered-eye-study', args[2] == '--geometry-eye-study',
+                 args[2] == '--eye-light-study')
     sys.exit(0)
 if len(args) != 2:
     raise ValueError('Expected source, fresh output directory and optional --review-only')

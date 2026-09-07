@@ -627,6 +627,54 @@ established by the small fixture.
 
 #### Fixed-light inspection and eye hypothesis
 
+**Separated-geometry checkpoint:** `eye_geometry.py`, called by the existing
+Blender character study's `--geometry-eye-study`, now constructs a closed outer
+eye with named sclera/limbus/cornea regions, a recessed annular iris, and separate
+pupil backing. A quartic corneal cap matches the ellipsoid boundary's position
+and first derivative. This is a bounded generic construction experiment, not
+the paper's captured anatomy or an anatomically validated corneal profile.
+Dimensions, cap coefficients, region weights, source eye anchors and weight
+transfer policy are recorded. Inputs outside the reviewed dimensional and
+tessellation envelope fail before mesh construction.
+
+Source eye texture UVs are projected onto the study using source triangles;
+the fitted source rest pose is required and checked. Source eyes contain four
+small eyelid-bone blends per side, not purely rigid weights. An initial assertion
+exposed this (`geometry-eye-01`); the corrected implementation transfers actual
+nearest-source weights. `geometry-eye-02` exposed Blender clearing vertex-group
+definitions on mesh replacement; explicit recreation fixes that binding path.
+Both failed logs are retained. Source model/compiler files remain unchanged.
+
+`geometry-eye-03` produced face, frontal eye and oblique eye renders, all inspected.
+The separated pupil/iris is visible and coarse shell facets are reduced, but
+large reflections and an awkward doubled-looking limbus remain. A controlled
+`--eye-light-study` reloads this exact saved mesh and reduces area-light sizes to
+one third, leaving their power unchanged. All three `eye-light-01` renders were
+also inspected. The pale side reflection shrinks, establishing a light-size
+contribution, but a stretched reflection and edge-transition defect remain.
+**Neither variant is admitted as realistic final character art.** Smaller lights
+also sharpen skin/clothing shadows; this is a diagnostic, not an approved scene
+lighting replacement.
+
+Validation: all 28 Blender-adjacent Python tests pass, including four new tests
+covering outer closure/orientation/Euler characteristic, deterministic construction,
+C1 cap matching, finite bounded data, conservative axial iris clearance, and
+rejected invalid parameters. A fresh background Blender load confirms six new
+meshes / 12,486 vertices, normalized weights, live armature references, and maximum
+rest-placement difference 2.39e-7 m. Source-file hash checks pass. These are not
+pose, eye/eyelid intersection, anatomical validity or game-export certifications.
+The cap's C1 join alone does not guarantee suitable optical curvature: the quartic
+can develop an inflection near its boundary. Next research must address the
+central corneal profile and place the transition appropriately, then separate
+sclera pigment from the original texture's already-painted iris. Do not hide these
+limitations by accepting the more favorable frontal view alone.
+
+Both three-view jobs used CPU Cycles, two threads, 24 samples, a 40-second Cycles
+limit per view and an outer 160-second / 3 GiB sampled process guard. The final
+oblique images took 46.95 and 33.32 seconds respectively (Cycles' limit is not a
+strict total render wall-time ceiling). No new Godot window, paid call, push or
+Actions run was used for this checkpoint.
+
 **Optical-layer checkpoint:** Read the sclera, cornea and iris methods in
 [Berard et al., High-Quality Capture of Eyes, 2014, sections 5–7](https://la.disneyresearch.com/wp-content/uploads/High-Quality-Capture-of-Eyes-Pub-Paper.pdf).
 This is a capture/reconstruction method, not a turnkey procedural eye generator.
