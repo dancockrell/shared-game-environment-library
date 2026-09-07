@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 2,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    610,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      618,
+      1254
+    ],
+    [
+      0,
+      614,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        618,
+        610
+      ],
+      "trim_rect_in_cell": [
+        79,
+        139,
+        536,
+        501
+      ],
+      "source_trim_rect": [
+        79,
+        139,
+        536,
+        501
+      ],
+      "size": [
+        457,
+        362
+      ],
+      "rgba_sha256": "755dbe1ebfb996f19edc9871c9263e8b334364e0dff2656558139472be752fb7",
+      "components_before_filter": 4,
+      "components_kept": 4,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "8e453ec0d47421a13ef7bf1e0bb0bc3b32e5ba46fa5e510b6256317306c8f168"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        618,
+        0,
+        1254,
+        610
+      ],
+      "trim_rect_in_cell": [
+        82,
+        139,
+        536,
+        501
+      ],
+      "source_trim_rect": [
+        700,
+        139,
+        1154,
+        501
+      ],
+      "size": [
+        454,
+        362
+      ],
+      "rgba_sha256": "ea4dbc33d553e86f30b023afc2d7544b2909b562d7f9bde4d3b6d7ad189cde96",
+      "components_before_filter": 4,
+      "components_kept": 4,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "9313634669d47e3fee3623fc2e627dcf8199a326ac573e9af96e3bf8ebb8fd0d"
+    },
+    {
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        610,
+        614,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        79,
+        110,
+        529,
+        469
+      ],
+      "source_trim_rect": [
+        79,
+        720,
+        529,
+        1079
+      ],
+      "size": [
+        450,
+        359
+      ],
+      "rgba_sha256": "b604eb825812427cabb38d64bdfc6cc3603a2a919940930bf0aa579ae1489b4d",
+      "components_before_filter": 8,
+      "components_kept": 8,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "dd6b7c2aae779ff20f09bd3d5e31178ea63145d64bd88cdd2d2f0f1029e2d17d"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        614,
+        610,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        87,
+        109,
+        539,
+        469
+      ],
+      "source_trim_rect": [
+        701,
+        719,
+        1153,
+        1079
+      ],
+      "size": [
+        452,
+        360
+      ],
+      "rgba_sha256": "4eeb767c2a2ccaaf79aee19cc842ae2e4b7278008d190d480b5e67eb7b8c8092",
+      "components_before_filter": 6,
+      "components_kept": 6,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "be39afa40579c6acaba95df4d7dc65717caa123a18d95b6020d78195a9006f89"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\rat-scurry-01\\idle-magenta-04.png",
+  "source_sha256": "decfd883afaa3b5e69b8e9add7ec9294fdd79655f2d3a6d032880a365876bafe",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}

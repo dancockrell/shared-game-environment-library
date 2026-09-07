@@ -31,3 +31,14 @@ test('decoded alpha needs visible subject and fully transparent background',()=>
   assert.equal(hasSpriteAlpha([]),false)
   assert.equal(hasSpriteAlpha([0,0,0]),false)
 })
+const idle = JSON.parse(readFileSync(new URL('../procedural/sprites/candidates/rat-scurry-01/idle-extracted-04/animation.json',import.meta.url)))
+test('separate frame files and unequal timing validate',()=>assert.equal(validate(structuredClone(idle)).frames[0].durationMs,2400))
+for(const [name,change] of [
+  ['missing frame image',m=>m.frames[0].imageIndex=4],
+  ['negative image index',m=>m.frames[0].imageIndex=-1],
+  ['fractional image index',m=>m.frames[0].imageIndex=0.5],
+  ['frame exceeds its own image',m=>m.frames[2].rect[2]=451],
+  ['zero frame duration',m=>m.frames[0].durationMs=0],
+  ['infinite frame duration',m=>m.frames[0].durationMs=Infinity],
+  ['ambiguous image sources',m=>m.image=source.image],
+])test(name,()=>{const m=structuredClone(idle);change(m);assert.throws(()=>validate(m))})

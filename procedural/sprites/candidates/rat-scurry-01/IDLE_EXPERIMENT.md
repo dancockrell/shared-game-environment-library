@@ -12,7 +12,7 @@ blink -> neutral. This is an idle, never evidence of attacking or walking.
 Admission requires alpha, anatomy, fixed-scale alignment and continuous motion
 review at gameplay size. Candidate only until those are checked.
 
-## Result: rejected for runtime
+## Direct-alpha attempts: rejected for runtime
 
 - idle-02.png: RGB 1254x1254, SHA256 4b45d91d71821c11695cd34a781f1dfe0edff09fa5c846d2c9739996b6fe02c0.
 - idle-03.png: background-only cleanup attempt, also RGB 1254x1254, SHA256 e7f5fe11bfa8666564e68c0251f852bd253d7f3eb248784af67dab6b7a83069c.
@@ -28,6 +28,48 @@ checks for both fully transparent background pixels and visible pixels after
 browser decode. Presence of alpha still does not certify clean edges or motion.
 Its HTML embeds the verified bytes so local-file origin restrictions cannot
 prevent pixel inspection and later source replacement cannot change the review.
+
+## Chroma-key follow-up: extracted candidate, admission pending
+
+The Cattle Trail handoff's METHOD.md and sprite_grid.py provide a reproducible
+solid-magenta workflow. Reused that helper read-only, without a DR-specific fork.
+Built-in image generation changed the background of idle-02.png to a magenta key
+in idle-magenta-04.png (SHA256 decfd883afaa3b5e69b8e9add7ec9294fdd79655f2d3a6d032880a365876bafe).
+
+Extraction command from shared repository root:
+
+```powershell
+python procedural/sprites/candidates/cattle-trail/sprite_grid.py procedural/sprites/candidates/rat-scurry-01/idle-magenta-04.png procedural/sprites/candidates/rat-scurry-01/idle-extracted-04 --columns 2 --rows 2 --min-component-pixels 1
+```
+
+The helper refuses to overwrite populated outputs. Use a new empty destination
+for a reproducibility check. System Python 3.13 has Pillow/numpy/scipy; the bundled
+Codex Python lacks scipy and was not modified. Extractor SHA256:
+d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d.
+The Cattle Trail handoff remains owner-maintained; keep that dependency with its
+source ZIP or verified helper, rather than copying a second implementation.
+
+Four RGBA cells produced, no gutter warnings and no small-component pixels
+removed. Metadata records all original crop/trim rectangles and output hashes.
+Raw generation, cleaned candidates and runtime admission remain separate.
+Inspect whiskers and pink tail for key spill; a magenta key is inappropriate for
+subjects that themselves contain magenta. No claim of lossless background edit.
+
+The reviewer now accepts either one atlas or multiple frame sources and explicit
+per-frame durationMs. This clip uses 2400/140/100/200ms at fixed 0.12 source scale;
+all anchors are the same manual body-ground estimate [280,330] after trimming.
+No frame is independently resized to force its silhouette to match. Browser
+decode, four frames, two timed loops and Pause passed. Observed first-loop
+transitions were approximately 2430/2583/2688/2870ms. Nineteen tool tests passed.
+The screenshot confirms the small sprite reads against moss; timing telemetry
+alone does not establish native gameplay animation acceptance. Inspect actual
+in-client motion, light/dark edges and reduced-motion fallback before admission.
+
+Regenerate the review with `node tools/sprite-animation-review.mjs procedural/sprites/candidates/rat-scurry-01/idle-extracted-04/animation.json`.
+
+### Exact magenta edit prompt
+
+Use case: precise-object-edit. Image 1 is the edit target, a four-frame pixel-art rat idle sheet. Change ONLY its grey-white checkerboard background to perfectly flat solid vivid magenta RGB(255,0,255), #FF00FF. This is a chroma-key production source, NOT a transparency request. Keep all four rats at exactly the same coordinates and size, and preserve the original square canvas, 2x2 cell layout, fur patterns, outline, paws, tail, eyes and lower-left closed-eye blink. Do not redraw or move rats. Preserve fine whiskers, no magenta fringe. No checkerboard, no gradients, no lighting changes, no shadows, no labels. Solid #FF00FF everywhere outside the rats.
 
 ## Exact initial prompt
 

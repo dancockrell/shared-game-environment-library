@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "runtimeAdmission": false,
+  "title": "Rat idle extracted candidate — fixed scale, not gameplay admission",
+  "fps": 6,
+  "scale": 0.12,
+  "anchorConvention": "Manual body-ground estimate relative to trimmed frame; no per-frame resizing",
+  "images": [
+    {"path":"cell_00_00.png","width":457,"height":362,"sha256":"8e453ec0d47421a13ef7bf1e0bb0bc3b32e5ba46fa5e510b6256317306c8f168"},
+    {"path":"cell_00_01.png","width":454,"height":362,"sha256":"9313634669d47e3fee3623fc2e627dcf8199a326ac573e9af96e3bf8ebb8fd0d"},
+    {"path":"cell_01_00.png","width":450,"height":359,"sha256":"dd6b7c2aae779ff20f09bd3d5e31178ea63145d64bd88cdd2d2f0f1029e2d17d"},
+    {"path":"cell_01_01.png","width":452,"height":360,"sha256":"be39afa40579c6acaba95df4d7dc65717caa123a18d95b6020d78195a9006f89"}
+  ],
+  "frames": [
+    {"imageIndex":0,"rect":[0,0,457,362],"anchor":[280,330],"durationMs":2400},
+    {"imageIndex":1,"rect":[0,0,454,362],"anchor":[280,330],"durationMs":140},
+    {"imageIndex":2,"rect":[0,0,450,359],"anchor":[280,330],"durationMs":100},
+    {"imageIndex":3,"rect":[0,0,452,360],"anchor":[280,330],"durationMs":200}
+  ]
+}
