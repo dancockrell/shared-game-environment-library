@@ -1136,6 +1136,21 @@ rather than silently hiding later limitations. No visual screenshot/layout or
 full wardrobe/export-suite acceptance follows from this headless UI-state test.
 No visible window, paid operation, engine download or Actions were needed.
 
+**Workshop render previews:** The same review dialog now includes a view selector
+and aspect-preserving PNG preview beside the read-only evidence text. Only one
+selected image is decoded at a time. View names must be safe identifiers (hyphens
+allowed), with at most 32 views. Loader verifies PNG signature/IHDR and dimensions
+before decoding, limits files to 16 MiB and dimensions to 4096 per axis/8M pixels.
+Missing/invalid/oversized previews clear the image and report failure. These are
+local saved images, not independently hash-verified outputs or approved art.
+
+Twelve focused headless checks pass against the actual revision-07 receipt/PNG:
+source resolution decoded, named preview receives texture, unsafe traversal and
+missing image rejected, character scene unchanged. Initial test counted internal
+TextureRects too; narrowed it to the named BuildRenderPreview rather than weakening
+the texture-assignment check. Visual panel layout capture remains outstanding.
+No generation controller or export change is implied by this image-review entry.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

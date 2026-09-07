@@ -22,6 +22,8 @@ func run() -> void:
 		check(workshop.build_review_text(review).contains("Rendered views recorded"), "render state is explicit")
 		review.changes = [null]
 		check(workshop.build_review_text(review).begins_with("Invalid"), "reject malformed change")
+		check(workshop.load_review_image("user://", "../outside") == null, "reject preview traversal")
+		check(workshop.load_review_image("user://", "missing-review-image") == null, "missing preview is explicit")
 		if args.size() == 2:
 			var editor = workshop.new()
 			root.add_child(editor)
@@ -32,8 +34,12 @@ func run() -> void:
 			var dialogs: Array = editor.find_children("*", "AcceptDialog", false, false)
 			check(dialogs.size() == 1, "actual review opens Workshop dialog")
 			if dialogs.size() == 1:
-				var reports = dialogs[0].find_children("*", "TextEdit", false, false)
+				var reports = dialogs[0].find_children("*", "TextEdit", true, false)
 				check(reports.size() == 1 and not reports[0].editable and not reports[0].text.begins_with("Invalid"), "actual receipt displayed read-only")
+				var previews = dialogs[0].find_children("BuildRenderPreview", "TextureRect", true, false)
+				var loaded: Image = workshop.load_review_image(args[1].get_base_dir(), "whole-eye")
+				check(loaded != null and loaded.get_width() == 640, "actual review PNG decoded at source resolution")
+				check(previews.size() == 1 and previews[0].texture != null, "actual review PNG assigned to preview")
 			check(editor.model == null and editor.stage.get_child_count() == before, "review leaves character scene unchanged")
 			editor.queue_free()
 			await process_frame

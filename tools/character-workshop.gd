@@ -144,6 +144,11 @@ static func build_review_text(data: Variant) -> String:
 		return "Invalid build review: render state contradicts recorded views."
 	if data.changes.size() > 100:
 		return "Invalid build review: too many changes to display completely."
+	if data.views.size() > 32:
+		return "Invalid build review: too many views."
+	for view in data.views:
+		if not view is Dictionary or not view.get("view") is String or not view.view.replace("-", "_").is_valid_identifier():
+			return "Invalid build review: unsafe or malformed view name."
 	var lines := PackedStringArray(["BUILD EVIDENCE — NOT ART APPROVAL", "This receipt does not validate the character currently loaded in the Workshop.", "Rendered views recorded" if data.rendered else "Build only — no render recorded", "Source SHA-256: " + digest])
 	for change in data.changes:
 		if not change is Dictionary:
@@ -155,22 +160,67 @@ static func build_review_text(data: Variant) -> String:
 	lines.append("\nReview original images and edited source before accepting an asset. No approval or scene changes are performed here.")
 	return "\n".join(lines)
 
+static func load_review_image(directory: String, view: String) -> Image:
+	if not view.replace("-", "_").is_valid_identifier():
+		return null
+	var file := FileAccess.open(directory.path_join(view + ".png"), FileAccess.READ)
+	if file == null or file.get_length() < 24 or file.get_length() > 16777216:
+		return null
+	if file.get_buffer(8).hex_encode() != "89504e470d0a1a0a":
+		return null
+	file.big_endian = true
+	if file.get_32() != 13 or file.get_buffer(4).get_string_from_ascii() != "IHDR":
+		return null
+	var width := file.get_32()
+	var height := file.get_32()
+	if width < 1 or height < 1 or width > 4096 or height > 4096 or width * height > 8388608:
+		return null
+	file.seek(0)
+	var bytes := file.get_buffer(file.get_length())
+	file.close()
+	var image := Image.new()
+	if image.load_png_from_buffer(bytes) != OK or image.get_width() != width or image.get_height() != height:
+		return null
+	return image
+
 func show_build_review(path: String) -> void:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null or file.get_length() > 2097152:
 		status.text = "Cannot read review, or review exceeds 2 MiB."
 		return
-	var text := build_review_text(JSON.parse_string(file.get_as_text()))
+	var data = JSON.parse_string(file.get_as_text())
+	var text := build_review_text(data)
 	file.close()
 	var dialog := AcceptDialog.new()
 	dialog.title = "Build review (read-only)"
-	dialog.min_size = Vector2i(700, 500)
+	dialog.min_size = Vector2i(700, 700)
+	var layout := VBoxContainer.new()
+	dialog.add_child(layout)
 	var report := TextEdit.new()
-	report.custom_minimum_size = Vector2(680, 440)
+	report.custom_minimum_size = Vector2(680, 240)
 	report.editable = false
 	report.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	report.text = text
-	dialog.add_child(report)
+	layout.add_child(report)
+	if not text.begins_with("Invalid") and data.rendered:
+		var chooser := OptionButton.new()
+		layout.add_child(chooser)
+		var preview := TextureRect.new()
+		preview.name = "BuildRenderPreview"
+		preview.custom_minimum_size = Vector2(680, 340)
+		preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		layout.add_child(preview)
+		var image_status := Label.new()
+		layout.add_child(image_status)
+		for view in data.views:
+			chooser.add_item(view.view)
+		var select_view := func(index: int):
+			var image := load_review_image(path.get_base_dir(), chooser.get_item_text(index))
+			preview.texture = ImageTexture.create_from_image(image) if image != null else null
+			image_status.text = "Saved render — not independently hash-verified or approved" if image != null else "Preview missing, invalid or above image limits."
+		chooser.item_selected.connect(select_view)
+		select_view.call(0)
 	add_child(dialog)
 	dialog.confirmed.connect(dialog.queue_free)
 	dialog.canceled.connect(dialog.queue_free)
