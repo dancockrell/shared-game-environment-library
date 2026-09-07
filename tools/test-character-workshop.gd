@@ -10,16 +10,33 @@ func check(ok: bool, label: String) -> void:
 		print("PASS ",label)
 func run() -> void:
 	var args := OS.get_cmdline_user_args()
-	if args.size() == 1 and args[0] == "--review-only":
+	if args.size() >= 1 and args[0] == "--review-only":
 		var workshop = load("res://character-workshop.gd")
 		check(workshop.build_review_text(null).begins_with("Invalid"), "reject null review")
 		var review := {"changes":[],"views":[],"rendered":false,"source_blend_sha256":"a".repeat(64)}
 		var text: String = workshop.build_review_text(review)
 		check(text.contains("Build only") and text.contains("NOT ART APPROVAL"), "build receipt cannot imply visual approval")
 		review.rendered = true
+		check(workshop.build_review_text(review).begins_with("Invalid"), "reject rendered receipt without views")
+		review.views = [{"view":"whole-eye"}]
 		check(workshop.build_review_text(review).contains("Rendered views recorded"), "render state is explicit")
 		review.changes = [null]
 		check(workshop.build_review_text(review).begins_with("Invalid"), "reject malformed change")
+		if args.size() == 2:
+			var editor = workshop.new()
+			root.add_child(editor)
+			await process_frame
+			var before: int = editor.stage.get_child_count()
+			editor.show_build_review(args[1])
+			await process_frame
+			var dialogs: Array = editor.find_children("*", "AcceptDialog", false, false)
+			check(dialogs.size() == 1, "actual review opens Workshop dialog")
+			if dialogs.size() == 1:
+				var reports = dialogs[0].find_children("*", "TextEdit", false, false)
+				check(reports.size() == 1 and not reports[0].editable and not reports[0].text.begins_with("Invalid"), "actual receipt displayed read-only")
+			check(editor.model == null and editor.stage.get_child_count() == before, "review leaves character scene unchanged")
+			editor.queue_free()
+			await process_frame
 		quit(0 if failures == 0 else 1)
 		return
 	if args.size()<2:

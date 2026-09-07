@@ -1122,6 +1122,20 @@ notLoaded/interrupted before the narrow edit, with tracked files clean; its
 garment/compiler/export implementations remain unchanged. Claim records the
 overlap for resumption. No visible engine, download, paid service or Actions.
 
+**Workshop runtime verification:** Found installed Standard Godot at
+`C:/Users/Admin/AppData/Local/Programs/Godot/Standard/Godot_v4.7.2-stable_win64_console.exe`;
+the empty historical tools directory is not an engine availability blocker.
+Ran `--headless --path tools --script test-character-workshop.gd -- --review-only`
+with the absolute revision-07 review.json as a second argument. Eight checks
+pass, including actual Workshop/dialog instantiation, read-only display of the
+real receipt and unchanged character-stage child count/no imported model.
+The extended test initially had an inferred-type parse error; corrected with
+an explicit Array declaration and reran successfully. Rendered receipts without
+views now fail rather than imply a completed render; more than 100 changes fail
+rather than silently hiding later limitations. No visual screenshot/layout or
+full wardrobe/export-suite acceptance follows from this headless UI-state test.
+No visible window, paid operation, engine download or Actions were needed.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

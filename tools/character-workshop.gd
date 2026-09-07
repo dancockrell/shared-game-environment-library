@@ -140,8 +140,12 @@ static func build_review_text(data: Variant) -> String:
 	var digest = data.get("source_blend_sha256", "")
 	if not digest is String or digest.length() != 64 or not digest.is_valid_hex_number(false):
 		return "Invalid build review: missing source SHA-256."
+	if data.rendered != (not data.views.is_empty()):
+		return "Invalid build review: render state contradicts recorded views."
+	if data.changes.size() > 100:
+		return "Invalid build review: too many changes to display completely."
 	var lines := PackedStringArray(["BUILD EVIDENCE — NOT ART APPROVAL", "This receipt does not validate the character currently loaded in the Workshop.", "Rendered views recorded" if data.rendered else "Build only — no render recorded", "Source SHA-256: " + digest])
-	for change in data.changes.slice(0, 100):
+	for change in data.changes:
 		if not change is Dictionary:
 			return "Invalid build review: malformed change."
 		lines.append("\n" + str(change.get("experiment", "Unnamed operation")))
