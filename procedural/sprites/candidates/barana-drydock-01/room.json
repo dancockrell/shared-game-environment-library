@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "dr-1-456",
+  "title": "Barana's Shipyard, Drydock Services",
+  "status": "candidate",
+  "runtimeAdmission": false,
+  "source": {
+    "game": "DragonRealms",
+    "roomBinding": "1-456",
+    "descriptionId": "1::Drydock Services",
+    "descriptionHash": "d71dbde8aeca93df",
+    "description": "Stacked crates lean against the walls, along with kegs of tar, coils of rope, and casks of paint. Amidst all the clutter is an antique roll-top desk covered in dust, cobwebs and surprisingly healthy plants. Half-used candles rest in a spray of brass sconces mounted upon each wall.",
+    "evidence": "DR Companion data/art/out/geometric-room-briefs.json roomBriefs id 1-456"
+  },
+  "image": {
+    "path": "source-01.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "541cd576dd977ac63793a9a79e9217404a604e304df8faa8d9d60b9fc835d007"
+  },
+  "coordinates": "normalized-image-top-left",
+  "camera": "fixed-high-three-quarter",
+  "floor": [[0.29,0.53],[0.58,0.36],[0.77,0.52],[0.78,0.65],[0.65,0.88],[0.38,0.95],[0.26,0.73]],
+  "anchors": [
+    {"id":"player","label":"Player test position","point":[0.51,0.65],"kind":"spawn"},
+    {"id":"encounter-a","label":"Encounter space A","point":[0.61,0.55],"kind":"spawn"},
+    {"id":"encounter-b","label":"Encounter space B","point":[0.43,0.74],"kind":"spawn"},
+    {"id":"desk","label":"Desk approach","point":[0.40,0.55],"kind":"interaction"}
+  ],
+  "exits": [
+    {"direction":"south","command":"south","to":"1-455","presentation":"off-camera","anchor":null}
+  ],
+  "placementAuthority": "Artist-estimated floor and test anchors, not server coordinates or validated collision geometry.",
+  "limitations": [
+    "Flattened room plate: furniture cannot yet occlude or move independently.",
+    "Markers are explicit layout probes, not finished character sprites.",
+    "No click in this review sends a MUD command or establishes a real room transition.",
+    "Floor is a conservative placement polygon, not a pathfinding mesh.",
+    "Lighting, object scale and clutter still require gameplay-scale approval."
+  ]
+}
