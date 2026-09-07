@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        63,
+        160,
+        1188,
+        1088
+      ],
+      "source_trim_rect": [
+        63,
+        160,
+        1188,
+        1088
+      ],
+      "size": [
+        1125,
+        928
+      ],
+      "rgba_sha256": "1282df9d5d07e84f126823fb9d734ca84a4189a00fa989fff44e5d9b9b7a1e0f",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "34c8f250350f73f4cb6ae78c82a7bf9aca4266040a221d60e40e9f2527494c56"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\watch-fort-01\\magenta-source.png",
+  "source_sha256": "d9093c3be3762a3c069d46dd220d194544e4968173a2d376eda9a2683267aacc",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
