@@ -789,6 +789,20 @@ not rely on subdividing exported triangles. The narrow study does not modify
 that owner's implementation. All 32 Python tests pass; both bounded CPU renders
 completed, with 50.35 seconds including overhead for the cheek image.
 
+**Lash fitting experiment:** Actual Lashes01/Brows001 shaders retain image alpha
+linked to Principled alpha; missing transparency is not the demonstrated defect.
+The first inspection command failed from shell quoting, and the corrected query
+completed. `--lash-fit-review` moves the 250 existing lash-card vertices 45 percent
+toward their nearest evaluated skin point (maximum movement 3.161 mm), retaining
+UVs, texture and weights. Both `lash-fit-01` images were inspected: less prominent
+at portrait scale, but the close crop still shows artificial repeated streaks and
+weak eyelid-root integration. **Not approved as realistic lashes.** Nearest skin
+is not a semantic eyelid root and this approximation must not become the general
+fitting contract. Next use explicit eyelid root paths and tapered individual lash
+curves, preserving anatomical upper/lower-lid distinctions and rig correspondence.
+The input hash is unchanged, 32 tests pass, and the bounded CPU job completed;
+no collision, pose or runtime export certification is implied.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

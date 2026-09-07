@@ -377,7 +377,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
-                 skin_normals=False, skin_subdivision=False):
+                 skin_normals=False, skin_subdivision=False, lash_fit=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -390,6 +390,30 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if lash_fit:
+        body = bpy.data.objects['Body03']
+        evaluated = body.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        surface = evaluated.to_mesh()
+        tree = BVHTree.FromPolygons([evaluated.matrix_world@v.co for v in surface.vertices],
+            [tuple(p.vertices) for p in surface.polygons])
+        lash = bpy.data.objects['Lashes01']
+        inverse = lash.matrix_world.inverted()
+        movements = []
+        for vertex in lash.data.vertices:
+            point = lash.matrix_world@vertex.co
+            hit,normal,index,distance = tree.find_nearest(point)
+            assert hit is not None and distance < .025
+            delta = (hit-point)*.45
+            vertex.co = inverse@(point+delta)
+            movements.append(delta.length)
+        evaluated.to_mesh_clear()
+        lash.data.update()
+        changes.append({'experiment':'reduce source lash-card projection toward fitted skin',
+            'fraction':.45,'vertices':len(movements),'maximum_movement_m':max(movements),
+            'limitations':['nearest skin is not an authored eyelid root map',
+                'texture/UV/rig weights retained; posed clearance unvalidated',
+                'source cards remain; not individual lash geometry']})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'lash-fit.blend'))
     if skin_subdivision:
         body = bpy.data.objects['Body03']
         mesh = body.data
@@ -639,9 +663,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
-    if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals or skin_subdivision:
+    if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals or skin_subdivision or lash_fit:
         views = views[:1]
-    if skin_detail or skin_normals or skin_subdivision:
+    if skin_detail or skin_normals or skin_subdivision or lash_fit:
         views.append(('skin-cheek',eye_center+Vector((-.035,-.005,-.035)),
                       Vector((-.15,-1,0)),.075))
     if groom_pose:
@@ -699,6 +723,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--lash-fit-review':
+    review_saved(Path(args[0]),Path(args[1]),lash_fit=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--skin-subdivision-review':
     review_saved(Path(args[0]),Path(args[1]),skin_subdivision=True)
     sys.exit(0)
