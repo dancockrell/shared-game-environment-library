@@ -741,6 +741,21 @@ Use this fixed condition for the next surface-detail comparison; do not infer
 photorealism from stronger shadows. Both bounded CPU renders completed in about
 16 seconds, source hashes remained unchanged and all 32 Python tests passed.
 
+**Editable microrelief:** `--skin-detail-review` adds rest-coordinate Voronoi
+depressions at 1800/m, eased distance profile 0.04..0.26, 60-micrometre bump
+distance with strength 0.35, and 120/m noise remapped to roughness 0.35..0.5.
+Source color, diagnostic light and geometry remain unchanged. These synthetic
+isotropic details are not measured skin; regional lips/eyelids masks and export
+baking remain absent. A fresh Blender reload verifies all 10,354 finite rest
+coordinate vectors exactly. The actual `skin-detail-01` portrait and
+`skin-detail-02` cheek crop were inspected: subtle relief exists, but the portrait
+remains unconvincing. The close crop additionally exposes angular nose/cheek
+transitions and crude lashes/eye margins. **Next prioritize the exposed geometry
+and eyelid/lash integration rather than raising pore amplitude.** A stronger
+uniform texture would not repair these defects. The close crop took 44.76 seconds
+including overhead despite the 40-second sampling limit; the outer 120-second
+process guard held. The 32 Python tests pass; no artistic or runtime approval.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

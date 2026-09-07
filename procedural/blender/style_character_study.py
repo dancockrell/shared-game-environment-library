@@ -376,7 +376,7 @@ def construct_fitted_eyes(eyes):
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
-                 skin_transport=False, diagnostic_light=False):
+                 skin_transport=False, diagnostic_light=False, skin_detail=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -389,6 +389,47 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if skin_detail:
+        body = bpy.data.objects['Body03']
+        mesh = body.data
+        attr = mesh.attributes.get('study_skin_rest_m') or mesh.attributes.new(
+            'study_skin_rest_m','FLOAT_VECTOR','POINT')
+        for v, value in zip(mesh.vertices,attr.data):
+            value.vector = body.matrix_world @ v.co
+        mat = body.data.materials[0]
+        nodes,links = mat.node_tree.nodes,mat.node_tree.links
+        p = next(n for n in nodes if n.type == 'BSDF_PRINCIPLED')
+        assert not p.inputs['Normal'].is_linked and not p.inputs['Roughness'].is_linked
+        coordinates = nodes.new('ShaderNodeAttribute')
+        coordinates.attribute_name = attr.name
+        pores = nodes.new('ShaderNodeTexVoronoi')
+        pores.inputs['Scale'].default_value = 1800
+        links.new(coordinates.outputs['Vector'],pores.inputs['Vector'])
+        profile = nodes.new('ShaderNodeValToRGB')
+        profile.color_ramp.interpolation = 'EASE'
+        profile.color_ramp.elements[0].position = .04
+        profile.color_ramp.elements[1].position = .26
+        links.new(pores.outputs['Distance'],profile.inputs[0])
+        bump = nodes.new('ShaderNodeBump')
+        bump.inputs['Strength'].default_value = .35
+        bump.inputs['Distance'].default_value = .00006
+        links.new(profile.outputs['Color'],bump.inputs['Height'])
+        links.new(bump.outputs['Normal'],p.inputs['Normal'])
+        rough = nodes.new('ShaderNodeTexNoise')
+        rough.inputs['Scale'].default_value = 120
+        rough.inputs['Detail'].default_value = 2
+        links.new(coordinates.outputs['Vector'],rough.inputs['Vector'])
+        remap = nodes.new('ShaderNodeMapRange')
+        remap.inputs['To Min'].default_value = .35
+        remap.inputs['To Max'].default_value = .5
+        links.new(rough.outputs['Fac'],remap.inputs['Value'])
+        links.new(remap.outputs['Result'],p.inputs['Roughness'])
+        changes.append({'experiment':'editable rest-coordinate skin microrelief',
+            'coordinate_attribute':attr.name,'pore_frequency_per_m':1800,
+            'bump_distance_m':.00006,'bump_strength':.35,'roughness_range':[.35,.5],
+            'limitations':['synthetic isotropic pores, not measured skin',
+                'no regional lips/eyelids mask','not baked or game-export validated']})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'skin-detail.blend'))
     if diagnostic_light:
         before = []
         for obj in scene.objects:
@@ -545,8 +586,11 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
-    if source_skin or skin_transport or diagnostic_light:
+    if source_skin or skin_transport or diagnostic_light or skin_detail:
         views = views[:1]
+    if skin_detail:
+        views.append(('skin-cheek',eye_center+Vector((-.035,-.005,-.035)),
+                      Vector((-.15,-1,0)),.075))
     if groom_pose:
         target = eye_center + Vector((0,0,.03))
         views = [('head-turned', target, Vector((0,-1,.05)),.38),
@@ -602,6 +646,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--skin-detail-review':
+    review_saved(Path(args[0]),Path(args[1]),skin_detail=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--skin-light-review':
     review_saved(Path(args[0]),Path(args[1]),diagnostic_light=True)
     sys.exit(0)
