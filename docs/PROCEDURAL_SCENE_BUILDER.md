@@ -960,6 +960,19 @@ partial output as incomplete, do not label this a completed render. Numeric
 inspection completed; 32 Python tests passed/one Blender-only skip. Next obtain
 a bounded visual check and inspect remaining root/oblique behavior.
 
+**Completed clearance visual review:** No Blender process remained from the
+stopped job. `--whole-eye-review` reloads the saved revision-05 asset and renders
+only the missing view. The actual `lash-clearance-review-01/whole-eye.png` was
+inspected: strands are now visible continuously from the eye margin to their
+tips, confirming that full-path penetration was the major visibility failure.
+They remain overly straight and comb-like, so final art is still rejected;
+next refine curvature, splay and natural grouping without reintroducing skin
+penetration. This is not a completed character or pose/collision certification.
+The single-view job completed in 52.243 seconds, peak sampled process memory
+1,703,718,912 bytes; the revised outer command separately reports RAM versus time
+failure. Source/lighting guards pass. Ordinary Python: 32 passed/one Blender-only
+skip. No push, Actions, paid service or visible Godot lifecycle changes.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

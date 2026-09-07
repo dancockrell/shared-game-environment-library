@@ -1100,6 +1100,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--whole-eye-review':
+    review_saved(Path(args[0]),Path(args[1]),whole_eye=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--eye-opening-review':
     review_saved(Path(args[0]),Path(args[1]),whole_eye=True,opening_overlay=True)
     sys.exit(0)
