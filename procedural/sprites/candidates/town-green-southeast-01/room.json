@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "id": "dr-1-15",
+  "title": "The Crossing, Town Green Southeast",
+  "status": "candidate",
+  "runtimeAdmission": false,
+  "consumerAdmission": {"project":"DR Companion","status":"reviewed-static-backdrop","scope":"Exact room background only. Shared reusable asset admission is separate."},
+  "source": {
+    "game": "DragonRealms",
+    "roomBinding": "1-15",
+    "descriptionId": "1::Town Green Southeast",
+    "descriptionHash": "352586dc0dc77d00",
+    "description": "This tranquil corner of the Green has a small bower of entwined modwyn vines, laden with tempting, grape-like clusters. A limestone bench and some sawed-off sections of trees that serve as rustic stools make up an open-air performance space, where bards, musicians and poets can demonstrate their talents.",
+    "evidence": "DR Companion data/art/room-prompts-priority.json and src/data/map/1.json"
+  },
+  "image": {
+    "path": "source-01.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "68f1be74db4aeaf49ef39c954c3d7d56cf75c4da62eff88b499be0998ecd57d4"
+  },
+  "coordinates": "normalized-image-top-left",
+  "camera": "fixed-high-three-quarter",
+  "floor": [
+    [
+      0.28,
+      0.48
+    ],
+    [
+      0.6,
+      0.48
+    ],
+    [
+      0.7,
+      0.65
+    ],
+    [
+      0.6,
+      0.8
+    ],
+    [
+      0.3,
+      0.8
+    ],
+    [
+      0.23,
+      0.62
+    ]
+  ],
+  "anchors": [
+    {
+      "id": "player",
+      "label": "Illustrative player floor position",
+      "point": [
+        0.48,
+        0.66
+      ],
+      "kind": "spawn"
+    },
+    {
+      "id": "encounter-a",
+      "label": "Illustrative encounter A",
+      "point": [
+        0.6,
+        0.57
+      ],
+      "kind": "spawn"
+    },
+    {
+      "id": "encounter-b",
+      "label": "Illustrative encounter B",
+      "point": [
+        0.35,
+        0.57
+      ],
+      "kind": "spawn"
+    }
+  ],
+  "exits": [
+    {
+      "direction": "north",
+      "command": "north",
+      "to": "1-17",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "west",
+      "command": "west",
+      "to": "1-16",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "northwest",
+      "command": "northwest",
+      "to": "1-14",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "go",
+      "command": "go grass path",
+      "to": "1-371",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "go",
+      "command": "go amphitheater gate",
+      "to": "1-377",
+      "presentation": "off-camera",
+      "anchor": null
+    }
+  ],
+  "placementAuthority": "Artist-estimated ground polygon and anchors, not MUD coordinates. Actual graph transitions remain authoritative.",
+  "limitations": [
+    "Vine bower, limestone bench, sawed-log stools and grape-like fruit carry the described identity. Four stools, fruit color, vine morphology and support frame are artistic interpretation; no botanical authority claimed.",
+    "All exit screen correspondence remains unestablished; no route-screen-position claim.",
+    "Static opaque plate. No independent occlusion, inhabitants, animated foliage or time variants.",
+    "Automated structural QA and agent visual review are not final user approval."
+  ]
+}

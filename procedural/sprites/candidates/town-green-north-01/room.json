@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "id": "dr-1-14",
+  "title": "The Crossing, Town Green North",
+  "status": "candidate",
+  "runtimeAdmission": false,
+  "consumerAdmission": {"project":"DR Companion","status":"reviewed-static-backdrop","scope":"Exact room background only. Shared reusable asset admission is separate."},
+  "source": {
+    "game": "DragonRealms",
+    "roomBinding": "1-14",
+    "descriptionId": "1::Town Green North",
+    "descriptionHash": "f73bd5e2ac6e412c",
+    "description": "A small path of bent grass leads to a narrow stretch of cobblestones between the grass and the privet hedge that stands before Milgrym the Weaponsmith's. The town's main source of serviceable arms, Milgrym does a good trade and has a solid reputation. The stream of customers, though steady, seems careful not to disturb the usual tranquility of the facing greensward.",
+    "evidence": "DR Companion data/art/room-prompts-priority.json and src/data/map/1.json"
+  },
+  "image": {
+    "path": "source-01.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "f55470f3f63d6eb3b6365a8f7a35804a691255075c2b583949ebc3543f763e29"
+  },
+  "coordinates": "normalized-image-top-left",
+  "camera": "fixed-high-three-quarter",
+  "floor": [
+    [
+      0.28,
+      0.48
+    ],
+    [
+      0.6,
+      0.48
+    ],
+    [
+      0.7,
+      0.65
+    ],
+    [
+      0.6,
+      0.8
+    ],
+    [
+      0.3,
+      0.8
+    ],
+    [
+      0.23,
+      0.62
+    ]
+  ],
+  "anchors": [
+    {
+      "id": "player",
+      "label": "Illustrative player floor position",
+      "point": [
+        0.48,
+        0.66
+      ],
+      "kind": "spawn"
+    },
+    {
+      "id": "encounter-a",
+      "label": "Illustrative encounter A",
+      "point": [
+        0.6,
+        0.57
+      ],
+      "kind": "spawn"
+    },
+    {
+      "id": "encounter-b",
+      "label": "Illustrative encounter B",
+      "point": [
+        0.35,
+        0.57
+      ],
+      "kind": "spawn"
+    }
+  ],
+  "exits": [
+    {
+      "direction": "north",
+      "command": "north",
+      "to": "1-13",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "east",
+      "command": "east",
+      "to": "1-17",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "southeast",
+      "command": "southeast",
+      "to": "1-15",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "south",
+      "command": "south",
+      "to": "1-16",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "southwest",
+      "command": "southwest",
+      "to": "1-23",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "west",
+      "command": "west",
+      "to": "1-225",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "go",
+      "command": "go weaponsmith's",
+      "to": "1-191",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "go",
+      "command": "go green pond",
+      "to": "1-467",
+      "presentation": "off-camera",
+      "anchor": null
+    }
+  ],
+  "placementAuthority": "Artist-estimated ground polygon and anchors, not MUD coordinates. Actual graph transitions remain authoritative.",
+  "limitations": [
+    "Shop frontage, door count, displayed arms, barrels and small workbench are artistic supporting interpretation rather than facts in room prose. Bent grass path, cobble strip and privet hedge carry the described identity. Green pond exit remains off-camera.",
+    "All exit screen correspondence remains unestablished; no route-screen-position claim.",
+    "Static opaque plate. No independent occlusion, inhabitants, animated foliage or time variants.",
+    "Automated structural QA and agent visual review are not final user approval."
+  ]
+}

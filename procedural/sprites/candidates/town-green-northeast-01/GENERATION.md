@@ -1,0 +1,17 @@
+# The Crossing, Town Green Northeast — sprite backdrop
+
+Built-in imagegen, 2026-09-08. Style reference: ../town-green-south-01/source-02.png (SHA256 a2b74edc3770de5aff4869c205979443a2263febedef2676be8fc51ce4b3ab6a). No paid external service or API fallback. Model version not exposed by tool. Original generated output preserved by tool; unmodified source copied here and into DR runtime. No third-party art downloaded. Generated using user-directed production artwork; no claim of human authorship or vendor terms beyond tool provenance.
+
+## Evidence and contract
+
+Exact room binding 1-17, source description 1::Town Green Northeast, SHA256 first16 bf4bf4c9cfbd91f7. See room.json for complete prose, graph exits and estimated floor positions. Landscape 1536x1024 RGB opaque background, fixed high three-quarter view, broad central floor for runtime actors. Does not bake actors, UI or action into the background.
+
+## Review
+
+Agent inspected full-size generated image. One ancient oak and soft manicured grass carry the described identity. Border shrubs and exact oak silhouette are artistic interpretation. No people are baked into the plate. Accepted as a static illustrated backdrop only, not final user approval, animation or exact spatial reconstruction. Runtime copy public/sprite-art/town-green-northeast.png, selected through existing reviewedRoomAssignments for this exact room only. SHA256 c80fb8bfbc9eaf10293cbef3a2f89f5d4f4db817085d206a349fec0358a6197d. Mounted client review recorded at integration checkpoint.
+
+## Exact prompt
+
+Mounted review: 1440x1000 real demo client, exact room fixture, decoded 1536px runtime image and authored prose asserted. Screenshot data/art/out/sprite-client-town-green-northeast.png in DR workspace visually inspected: central floor remains readable and named room feature visible behind existing UI. This is demo presentation QA, not live MUD evidence. Shared offline review generator and existing seven-case validation test passed. Temporary headless browser and port 5191 server stopped.
+
+Use case: stylized-concept. Asset: finished 1536x1024 landscape 2D game room background. Image 1 is STYLE reference only, not an edit target. Match its exquisitely detailed illustrated pixel-art aesthetic, warm olive greens, small crisp painterly pixel clusters, natural material detail, high three-quarter top-down fixed gameplay camera, no horizon, soft sun from upper left. Make a DIFFERENT neighboring room of the same DragonRealms park. Broad uncluttered central/lower lawn for separately composited actors; structural story elements along upper and side edges, not an empty generic arena. Do not include people, animals, UI, text, labels, frames, grids, paths painted as game markers, or a diamond island. Flat opaque full-bleed background, not a spritesheet. No fountains, statues, temple towers, or unmentioned landmarks. Town Green Northeast: a cool welcoming expanse of well-manicured soft spongy grass used for gathering, sitting, and resting in warm sun. ONE ANCIENT OAK TREE provides shelter. Compose a magnificent broad-crowned ancient oak in upper-right area with thick gnarled trunk, deeply textured bark, visible roots near trunk, broad lobed leaves and wide natural canopy; soft dappled shelter falls onto upper lawn. Most central and lower half is open manicured grassy gathering space. No paving, roads, benches, stones, buildings, fences, additional tree ring, invented props or flowers beds. Do not turn it into dense forest; one ancient oak is the room's clear landmark.

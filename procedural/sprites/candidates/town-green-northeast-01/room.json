@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "id": "dr-1-17",
+  "title": "The Crossing, Town Green Northeast",
+  "status": "candidate",
+  "runtimeAdmission": false,
+  "consumerAdmission": {"project":"DR Companion","status":"reviewed-static-backdrop","scope":"Exact room background only. Shared reusable asset admission is separate."},
+  "source": {
+    "game": "DragonRealms",
+    "roomBinding": "1-17",
+    "descriptionId": "1::Town Green Northeast",
+    "descriptionHash": "bf4bf4c9cfbd91f7",
+    "description": "The cool, welcome expanse of the Town Green is a pleasant place to gather and exchange news, gossip and adventuring pointers with all the folk and races of Elanthia who are drawn to town. A soft, spongy carpet of well-manicured grass underfoot affords a comfortable cushion for sitting or sprawling out to enjoy a rare moment of rest in the warm sun. An ancient oak tree provides shelter for those so inclined.",
+    "evidence": "DR Companion data/art/room-prompts-priority.json and src/data/map/1.json"
+  },
+  "image": {
+    "path": "source-01.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "c80fb8bfbc9eaf10293cbef3a2f89f5d4f4db817085d206a349fec0358a6197d"
+  },
+  "coordinates": "normalized-image-top-left",
+  "camera": "fixed-high-three-quarter",
+  "floor": [
+    [
+      0.28,
+      0.48
+    ],
+    [
+      0.6,
+      0.48
+    ],
+    [
+      0.7,
+      0.65
+    ],
+    [
+      0.6,
+      0.8
+    ],
+    [
+      0.3,
+      0.8
+    ],
+    [
+      0.23,
+      0.62
+    ]
+  ],
+  "anchors": [
+    {
+      "id": "player",
+      "label": "Illustrative player floor position",
+      "point": [
+        0.48,
+        0.66
+      ],
+      "kind": "spawn"
+    },
+    {
+      "id": "encounter-a",
+      "label": "Illustrative encounter A",
+      "point": [
+        0.6,
+        0.57
+      ],
+      "kind": "spawn"
+    },
+    {
+      "id": "encounter-b",
+      "label": "Illustrative encounter B",
+      "point": [
+        0.35,
+        0.57
+      ],
+      "kind": "spawn"
+    }
+  ],
+  "exits": [
+    {
+      "direction": "south",
+      "command": "south",
+      "to": "1-15",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "southwest",
+      "command": "southwest",
+      "to": "1-16",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "west",
+      "command": "west",
+      "to": "1-14",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "go",
+      "command": "go cobblestone walkway",
+      "to": "1-264",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "go",
+      "command": "go dirt path",
+      "to": "1-379",
+      "presentation": "off-camera",
+      "anchor": null
+    },
+    {
+      "direction": "none",
+      "command": "go shadowed gap",
+      "to": "1-853",
+      "presentation": "off-camera",
+      "anchor": null
+    }
+  ],
+  "placementAuthority": "Artist-estimated ground polygon and anchors, not MUD coordinates. Actual graph transitions remain authoritative.",
+  "limitations": [
+    "One ancient oak and soft manicured grass carry the described identity. Border shrubs and exact oak silhouette are artistic interpretation. No people are baked into the plate.",
+    "All exit screen correspondence remains unestablished; no route-screen-position claim.",
+    "Static opaque plate. No independent occlusion, inhabitants, animated foliage or time variants.",
+    "Automated structural QA and agent visual review are not final user approval."
+  ]
+}
