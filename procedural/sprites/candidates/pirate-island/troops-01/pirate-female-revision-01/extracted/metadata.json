@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1034,
+    1521
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1521
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1034
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1034,
+        1521
+      ],
+      "trim_rect_in_cell": [
+        279,
+        123,
+        847,
+        1313
+      ],
+      "source_trim_rect": [
+        279,
+        123,
+        847,
+        1313
+      ],
+      "size": [
+        568,
+        1190
+      ],
+      "rgba_sha256": "dd41cba6194b9fb2be14bdba09c949745534981cdf21504f37efe92bb248a7b5",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "52326f77901ee1d4643359d32fea47e25915bfd9146fd3e667b8e66b0c5afc19"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\troops-01\\pirate-female-revision-01\\keyed-source.png",
+  "source_sha256": "3b5124d7278150d81e571372b068f8f7638d3994879159bde6e08ade8f4e760f",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
