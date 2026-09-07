@@ -943,6 +943,23 @@ The original assets and source hash remain unchanged; lighting guards pass,
 32 Python tests pass/one Blender-only skip. The bounded CPU job completed,
 including 62.97 seconds of closeup render overhead. No final art or posed approval.
 
+**Full-path clearance revision 05:** The actual revision-04 skin test found
+270/552 sampled root/mid/tip centers inside skin, minimum signed local-normal
+distance -2.249 mm; front occlusion counts were 2/145/116. Revision 05 projects
+each of nine centerline nodes in front of the first skin intersection at its X/Z
+coordinate with 0.15 mm Y clearance, then recomputes tangents from corrected
+nodes. Complete corrected centers are preserved in the construction receipt.
+The saved revision-05 audit reports zero negative sampled distances, minimum
+29.996 micrometres, front occlusion 0/0/0 and oblique 53/0/0. This is not full
+tube-surface, between-node, eye-collision or posed certification. The correction
+is front-oriented and must not be generalized as an arbitrary hair collision
+solver. The render job hit its combined 150-second/3-GiB outer guard before the
+whole-eye output completed; that job was terminated and no visual approval is
+claimed. The existing guard did not distinguish which limit fired. Preserve
+partial output as incomplete, do not label this a completed render. Numeric
+inspection completed; 32 Python tests passed/one Blender-only skip. Next obtain
+a bounded visual check and inspect remaining root/oblique behavior.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

@@ -132,11 +132,19 @@ def construct_lash_strands(source, destination):
                 'surface_normal':list(normal),'direction':list(direction)}
             roots.append(root_record)
             first = len(verts)
+            centers = []
             for k in range(9):
                 u = k/8
                 curl = Vector((0,0,.25 if upper else -.2))
                 position = root+length*(direction*u+curl*u*u)
-                tangent = (direction+2*curl*u).normalized()
+                front_hit,_,_,_ = surface.ray_cast(Vector((position.x,-1,position.z)),Vector((0,1,0)),2)
+                if front_hit is not None:
+                    position.y = min(position.y,front_hit.y-.00015)
+                centers.append(position)
+            root_record['corrected_centers_m'] = [list(p) for p in centers]
+            for k,position in enumerate(centers):
+                u = k/8
+                tangent = (centers[min(8,k+1)]-centers[max(0,k-1)]).normalized()
                 side = tangent.cross(Vector((1,0,0))).normalized()
                 across = tangent.cross(side).normalized()
                 radius = .000045*(1-.95*u)
