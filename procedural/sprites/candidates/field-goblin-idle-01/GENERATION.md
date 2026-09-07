@@ -15,3 +15,24 @@ Contract: richly shaded crisp illustrated pixel art matching current sprite-firs
 Exact built-in image-generation prompt:
 
 Use case: stylized-concept. Asset type: premium 2D fantasy game sprite idle source sheet. Square canvas divided invisibly into exactly 2 columns and 2 rows of equal square cells; solid perfectly flat vivid magenta #FF00FF background for chroma key, NOT a transparency checkerboard. Four sequential frames of ONE identical field goblin. Full body short adult humanoid, dwarf-sized proportions, olive leathery skin, pointed ears, long angular nose, dark wary eyes, short dark hair, patched earth-brown linen tunic with covered torso, worn charcoal trousers, simple leather belt and soft brown shoes. Empty relaxed hands. Passive but alert, not snarling, not cute or chibi. Fixed high three-quarter top-down gameplay camera, facing diagonally down-right. Rich detailed crisp pixel-art clusters, beautiful warm directional highlights from upper left, deep coherent earthy shadows, restrained outline, no smooth glossy 3D. Frame 1 neutral eyes open. Frame 2 eyelids half-close. Frame 3 blink eyes closed. Frame 4 same eyes-open neutral as frame 1. Only eyelids move; lock every foot, knee, arm, hand, head, ear, clothing fold, silhouette and location at exactly matching local coordinates in every cell. No body bounce, no walking, no size or lighting changes. Every figure fully inside its cell with wide identical magenta gutters, visible shoes and head, no cropping. No shadows outside the character, no ground, no weapons, no text, no labels, no grid lines, no other objects. Four frames of the SAME goblin, not four different designs. Magenta must not appear inside the goblin.
+
+## Prone status candidate
+
+`prone-source-01.png`:1254x1254 RGB, SHA256 `f874cb26079ed37d4fdaf3e769a0b280a1949df414f6b3be55445ab121be7af5`.
+Same shared extractor command with `--columns 1 --rows 1 --min-component-pixels 1`
+to `prone-extracted-01` produced974x504 RGBA, no warnings/no removed pixels.
+Source and alpha cutout visually inspected: same face/costume identity, open
+alert eyes and limbs readable on ground, not a corpse. `pose.json` records
+manual belly-ground anchor and tentative0.7 source-scale calibration because
+the new single-subject source has more pixels per head than the standing sheet.
+This requires client calibration; never independently fit this horizontal pose
+to the standing pose's width. No production-state mapping added by this asset.
+
+Parent verified bridge combatant statuses include `prone`; there is no identified
+per-hit animation event. Therefore this is a single static status pose, not an
+attack, death, damage outcome or fall animation. Not admitted until runtime
+explicitly consumes authoritative prone status.
+
+Exact built-in prompt, using source-01.png as identity/style reference:
+
+Use case: identity-preserve. Asset type: ONE full-body field goblin prone status sprite, NOT a sprite sheet. Input image is identity and pixel-art style reference: use its upper-left eyes-open goblin only. Render that exact same short adult olive-skinned goblin, same angular long-nosed face and pointed ears, dark short hair, patched brown tunic with covered torso, charcoal trousers, brown shoes, belt, empty hands, under exactly the same high three-quarter gameplay camera and upper-left light. Change only pose: he is alive and lying prone on his stomach along a diagonal, head toward lower-right and feet toward upper-left. Elbows bent, hands on the ground beside his shoulders, head slightly raised with alert eyes; both legs extended behind with visible shoes. A grounded readable silhouette, no tucked sitting pose, no flying, no standing. Preserve body proportions and costume identity; same richly shaded crisp earthy pixel-art clusters, no smooth 3D. ONE goblin centered on a perfectly flat solid #FF00FF magenta background for chroma key. Whole body comfortably inside frame with generous margins. No ground illustration, no external cast shadow, no weapons, no blood, no wound, no death symbolism, no text, no grid, no checkerboard. This is a recoverable prone posture, not a corpse. Landscape composition within a square image.

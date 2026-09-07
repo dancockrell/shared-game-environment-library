@@ -1,0 +1,11 @@
+{
+  "schemaVersion":1,"runtimeAdmission":false,"subject":"field goblin",
+  "pose":"prone-alive","intendedAuthoritativeStatus":"prone",
+  "image":{"path":"cell_00_00.png","width":974,"height":504,"sha256":"5a389c96d180c0cc6dff352a0b10142af01609ad4a44d4614ad76aae5e752eec"},
+  "crop":[0,0,974,504],"anchor":[470,325],
+  "anchorConvention":"Manual projected belly-ground midpoint, not a mesh-derived joint",
+  "suggestedSourceScaleRelativeToStanding":0.7,
+  "scaleReview":"Prone generation uses larger head pixels than standing sheet.0.7 is a starting head-size calibration only; compare in-client before admission, do not fit horizontal pose by width.",
+  "status":"extracted-candidate-needs-client-status-mapping",
+  "review":"Same olive skin, face, ears, dark hair, brown patched tunic, trousers and empty hands. Eyes open, prone supported on bent arms, not a corpse. Source and extracted alpha inspected. No attack, falling transition or death implication."
+}

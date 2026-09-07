@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        129,
+        379,
+        1103,
+        883
+      ],
+      "source_trim_rect": [
+        129,
+        379,
+        1103,
+        883
+      ],
+      "size": [
+        974,
+        504
+      ],
+      "rgba_sha256": "baa1fd231cdc74f0b0857e7407aa6dd9faa645abf44c5026a2e67c029de66127",
+      "components_before_filter": 3,
+      "components_kept": 3,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "5a389c96d180c0cc6dff352a0b10142af01609ad4a44d4614ad76aae5e752eec"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\field-goblin-idle-01\\prone-source-01.png",
+  "source_sha256": "f874cb26079ed37d4fdaf3e769a0b280a1949df414f6b3be55445ab121be7af5",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
