@@ -2,10 +2,10 @@
   "schema_version": 1,
   "task_id": "crossing-support-assets",
   "agent": "codex",
-  "summary": "Refine and evaluate actual character-study eye, lash and groom geometry in the existing Blender caller; preserve canonical body and garment owner",
+  "summary": "Improve shared character construction and evaluation; stop failed collar tweaks and investigate the existing owner retargeter dependency gate",
   "status": "active",
   "claimed_at": "2026-09-06T03:10:00Z",
-  "updated_at": "2026-09-07T09:50:53Z",
+  "updated_at": "2026-09-07T14:00:00Z",
   "paths": [
     "tools/iterate-character-build.ps1",
     "tools/character-workshop.gd",

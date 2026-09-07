@@ -1338,6 +1338,36 @@ collar constraints, not another arbitrary modifier parameter. No variant is
 approved or enabled by default. CPU render 37.22 s, sampled peak 2,938,638,336
 bytes; 34 tests pass, one skip. No source mutation, push or Actions.
 
+**Retargeter dependency investigation, 7 September:** Following the rejected
+collar modifier line, inspected the existing owner's garment workflow in
+`docs/CHARACTER_WORKSHOP.md`, not a second solver. The owner task was again
+`notLoaded` with an interrupted turn; its source and claims remain intact.
+The selected [author implementation](https://github.com/Huangzizhou/cloth-fit)
+at `123e2440f46720b5f993c91d1705aff838aa55fb` requires corresponding ordered
+skeleton connectivity and triangular source/target meshes. Its documented
+distance-to-bone fallback is not equivalent to supplied skinning weights.
+This is a garment-retargeting candidate, not a sewing-pattern generator.
+
+The local CMake recipe unconditionally includes the author's OpenVDB commit
+`c96cb06971a89ad2638ed29972ab54f63a8e2fbc`. Actual `FitForm.hpp` uses
+`openvdb::tools::HessType`; inspected cached `Interpolation.h` implements
+`SplineSampler::sampleHessian`, with tensor-product spline value, gradient
+and Hessian accumulation. Preserve that dependency revision: installing stock
+OpenVDB is not an established substitute. Provision its missing prerequisites
+instead, then configure the unchanged author source through the existing
+watchdog. No claim is made that this source inspection validates derivatives
+or numerical convergence.
+
+Verified installed Visual Studio vcpkg version
+`2024-03-14-7d353e869753e5609a1f1a057df3db8fd356e49d`.
+A `boost-iostreams:x64-windows --dry-run` with a separate cache install root
+exited before installation: this distribution has no classic-mode instance
+and requires a manifest. Thus the next provisioning step needs an explicit
+dependency manifest/registry and toolchain wiring; repeating a classic-mode
+install command will not fix the previously measured Boost gate. Nothing was
+installed, no compiler/solver/render was started, and no new garment result
+was produced in this investigation. Existing failed fits remain rejected.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
