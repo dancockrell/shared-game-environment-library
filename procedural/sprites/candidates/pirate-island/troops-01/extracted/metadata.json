@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 3,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    612,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      405,
+      804,
+      1254
+    ],
+    [
+      0,
+      420,
+      800,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        405,
+        612
+      ],
+      "trim_rect_in_cell": [
+        139,
+        174,
+        376,
+        535
+      ],
+      "source_trim_rect": [
+        139,
+        174,
+        376,
+        535
+      ],
+      "size": [
+        237,
+        361
+      ],
+      "rgba_sha256": "0002b3afc6a974d05c9106e86b44ffe4b89c738f39b52d9711022cb9cd00f2f8",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "f3387eebf2347ada624bad61cf09e4219bf042e1133cc4cc98ac29b393ed6633"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        405,
+        0,
+        804,
+        612
+      ],
+      "trim_rect_in_cell": [
+        30,
+        177,
+        308,
+        539
+      ],
+      "source_trim_rect": [
+        435,
+        177,
+        713,
+        539
+      ],
+      "size": [
+        278,
+        362
+      ],
+      "rgba_sha256": "75a253729341cd844f4a47a862edfb06348d8596c4061b26b6d1e2293a1c478b",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "7ca007f7f47663e0aa124bb9be2a6b936e2151e8c78bbda5b758370a9dca176a"
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "file": "cell_00_02.png",
+      "source_rect": [
+        804,
+        0,
+        1254,
+        612
+      ],
+      "trim_rect_in_cell": [
+        92,
+        166,
+        359,
+        539
+      ],
+      "source_trim_rect": [
+        896,
+        166,
+        1163,
+        539
+      ],
+      "size": [
+        267,
+        373
+      ],
+      "rgba_sha256": "615fa0554299ca66e30007226c84950bfc9082414a4d9906fcde5cf6ca7e555d",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "7cc35e7768aebc99046cb68aa87c80bbd4c7c732f9a0a306843340d0329e62d0"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        612,
+        420,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        155,
+        75,
+        372,
+        431
+      ],
+      "source_trim_rect": [
+        155,
+        687,
+        372,
+        1043
+      ],
+      "size": [
+        217,
+        356
+      ],
+      "rgba_sha256": "c4a0cac2e3f711cd36ecca5039aaf3260748970bb38d925d2aeca1e301a64f44",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "21fec70f5a4d0ba2564b055f3d36ec120b26f0ab117a911f77d5fc04acdde7b5"
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        420,
+        612,
+        800,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        47,
+        89,
+        276,
+        431
+      ],
+      "source_trim_rect": [
+        467,
+        701,
+        696,
+        1043
+      ],
+      "size": [
+        229,
+        342
+      ],
+      "rgba_sha256": "0f60fdb3112583ccc6568e6fe0929216dc7e1b40e3de3662ea15f0edf699062d",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "3b1a0c19893854792923fcfab042d7e2d8a387241bff378bc83fdb9c5fc1ceaa"
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "file": "cell_01_02.png",
+      "source_rect": [
+        800,
+        612,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        105,
+        75,
+        329,
+        435
+      ],
+      "source_trim_rect": [
+        905,
+        687,
+        1129,
+        1047
+      ],
+      "size": [
+        224,
+        360
+      ],
+      "rgba_sha256": "e4fd9da6887524ea7a818e1bb1ebde12e19507d97370fbf8655d3afe12ae2bca",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "2929cb62163b3450b7f4b586f954a909a7f4ffcf86de9fca016c45cb400783a8"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\troops-01\\keyed-source.png",
+  "source_sha256": "adddcb1310be7d960d0e689c272491b9fda2c47e30e7475abcf97dd5242c1696",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
