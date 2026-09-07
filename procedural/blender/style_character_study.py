@@ -9,8 +9,8 @@ from pathlib import Path
 import bpy
 from mathutils import Vector
 
-def review_saved(source, destination, eye_study=False):
-    """Inspect the exact saved prototype without rebuilding or changing its materials."""
+def review_saved(source, destination, eye_study=False, layered_eye=False):
+    """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     bpy.ops.wm.open_mainfile(filepath=str(source))
@@ -22,6 +22,40 @@ def review_saved(source, destination, eye_study=False):
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if layered_eye:
+        # Isolate the optical-layer hypothesis; this is not captured corneal
+        # anatomy or an iris reconstruction. Preserve the source rig/UVs.
+        assert len(eyes.data.vertices) == 96, 'Reassess construction for changed eye source'
+        shell = eyes.copy()
+        shell.data = eyes.data.copy()
+        shell.name = 'Eye_surface_study'
+        scene.collection.objects.link(shell)
+        shell.data.materials.clear()
+        material = bpy.data.materials.new('Eye_clear_surface_study')
+        material.use_nodes = True
+        p = material.node_tree.nodes.get('Principled BSDF')
+        p.inputs['Base Color'].default_value = (1, 1, 1, 1)
+        p.inputs['Roughness'].default_value = 0.025
+        p.inputs['IOR'].default_value = 1.37
+        p.inputs['Transmission Weight'].default_value = 1
+        shell.data.materials.append(material)
+        # Positive offset keeps the clear shell outside the opaque source.
+        offset = shell.modifiers.new('Surface clearance 0.05 mm', 'DISPLACE')
+        offset.strength = 0.00005
+        offset.mid_level = 0
+        thickness = shell.modifiers.new('Clear layer 0.15 mm', 'SOLIDIFY')
+        thickness.thickness = 0.00015
+        thickness.offset = 1
+        for material in eyes.data.materials:
+            p = next(n for n in material.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+            # Do not add a second specular lobe on the buried pigment surface.
+            p.inputs['Specular IOR Level'].default_value = 0
+        changes.append({'experiment':'clear shell over existing pigment mesh',
+            'clearance_m':0.00005,'thickness_m':0.00015,'ior':1.37,
+            'roughness':0.025,'buried_specular_ior_level':0,
+            'limitations':['not anatomical cornea','no recessed iris',
+                'no limbus transition','no engine export validation']})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'layered-eye-study.blend'))
     if eye_study:
         for mat in eyes.data.materials:
             p = next(n for n in mat.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
@@ -41,7 +75,7 @@ def review_saved(source, destination, eye_study=False):
         ('three-quarter', full_target, Vector((0.8, -1, 0.08)), height * 1.16),
         ('back', full_target, Vector((0, 1, 0.06)), height * 1.16),
     ]
-    if eye_study:
+    if eye_study or layered_eye:
         views = views[:1]
     diagnostics = []
     for obj in scene.objects:
@@ -82,8 +116,9 @@ def review_saved(source, destination, eye_study=False):
     print('CHARACTER_SAVED_REVIEW_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
-if len(args) == 3 and args[2] in ('--review-only', '--eye-study'):
-    review_saved(Path(args[0]), Path(args[1]), args[2] == '--eye-study')
+if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study'):
+    review_saved(Path(args[0]), Path(args[1]), args[2] == '--eye-study',
+                 args[2] == '--layered-eye-study')
     sys.exit(0)
 if len(args) != 2:
     raise ValueError('Expected source, fresh output directory and optional --review-only')

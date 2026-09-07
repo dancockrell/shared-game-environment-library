@@ -627,6 +627,39 @@ established by the small fixture.
 
 #### Fixed-light inspection and eye hypothesis
 
+**Optical-layer checkpoint:** Read the sclera, cornea and iris methods in
+[Berard et al., High-Quality Capture of Eyes, 2014, sections 5–7](https://la.disneyresearch.com/wp-content/uploads/High-Quality-Capture-of-Eyes-Pub-Paper.pdf).
+This is a capture/reconstruction method, not a turnkey procedural eye generator.
+Its cornea reconstruction fits a locally controlled B-spline using reflection,
+refraction and boundary constraints; iris reconstruction accounts for corneal
+refraction. No paper code, captured eye dataset or scanning apparatus was adopted.
+The practical design implication is to separate optical surface from colored
+internal structure, not to claim that two generic spheres reproduce a person.
+
+The actual evaluated source eye pair has **96 vertices**, one material and no
+separate corneal/iris meshes. A bounded `--layered-eye-study` experiment in the
+existing review script duplicates the fitted eye mesh with its rig modifiers,
+adds a 0.05 mm outward clearance and 0.15 mm transparent shell, and suppresses
+the buried pigment's specular lobe. IOR 1.37 and roughness 0.025 are experimental
+settings, not calibrated physiology. It preserves the original texture, camera,
+lights and saved source; no canonical character compiler changes are made.
+
+Actual `cyberpunk-adult-002/layered-eye-01/face-front.png` was rendered and
+inspected alongside `eye-study-01`: **rejected for realism**. Wet response appears,
+but highlights are oversized/faceted and the iris remains flat. The shell has
+neither an anatomical corneal profile nor a recessed iris or limbus transition.
+This is retained only as an optical hypothesis test, not admitted production
+geometry. CPU two-thread render completed in 13.24 seconds; source hash check,
+Python syntax and whitespace checks pass. No Godot window, paid call, engine
+export validation, pose validation or full character test suite is claimed.
+
+Next representation test must author bounded corneal curvature and iris depth,
+retain fitted gaze/rig coordinates, and inspect frontal **and oblique eye-scale**
+views. Define region labels for sclera, cornea, limbus, iris and pupil so material
+assignment does not depend on guessing from a colored texture. Require geometric
+clearance/intersection checks before using transmission. Do not promote the
+current low-poly shell or keep lowering roughness to conceal missing geometry.
+
 The existing look-development script now accepts a saved Blender scene plus
 `--review-only`. It reloads the actual prototype, produces face/front,
 three-quarter and back views, and records camera parameters and material/texture
