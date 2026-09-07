@@ -1,0 +1,28 @@
+{
+  "schemaVersion":1,"id":"dr-1-225","title":"The Crossing, Town Green Northwest",
+  "status":"candidate","runtimeAdmission":false,
+  "source":{"game":"DragonRealms","roomBinding":"1-225","descriptionId":"1::Town Green Northwest",
+    "description":"The entrance to Tembeg's Armory is through a hacked-out breach in the thick hedges that border the Green here. Tembeg, being a humble sort, has laid down a few planks leading into his establishment to serve as a walkway. Samples of his work are hung on hooks on the exterior of the unpainted wood structure but no sign or other eye-catching gimmicks are noticeable.",
+    "evidence":"DR Companion public/roomtext/1.json from room-prompts-priority.json and room-place-map.json; exits from src/data/map/1.json"},
+  "image":{"path":"source-02.png","width":1536,"height":1024,"sha256":"37218ec2dde2539beb305b771139a3e986f5d519f16588f195c75dbf6aab04f2"},
+  "coordinates":"normalized-image-top-left","camera":"fixed-high-three-quarter",
+  "floor":[[0.23,0.43],[0.72,0.41],[0.83,0.66],[0.69,0.86],[0.28,0.84],[0.18,0.62]],
+  "anchors":[
+    {"id":"player","label":"Illustrative player floor position","point":[0.5,0.62],"kind":"spawn"},
+    {"id":"encounter-a","label":"Illustrative encounter A","point":[0.68,0.58],"kind":"spawn"},
+    {"id":"encounter-b","label":"Illustrative encounter B","point":[0.35,0.6],"kind":"spawn"}
+  ],
+  "exits":[
+    {"direction":"east","command":"east","to":"1-14","presentation":"off-camera","anchor":null},
+    {"direction":"southeast","command":"southeast","to":"1-16","presentation":"off-camera","anchor":null},
+    {"direction":"south","command":"south","to":"1-23","presentation":"off-camera","anchor":null},
+    {"direction":"northwest","command":"northwest","to":"1-24","presentation":"off-camera","anchor":null},
+    {"direction":"go","command":"go armory","to":"1-192","presentation":"off-camera","anchor":null}
+  ],
+  "placementAuthority":"Artist-estimated illustration probes only. Actual graph commands and transitions remain authoritative; visible doorway is not a clickable route binding.",
+  "limitations":[
+    "Plain wood walls, hedge breach, planks and hung work samples reflect source description. Individual armor types, barrels, roof and small storage objects are artistic interpretation.",
+    "First stone/plaster facade output is rejected and preserved separately. Only corrected source-02 is eligible for consumer review.",
+    "No independent building layers, actors or animated foliage. No sign, text, or user final approval claim."
+  ]
+}
