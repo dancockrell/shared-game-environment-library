@@ -12,6 +12,92 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 
 
+def construct_surface_strands(destination):
+    """Confidence-gated texture streamlines on the existing upper hair surface."""
+    sys.path.insert(0,str(Path(__file__).parent))
+    from hair_field import direction_field,trace_line
+    import numpy as np
+    hair = bpy.data.objects['Hair_braid01']
+    e = hair.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    mesh = e.to_mesh()
+    mesh.calc_loop_triangles()
+    world = [e.matrix_world@v.co for v in mesh.vertices]
+    uv = mesh.uv_layers.active.data
+    eye = bpy.data.objects['Eyes']
+    min_z = sum((eye.matrix_world@v.co).z for v in eye.data.vertices)/len(eye.data.vertices)+.025
+    triangles = [t for t in mesh.loop_triangles if min(world[i].z for i in t.vertices)>min_z]
+    atlas,faces,spatial,normals = [],[],[],[]
+    normal_transform = e.matrix_world.to_3x3().inverted().transposed()
+    for t in triangles:
+        offset = len(atlas)
+        atlas.extend(Vector((*uv[i].uv,0)) for i in t.loops)
+        faces.append((offset,offset+1,offset+2))
+        spatial.append([world[i].copy() for i in t.vertices])
+        normals.append([(normal_transform@mesh.vertices[i].normal).normalized() for i in t.vertices])
+    e.to_mesh_clear()
+    tree = BVHTree.FromPolygons(atlas,faces,all_triangles=True)
+    image = next(n.image for n in hair.data.materials[0].node_tree.nodes if n.type=='TEX_IMAGE')
+    width,height = image.size
+    pixels = np.array(image.pixels[:],dtype=np.float32).reshape(height,width,4)
+    field,confidence = direction_field(pixels[:,:,:3] @ np.array([.2126,.7152,.0722]))
+    rng = np.random.default_rng(23)
+    strands,uv_strands = [],[]
+    for _ in range(768):
+        f = faces[int(rng.integers(len(faces)))]
+        b = rng.dirichlet([1,1,1])
+        seed = sum((atlas[i]*float(w) for i,w in zip(f,b)),Vector())
+        line = trace_line(field,confidence,(seed.x*width,seed.y*height))
+        points,retained_uv = [],[]
+        for x,y in line:
+            point = Vector((x/width,y/height,0))
+            hit,_,index,distance = tree.find_nearest(point,.000001)
+            if hit is None:
+                break
+            tri = spatial[index]
+            pos = barycentric_transform(hit,*(atlas[i] for i in faces[index]),*tri)
+            normal = barycentric_transform(hit,*(atlas[i] for i in faces[index]),
+                                           *normals[index]).normalized()
+            pos += normal*.0003
+            if points and (pos-points[-1]).length>.003:
+                break
+            points.append(pos)
+            retained_uv.append((x/width,y/height))
+        if len(points)>=12:
+            strands.append(points)
+            uv_strands.append(retained_uv)
+    assert 0<len(strands)<=768
+    curves = bpy.data.hair_curves.new('Source_surface_hair_study')
+    curves.add_curves([len(s) for s in strands])
+    positions = [v for strand in strands for p in strand for v in p]
+    curves.attributes['position'].data.foreach_set('vector',positions)
+    radius = curves.attributes.new('radius','FLOAT','POINT')
+    radii = [0.000035*(.2+.8*np.sin(np.pi*i/(len(s)-1))) for s in strands for i in range(len(s))]
+    radius.data.foreach_set('value',radii)
+    obj = bpy.data.objects.new(curves.name,curves)
+    bpy.context.scene.collection.objects.link(obj)
+    material = bpy.data.materials.new('Surface_fiber_study')
+    material.use_nodes = True
+    nodes,links = material.node_tree.nodes,material.node_tree.links
+    shader = nodes.new('ShaderNodeBsdfHairPrincipled')
+    shader.parametrization = 'COLOR'
+    shader.inputs['Color'].default_value = (.025,.014,.008,1)
+    shader.inputs['Roughness'].default_value = .3
+    links.new(shader.outputs[0],nodes.get('Material Output').inputs['Surface'])
+    curves.materials.append(material)
+    record = {'method':'structure-tensor confidence-gated upper-surface streamlines',
+        'seed':23,'attempts':768,'accepted':len(strands),'point_count':len(radii),
+        'source_image':image.name,'source_image_size':[width,height],
+        'surface_offset_m':.0003,'maximum_radius_m':.000035,
+        'offset_normal':'barycentric interpolation of source vertex normals',
+        'minimum_source_z_m':min_z,'curves_world_m':[[list(p) for p in s] for s in strands],
+        'curves_uv':uv_strands,
+        'limitations':['surface overlays, not rooted full-length groom',
+            'no braid topology reconstruction','no rig binding or engine export',
+            'UV overlap ambiguity and surface penetration not certified']}
+    (destination/'strand-construction.json').write_text(json.dumps(record))
+    return {k:v for k,v in record.items() if not k.startswith('curves_')}
+
+
 def audit_eye_motion(source, destination):
     """Measure optical-part deformation against rigid eye motion; no art approval."""
     destination.mkdir(parents=True, exist_ok=False)
@@ -179,7 +265,7 @@ def construct_fitted_eyes(eyes):
                 'rigid eye attachment; eyelid contact and export not validated']}
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
-                 eye_light=False, render_review=True, hair_texture=False):
+                 eye_light=False, render_review=True, hair_texture=False, hair_strands=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -192,6 +278,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if hair_strands:
+        changes.append(construct_surface_strands(destination))
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'hair-strands-study.blend'))
     if hair_texture:
         hair = bpy.data.objects['Hair_braid01']
         material = hair.data.materials[0]
@@ -329,11 +418,11 @@ args = sys.argv[sys.argv.index('--') + 1:]
 if len(args) == 3 and args[2] == '--eye-pose-audit':
     audit_eye_motion(Path(args[0]),Path(args[1]))
     sys.exit(0)
-if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study', '--geometry-eye-build', '--hair-texture-study'):
+if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study', '--geometry-eye-build', '--hair-texture-study', '--hair-strands-study'):
     review_saved(Path(args[0]), Path(args[1]), args[2] == '--eye-study',
                  args[2] == '--layered-eye-study', args[2] in ('--geometry-eye-study','--geometry-eye-build'),
                  args[2] == '--eye-light-study', args[2] != '--geometry-eye-build',
-                 args[2] == '--hair-texture-study')
+                 args[2] == '--hair-texture-study', args[2] == '--hair-strands-study')
     sys.exit(0)
 if len(args) != 2:
     raise ValueError('Expected source, fresh output directory and optional --review-only')

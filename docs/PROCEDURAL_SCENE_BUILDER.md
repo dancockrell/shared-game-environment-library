@@ -627,6 +627,40 @@ established by the small fixture.
 
 #### Hair source-detail checkpoint
 
+**Surface-strand experiment:** The existing review caller now exercises
+`hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
+from the source atlas, extracts its low-gradient line direction and anisotropy
+confidence, and traces sign-consistent paths only through confident regions.
+Tracing is bounded to 40 steps each way, with curvature and boundary stops. This
+is an independently implemented small diagnostic, not a reproduction of the
+Gabor/refinement/occlusion pipeline in [Chai et al., Single-View Hair Modeling for
+Portrait Manipulation, section 3.2](https://www.microsoft.com/en-us/research/wp-content/uploads/2012/01/2012_imagehair.pdf).
+That paper's warning about crossing-strand ambiguity motivates confidence gating;
+its complete topology recovery has not been implemented here.
+
+The caller projects traces through source UV triangles onto the existing upper
+hair mesh, offset by 0.3 mm, and creates native Blender hair curves with tapered
+35-micrometre maximum radius and the existing Chiang hair shader. Seed 23,
+768 attempts, source-image identity, UV paths and complete world-space points
+are recorded in `strand-construction.json`. This is not a rooted groom, braid
+reconstruction, rigged hairstyle or runtime export. UV overlap ambiguity and
+penetration remain uncertified. No new neural model or external art was acquired.
+
+Actual `hair-strands-01` and `hair-strands-02` each contain 336 accepted curves /
+10,243 points. All six face/three-quarter/back images were inspected. Revision 02
+replaces face-normal offsets with interpolated source vertex normals; it does
+not materially rescue the appearance. Sparse short paths and crown discontinuities
+remain, with little improvement at full-character scale. **Rejected as finished
+hair.** Do not multiply strand count to disguise the missing root-to-tip structure.
+Next evaluate complete guide-based construction and licensed existing grooms,
+with explicit scalp attachment, parting, clumps, braid routing and silhouette.
+
+All 32 Python tests pass, including four line-field checks for stripe direction,
+flat-image rejection, sign equivalence and bounded requests. A fresh Blender load
+matches all 10,243 curve points to the construction receipt exactly and verifies
+finite positive radii. Source-hash checks pass. CPU two-thread renders and the
+160-second / 3 GiB outer guard were used; no paid work, Godot UI or Actions run.
+
 The active source braid has 4,771 vertices / 5,518 polygons and a CC0 diffuse
 atlas with visible fine strands and baked highlights. Its `.mhmat` names a
 litsphere-based appearance, not a calibrated physically based hair shader.
