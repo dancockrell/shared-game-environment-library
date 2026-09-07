@@ -51,6 +51,7 @@ func _ready() -> void:
 	button(panel,"Open clothing/body profile",func(): file_dialog(false,"*.json",load_outfit_profile))
 	button(panel,"Save appearance",func(): file_dialog(true,"*.json",save_recipe))
 	button(panel,"Load appearance",func(): file_dialog(false,"*.json",load_recipe))
+	button(panel,"Inspect build review",func(): file_dialog(false,"*.json",show_build_review))
 	button(panel,"Export Godot character",func(): file_dialog(true,"*.scn",export_character))
 	button(panel,"Export portable character",func(): file_dialog(true,"*.glb",export_portable_character))
 	status = Label.new()
@@ -132,6 +133,44 @@ func file_dialog(save: bool, filter: String, action: Callable) -> void:
 	dialog.file_selected.connect(func(_p): dialog.queue_free())
 	dialog.canceled.connect(dialog.queue_free)
 	dialog.popup_centered_ratio(.75)
+
+static func build_review_text(data: Variant) -> String:
+	if not data is Dictionary or not data.get("changes") is Array or not data.get("views") is Array or not data.get("rendered") is bool:
+		return "Invalid build review: expected changes, views and rendered state."
+	var digest = data.get("source_blend_sha256", "")
+	if not digest is String or digest.length() != 64 or not digest.is_valid_hex_number(false):
+		return "Invalid build review: missing source SHA-256."
+	var lines := PackedStringArray(["BUILD EVIDENCE — NOT ART APPROVAL", "This receipt does not validate the character currently loaded in the Workshop.", "Rendered views recorded" if data.rendered else "Build only — no render recorded", "Source SHA-256: " + digest])
+	for change in data.changes.slice(0, 100):
+		if not change is Dictionary:
+			return "Invalid build review: malformed change."
+		lines.append("\n" + str(change.get("experiment", "Unnamed operation")))
+		lines.append(JSON.stringify(change, "  "))
+	lines.append("\nRecorded views: " + str(data.views.size()))
+	lines.append("Source bytes unchanged: " + str(data.get("source_unchanged", "not recorded")))
+	lines.append("\nReview original images and edited source before accepting an asset. No approval or scene changes are performed here.")
+	return "\n".join(lines)
+
+func show_build_review(path: String) -> void:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null or file.get_length() > 2097152:
+		status.text = "Cannot read review, or review exceeds 2 MiB."
+		return
+	var text := build_review_text(JSON.parse_string(file.get_as_text()))
+	file.close()
+	var dialog := AcceptDialog.new()
+	dialog.title = "Build review (read-only)"
+	dialog.min_size = Vector2i(700, 500)
+	var report := TextEdit.new()
+	report.custom_minimum_size = Vector2(680, 440)
+	report.editable = false
+	report.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	report.text = text
+	dialog.add_child(report)
+	add_child(dialog)
+	dialog.confirmed.connect(dialog.queue_free)
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.popup_centered()
 
 func slider(label_text: String, low: float, high: float, value: float, action: Callable) -> void:
 	var label := Label.new()

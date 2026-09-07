@@ -1104,6 +1104,24 @@ the active shared-character-workshop owner; no second editor or fitting solver
 is introduced. Saved editable results and reproducible build-only operations
 are prerequisites, not proof of an integrated user-facing workflow.
 
+**Workshop review entry point:** The existing Character Workshop now includes
+`Inspect build review`, reading the Blender caller's review.json in a read-only
+dialog. It validates required receipt types and source SHA-256 syntax, caps
+input at 2 MiB, displays operations/limitations and distinguishes build-only
+from rendered evidence. It explicitly does not validate the currently loaded
+actor, grant art approval, launch commands or mutate appearance. No second app
+or fitting solver was created. Image comparison and build execution controls
+are not integrated yet; this is the evidence-inspection entry point only.
+
+Added `--review-only` focused cases to the existing Workshop test script for
+null/malformed input and explicit build/render status. Runtime/UI tests are
+**not_run**: the previously known Godot-4.7.2 directory is empty and no executable
+was found in the checked tool/package locations. Do not confuse code inspection
+or Python tests with Godot execution. Shared editor owner task was verified
+notLoaded/interrupted before the narrow edit, with tracked files clean; its
+garment/compiler/export implementations remain unchanged. Claim records the
+overlap for resumption. No visible engine, download, paid service or Actions.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

@@ -10,6 +10,18 @@ func check(ok: bool, label: String) -> void:
 		print("PASS ",label)
 func run() -> void:
 	var args := OS.get_cmdline_user_args()
+	if args.size() == 1 and args[0] == "--review-only":
+		var workshop = load("res://character-workshop.gd")
+		check(workshop.build_review_text(null).begins_with("Invalid"), "reject null review")
+		var review := {"changes":[],"views":[],"rendered":false,"source_blend_sha256":"a".repeat(64)}
+		var text: String = workshop.build_review_text(review)
+		check(text.contains("Build only") and text.contains("NOT ART APPROVAL"), "build receipt cannot imply visual approval")
+		review.rendered = true
+		check(workshop.build_review_text(review).contains("Rendered views recorded"), "render state is explicit")
+		review.changes = [null]
+		check(workshop.build_review_text(review).begins_with("Invalid"), "reject malformed change")
+		quit(0 if failures == 0 else 1)
+		return
 	if args.size()<2:
 		quit(2)
 		return
