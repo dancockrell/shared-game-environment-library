@@ -1234,6 +1234,26 @@ arithmetic bug was established in that inspection. Source/solver unchanged.
 Fresh Blender audit completed; 32 tests pass, one skip. Collar repair and final
 garment construction remain unfinished; no new render or art acceptance.
 
+**Local collar clearance study:** Reused Blender's existing Shrinkwrap modifier
+(nearest surface point, outside-surface mode, 1.5-mm offset) on a recorded vertex
+group restricted to the upper rear collar near the actual skin. Source topology
+and armature remain; modifier and editable model saved in
+`collar-clearance-01/collar-clearance.blend`. Actual back render inspected:
+exposed skin strip is smaller but small edge slivers remain. Fresh reload audit
+reduces skin-before-garment rays from 114 to 52, with uncovered rays unchanged
+at 89. This is partial visible/numeric improvement, not finished collar fit.
+Target normals on masked skin and rest-pose spatial selection remain limitations;
+no arbitrary pose, full triangle contact or game export claim. Do not treat
+remaining rays as all defects because the intentional opening remains included.
+Blender's [Shrinkwrap documentation](https://docs.blender.org/UATEST/manual/en/dev/modeling/modifiers/deform/shrinkwrap.html)
+notes normal-based inside/outside instability around sharp target geometry.
+No new solver or source asset mutation was introduced.
+
+CPU/two-thread render completed in 26.91 s, sampled peak process 2,910,027,776
+bytes under the 4-GiB/8-GiB-free-system guard. 32 Python tests passed, one skip.
+Next refine collar-edge coverage and test pose response before accepting this
+modifier as part of a character build. No push, Actions or paid service.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

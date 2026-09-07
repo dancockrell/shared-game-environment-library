@@ -752,7 +752,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
                  sclera_transport=False, upper_eye_fit=False, full_character=False, full_view=None,
-                 studio_review=False, body_surface_isolation=False):
+                 studio_review=False, body_surface_isolation=False, collar_clearance=False):
     """Review saved geometry; record every optional experimental modification."""
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
@@ -773,6 +773,42 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if collar_clearance:
+        body = bpy.data.objects['Body03']
+        top = bpy.data.objects['FormalTop']
+        dg = bpy.context.evaluated_depsgraph_get()
+        evaluated = body.evaluated_get(dg)
+        mesh = evaluated.to_mesh()
+        skin = BVHTree.FromPolygons([evaluated.matrix_world@v.co for v in mesh.vertices],
+            [tuple(p.vertices) for p in mesh.polygons])
+        evaluated.to_mesh_clear()
+        evaluated = top.evaluated_get(dg)
+        mesh = evaluated.to_mesh()
+        assert len(mesh.vertices) == len(top.data.vertices)
+        points = [evaluated.matrix_world@v.co for v in mesh.vertices]
+        zmax = max(p.z for p in points)
+        selected = []
+        for index,point in enumerate(points):
+            near,normal,_,distance = skin.find_nearest(point)
+            if point.z>zmax-.07 and abs(point.x)<.1 and normal.y>.3 and distance<.015:
+                if (point-near).dot(normal)<.0015:
+                    selected.append(index)
+        evaluated.to_mesh_clear()
+        assert selected
+        group = top.vertex_groups.new(name='Study rear collar clearance')
+        group.add(selected,1,'REPLACE')
+        modifier = top.modifiers.new('Study local collar fit','SHRINKWRAP')
+        modifier.target = body
+        modifier.wrap_method = 'NEAREST_SURFACEPOINT'
+        modifier.wrap_mode = 'OUTSIDE_SURFACE'
+        modifier.offset = .0015
+        modifier.vertex_group = group.name
+        changes.append({'experiment':'existing shrinkwrap rear collar clearance',
+            'selected_vertices':selected,'offset_m':.0015,
+            'limitations':['rest-pose spatial selection','masked body normals can be ambiguous',
+                'not full cloth contact or animation acceptance']})
+        bpy.context.view_layer.update()
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'collar-clearance.blend'))
     if body_surface_isolation:
         modifiers = []
         for modifier in bpy.data.objects['Body03'].modifiers:
@@ -1339,6 +1375,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--collar-clearance':
+    review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view='back',
+                 studio_review=True,collar_clearance=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--collar-interface':
     audit_collar_interface(Path(args[0]),Path(args[1]))
     sys.exit(0)
