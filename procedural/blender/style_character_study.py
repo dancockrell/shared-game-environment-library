@@ -9,7 +9,85 @@ from pathlib import Path
 import bpy
 from mathutils import Vector
 
-source, destination = map(Path, sys.argv[sys.argv.index('--') + 1:])
+def review_saved(source, destination, eye_study=False):
+    """Inspect the exact saved prototype without rebuilding or changing its materials."""
+    destination.mkdir(parents=True, exist_ok=False)
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    bpy.ops.wm.open_mainfile(filepath=str(source))
+    scene = bpy.context.scene
+    assert json.loads(scene['requested_character'])['age'] == 18
+    bpy.context.view_layer.update()
+    cam = scene.camera
+    height = cam.data.ortho_scale / 1.16
+    ground = bpy.data.objects['Plane'].location.z + 0.005
+    eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
+    changes = []
+    if eye_study:
+        for mat in eyes.data.materials:
+            p = next(n for n in mat.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+            assert not p.inputs['Roughness'].is_linked
+            changes.append({'material':mat.name, 'parameter':'roughness',
+                'before':p.inputs['Roughness'].default_value, 'after':0.12})
+            p.inputs['Roughness'].default_value = 0.12
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'eye-material-study.blend'))
+    evaluated = eyes.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    mesh = evaluated.to_mesh()
+    points = [evaluated.matrix_world @ v.co for v in mesh.vertices]
+    eye_center = sum(points, Vector()) / len(points)
+    evaluated.to_mesh_clear()
+    full_target = Vector((0, 0, ground + height * 0.52))
+    views = [
+        ('face-front', eye_center + Vector((0, 0, -0.035)), Vector((0, -1, 0)), 0.43),
+        ('three-quarter', full_target, Vector((0.8, -1, 0.08)), height * 1.16),
+        ('back', full_target, Vector((0, 1, 0.06)), height * 1.16),
+    ]
+    if eye_study:
+        views = views[:1]
+    diagnostics = []
+    for obj in scene.objects:
+        if obj.type != 'MESH' or not obj.visible_get() or obj.name == 'Plane':
+            continue
+        for mat in obj.data.materials:
+            if not mat or not mat.use_nodes:
+                continue
+            p = next((n for n in mat.node_tree.nodes if n.type == 'BSDF_PRINCIPLED'), None)
+            diagnostics.append({'object': obj.name, 'material': mat.name,
+                'roughness': p.inputs['Roughness'].default_value if p else None,
+                'subsurface_scale': p.inputs['Subsurface Scale'].default_value if p else None,
+                'textures': [{'name': n.image.name, 'size': list(n.image.size),
+                    'color_space': n.image.colorspace_settings.name}
+                    for n in mat.node_tree.nodes if n.type == 'TEX_IMAGE' and n.image]})
+    scene.cycles.samples = 24
+    scene.cycles.time_limit = 40
+    scene.cycles.device = 'CPU'
+    scene.render.threads_mode = 'FIXED'
+    scene.render.threads = 2
+    records = []
+    for name, target, direction, scale in views:
+        cam.location = target + direction.normalized() * height * 2.5
+        cam.rotation_euler = (target - cam.location).to_track_quat('-Z', 'Y').to_euler()
+        cam.data.ortho_scale = scale
+        scene.render.resolution_x = 640
+        scene.render.resolution_y = 640 if name == 'face-front' else 850
+        scene.render.filepath = str(destination / (name + '.png'))
+        bpy.ops.render.render(write_still=True)
+        records.append({'view':name, 'camera_position':list(cam.location),
+            'target':list(target), 'orthographic_scale':scale})
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == digest
+    (destination/'review.json').write_text(json.dumps({'source_blend_sha256':digest,
+        'views':records,'materials':diagnostics,'source_unchanged':True,
+        'changes':changes,
+        'scope':'fixed-light saved-asset review; only explicitly listed changes',
+        'art_approval':'pending'},indent=2))
+    print('CHARACTER_SAVED_REVIEW_PASS')
+
+args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] in ('--review-only', '--eye-study'):
+    review_saved(Path(args[0]), Path(args[1]), args[2] == '--eye-study')
+    sys.exit(0)
+if len(args) != 2:
+    raise ValueError('Expected source, fresh output directory and optional --review-only')
+source, destination = map(Path, args)
 destination.mkdir(parents=True, exist_ok=False)
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)

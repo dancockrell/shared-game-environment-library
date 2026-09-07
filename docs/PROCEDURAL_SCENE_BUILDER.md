@@ -625,6 +625,35 @@ established by the small fixture.
 
 ### Adult cyberpunk character benchmark, 7 September 2026
 
+#### Fixed-light inspection and eye hypothesis
+
+The existing look-development script now accepts a saved Blender scene plus
+`--review-only`. It reloads the actual prototype, produces face/front,
+three-quarter and back views, and records camera parameters and material/texture
+diagnostics. Source-file hashes are checked before/after; no reconstruction or
+lighting/material edits occur in this mode. Two CPU threads, 24 samples and
+40 seconds per image are explicit limits. The outer diagnostic used a 3 GiB
+sampled process cap and 150-second timeout; no new Godot session was required.
+
+All three `cyberpunk-adult-002/review-01` images were inspected. Face shows flat
+eyes and broad ridged hair; side/back show weak garment construction detail and
+a coarse braid. The review reports 1024-square skin, eye and hair textures.
+Eyes/hair carry roughness 0.85. Source inspection confirms the canonical material
+loader initializes all materials to 0.85 while the original brown eye `.mhmat`
+declares shininess 1.0. These are different shading models, not interchangeable
+numeric controls; do not silently map one to the other with an arbitrary formula.
+
+`--eye-study` is an explicitly recorded experiment in that same saved-scene
+review path, changing only eye roughness to 0.12 and rendering only the identical
+face view. It preserves the source, saves a separate editable study, and records
+before/after values. Actual `eye-study-01/face-front.png` adds reflections but
+the highlights dominate and the iris still lacks believable depth. **Not accepted
+as realistic eyes.** Keep this as a failed quality benchmark demonstrating that
+roughness alone is insufficient. The ordinary character builder is not changed
+by this experiment. Next work must inspect eye geometry, corneal layering and
+iris representation before adding further shader compensation. Python syntax
+and all four actual renders pass; no full character suite or pose test claimed.
+
 User now requests an explicitly adult, 18-year-old human woman, realistic,
 wearing cyberpunk clothing, using our real model. Treat this as a raised
 capability benchmark, not permission to substitute an AI picture or certify
