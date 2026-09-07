@@ -1,0 +1,16 @@
+{
+  "schemaVersion":1,"runtimeAdmission":false,"title":"Crossing jackal restrained ear twitch and blink candidate","fps":6,"scale":0.20,
+  "anchorConvention":"Manual body-ground estimate in trimmed pixels; fixed source scale, no per-frame resize",
+  "images":[
+    {"path":"cell_00_00.png","width":451,"height":407,"sha256":"12dc31dc803201dbae45f432a26e475db5dbae9a789cd016e5a021c85c85d747"},
+    {"path":"cell_00_01.png","width":451,"height":408,"sha256":"576b90cb490514fd21f6240c24e594b4608a892fa24a801f1156c7c14310d77b"},
+    {"path":"cell_01_00.png","width":452,"height":406,"sha256":"ed1f39a07b3c2ba06c4ae9f3e6f15816dce82fdab3a429d2ff3d4fe7cfafc8f6"},
+    {"path":"cell_01_01.png","width":451,"height":408,"sha256":"94aa3746cd0157c80031027ae2443eb21b29984d3438b76cdfcb5f8d5dbfb843"}
+  ],
+  "frames":[
+    {"imageIndex":0,"rect":[0,0,451,407],"anchor":[250,385],"durationMs":2400},
+    {"imageIndex":1,"rect":[0,0,451,408],"anchor":[250,386],"durationMs":160},
+    {"imageIndex":2,"rect":[0,0,452,406],"anchor":[251,384],"durationMs":120},
+    {"imageIndex":3,"rect":[0,0,451,408],"anchor":[250,386],"durationMs":200}
+  ]
+}

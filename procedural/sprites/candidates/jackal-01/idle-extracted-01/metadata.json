@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 2,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    622,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      602,
+      1254
+    ],
+    [
+      0,
+      602,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        602,
+        622
+      ],
+      "trim_rect_in_cell": [
+        102,
+        157,
+        553,
+        564
+      ],
+      "source_trim_rect": [
+        102,
+        157,
+        553,
+        564
+      ],
+      "size": [
+        451,
+        407
+      ],
+      "rgba_sha256": "ddf36048d611400c4e73128160f1f5096d5be30094473e646a2015717b5dc612",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "12dc31dc803201dbae45f432a26e475db5dbae9a789cd016e5a021c85c85d747"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        602,
+        0,
+        1254,
+        622
+      ],
+      "trim_rect_in_cell": [
+        51,
+        156,
+        502,
+        564
+      ],
+      "source_trim_rect": [
+        653,
+        156,
+        1104,
+        564
+      ],
+      "size": [
+        451,
+        408
+      ],
+      "rgba_sha256": "2f64451ed2c2dc689945e9afd3c3cfecb17075303972e11a65b5c887943b0e8e",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "576b90cb490514fd21f6240c24e594b4608a892fa24a801f1156c7c14310d77b"
+    },
+    {
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        622,
+        602,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        101,
+        62,
+        553,
+        468
+      ],
+      "source_trim_rect": [
+        101,
+        684,
+        553,
+        1090
+      ],
+      "size": [
+        452,
+        406
+      ],
+      "rgba_sha256": "4ab99c827dda6ce6525b164d98ba00800d7e40a26f77ee329aaa270e83e10c3a",
+      "components_before_filter": 3,
+      "components_kept": 3,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "ed1f39a07b3c2ba06c4ae9f3e6f15816dce82fdab3a429d2ff3d4fe7cfafc8f6"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        602,
+        622,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        51,
+        60,
+        502,
+        468
+      ],
+      "source_trim_rect": [
+        653,
+        682,
+        1104,
+        1090
+      ],
+      "size": [
+        451,
+        408
+      ],
+      "rgba_sha256": "503d29e911e286d480dabacea8cf6d10ae0f18ed015df8c929bd88283d208945",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "94aa3746cd0157c80031027ae2443eb21b29984d3438b76cdfcb5f8d5dbfb843"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\jackal-01\\idle-magenta-01.png",
+  "source_sha256": "87e20ad20d668c33e7cc10220593ab303bef5282c60f802fcf47444cd1da8b9b",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
