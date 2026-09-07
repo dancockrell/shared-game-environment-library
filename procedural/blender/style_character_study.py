@@ -375,7 +375,8 @@ def construct_fitted_eyes(eyes):
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
-                 demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False):
+                 demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
+                 skin_transport=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -388,6 +389,21 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if skin_transport:
+        mat = bpy.data.objects['Body03'].data.materials[0]
+        p = next(n for n in mat.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+        before = {'method':p.subsurface_method,
+            'weight':p.inputs['Subsurface Weight'].default_value,
+            'scale':p.inputs['Subsurface Scale'].default_value,
+            'radius':list(p.inputs['Subsurface Radius'].default_value)}
+        p.subsurface_method = 'RANDOM_WALK_SKIN'
+        p.inputs['Subsurface Weight'].default_value = 1
+        p.inputs['Subsurface Scale'].default_value = .001
+        p.inputs['Subsurface Radius'].default_value = (1,.45,.2)
+        changes.append({'experiment':'millimetre-scale skin transport', 'before':before,
+            'after':{'method':p.subsurface_method,'weight':1,'scale':.001,'radius':[1,.45,.2]},
+            'limitation':'hypothesis parameters, not measured subject optical properties'})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'skin-transport.blend'))
     if source_skin:
         path = Path(__file__).resolve().parents[2]/'assets/character-sources/makehuman-system/skins/young_caucasian_female/young_lightskinned_female_diffuse.png'
         body = bpy.data.objects['Body03']
@@ -507,7 +523,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
-    if source_skin:
+    if source_skin or skin_transport:
         views = views[:1]
     if groom_pose:
         target = eye_center + Vector((0,0,.03))
@@ -564,6 +580,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--skin-transport-review':
+    review_saved(Path(args[0]),Path(args[1]),skin_transport=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--source-skin-review':
     review_saved(Path(args[0]),Path(args[1]),source_skin=True)
     sys.exit(0)

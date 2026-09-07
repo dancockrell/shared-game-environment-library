@@ -713,6 +713,22 @@ regional roughness/detail rather than further resolution increases. The render
 completed in 12.35 seconds; input hash unchanged, 32 Python tests passed. This
 checkpoint neither removes scalp stubble nor approves skin or runtime export.
 
+**Skin transport hypothesis:** Actual saved Body03 material inspection finds
+one image linked directly to Principled base color, zero emission strength,
+metallic zero and no normal input. There is no hidden dye multiplier. An initial
+optional world-socket dump raised AttributeError after the body inspection;
+do not treat that command as a complete world audit. `--skin-transport-review`
+tests Random Walk Skin at full subsurface weight, 1 mm scale and RGB radius
+(1, 0.45, 0.2), recording the original values. These are experimental values,
+not measured optical properties. The actual `skin-transport-01/face-front.png`
+remains pale and smooth, with little improvement under the existing soft light.
+Do not promote this setting as a realism fix. Next use more revealing diagnostic
+lighting and explicit surface detail/roughness controls rather than another
+uniform scattering adjustment. The saved source is unchanged, CPU render took
+16.87 seconds and all 32 Python tests passed. Official Blender manual search
+confirmed the skin-specific random-walk option; full manual fetch failed, so no
+claim of a newly completed paper review or calibrated skin model is made.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
