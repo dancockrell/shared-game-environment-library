@@ -83,6 +83,10 @@ def construct_lash_strands(source, destination):
         arcs.append(sorted(arc,key=lambda p:p['world_m'][0]))
     lash = bpy.data.objects['Lashes01']
     verts,faces,weights,records = [],[],[],[]
+    body = bpy.data.objects['Body03'].evaluated_get(bpy.context.evaluated_depsgraph_get())
+    skin = body.to_mesh()
+    surface = BVHTree.FromPolygons([body.matrix_world@v.co for v in skin.vertices],
+        [tuple(p.vertices) for p in skin.polygons])
     for arc in arcs:
         center = sum((Vector(p['world_m']) for p in arc),Vector())/len(arc)
         same_side = [a for a in arcs if (sum(p['world_m'][0] for p in a)>0)==(center.x>0)]
@@ -99,20 +103,29 @@ def construct_lash_strands(source, destination):
             j = next(j for j in range(len(arc)-1) if lengths[j+1]>=distance)
             t = (distance-lengths[j])/(lengths[j+1]-lengths[j])
             root = Vector(arc[j]['world_m']).lerp(Vector(arc[j+1]['world_m']),t)
+            hit,normal,_,distance = surface.find_nearest(root)
+            assert hit is not None and distance < .001
+            original_root = root.copy()
+            signed_root = (root-hit).dot(normal)
+            root = hit+normal*.00008
             w = {name:(1-t)*arc[j]['weights'].get(name,0)+t*arc[j+1]['weights'].get(name,0)
                  for name in set(arc[j]['weights'])|set(arc[j+1]['weights'])}
             total = sum(w.values())
             assert total>0
             w = {name:value/total for name,value in w.items()}
             length = (.0045 if upper else .0025)*(.65+.35*math.sin(math.pi*fraction))
-            root_record = {'position_m':list(root),'weights':w,'length_m':length}
+            direction = (normal*.6+Vector(((fraction-.5)*.3,-.7,
+                .65 if upper else -.45))).normalized()
+            root_record = {'position_m':list(root),'weights':w,'length_m':length,
+                'source_root_m':list(original_root),'source_signed_clearance_m':signed_root,
+                'surface_normal':list(normal),'direction':list(direction)}
             roots.append(root_record)
             first = len(verts)
             for k in range(9):
                 u = k/8
-                position = root+Vector(((fraction-.5)*length*.35*u,-length*u,
-                    (1 if upper else -1)*length*.35*u*u))
-                tangent = Vector(((fraction-.5)*.35,-1,(1 if upper else -1)*.7*u)).normalized()
+                curl = Vector((0,0,.3 if upper else -.2))
+                position = root+length*(direction*u+curl*u*u)
+                tangent = (direction+2*curl*u).normalized()
                 side = tangent.cross(Vector((1,0,0))).normalized()
                 across = tangent.cross(side).normalized()
                 radius = .000035*(1-.95*u)
@@ -130,6 +143,7 @@ def construct_lash_strands(source, destination):
         records.append({'upper':upper,'side':'positive_x' if center.x>0 else 'negative_x',
             'source_root_vertices':[p['vertex'] for p in arc],'strands':roots})
     assert sum(r['upper'] for r in records)==2 and len(verts)<10000
+    body.to_mesh_clear()
     mesh = bpy.data.meshes.new('Study rooted lashes')
     mesh.from_pydata(verts,[],faces)
     mesh.update()

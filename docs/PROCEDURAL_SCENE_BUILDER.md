@@ -848,6 +848,19 @@ new lighting guard successfully, and both input/review lighting records are
 preserved. Ordinary Python: 32 passed/one Blender-only skip. Bounded CPU render
 completed; no game export or posed collision validation.
 
+**Lash clearance revision:** Revision 02 measures each interpolated root against
+evaluated skin before moving it. Signed local-normal distances range from
+-79.627 to +335.464 micrometres; proximity did include slightly buried roots.
+Roots are projected to the nearest surface plus 80 micrometres and the recorded
+surface normal contributes to strand direction, with stronger upper/lower curl.
+The inspected `lash-strands-02/skin-cheek.png` still has inadequate lash visibility.
+**Rejected again; clearance and a generic outward direction are insufficient.**
+Next inspect the strand assembly in isolation and in a side view, testing actual
+occlusion and root-arc placement before further parameter tuning. Do not assume
+the nearest skin patch is the correct eyelid rim. Source input and lighting
+guards pass; ordinary Python has 32 passes/one Blender-only skip. The bounded CPU
+job completed with 51.13 seconds for the close crop. No final art admission.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
