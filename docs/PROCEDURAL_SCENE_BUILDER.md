@@ -1207,6 +1207,19 @@ per corner. 32 Python tests pass, one skip. Next prioritize collar fit, garment
 construction/material detail and head/groom integration under this honest light.
 No original source edits, paid operations, push or Actions.
 
+**Collar/body isolation:** `--body-surface-isolation back` disables only Body03
+SUBSURF visibility in the loaded review copy, retaining the identical studio
+setup and unmodified garment. Actual `collar-isolation-01/back.png` inspected:
+the rear collar skin slivers remain. Thus body subdivision is not a sufficient
+explanation and disabling it is not the fix. Preserve the face-smoothing work;
+inspect garment source/fitting next. Compiler tracing identifies FormalTop as
+the top connected component of female_elegantsuit01.obj, fitted through its
+existing mhclo path, with the source delete mask on Body03. Do not patch by
+hiding additional arbitrary skin. Source/compiler bytes remain unchanged.
+CPU/two-thread render completed in 24.24 s with sampled peak 2,187,886,592 bytes;
+32 tests passed, one skip. This is a rejected causal hypothesis, not repaired
+collar geometry or completed wardrobe. No push, Actions or paid operation.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

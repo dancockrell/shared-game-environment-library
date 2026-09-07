@@ -713,7 +713,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
                  sclera_transport=False, upper_eye_fit=False, full_character=False, full_view=None,
-                 studio_review=False):
+                 studio_review=False, body_surface_isolation=False):
     """Review saved geometry; record every optional experimental modification."""
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
@@ -734,6 +734,18 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if body_surface_isolation:
+        modifiers = []
+        for modifier in bpy.data.objects['Body03'].modifiers:
+            if modifier.type == 'SUBSURF':
+                modifiers.append({'name':modifier.name,'show_render':modifier.show_render,
+                    'show_viewport':modifier.show_viewport,'levels':modifier.levels})
+                modifier.show_render = False
+                modifier.show_viewport = False
+        assert modifiers, 'No body subdivision modifier to isolate'
+        changes.append({'experiment':'body subdivision isolation','previous_modifiers':modifiers,
+            'limitation':'diagnostic only; does not repair garment fit'})
+        bpy.context.view_layer.update()
     if studio_review:
         # Fixed world-space setup for every view, not camera-following lights.
         for obj in scene.objects:
@@ -1288,6 +1300,10 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 4 and args[2] == '--body-surface-isolation':
+    review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view=args[3],
+                 studio_review=True,body_surface_isolation=True)
+    sys.exit(0)
 if len(args) == 4 and args[2] == '--studio-character-review':
     review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view=args[3],studio_review=True)
     sys.exit(0)
