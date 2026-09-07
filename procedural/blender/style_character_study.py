@@ -712,7 +712,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
-                 sclera_transport=False, upper_eye_fit=False, full_character=False, full_view=None):
+                 sclera_transport=False, upper_eye_fit=False, full_character=False, full_view=None,
+                 studio_review=False):
     """Review saved geometry; record every optional experimental modification."""
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
@@ -733,6 +734,29 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if studio_review:
+        # Fixed world-space setup for every view, not camera-following lights.
+        for obj in scene.objects:
+            if obj.type == 'LIGHT':
+                obj.data.energy = 0
+        target = Vector((0,0,ground+height*.55))
+        for index,(x,y) in enumerate(((-1,-1),(1,-1),(-1,1),(1,1))):
+            light = bpy.data.lights.new('Studio review '+str(index),'AREA')
+            light.energy = 100
+            light.shape = 'DISK'
+            light.size = height
+            obj = bpy.data.objects.new(light.name,light)
+            scene.collection.objects.link(obj)
+            obj.location = target+Vector((x*height,y*height,height*.65))
+            obj.rotation_euler = (target-obj.location).to_track_quat('-Z','Y').to_euler()
+        background = scene.world.node_tree.nodes.get('Background')
+        assert background is not None
+        background.inputs['Color'].default_value = (.18,.18,.18,1)
+        background.inputs['Strength'].default_value = .35
+        changes.append({'experiment':'fixed four-area neutral studio review',
+            'area_watts_each':100,'area_size_m':height,'world_strength':.35,
+            'scope':'review lighting only, source lighting retained in input receipt'})
+        bpy.context.view_layer.update()
     if upper_eye_fit:
         audit = json.loads((source.parent.parent/'eye-interface-02/eye-opening.json').read_text())
         assert audit['source_sha256'] == digest
@@ -1218,18 +1242,19 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     scene.render.threads = 2
     records = []
     review_lighting = lighting_state(scene)
-    if not (diagnostic_light or eye_light):
+    if not (diagnostic_light or eye_light or studio_review):
         assert review_lighting == input_lighting, 'Unrequested lighting change in asset study'
     if not render_review:
         views = []
     for name, target, direction, scale in views:
         if full_character:
             dg = bpy.context.evaluated_depsgraph_get()
-            bounds = [obj.evaluated_get(dg).matrix_world@Vector(corner)
-                for obj in scene.objects
-                if obj.type in ('MESH','CURVES','CURVE') and obj.visible_get()
-                and not obj.hide_render and obj.name not in ('Plane','Icosphere')
-                for corner in obj.evaluated_get(dg).bound_box]
+            bounds = []
+            for obj in scene.objects:
+                if obj.type not in ('MESH','CURVES','CURVE') or not obj.visible_get() or obj.hide_render or obj.name in ('Plane','Icosphere'):
+                    continue
+                evaluated = obj.evaluated_get(dg)
+                bounds.extend(evaluated.matrix_world@Vector(corner) for corner in evaluated.bound_box)
             assert bounds
             target = Vector(tuple((min(p[k] for p in bounds)+max(p[k] for p in bounds))/2 for k in range(3)))
         cam.location = target + direction.normalized() * height * 2.5
@@ -1263,6 +1288,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 4 and args[2] == '--studio-character-review':
+    review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view=args[3],studio_review=True)
+    sys.exit(0)
 if len(args) == 4 and args[2] == '--full-character-review':
     review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view=args[3])
     sys.exit(0)

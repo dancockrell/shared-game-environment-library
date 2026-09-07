@@ -1186,6 +1186,27 @@ Each stayed within its separate 100-second/3-GiB guard; this does not prove an
 arbitrary multi-view process memory bound. 32 Python tests passed, one skip.
 No geometry changes, art acceptance, game export, push or Actions in this pass.
 
+**Consistent studio review completed:** `--studio-character-review <view>` uses
+four fixed world-space 100-W area lights with body-height size and a neutral
+world at strength 0.35. Original light energies are disabled only in the loaded
+review scene; input and resulting illumination are recorded separately. The
+three `studio-character-02-*` receipts have identical source hashes and identical
+recorded review lighting. Actual front, three-quarter and back PNGs inspected.
+Rear is now readable: collar/upper-back skin slivers show through, back garment
+surfaces lack construction detail, and the shaved scalp/hair boundary remains
+poor. Front/side expose chest shading irregularities, overly smooth clothes and
+footwear. This is improved evaluation visibility, not improved character art.
+
+First studio attempt terminated at the 3-GiB guard (sample 3,364,409,344 bytes).
+Verified terminal state and 21,430,944 KiB free physical memory before retry.
+Retry uses separate 100-second/4-GiB CPU/two-thread jobs with an additional
+8-GiB system-free-memory floor. Completed front 24.84 s / 2,938,134,528 sampled
+peak bytes; three-quarter 24.73 s / 3,328,040,960; back 26.11 s / 2,910,232,576.
+Bounds gathering evaluates each object's reference once instead of repeatedly
+per corner. 32 Python tests pass, one skip. Next prioritize collar fit, garment
+construction/material detail and head/groom integration under this honest light.
+No original source edits, paid operations, push or Actions.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
