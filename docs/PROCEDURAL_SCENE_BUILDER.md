@@ -697,6 +697,22 @@ source asset or shader, preserves the input hash, completes in 15.21 seconds of
 reported render time and passes all 32 Python tests. It is evidence for the next
 revision, not an improved or admitted character.
 
+**Source skin inspection and resolution test:** The original CC0 MakeHuman
+`young_lightskinned_female_diffuse.png` was inspected directly. It contains the
+painted scalp stubble seen in the isolation render. Its material declares a
+litsphere source appearance, not a calibrated modern skin response. The canonical
+compiler intentionally caps workshop textures at 1024 pixels; the source is 2048.
+`--source-skin-review` substitutes only that original image in the existing body
+material, records its hash and dimensions, packs it in the editable study and
+leaves shader, geometry and lighting unchanged. No compiler or source bytes change.
+The actual `source-skin-01/face-front.png` remains pale and smooth; resolution
+alone does not materially solve the realism deficit at this crop. Retain the
+original detail for look development, but do not increase the runtime texture
+budget on this evidence alone. Next investigate skin lighting/transport and
+regional roughness/detail rather than further resolution increases. The render
+completed in 12.35 seconds; input hash unchanged, 32 Python tests passed. This
+checkpoint neither removes scalp stubble nor approves skin or runtime export.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

@@ -375,7 +375,7 @@ def construct_fitted_eyes(eyes):
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
-                 demo_groom=False, groom_pose=False, scalp_isolation=False):
+                 demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -388,6 +388,20 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if source_skin:
+        path = Path(__file__).resolve().parents[2]/'assets/character-sources/makehuman-system/skins/young_caucasian_female/young_lightskinned_female_diffuse.png'
+        body = bpy.data.objects['Body03']
+        textures = [n for n in body.data.materials[0].node_tree.nodes if n.type == 'TEX_IMAGE']
+        assert len(textures) == 1
+        before = list(textures[0].image.size)
+        textures[0].image = bpy.data.images.load(str(path),check_existing=True)
+        textures[0].image.pack()
+        changes.append({'experiment':'original-resolution source skin',
+            'before_size':before,'after_size':list(textures[0].image.size),
+            'source_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
+            'license':'CC0, source mhmat declaration',
+            'limitation':'source contains painted scalp stubble and baked shading; not calibrated skin'})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'source-skin.blend'))
     if scalp_isolation:
         bpy.data.objects['cyberpunk hair'].hide_render = True
         changes.append({'experiment':'isolate underlying head without author groom',
@@ -493,6 +507,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
+    if source_skin:
+        views = views[:1]
     if groom_pose:
         target = eye_center + Vector((0,0,.03))
         views = [('head-turned', target, Vector((0,-1,.05)),.38),
@@ -548,6 +564,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--source-skin-review':
+    review_saved(Path(args[0]),Path(args[1]),source_skin=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--scalp-isolation-review':
     review_saved(Path(args[0]),Path(args[1]),groom_pose=True,scalp_isolation=True)
     sys.exit(0)
