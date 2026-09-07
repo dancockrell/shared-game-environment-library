@@ -756,6 +756,22 @@ uniform texture would not repair these defects. The close crop took 44.76 second
 including overhead despite the 40-second sampling limit; the outer 120-second
 process guard held. The 32 Python tests pass; no artistic or runtime approval.
 
+**Facial normal investigation:** Body03 contains 10,354 vertices, 17,698 smooth
+triangles and imported custom normals, with only an armature modifier. Removing
+custom normals in `skin-normals-01` worsened angular seams in the inspected
+portrait and cheek crop. Revision 02 averages area-weighted geometric normals
+across positions rounded to six decimals, retaining all vertices, UVs and weights.
+The inspected cheek crop removes the added seams but retains the original angular
+nose transition; normals alone are not a sufficient correction. A fresh-load
+coincident-normal check measured maximum vector difference 0.001724 across 8,954
+position groups and **failed** its 0.001 gate. Do not present this as exact seam
+continuity or promote it into the canonical compiler. Vertex positions remained
+exactly unchanged during construction; all 32 Python tests pass. Both rendering
+jobs completed within the bounded CPU runner. Next investigate geometric
+continuity and controlled subdivision on the preserved source topology rather
+than further normal-only fixes. `--skin-normals-review` retains this reproducible
+diagnostic and the failed outputs remain quarantined.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

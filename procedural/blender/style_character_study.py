@@ -376,7 +376,8 @@ def construct_fitted_eyes(eyes):
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
-                 skin_transport=False, diagnostic_light=False, skin_detail=False):
+                 skin_transport=False, diagnostic_light=False, skin_detail=False,
+                 skin_normals=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -389,6 +390,32 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if skin_normals:
+        mesh = bpy.data.objects['Body03'].data
+        original = [tuple(v.co) for v in mesh.vertices]
+        custom = mesh.attributes.get('custom_normal')
+        assert custom is not None
+        mesh.attributes.remove(custom)
+        for edge in mesh.edges:
+            edge.use_edge_sharp = False
+        for face in mesh.polygons:
+            face.use_smooth = True
+        mesh.update()
+        # GLB seams duplicate positions for UVs/attributes. Average geometric
+        # normals across those positions without merging skin/UV vertices.
+        keys = [tuple(round(c,6) for c in v.co) for v in mesh.vertices]
+        sums = {}
+        for face in mesh.polygons:
+            for index in face.vertices:
+                key = keys[index]
+                sums[key] = sums.get(key,Vector()) + face.normal * face.area
+        mesh.normals_split_custom_set([sums[keys[loop.vertex_index]].normalized()
+                                       for loop in mesh.loops])
+        assert [tuple(v.co) for v in mesh.vertices] == original
+        changes.append({'experiment':'area-weighted skin normals shared across coincident positions',
+            'vertices_unchanged':True,'vertices':len(mesh.vertices),'faces':len(mesh.polygons),
+            'limitation':'split vertices and topology unchanged; not anatomical remodeling'})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'skin-normals.blend'))
     if skin_detail:
         body = bpy.data.objects['Body03']
         mesh = body.data
@@ -586,9 +613,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
-    if source_skin or skin_transport or diagnostic_light or skin_detail:
+    if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals:
         views = views[:1]
-    if skin_detail:
+    if skin_detail or skin_normals:
         views.append(('skin-cheek',eye_center+Vector((-.035,-.005,-.035)),
                       Vector((-.15,-1,0)),.075))
     if groom_pose:
@@ -646,6 +673,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--skin-normals-review':
+    review_saved(Path(args[0]),Path(args[1]),skin_normals=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--skin-detail-review':
     review_saved(Path(args[0]),Path(args[1]),skin_detail=True)
     sys.exit(0)
