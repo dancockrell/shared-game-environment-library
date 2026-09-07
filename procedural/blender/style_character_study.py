@@ -327,6 +327,45 @@ def audit_eye_opening(source,destination):
     print('EYE_OPENING_ROWS',[(r['eye'],len(r['rows'])) for r in results])
 
 
+def audit_collar_interface(source,destination):
+    """Distinguish rear-neck uncovered rays from garment-behind-skin rays."""
+    destination.mkdir(parents=True,exist_ok=False)
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    bpy.ops.wm.open_mainfile(filepath=str(source))
+    dg = bpy.context.evaluated_depsgraph_get()
+    surfaces = {}
+    for name in ('Body03','FormalTop'):
+        obj = bpy.data.objects[name].evaluated_get(dg)
+        mesh = obj.to_mesh()
+        points = [obj.matrix_world@v.co for v in mesh.vertices]
+        surfaces[name] = (BVHTree.FromPolygons(points,[tuple(p.vertices) for p in mesh.polygons]),points)
+        obj.to_mesh_clear()
+    body,_ = surfaces['Body03']
+    garment,points = surfaces['FormalTop']
+    top = max(p.z for p in points)
+    records = []
+    for ix in range(81):
+        for iz in range(41):
+            origin = Vector((-.1+.2*ix/80,1,top-.07+.07*iz/40))
+            skin,_,skin_face,skin_depth = body.ray_cast(origin,Vector((0,-1,0)),2)
+            cloth,_,cloth_face,cloth_depth = garment.ray_cast(origin,Vector((0,-1,0)),2)
+            if skin is None or (cloth is not None and cloth_depth <= skin_depth):
+                continue
+            near,normal,near_face,distance = garment.find_nearest(skin)
+            records.append({'skin_world_m':list(skin),'skin_face':skin_face,
+                'classification':'uncovered_ray' if cloth is None else 'garment_behind_skin',
+                'garment_ray_face':cloth_face,'garment_nearest_face':near_face,
+                'garment_distance_m':distance,'garment_nearest_m':list(near),
+                'ray_depth_difference_m':cloth_depth-skin_depth if cloth is not None else None})
+    result = {'source_sha256':digest,'samples':3321,'visible_skin':records,
+        'counts':{label:sum(r['classification']==label for r in records)
+                  for label in ('uncovered_ray','garment_behind_skin')},
+        'scope':'rear upper 70 mm of garment, central 200 mm; intentional neck opening included'}
+    assert hashlib.sha256(source.read_bytes()).hexdigest()==digest
+    (destination/'collar-interface.json').write_text(json.dumps(result,indent=2))
+    print('COLLAR_INTERFACE',result['counts'])
+
+
 def lighting_state(scene):
     """Capture illumination and color management independently of camera poses."""
     world = scene.world
@@ -1300,6 +1339,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--collar-interface':
+    audit_collar_interface(Path(args[0]),Path(args[1]))
+    sys.exit(0)
 if len(args) == 4 and args[2] == '--body-surface-isolation':
     review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view=args[3],
                  studio_review=True,body_surface_isolation=True)

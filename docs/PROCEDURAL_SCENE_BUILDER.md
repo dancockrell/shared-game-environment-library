@@ -1220,6 +1220,20 @@ CPU/two-thread render completed in 24.24 s with sampled peak 2,187,886,592 bytes
 32 tests passed, one skip. This is a rejected causal hypothesis, not repaired
 collar geometry or completed wardrobe. No push, Actions or paid operation.
 
+**Rear-collar geometric evidence:** `--collar-interface` records skin/garment
+ray order, nearest garment face/point and depth separation on a bounded 81x41
+rear-facing grid over the central 200 mm and upper 70 mm of FormalTop. Actual
+`collar-interface-01/collar-interface.json`: 89 rays have visible skin without a
+garment ray hit; 114 have skin before garment (mean depth difference 3.038 mm,
+maximum 10.669 mm). This includes the intentional neck opening and may hit
+front-side cloth; these counts are not all defects or a penetration certificate.
+They provide editable spatial evidence for targeted fitting rather than hiding
+skin or closing every opening. The source fitting owner uses barycentric proxy
+weights plus scaled offsets, preserving signed positional weights; no concrete
+arithmetic bug was established in that inspection. Source/solver unchanged.
+Fresh Blender audit completed; 32 tests pass, one skip. Collar repair and final
+garment construction remain unfinished; no new render or art acceptance.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
