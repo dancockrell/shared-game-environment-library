@@ -12,6 +12,53 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 
 
+def append_demo_groom():
+    """Quarantined CC-BY-SA author groom; never an admitted CC0 catalog asset."""
+    from mathutils import Matrix
+    source = Path(__file__).resolve().parents[1]/'generated/reviews/hair_nodes-female_hair_styles.blend'
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    assert digest == '1ad6202095c1793678fee7d69a7e9f8b5fdb6e5c293d300eb1062d2d437e8d48'
+    with bpy.data.libraries.load(str(source)) as (_,data):
+        data.objects = ['cyberpunk hair','cyber punk growth mesh','eyes']
+    groom,scalp,donor_eyes = data.objects
+    assert groom.type == 'CURVES' and groom.data.surface == scalp
+    donor_matrix = Matrix.LocRotScale(donor_eyes.location,
+        donor_eyes.rotation_euler.to_quaternion(),donor_eyes.scale)
+    donor_center = sum((donor_matrix@v.co for v in donor_eyes.data.vertices),Vector())/len(donor_eyes.data.vertices)
+    target = bpy.data.objects['Eyes']
+    target_center = sum((target.matrix_world@v.co for v in target.data.vertices),Vector())/len(target.data.vertices)
+    scale = .1  # Author demo's decimetre-scale head; align paired eye centres.
+    fit = Matrix.Translation(target_center-scale*donor_center)@Matrix.Scale(scale,4)
+    scalp.data.calc_loop_triangles()
+    area = sum((scalp.data.vertices[t.vertices[1]].co-scalp.data.vertices[t.vertices[0]].co).cross(
+        scalp.data.vertices[t.vertices[2]].co-scalp.data.vertices[t.vertices[0]].co).length/2
+        for t in scalp.data.loop_triangles)
+    interpolation = groom.modifiers['Interpolate Hair Curves']
+    density_before = interpolation['Input_15']
+    interpolation['Input_15'] = 20000/area
+    for obj in (groom,scalp):
+        obj.parent = None
+        obj.matrix_world = fit
+        bpy.context.scene.collection.objects.link(obj)
+    scalp.hide_render = True
+    old = bpy.data.objects['Hair_braid01']
+    old.hide_render = True
+    old.hide_set(True)
+    bpy.context.view_layer.update()
+    evaluated = groom.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    count,points = len(evaluated.data.curves),len(evaluated.data.points)
+    assert 1000<count<40000 and points<500000, 'Author groom exceeded study geometry bound'
+    return {'experiment':'author guide-based cyberpunk groom, fit study only',
+        'author':'Daniel Bystedt','license':'CC-BY-SA (official demo listing)',
+        'source_url':'https://download.blender.org/demo/geometry-nodes/hair_nodes-female_hair_styles.blend',
+        'source_sha256':digest,'source_guides':len(groom.data.curves),
+        'evaluated_curves':count,'evaluated_points':points,
+        'density_before':density_before,'density_after':interpolation['Input_15'],
+        'fit_matrix':[list(row) for row in fit],
+        'limitations':['not admitted to CC0 catalog','approximate head fit, no scalp collision certification',
+            'not attached to character rig','no game export validation']}
+
+
 def construct_surface_strands(destination):
     """Confidence-gated texture streamlines on the existing upper hair surface."""
     sys.path.insert(0,str(Path(__file__).parent))
@@ -265,7 +312,8 @@ def construct_fitted_eyes(eyes):
                 'rigid eye attachment; eyelid contact and export not validated']}
 
 def review_saved(source, destination, eye_study=False, layered_eye=False, geometry_eye=False,
-                 eye_light=False, render_review=True, hair_texture=False, hair_strands=False):
+                 eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
+                 demo_groom=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -278,6 +326,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if demo_groom:
+        changes.append(append_demo_groom())
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'author-groom-study.blend'))
     if hair_strands:
         changes.append(construct_surface_strands(destination))
         bpy.ops.wm.save_as_mainfile(filepath=str(destination/'hair-strands-study.blend'))
@@ -418,11 +469,12 @@ args = sys.argv[sys.argv.index('--') + 1:]
 if len(args) == 3 and args[2] == '--eye-pose-audit':
     audit_eye_motion(Path(args[0]),Path(args[1]))
     sys.exit(0)
-if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study', '--geometry-eye-build', '--hair-texture-study', '--hair-strands-study'):
+if len(args) == 3 and args[2] in ('--review-only', '--eye-study', '--layered-eye-study', '--geometry-eye-study', '--eye-light-study', '--geometry-eye-build', '--hair-texture-study', '--hair-strands-study', '--author-groom-study'):
     review_saved(Path(args[0]), Path(args[1]), args[2] == '--eye-study',
                  args[2] == '--layered-eye-study', args[2] in ('--geometry-eye-study','--geometry-eye-build'),
                  args[2] == '--eye-light-study', args[2] != '--geometry-eye-build',
-                 args[2] == '--hair-texture-study', args[2] == '--hair-strands-study')
+                 args[2] == '--hair-texture-study', args[2] == '--hair-strands-study',
+                 args[2] == '--author-groom-study')
     sys.exit(0)
 if len(args) != 2:
     raise ValueError('Expected source, fresh output directory and optional --review-only')

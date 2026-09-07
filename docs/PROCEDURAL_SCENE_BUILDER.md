@@ -627,6 +627,36 @@ established by the small fixture.
 
 #### Hair source-detail checkpoint
 
+**Complete-groom alternative:** `--author-groom-study` now evaluates Daniel
+Bystedt's cyberpunk guide groom from the [official Blender demo files](https://www.blender.org/download/demo-files/).
+The downloaded source is quarantined under ignored research output, with SHA-256
+`1ad6202095c1793678fee7d69a7e9f8b5fdb6e5c293d300eb1062d2d437e8d48`.
+Its listed license is **CC-BY-SA**, not CC0 or a consequence of Blender's GPL.
+It is not admitted to the shared catalog. The study records author, source URL,
+hash, fit matrix, density changes and limitations. No embedded scripts execute.
+
+The narrow caller appends the existing groom and growth mesh together, aligns
+their coordinates approximately through paired eye centers at 0.1 uniform scale,
+and reduces interpolation density to an area-based 20,000-curve budget before
+the source mask. The actual evaluated result is 15,944 curves / 89,691 points
+from 1,744 guides. The source's interpolation, clumping and trimming stack is
+retained instead of reconstructing it through sparse texture traces.
+
+All three `cyberpunk-adult-002/author-groom-01` renders were inspected. The front
+hairline and strand silhouette improve substantially over the solid source braid
+and rejected tracing experiment. The rear exposes an abrupt cropped boundary;
+scalp fit, collisions and hairstyle continuity need closer inspection. This is a
+promising construction foundation, **not finished character approval**. Skin is
+still pale and under-detailed, the clothing remains smooth and weakly constructed,
+and the shoes and static hardware remain below the benchmark. The groom has no
+character-rig attachment or validated game export. Next establish reliable scalp
+attachment and deformation, then evaluate a bounded runtime representation.
+
+The three CPU-only renders completed under the existing two-thread study runner;
+Blender reported a 227.24 MB internal peak on the final view (not whole-process
+memory or VRAM). All 32 Python tests and whitespace checks pass. No paid service,
+Godot UI, catalog publication, push or Actions run was used.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
