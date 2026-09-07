@@ -334,10 +334,17 @@ def audit_collar_interface(source,destination):
     bpy.ops.wm.open_mainfile(filepath=str(source))
     dg = bpy.context.evaluated_depsgraph_get()
     surfaces = {}
+    garment_faces = []
     for name in ('Body03','FormalTop'):
         obj = bpy.data.objects[name].evaluated_get(dg)
         mesh = obj.to_mesh()
         points = [obj.matrix_world@v.co for v in mesh.vertices]
+        if name == 'FormalTop':
+            group = bpy.data.objects[name].vertex_groups.get('Study rear collar clearance')
+            garment_faces = [{'vertices':list(p.vertices),
+                'fit_weights':[next((g.weight for g in mesh.vertices[i].groups
+                               if group is not None and g.group==group.index),0.) for i in p.vertices]}
+                             for p in mesh.polygons]
         surfaces[name] = (BVHTree.FromPolygons(points,[tuple(p.vertices) for p in mesh.polygons]),points)
         obj.to_mesh_clear()
     body,_ = surfaces['Body03']
@@ -355,6 +362,7 @@ def audit_collar_interface(source,destination):
             records.append({'skin_world_m':list(skin),'skin_face':skin_face,
                 'classification':'uncovered_ray' if cloth is None else 'garment_behind_skin',
                 'garment_ray_face':cloth_face,'garment_nearest_face':near_face,
+                'garment_ray_binding':garment_faces[cloth_face] if cloth is not None else None,
                 'garment_distance_m':distance,'garment_nearest_m':list(near),
                 'ray_depth_difference_m':cloth_depth-skin_depth if cloth is not None else None})
     result = {'source_sha256':digest,'samples':3321,'visible_skin':records,
@@ -759,7 +767,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
                  sclera_transport=False, upper_eye_fit=False, full_character=False, full_view=None,
                  studio_review=False, body_surface_isolation=False, collar_clearance=False,
-                 collar_offset=.0015, raw_render=False, collar_refine=False):
+                 collar_offset=.0015, raw_render=False, collar_expand=False):
     """Review saved geometry; record every optional experimental modification."""
     if collar_clearance:
         collar_offset = validate_collar_offset(collar_offset)
@@ -808,12 +816,14 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                     selected.append(index)
         evaluated.to_mesh_clear()
         assert selected
+        seed_count = len(selected)
+        if collar_expand:
+            seeds = set(selected)
+            selected = sorted(seeds | {i for face in top.data.polygons
+                                      if any(i in seeds for i in face.vertices)
+                                      for i in face.vertices})
         group = top.vertex_groups.new(name='Study rear collar clearance')
         group.add(selected,1,'REPLACE')
-        if collar_refine:
-            subdivision = top.modifiers.new('Study fit sampling subdivision','SUBSURF')
-            subdivision.subdivision_type = 'SIMPLE'
-            subdivision.levels = subdivision.render_levels = 1
         modifier = top.modifiers.new('Study local collar fit','SHRINKWRAP')
         modifier.target = body
         modifier.wrap_method = 'NEAREST_SURFACEPOINT'
@@ -822,7 +832,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
         modifier.vertex_group = group.name
         changes.append({'experiment':'existing shrinkwrap rear collar clearance',
             'selected_vertices':selected,'offset_m':collar_offset,
-            'simple_subdivision_levels':1 if collar_refine else 0,
+            'seed_vertex_count':seed_count,'selection_expansion_rings':1 if collar_expand else 0,
             'limitations':['rest-pose spatial selection','masked body normals can be ambiguous',
                 'not full cloth contact or animation acceptance']})
         bpy.context.view_layer.update()
@@ -1393,9 +1403,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
-if len(args) == 5 and args[2] == '--collar-clearance' and args[4] == '--refine':
+if len(args) == 5 and args[2] == '--collar-clearance' and args[4] == '--expand':
     review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view='back',
-                 studio_review=True,collar_clearance=True,collar_offset=float(args[3]),collar_refine=True)
+                 studio_review=True,collar_clearance=True,collar_offset=float(args[3]),collar_expand=True)
     sys.exit(0)
 if len(args) == 5 and args[2] == '--collar-clearance' and args[4] == '--raw':
     review_saved(Path(args[0]),Path(args[1]),full_character=True,full_view='back',

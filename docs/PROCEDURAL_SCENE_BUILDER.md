@@ -1324,6 +1324,20 @@ clearance or whole-garment density increase. CPU render 30.01 s, peak sampled
 process 2,963,664,896 bytes; 34 Python tests pass, one skip. Saved modifier stack
 and rejected evidence retained; no source changes, push, Actions or paid service.
 
+**Collar selection experiment closes the local modifier line:** Audit now
+retains evaluated garment-face vertex IDs and fit weights. In the 1.5-mm result,
+47/52 skin-before-cloth ray hits lie on triangles with only one or two selected
+corners (one hit has zero, four have three). Replaced the rejected whole-garment
+`--refine` option with optional one-ring `--expand` selection; old subdivision
+output remains historical evidence, not an active alternative implementation.
+Actual `collar-clearance-06/back.png` shows persistent slivers plus new pinching
+below the collar. Fresh audit 50 skin-before-cloth / 89 uncovered: not meaningful
+improvement over 52/89. **Reject and stop iterative Shrinkwrap offset/selection
+tweaks here.** Resume with garment construction/fitting alternatives and explicit
+collar constraints, not another arbitrary modifier parameter. No variant is
+approved or enabled by default. CPU render 37.22 s, sampled peak 2,938,638,336
+bytes; 34 tests pass, one skip. No source mutation, push or Actions.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
