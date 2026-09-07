@@ -1151,6 +1151,22 @@ TextureRects too; narrowed it to the named BuildRenderPreview rather than weaken
 the texture-assignment check. Visual panel layout capture remains outstanding.
 No generation controller or export change is implied by this image-review entry.
 
+**Whole-character return to scope:** Added `--full-character-review` to the
+existing caller for front/back/three-quarter evidence. Character height now
+comes from evaluated body geometry, not the saved camera's previous close-up
+scale. `full-character-01/front.png` completed and was inspected. It exposes
+the broader failure: plain jacket/skirt fitting-fixture construction, attached
+light bars instead of convincing cyberpunk garment construction, crude footwear,
+weak hands and insufficient cloth surface detail. Head/hair top is clipped;
+body-only framing needs additional hair bounds/margin before silhouette approval.
+The guard terminated the batch after front output; no Blender process remained.
+The combined guard reports neither a peak nor a specific reason, so do not
+invent resource statistics. Back/three-quarter and final receipt are missing:
+**this is an incomplete batch, not a completed multi-view review**. Next fix
+per-view resource handling/framing and prioritize full garment/character work
+over further isolated eye polishing. 32 Python tests pass, one Blender-only skip.
+No push, Actions, paid service or visible engine window.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy

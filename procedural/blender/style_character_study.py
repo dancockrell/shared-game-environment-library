@@ -712,7 +712,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  skin_normals=False, skin_subdivision=False, lash_fit=False, lash_strands=False,
                  lash_isolation=False, raw_lashes=False, whole_eye=False, native_lashes=False,
                  opening_overlay=False, eye_material_ids=False, eye_shadow_diagnostic=False,
-                 sclera_transport=False, upper_eye_fit=False):
+                 sclera_transport=False, upper_eye_fit=False, full_character=False):
     """Review saved geometry; record every optional experimental modification."""
     # Blender interprets render-relative paths differently from pathlib.
     source, destination = source.resolve(), destination.resolve()
@@ -724,7 +724,12 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     bpy.context.view_layer.update()
     input_lighting = lighting_state(scene)
     cam = scene.camera
-    height = cam.data.ortho_scale / 1.16
+    body_eval = bpy.data.objects['Body03'].evaluated_get(bpy.context.evaluated_depsgraph_get())
+    body_mesh = body_eval.to_mesh()
+    body_points = [body_eval.matrix_world@v.co for v in body_mesh.vertices]
+    height = max(p.z for p in body_points)-min(p.z for p in body_points)
+    body_eval.to_mesh_clear()
+    assert .5 < height < 2.5, 'Unexpected character bounds in metres'
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
@@ -1154,6 +1159,8 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
         ('three-quarter', full_target, Vector((0.8, -1, 0.08)), height * 1.16),
         ('back', full_target, Vector((0, 1, 0.06)), height * 1.16),
     ]
+    if full_character:
+        views[0] = ('front',full_target,Vector((0,-1,.02)),height*1.16)
     if eye_study or layered_eye:
         views = views[:1]
     if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals or skin_subdivision or lash_fit or lash_strands:
@@ -1233,6 +1240,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--full-character-review':
+    review_saved(Path(args[0]),Path(args[1]),full_character=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--upper-eye-fit-build':
     review_saved(Path(args[0]),Path(args[1]),whole_eye=True,upper_eye_fit=True,render_review=False)
     sys.exit(0)
