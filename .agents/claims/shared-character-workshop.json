@@ -3,7 +3,7 @@
   "task_id": "shared-character-workshop",
   "agent": "codex-root",
   "summary": "Preserve Pirate Island legacy artwork and shelved 3D builder in shared archive; production now uses 2D sprites",
-  "status": "active",
+  "status": "completed",
   "claimed_at": "2026-09-06T03:30:00Z",
   "updated_at": "2026-09-06T23:00:00Z",
   "paths": [
@@ -54,8 +54,9 @@
     "notes": "Own shared character tooling; DR Companion owns scenery. Free source assets obtained and staged. No paid generation. Broader builder remains unfinished: period wardrobe, face and creature construction, fit coverage and game integration."
   },
   "completion": {
-    "commit": null,
+    "commit": "01f29a8",
     "checks": [
+      "User shelved Pirate Island 3D work: archive checkpoint complete, builder goal not achieved. 113 located legacy source files preserved with receipts; 208845797 bytes; no originals removed. Code remains in the existing shared repository, with a restart index and local research preservation warning. LFS uploaded 68 objects, about 201 MB; archive commit pushed.",
       "Coplanar skirt fix: Shapely 2.1.2/GEOS audit measures 228.0198/55.7698 cm2 initial front/back overlap. Serialized lateral placement removes both without changing exact cut vertices, edge definitions or stitch identities. Actual 20260906T150832582Z-vbd / review 20260906T150913211Z-vbd inspected: front opens to hem, back knot gone; sleeves unresolved, mean seam 1.200 mm fails. Male 26/27 checks pass; female 27/27 pass and all ten regenerated pattern outputs identical. Fresh female image also inspected. No final coat/character approval.",
       "Male/female 300-frame runs 16.60/15.74 s, sampled process 480.30/479.20 MiB and whole GPU 3961 MiB. No paid service or new engine. Author custom Warp README/license inspected: NC research/evaluation restriction excludes that implementation from commercial pipeline; no custom Warp source copied or installed. Retain existing permissive Newton and independently verified pattern placement.",
       "Seam failure isolation: cuff-endpoint, five-point and full-seam temporary guides plus widened cuff all rejected and removed; original cut/physics restored. Actual cuff 22.03 cm, not bare-wrist 15.75 cm. Added measured cuff circumference and per-seam/edge/pair diagnostics including exact pre-release frame 90. Diagnostic 20260906T145707886Z-vbd has 74.730 mm gap before release, 74.811 mm after; initial sewing is failing, not release alone. 27 actual checks: 26 pass, mean-seam gate fails. 12.20 s, 485.77 MiB sampled process / 4029 MiB whole GPU. No final art or runtime change; continue feasible initialization and author reference-drag investigation.",

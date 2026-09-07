@@ -20,3 +20,6 @@ licenses/upstream/** -whitespace
 assets/character-sources/** -text -whitespace
 assets/character-prototypes/makehuman/** -text
 tools/prepare-character-model.gd text eol=lf
+
+# Immutable preservation snapshots retain original bytes, including text newlines.
+archives/pirate-island-pre-sprite/** -text -whitespace
