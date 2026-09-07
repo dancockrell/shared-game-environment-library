@@ -377,7 +377,7 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
                  eye_light=False, render_review=True, hair_texture=False, hair_strands=False,
                  demo_groom=False, groom_pose=False, scalp_isolation=False, source_skin=False,
                  skin_transport=False, diagnostic_light=False, skin_detail=False,
-                 skin_normals=False):
+                 skin_normals=False, skin_subdivision=False):
     """Review saved geometry; record every optional experimental modification."""
     destination.mkdir(parents=True, exist_ok=False)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -390,6 +390,32 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ground = bpy.data.objects['Plane'].location.z + 0.005
     eyes = next(o for o in scene.objects if o.type == 'MESH' and o.name == 'Eyes')
     changes = []
+    if skin_subdivision:
+        body = bpy.data.objects['Body03']
+        mesh = body.data
+        original = [tuple(v.co) for v in mesh.vertices]
+        custom = mesh.attributes.get('custom_normal')
+        if custom:
+            mesh.attributes.remove(custom)
+        for edge in mesh.edges:
+            edge.use_edge_sharp = False
+        weld = body.modifiers.new('Study continuous surface','WELD')
+        weld.merge_threshold = .000001
+        subdivision = body.modifiers.new('Study smooth surface','SUBSURF')
+        subdivision.levels = subdivision.render_levels = 1
+        bpy.context.view_layer.update()
+        evaluated = body.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        result = evaluated.to_mesh()
+        counts = {'vertices':len(result.vertices),'faces':len(result.polygons)}
+        assert counts['vertices'] < 100000 and counts['faces'] < 100000
+        evaluated.to_mesh_clear()
+        assert [tuple(v.co) for v in mesh.vertices] == original
+        changes.append({'experiment':'non-destructive weld and one-level Catmull-Clark',
+            'weld_threshold_m':.000001,'evaluated':counts,'base_vertices_unchanged':True,
+            'limitations':['triangulated source, not recovered quad cage',
+                'post-armature study; collision and extreme poses unvalidated',
+                'UV interpolation and facial identity need review','not game-export validated']})
+        bpy.ops.wm.save_as_mainfile(filepath=str(destination/'skin-subdivision.blend'))
     if skin_normals:
         mesh = bpy.data.objects['Body03'].data
         original = [tuple(v.co) for v in mesh.vertices]
@@ -613,9 +639,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     ]
     if eye_study or layered_eye:
         views = views[:1]
-    if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals:
+    if source_skin or skin_transport or diagnostic_light or skin_detail or skin_normals or skin_subdivision:
         views = views[:1]
-    if skin_detail or skin_normals:
+    if skin_detail or skin_normals or skin_subdivision:
         views.append(('skin-cheek',eye_center+Vector((-.035,-.005,-.035)),
                       Vector((-.15,-1,0)),.075))
     if groom_pose:
@@ -673,6 +699,9 @@ def review_saved(source, destination, eye_study=False, layered_eye=False, geomet
     print('CHARACTER_SAVED_REVIEW_PASS' if render_review else 'CHARACTER_BUILD_PASS')
 
 args = sys.argv[sys.argv.index('--') + 1:]
+if len(args) == 3 and args[2] == '--skin-subdivision-review':
+    review_saved(Path(args[0]),Path(args[1]),skin_subdivision=True)
+    sys.exit(0)
 if len(args) == 3 and args[2] == '--skin-normals-review':
     review_saved(Path(args[0]),Path(args[1]),skin_normals=True)
     sys.exit(0)

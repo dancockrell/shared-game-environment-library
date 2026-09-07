@@ -772,6 +772,23 @@ continuity and controlled subdivision on the preserved source topology rather
 than further normal-only fixes. `--skin-normals-review` retains this reproducible
 diagnostic and the failed outputs remain quarantined.
 
+**Continuous-surface prototype:** `--skin-subdivision-review` tests a removable
+1-micrometre Weld followed by one Catmull-Clark subdivision level, after the
+existing armature, without editing the base vertex positions or source files.
+Custom normals/sharp flags are removed for this evaluated surface. A fresh reload
+confirms 53,301 vertices / 53,094 faces and the retained armature/weld/subdivision
+stack, within the explicit 100,000-element bounds. Both actual
+`skin-subdivision-01` portrait and cheek images were inspected: the sharp nose
+transition is substantially softened; lash/eyelid integration, lip construction
+and skin appearance remain inadequate. This supports geometry continuity as one
+cause, not full character approval. Pose collisions, facial identity drift and
+game export are still untested. The original female_generic OBJ was separately
+inspected and contains 13,866 quad faces. A lasting high-quality construction
+path should preserve this authored quad topology through the canonical compiler,
+not rely on subdividing exported triangles. The narrow study does not modify
+that owner's implementation. All 32 Python tests pass; both bounded CPU renders
+completed, with 50.35 seconds including overhead for the cheek image.
+
 **Surface-strand experiment:** The existing review caller now exercises
 `hair_field.py` via `--hair-strands-study`. It computes a local structure tensor
 from the source atlas, extracts its low-gradient line direction and anisotropy
