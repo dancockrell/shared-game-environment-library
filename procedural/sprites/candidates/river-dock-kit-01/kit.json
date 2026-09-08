@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "river-dock-kit-01",
+  "status": "extracted-candidate",
+  "runtimeAdmission": false,
+  "source": "source-02-magenta.png",
+  "sourceSha256": "7a4b5d37deb78286b620d97ad6a24b053dc95405fb5920b2c9599534bd82f06c",
+  "extraction": "extracted-01/metadata.json",
+  "camera": "fixed-high-three-quarter",
+  "lighting": "upper-left-daylight",
+  "coordinateConvention": "estimated anchor pixels relative to trimmed image; placement pivots, not collision geometry",
+  "matingEdges": {"status":"unestablished","seamless":false,"requiresAuthoredGeometry":true},
+  "components": [
+    {"id":"dock-straight","cell":0,"imageSize":[393,316],"anchor":[196,285],"semanticTags":["wooden-dock","plank-deck"],"layer":"platform","suggestedReviewWidth":180},
+    {"id":"dock-corner","cell":1,"imageSize":[399,360],"anchor":[200,320],"semanticTags":["wooden-dock","corner-deck"],"layer":"platform","suggestedReviewWidth":180},
+    {"id":"access-ramp","cell":2,"imageSize":[343,317],"anchor":[170,285],"semanticTags":["wooden-ramp"],"layer":"platform","suggestedReviewWidth":150},
+    {"id":"piling-pair-rope","cell":3,"imageSize":[370,239],"anchor":[185,227],"semanticTags":["piling","rope-barrier"],"layer":"boundary","suggestedReviewWidth":130},
+    {"id":"mooring-bollard","cell":4,"imageSize":[134,214],"anchor":[67,200],"semanticTags":["bollard","mooring"],"layer":"prop","suggestedReviewWidth":45},
+    {"id":"rope-coil-cleat","cell":5,"imageSize":[381,191],"anchor":[190,170],"semanticTags":["rope","cleat"],"layer":"prop","suggestedReviewWidth":100}
+  ],
+  "restrictions": ["Do not infer navigation or room exits from artwork", "Not seamless: endpoint widths, deck heights and projected joins need authored alignment", "Do not mirror lighting or rotate pixels to fake another view", "Ramp is visibly steep, not a verified accessible incline", "Ground and water are separate layers", "Scale suggestions and anchors require consumer review; no runtime or native visual approval"]
+}
