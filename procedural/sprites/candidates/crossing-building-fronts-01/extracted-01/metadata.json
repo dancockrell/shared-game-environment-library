@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 2,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    621,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      627,
+      1254
+    ],
+    [
+      0,
+      621,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        627,
+        621
+      ],
+      "trim_rect_in_cell": [
+        92,
+        81,
+        598,
+        592
+      ],
+      "source_trim_rect": [
+        92,
+        81,
+        598,
+        592
+      ],
+      "size": [
+        506,
+        511
+      ],
+      "rgba_sha256": "432812e423a791e5c869b21da2a3d7db98614dce7d661b2ab13a46c60f636fc6",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "8ae1b4830237c6446da0665f6f30d263a76be6014ce51b900249dd58ee2f253b"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        627,
+        0,
+        1254,
+        621
+      ],
+      "trim_rect_in_cell": [
+        30,
+        142,
+        526,
+        601
+      ],
+      "source_trim_rect": [
+        657,
+        142,
+        1153,
+        601
+      ],
+      "size": [
+        496,
+        459
+      ],
+      "rgba_sha256": "5d69192bfdbfebc3b59eeafa33dbdf5181d9dc95fda21bdace6100f2420c803b",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "fdf163b0a53452df2091721146f87e7bd3c1a465e68c6aae90f0640de78652ed"
+    },
+    {
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        621,
+        621,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        92,
+        21,
+        592,
+        540
+      ],
+      "source_trim_rect": [
+        92,
+        642,
+        592,
+        1161
+      ],
+      "size": [
+        500,
+        519
+      ],
+      "rgba_sha256": "97e85897450b439d51228cd19e10f391977b7c1072181c7b38d7b7f8379d81e3",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "1cfe3e96bf4f8ba7cd8c1b3090c59a4cef4b7558951404290f27babb1d25edef"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        621,
+        621,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        29,
+        75,
+        524,
+        540
+      ],
+      "source_trim_rect": [
+        650,
+        696,
+        1145,
+        1161
+      ],
+      "size": [
+        495,
+        465
+      ],
+      "rgba_sha256": "77b54045b63730484adb32e13c3606195276f1a566eb9ff9830d2daf386d4c61",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "a3e7ddc6b02b0067d984b25efc986ea9bc6271fcafd12852cc973fb2cb8bc9a4"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\crossing-building-fronts-01\\source-02-magenta.png",
+  "source_sha256": "d79283a0d21993eaf00d4a24ab7b30b023da5a83904c6dc990b373975afbb95c",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}

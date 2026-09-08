@@ -1,0 +1,19 @@
+{
+  "schemaVersion":1,
+  "id":"crossing-building-fronts-01",
+  "status":"extracted-candidate",
+  "runtimeAdmission":false,
+  "source":"source-02-magenta.png",
+  "sourceSha256":"d79283a0d21993eaf00d4a24ab7b30b023da5a83904c6dc990b373975afbb95c",
+  "extraction":"extracted-01/metadata.json",
+  "camera":"fixed-high-three-quarter",
+  "lighting":"upper-left-daylight",
+  "coordinateConvention":"trimmed-image pixels; bounds right/bottom exclusive; estimated ground anchors, not collision authority",
+  "components":[
+    {"id":"timber-plaster-cottage","cell":0,"bounds":[0,0,506,511],"anchor":[275,490],"semanticTags":["timber-frame","plaster","clay-roof","cottage","closed-door"],"doorHeightEstimate":113,"suggestedReviewHeight":210},
+    {"id":"plain-timber-workshop","cell":1,"bounds":[0,0,496,459],"anchor":[190,427],"semanticTags":["timber-walls","shingle-roof","workshop","closed-door"],"doorHeightEstimate":136,"suggestedReviewHeight":190},
+    {"id":"stone-small-hall","cell":2,"bounds":[0,0,500,519],"anchor":[146,449],"semanticTags":["stone-walls","slate-roof","hall","closed-door"],"doorHeightEstimate":143,"suggestedReviewHeight":215},
+    {"id":"thatched-earth-cottage","cell":3,"bounds":[0,0,495,465],"anchor":[147,407],"semanticTags":["earth-plaster","thatch","cottage","closed-door"],"doorHeightEstimate":112,"suggestedReviewHeight":195}
+  ],
+  "restrictions":["Generic whole prefabs, not named Crossing landmarks","Require actual room-description compatibility before use","No invented exits or lock states from closed-door art","Do not mirror baked lighting","No interiors or alternate door states included","Footprints, occlusion and actor-relative scale not approved","Review heights are candidate display sizes, not authoritative world dimensions"]
+}
