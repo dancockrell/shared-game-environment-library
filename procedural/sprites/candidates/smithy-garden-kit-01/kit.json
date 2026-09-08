@@ -1,0 +1,13 @@
+{
+ "schemaVersion":1,"id":"smithy-garden-kit-01","status":"source-candidate","runtimeAdmitted":false,
+ "source":"source-02-alpha.png","sourceSha256":"ee0e5e1e4c528dbd774b354d2810907650afe24f23f119b50f081dbf3b4f49c7",
+ "sourceDescription":{"room":"1-612","sha256":"77d22ba929c8eea430f093ed05c2c13b47a0a824cbe4eac58c4386302687b44c"},
+ "geometryAuthority":"All anchors and footprints estimated from artwork, not collision or navigation authority. Pixel coordinates relative to extracted PNG.",
+ "semanticLimits":["Flamestalk form, firethorn berry appearance, vine leaf shape and gate construction interpreted; only described colors and roles asserted.","Static gate does not assert lock state or traversability.","Hedge is a bounded segment, not certified seamless.","Vine is a mounting overlay, not a ground object; place around gate posts without implying it is free standing."],
+ "components":[
+  {"id":"orange-flamestalk-clump","file":"extracted-01/cell_00_00.png","size":[290,481],"pivot":[145,475],"footprint":[[50,450],[145,430],[230,455],[145,481]],"reviewHeight":85},
+  {"id":"bright-firethorn-hedge","file":"extracted-01/cell_00_01.png","size":[445,288],"pivot":[220,236],"footprint":[[15,215],[375,150],[430,190],[65,283]],"reviewHeight":75},
+  {"id":"yellow-vine-overlay","file":"extracted-01/cell_01_00.png","size":[451,460],"pivot":[160,448],"anchorRole":"lower stem mount on gate post","footprint":null,"reviewHeight":100},
+  {"id":"sunbleached-garden-gate","file":"extracted-01/cell_01_01.png","size":[473,477],"pivot":[236,400],"postBaseAnchors":[[48,365],[425,453]],"footprint":[[0,327],[427,414],[471,456],[432,477],[10,379]],"reviewHeight":110}
+ ]
+}

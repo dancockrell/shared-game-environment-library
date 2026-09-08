@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 2,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    608,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      576,
+      1254
+    ],
+    [
+      0,
+      612,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        576,
+        608
+      ],
+      "trim_rect_in_cell": [
+        185,
+        50,
+        475,
+        531
+      ],
+      "source_trim_rect": [
+        185,
+        50,
+        475,
+        531
+      ],
+      "size": [
+        290,
+        481
+      ],
+      "rgba_sha256": "5a03302fdd157d68c633aecb6d9c4b1f56bf0fee317a510899fb8a480c36912d",
+      "components_before_filter": 4,
+      "components_kept": 4,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "2b0f975e8e4b9725e91182b9e0c5ccf0666093c71ba9408271d98a99bf3a7969"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        576,
+        0,
+        1254,
+        608
+      ],
+      "trim_rect_in_cell": [
+        101,
+        250,
+        546,
+        538
+      ],
+      "source_trim_rect": [
+        677,
+        250,
+        1122,
+        538
+      ],
+      "size": [
+        445,
+        288
+      ],
+      "rgba_sha256": "960772641a9e9637afe5c32486901eec23ee9f666346f980150bef87e7300789",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "c804e813cfb086ddf9e05a78886ce134ad1cbe64cdf2dd5fe4c3b110aab8100e"
+    },
+    {
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        608,
+        612,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        98,
+        80,
+        549,
+        540
+      ],
+      "source_trim_rect": [
+        98,
+        688,
+        549,
+        1148
+      ],
+      "size": [
+        451,
+        460
+      ],
+      "rgba_sha256": "017cec22313fd67145cd1a3fc1d6c80881739aa65029f12ad6414aa874abf222",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "543138b2004121f473ef4b68ca5c23b14b09e313809982556117d1df845ebf35"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        612,
+        608,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        63,
+        72,
+        536,
+        549
+      ],
+      "source_trim_rect": [
+        675,
+        680,
+        1148,
+        1157
+      ],
+      "size": [
+        473,
+        477
+      ],
+      "rgba_sha256": "e5e21efc89b204f5cbe6ba284f2bb83c02f06299d58e1b4c636f3a7bedeec4fc",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "6ef92d9207ab99df02dc65d2439d7ade1c6e97ca303459508c5b119321d6886d"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\smithy-garden-kit-01\\source-02-alpha.png",
+  "source_sha256": "ee0e5e1e4c528dbd774b354d2810907650afe24f23f119b50f081dbf3b4f49c7",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
