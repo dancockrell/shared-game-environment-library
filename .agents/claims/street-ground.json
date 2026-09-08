@@ -1,0 +1,1 @@
+{"schema_version":1,"task_id":"street-ground","agent":"dock_sprite_kit","status":"active","summary":"Neutral urban earth backing for procedural cobbled street batch","paths":["procedural/sprites/candidates/street-ground-01/"],"coordination":{"notes":"Parent authorized narrow material source; no whole room generation."},"completion":{"commit":null,"checks":[]}}
