@@ -1,9 +1,9 @@
 // Source-kit review only. Alignment belongs to the shared room reviewer.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { alignSpriteEdge } from '../../../../tools/sprite-room-review.mjs';
+import { alignSpriteEdge, loadSpriteKit } from '../../../../tools/sprite-room-review.mjs';
 const root = new URL('./', import.meta.url);
-const kit = JSON.parse(readFileSync(new URL('kit.json', root), 'utf8'));
+const {kit} = loadSpriteKit(fileURLToPath(new URL('kit.json', root)));
 const geometry = kit.geometry;
 const door = geometry['stone-arch-doorway'];
 const wall = geometry['stone-wall-straight'];

@@ -3,6 +3,37 @@ import { resolve, dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { createHash } from 'node:crypto'
 
+/** Resolve the existing extraction ledger, never guess grid/file dimensions. */
+export function loadSpriteKit(filename) {
+  const root=dirname(resolve(filename)), kit=JSON.parse(readFileSync(filename,'utf8'))
+  const require=(ok,message)=>{if(!ok)throw new Error(`Invalid sprite kit: ${message}`)}
+  require(kit.schemaVersion===1&&kit.runtimeAdmission===false,'candidate contract')
+  require(/^[\w-]+\/metadata\.json$/.test(kit.extraction),'local extraction ledger')
+  require(/^[\w.-]+\.png$/.test(kit.source),'source PNG basename')
+  const hash=bytes=>createHash('sha256').update(bytes).digest('hex')
+  require(hash(readFileSync(join(root,kit.source)))===kit.sourceSha256,'source hash')
+  const metadata=JSON.parse(readFileSync(join(root,kit.extraction),'utf8'))
+  require(metadata.source_sha256===kit.sourceSha256,'extraction source identity')
+  require(Array.isArray(kit.components)&&kit.components.length>0&&kit.components.length<=256,'component count')
+  const ids=new Set()
+  const components=kit.components.map(component=>{
+    require(typeof component.id==='string'&&!ids.has(component.id),'unique component ID');ids.add(component.id)
+    require(Number.isInteger(component.cell)&&component.cell>=0,'cell index')
+    const cell=metadata.cells?.[component.cell]
+    require(cell&&/^[\w-]+\.png$/.test(cell.file),'cell file')
+    const path=join(root,dirname(kit.extraction),cell.file), bytes=readFileSync(path)
+    require(hash(bytes)===cell.png_sha256,'extracted PNG hash')
+    require(bytes.length>=24&&bytes.subarray(0,8).toString('hex')==='89504e470d0a1a0a','PNG signature')
+    const size=[bytes.readUInt32BE(16),bytes.readUInt32BE(20)]
+    require(Array.isArray(cell.size)&&size.every((n,i)=>n>0&&n<=4096&&n===cell.size[i]),'PNG dimensions')
+    require(Array.isArray(component.anchor)&&component.anchor.length===2&&component.anchor.every((n,i)=>Number.isFinite(n)&&n>=0&&n<=size[i]),'estimated anchor bounds')
+    if(component.imageSize)require(size.every((n,i)=>n===component.imageSize[i]),'declared image size')
+    if(component.bounds)require(component.bounds.length===4&&component.bounds[0]===0&&component.bounds[1]===0&&component.bounds[2]===size[0]&&component.bounds[3]===size[1],'declared trimmed bounds')
+    return {...component,path,imageSize:size,sha256:cell.png_sha256}
+  })
+  return {kit,components}
+}
+
 // This function is also embedded in the offline reviewer: one placement rule.
 // Align authored edge endpoints using translation and positive uniform scale.
 // No rotation/mirroring of baked light. Pixel tolerance is an explicit review

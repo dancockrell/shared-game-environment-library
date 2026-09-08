@@ -2,7 +2,14 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { inside, validate, build, alignSpriteEdge } from './sprite-room-review.mjs'
+import { inside, validate, build, alignSpriteEdge, loadSpriteKit } from './sprite-room-review.mjs'
+
+for(const [id,count] of [['temperate-vegetation-01',6],['temperate-masonry-01',6],['river-dock-kit-01',6],['crossing-building-fronts-01',4],['riverbank-components-01',6]]){
+  const result=loadSpriteKit(`procedural/sprites/candidates/${id}/kit.json`)
+  assert.equal(result.components.length,count)
+  assert(result.components.every(c=>c.imageSize.every(n=>n>0)&&c.sha256.length===64))
+}
+console.log('PASS28 actual component PNGs: source identity, extraction hashes, dimensions and anchors')
 
 assert.deepEqual(alignSpriteEdge([[10,20],[30,40]], [[2,3],[12,13]], 0), {scale:2,offset:[6,14],error:0})
 const fixed = [[0,0],[100,1]], moving = [[0,0],[50,0]]

@@ -1,7 +1,8 @@
 // Regenerate the offline component review from canonical kit metadata and solver.
-import {readFileSync, writeFileSync} from 'node:fs';
-import {alignSpriteEdge} from '../../../../tools/sprite-room-review.mjs';
-const kit=JSON.parse(readFileSync(new URL('./kit.json',import.meta.url),'utf8'));
+import {writeFileSync} from 'node:fs';
+import {alignSpriteEdge,loadSpriteKit} from '../../../../tools/sprite-room-review.mjs';
+import {fileURLToPath} from 'node:url';
+const {kit}=loadSpriteKit(fileURLToPath(new URL('./kit.json',import.meta.url)));
 const html=`<!doctype html><meta charset="utf-8"><title>Dock assembly candidate</title>
 <style>body{background:#263634;color:#efdfb8;font:16px system-ui;margin:20px}canvas{display:block;max-width:100%;background:#425856}label{display:block;margin:12px 0}pre{white-space:pre-wrap}img{image-rendering:pixelated}</style>
 <main><h1>Dock components: estimated assembly</h1><p>Three exact PNG instances. Translation and uniform scale only. No rotation, mirroring, navigation or seamless admission.</p>
