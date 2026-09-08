@@ -1,0 +1,8 @@
+{
+ "schemaVersion":1,"id":"black-bear-static-01","species":"Black bear","status":"rejected-alpha-and-trace-fringe","runtimeAdmitted":false,
+ "sourceLoreSha256":"b4d4c1173ad799030d79bbb46c777f11ae8201b133cf73c5a1711351db5ec185",
+ "source":"source-02-alpha.png","sourceSha256":"a94717e71526c88074fac8e561eb8e4b23be51929e915d1ba70d9775f069f962","sourceSize":[1254,1254],"actualMode":"RGB",
+ "pose":{"action":"standing","direction":"down-left three-quarter","frameCount":1,"animation":false,"visiblePaws":3,"occlusion":"Far hind limb present behind near foreleg; its paw naturally obscured. Not a missing limb diagnosis."},
+ "estimatedSourceGeometry":{"coordinateSpace":"uncropped source pixels","visualBounds":[185,195,1080,1045],"floorPivot":[600,1000],"visiblePawContacts":[[295,970],[585,1030],[988,870]],"groundEnvelope":[[295,970],[580,1030],[990,870],[700,800]],"authority":"Estimated art placement only. Far rear contact inferred and uncertain; not collision, navigation or four-paw rig authority. Do not consume until alpha repaired."},
+ "review":{"bodyHeights":[120,150,200],"fur":"Black charcoal fur preserved, tan muzzle interpreted from ordinary bear form","anatomy":"Plausible static quadruped with natural far-leg occlusion","alpha":"FAIL: source01 and correction02 RGB checkerboard. Existing Cattle traced-mask attempt also fails: white checker remnants along inner foreleg gap and upper rump seen clearly on dark background.","rejectedTracedFile":"standing-traced.png","rejectedTracedSha256":"dd9ca81a8c0d0c6fda8fc3ffaaff279e379b0d822efa4d7ffb88bfca3d80ba5d","nextStep":"Source cleanup remains required; generation and bounded trace attempt exhausted. Do not admit these outputs."}
+}
