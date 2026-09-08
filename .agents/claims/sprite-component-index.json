@@ -1,0 +1,1 @@
+{"schema_version":1,"task_id":"sprite-component-index","agent":"root","status":"active","summary":"Search reviewed sheet components from canonical kit manifests","paths":["tools/sprite-kit-index.mjs","tools/sprite-kit-index-test.mjs","procedural/sprites/component-index.json","procedural/sprites/README.md"],"completion":{"commit":null,"checks":[]}}

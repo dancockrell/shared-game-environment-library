@@ -2,6 +2,20 @@
 
 Current game production uses detailed illustrated pixel art. Sources under `candidates/` are not automatically shipped or approved. Preserve each source and generation record; keep individual projects' art authority separate.
 
+## Batch sheet production and discovery
+
+Produce themed multi-component sheets with consistent camera, pixel density and lighting, separated cells and extraction padding. Review the extracted batch at gameplay scale; exclude failed cells rather than counting every requested slot as usable. Do not generate or launch a game once per prop. Original sources, extraction records and per-cell review remain in each kit folder.
+
+Each new reviewed `kit.json` component declares `id`, relative PNG `file`, `size`, `anchor`, `semanticTags`, `mount` (`ground`, `wall` or `roof`) and `status: reviewed-candidate`. Use `rejected` for failed cells. Wall/roof mounting is not a ground collision anchor; retain the component's mounting restrictions. Runtime admission remains separate.
+
+```sh
+node tools/sprite-kit-index.mjs
+node tools/sprite-kit-index.mjs --search wood ground
+node tools/sprite-kit-index-test.mjs
+```
+
+The generated `component-index.json` is derived, not independently edited. Search rebuilds directly from kit manifests and verifies PNG dimensions, anchor bounds, path containment and hashes. Legacy components without explicit per-cell review are counted as omitted, not silently promoted or erased. Header checks do not replace alpha/visual review. Use returned kit/file references to choose components for the consuming game's existing composition pipeline.
+
 ## Room placement review
 
 The first grounded room package is `candidates/barana-drydock-01/`. Open its `review.html` directly in a browser; no server, account, engine or network is needed.

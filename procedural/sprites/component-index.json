@@ -1,0 +1,1209 @@
+{
+  "schemaVersion": 1,
+  "status": "reviewed-component-candidates",
+  "runtimeAdmission": false,
+  "source": "Derived from kit.json; not an independent admission registry",
+  "kits": 16,
+  "omitted": {
+    "unreviewed": 51,
+    "rejected": 1
+  },
+  "components": [
+    {
+      "id": "crossing-building-details-sheet-01/arched-wood-door",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_00_01.png",
+      "size": [
+        180,
+        308
+      ],
+      "anchor": [
+        89,
+        291
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "door",
+        "wood",
+        "arch",
+        "closed"
+      ],
+      "mount": "wall",
+      "sha256": "fb0f519d5a9435f56500844756f6284c3b2f9502f12c8d160f308bc4431d618c",
+      "mountingLimits": "Threshold mount; curved frame requires compatible opening, not existing masonry seam.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/blue-cloth-awning",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_02_01.png",
+      "size": [
+        307,
+        221
+      ],
+      "anchor": [
+        155,
+        39
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "awning",
+        "cloth",
+        "blue"
+      ],
+      "mount": "wall",
+      "sha256": "1b5f194142d5ded9f71878ccaa3cb34f5ba65addd5fae87850b45f4a41d097f4",
+      "mountingLimits": "Upper back support mount; requires matching wall direction and draw-order, not a ground object.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/brick-chimney",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_01_01.png",
+      "size": [
+        182,
+        273
+      ],
+      "anchor": [
+        91,
+        254
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "chimney",
+        "brick"
+      ],
+      "mount": "roof",
+      "sha256": "655b4ba4e95101db14404118603017d06714ed634f38c2b9fd72bcbc556ac39a",
+      "mountingLimits": "Roof penetration/base mount; stone base is part of art, roof occlusion requires deliberate overlap.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/closed-plank-door",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_00_00.png",
+      "size": [
+        182,
+        300
+      ],
+      "anchor": [
+        90,
+        282
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "door",
+        "wood",
+        "closed"
+      ],
+      "mount": "wall",
+      "sha256": "054976b5c28fe4b41233f84dbd87729bc2dd3106d56b2adebb7d491a7a70f0af",
+      "mountingLimits": "Threshold mount; no wall supplied and no lock/passability state implied.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/empty-window-frame",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_00_03.png",
+      "size": [
+        208,
+        261
+      ],
+      "anchor": [
+        104,
+        239
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "window",
+        "frame",
+        "wood"
+      ],
+      "mount": "wall",
+      "sha256": "ebd89d93f980804a54c72ffb10dd42db41cbce29c789f6e7f2393cc35ea3ab40",
+      "mountingLimits": "Open center is alpha; consumer must provide wall opening/background, not paint frame over intact wall and claim opening.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/iron-hanging-bracket",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_02_02.png",
+      "size": [
+        189,
+        157
+      ],
+      "anchor": [
+        18,
+        76
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "bracket",
+        "iron"
+      ],
+      "mount": "wall",
+      "sha256": "ffd0f4da478072a0fc6081df2b0a133494bbb1db144795b3217a469fa1e74038",
+      "mountingLimits": "Wall-plate center mount; no hanging item supplied, bracket projects right in image.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/shuttered-window",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_00_02.png",
+      "size": [
+        207,
+        254
+      ],
+      "anchor": [
+        104,
+        231
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "window",
+        "wood",
+        "shutters"
+      ],
+      "mount": "wall",
+      "sha256": "46708598ca2688ad04806561b8332d3afa190f12c65a7fb1187f6822dc76d810",
+      "mountingLimits": "Lower sill mount, not ground pivot; static closed appearance.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/small-porch-platform",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_02_00.png",
+      "size": [
+        311,
+        229
+      ],
+      "anchor": [
+        153,
+        205
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "porch",
+        "platform",
+        "wood"
+      ],
+      "mount": "ground",
+      "sha256": "c0c702cf75e918c3f6c6481f07cae95371b996d8933a74cf358a9ac3a9d81ae8",
+      "mountingLimits": "Short visible legs, no stairs; surface mounting depth differs from floor contact.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/stone-chimney",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_01_00.png",
+      "size": [
+        206,
+        290
+      ],
+      "anchor": [
+        102,
+        271
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "chimney",
+        "stone"
+      ],
+      "mount": "roof",
+      "sha256": "952423e7b2cb2d4563d19347197da36690ff5d9ceea8bc39a7bb86f5d9023e7d",
+      "mountingLimits": "Roof penetration/base mount; roof slope/occlusion must be matched, no chimney smoke or interior passage.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/stone-two-step-flight",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_01_03.png",
+      "size": [
+        290,
+        204
+      ],
+      "anchor": [
+        146,
+        180
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "steps",
+        "stone"
+      ],
+      "mount": "ground",
+      "sha256": "6bb8659e22e1768e5843987f0cf2844b21ea0b84618db2239f0bf348d413be2d",
+      "mountingLimits": "Low broad two-tier alternative to existing taller masonry stairs; no path/navigation authority.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/wood-railing-segment",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_02_03.png",
+      "size": [
+        269,
+        229
+      ],
+      "anchor": [
+        135,
+        199
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "railing",
+        "wood"
+      ],
+      "mount": "ground",
+      "sha256": "9ba5193191ad7c29e16231b475adcaa1d26d82898c737e6325e0dafe78ee9701",
+      "mountingLimits": "Two-post ground contact estimate; bounded segment not certified seamless.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-building-details-sheet-01/wood-three-step-flight",
+      "file": "crossing-building-details-sheet-01/extracted-01/cell_01_02.png",
+      "size": [
+        285,
+        257
+      ],
+      "anchor": [
+        139,
+        232
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "stairs",
+        "wood"
+      ],
+      "mount": "ground",
+      "sha256": "178b4d43a84a0966173b8827c3973d4681baa73f6f031aca041f48ecb138fbeb",
+      "mountingLimits": "Landing must be matched to actual doorway height and axis; no seamless stair-door claim.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision",
+      "kit": "crossing-building-details-sheet-01",
+      "manifest": "crossing-building-details-sheet-01/kit.json",
+      "manifestSha256": "b0806deec9dec356ac7e60677ea6b183d07ab196366e1e139aa2db2fbc1b24f9",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-backed-chair",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_00_02.png",
+      "size": [
+        162,
+        247
+      ],
+      "anchor": [
+        81,
+        216
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "chair",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "c3ce81398815a30d8f961ebe19e09708244835763a6ab8924a9d752ebbff878d",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-closed-wardrobe",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_01_02.png",
+      "size": [
+        208,
+        311
+      ],
+      "anchor": [
+        104,
+        282
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "wardrobe",
+        "closed",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "0f1fb177e9044c469edc2544294b1aa1124d3ceb608b377d9f1b2eb689737526",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-empty-bookshelf",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_01_03.png",
+      "size": [
+        215,
+        309
+      ],
+      "anchor": [
+        107,
+        278
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "bookshelf",
+        "empty",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "12f2b966b1b3964ad5329a023b9e4dd95e859da79c7581c6fd66b8f330624dee",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-empty-peg-rack",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_02_01.png",
+      "size": [
+        259,
+        125
+      ],
+      "anchor": [
+        129,
+        62
+      ],
+      "mount": "wall",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "rack",
+        "empty",
+        "wall",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "e0817e9faaeea0c3fd31fa45be1ce81d479875bdaaced0b7a1242e589e987375",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-long-bench",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_01_00.png",
+      "size": [
+        296,
+        205
+      ],
+      "anchor": [
+        148,
+        170
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "bench",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "18f170b66da3a303ef070f4f6c07456929ec9d1c7fb9f67b7514036bd4450f89",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-rectangular-table",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_00_00.png",
+      "size": [
+        311,
+        240
+      ],
+      "anchor": [
+        155,
+        190
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "table",
+        "rectangular",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "fec75f3c174aa2339240f7894295eccfe434c8acc4031decf868cd269803a260",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-round-stool",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_00_03.png",
+      "size": [
+        147,
+        177
+      ],
+      "anchor": [
+        73,
+        150
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "stool",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "d36de9c13db1f6debe6a80e50b527cce04482578b2c71fa4372fdf56d6bb7df8",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-round-table",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_00_01.png",
+      "size": [
+        249,
+        231
+      ],
+      "anchor": [
+        124,
+        185
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "table",
+        "round",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "b19d243d14fa7140fee8eac097b2f41b8f1047ef9ab6c2ad285255d0a0bd10bd",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-shop-counter",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_02_00.png",
+      "size": [
+        302,
+        238
+      ],
+      "anchor": [
+        151,
+        202
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "counter",
+        "shop",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "b70f26e2c83a7daf51e239e885250a8391594218a85ff1b0e93faed21a55eb0c",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-single-bed-cream",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_01_01.png",
+      "size": [
+        293,
+        286
+      ],
+      "anchor": [
+        146,
+        214
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "bed",
+        "linen",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "37698eecbe0c56559edcd1b41a8e6b6b61ceb1e3353d119fec9b9e0c9f7b7fd5",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/oak-washbasin-stand",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_02_02.png",
+      "size": [
+        213,
+        234
+      ],
+      "anchor": [
+        106,
+        201
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "furniture",
+        "washbasin",
+        "ceramic",
+        "oak"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "2eab975e69fe1ecf96f3eab0d42a06ff35b66790f1a8e1012a31fb9f305faebf",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-interiors-sheet-01/stone-unlit-hearth",
+      "file": "crossing-interiors-sheet-01/extracted-02/cell_02_03.png",
+      "size": [
+        230,
+        302
+      ],
+      "anchor": [
+        115,
+        276
+      ],
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "interior",
+        "structure",
+        "hearth",
+        "unlit",
+        "stone"
+      ],
+      "kit": "crossing-interiors-sheet-01",
+      "manifest": "crossing-interiors-sheet-01/kit.json",
+      "manifestSha256": "52f5b85f73b6dfbb31fe839651b8aa91518c2f75faa797a9090194376d97e967",
+      "sha256": "56d06b2aca1acb53df5c0a0a4f3ecc007c18f4af18e213bf4533bcb67ba47cff",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/blank-sign",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_02_02.png",
+      "size": [
+        212,
+        310
+      ],
+      "sha256": "d7961452ecf5e67904fd75937010f2c2d1dd678f10352b52a920fcb17e96c772",
+      "anchor": [
+        104,
+        304
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "blank",
+        "sign"
+      ],
+      "sourceRect": [
+        796,
+        735,
+        1008,
+        1045
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            84,
+            291
+          ],
+          [
+            109,
+            281
+          ],
+          [
+            128,
+            294
+          ],
+          [
+            122,
+            309
+          ],
+          [
+            90,
+            308
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/cradled-barrel",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_00_03.png",
+      "size": [
+        270,
+        283
+      ],
+      "sha256": "bd53cc3899f374e6a25d81077947efdb6ecfaec64fc09fbf726ff39ab0d54368",
+      "anchor": [
+        160,
+        271
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "cradled",
+        "barrel"
+      ],
+      "sourceRect": [
+        1129,
+        57,
+        1399,
+        340
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            10,
+            220
+          ],
+          [
+            170,
+            200
+          ],
+          [
+            269,
+            236
+          ],
+          [
+            240,
+            282
+          ],
+          [
+            40,
+            253
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/detached-wheel",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_01_01.png",
+      "size": [
+        241,
+        281
+      ],
+      "sha256": "ac6f4268384fddbf5fcd3448a85fa4b6c90ab66f16a9c4bb95082d261bea0514",
+      "anchor": [
+        124,
+        275
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "detached",
+        "wheel"
+      ],
+      "sourceRect": [
+        419,
+        402,
+        660,
+        683
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            75,
+            270
+          ],
+          [
+            151,
+            252
+          ],
+          [
+            199,
+            267
+          ],
+          [
+            157,
+            280
+          ],
+          [
+            96,
+            280
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/empty-handcart",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_01_02.png",
+      "size": [
+        329,
+        293
+      ],
+      "sha256": "1a2aad91a61971f7ee8a54ffdf0e88679be58037833b6cf270bceb1cac9aad66",
+      "anchor": [
+        189,
+        280
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "empty",
+        "handcart"
+      ],
+      "sourceRect": [
+        744,
+        398,
+        1073,
+        691
+      ],
+      "reviewHeight": 160,
+      "footprint": null,
+      "geometryLimit": "Multi-contact support geometry not authored; do not infer underpasses from transparent openings",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/empty-slat-crate",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_00_01.png",
+      "size": [
+        284,
+        279
+      ],
+      "sha256": "883159696a22949089efae7874f06b41d0de5019ae768c64b25dd69500c35159",
+      "anchor": [
+        145,
+        273
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "empty",
+        "slat",
+        "crate"
+      ],
+      "sourceRect": [
+        404,
+        48,
+        688,
+        327
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            5,
+            199
+          ],
+          [
+            141,
+            150
+          ],
+          [
+            280,
+            207
+          ],
+          [
+            150,
+            277
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/lantern-post",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_02_01.png",
+      "size": [
+        172,
+        344
+      ],
+      "sha256": "96dbcef170a13d78587cf631aef8a8f8ffa53b38323615d2d374a5ce4257e364",
+      "anchor": [
+        27,
+        338
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "lantern",
+        "post"
+      ],
+      "sourceRect": [
+        471,
+        717,
+        643,
+        1061
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            3,
+            316
+          ],
+          [
+            27,
+            306
+          ],
+          [
+            50,
+            321
+          ],
+          [
+            48,
+            341
+          ],
+          [
+            21,
+            343
+          ],
+          [
+            2,
+            330
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/open-barrel",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_00_02.png",
+      "size": [
+        209,
+        285
+      ],
+      "sha256": "6bcd54d4adc3219f4efefda571ebacb3912b98312e252fc33ea9b83bdb0fe187",
+      "anchor": [
+        108,
+        280
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "open",
+        "barrel"
+      ],
+      "sourceRect": [
+        800,
+        42,
+        1009,
+        327
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            25,
+            246
+          ],
+          [
+            104,
+            225
+          ],
+          [
+            191,
+            248
+          ],
+          [
+            171,
+            278
+          ],
+          [
+            55,
+            282
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/sack-pair",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_01_00.png",
+      "size": [
+        290,
+        282
+      ],
+      "sha256": "3191a3cece0e8e6a1532cc224b7506ad4ac3d8caf7e93d35bfbaeddaf7c0d8af",
+      "anchor": [
+        148,
+        272
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "sack",
+        "pair"
+      ],
+      "sourceRect": [
+        31,
+        407,
+        321,
+        689
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            6,
+            211
+          ],
+          [
+            175,
+            199
+          ],
+          [
+            289,
+            248
+          ],
+          [
+            263,
+            280
+          ],
+          [
+            86,
+            268
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/shipping-crate",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_00_00.png",
+      "size": [
+        260,
+        288
+      ],
+      "sha256": "243db3ed6138fd004b2c3ead6e4dec25cfb400f98d65a79e9ceaabea145a865b",
+      "anchor": [
+        130,
+        282
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "shipping",
+        "crate"
+      ],
+      "sourceRect": [
+        50,
+        48,
+        310,
+        336
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            5,
+            214
+          ],
+          [
+            129,
+            165
+          ],
+          [
+            255,
+            216
+          ],
+          [
+            130,
+            286
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/trestle-table",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_01_03.png",
+      "size": [
+        323,
+        260
+      ],
+      "sha256": "1067ffbfd5e6bd5d04be37955abf917508069607fbc422823e329f0c2e9816f0",
+      "anchor": [
+        161,
+        247
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "trestle",
+        "table"
+      ],
+      "sourceRect": [
+        1110,
+        431,
+        1433,
+        691
+      ],
+      "reviewHeight": 160,
+      "footprint": null,
+      "geometryLimit": "Multi-contact support geometry not authored; do not infer underpasses from transparent openings",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    },
+    {
+      "id": "crossing-town-props-sheet-01/water-trough",
+      "file": "crossing-town-props-sheet-01/extracted-01/cell_02_03.png",
+      "size": [
+        318,
+        248
+      ],
+      "sha256": "7aedf8754fde988df2cb5042b21bd303e7a92917834e03456cedda386a21b6f8",
+      "anchor": [
+        148,
+        236
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "water",
+        "trough"
+      ],
+      "sourceRect": [
+        1105,
+        773,
+        1423,
+        1021
+      ],
+      "reviewHeight": 156,
+      "footprint": null,
+      "geometryLimit": "Multi-contact support geometry not authored; do not infer underpasses from transparent openings",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission",
+      "kit": "crossing-town-props-sheet-01",
+      "manifest": "crossing-town-props-sheet-01/kit.json",
+      "manifestSha256": "05f47e0463a9476632b0647080906abe21c5da8b25f7b387b873e6de691e78fa",
+      "runtimeAdmission": false
+    }
+  ]
+}
