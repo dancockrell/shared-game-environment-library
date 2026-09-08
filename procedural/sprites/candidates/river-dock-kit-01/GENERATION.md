@@ -22,4 +22,10 @@ Reused `cattle-trail/sprite_grid.py source-02-magenta.png extracted-01 --columns
 
 ## Initial review
 
+## Estimated connector assembly follow-up
+
+`kit.json` now contains estimated top-surface polygons and named socket edge endpoints for straight, corner and ramp. Screen coordinates come from inspecting the extracted PNGs. They are not collision, walkability, world coordinates, or MUD exit authority. `build-assembly-review.mjs` embeds the canonical shared `alignSpriteEdge` implementation into an offline HTML preview; run it from this directory or repository root with Node. Open `assembly-review.html` directly, with adjacent PNGs retained. The overlay checkbox shows estimated deck polygons and both edge positions.
+
+Visual inspection of `assembly-review.png` confirms an L end plus two straight sections can form a coherent long deck without rotating/mirroring or redrawing the sprites. Measured endpoint residuals are 1.517 and 5.858 source-review pixels under an explicit 6-pixel inspection allowance. The second seam remains visibly offset; plank grain and skirt/piling positions do not become continuous merely because connectors approximately meet. This is a candidate assembly, not seamless admission. Ramp excluded due to unknown elevation matching. The corner branch has the opposite projected slope and requires another directional component. No runtime test performed. Local component HTML capture only; browser closed afterward.
+
 Six requested subjects present, coherent ochre timber palette, dark silhouette contours, no water or characters. L-corner and straight deck share construction but mating-edge alignment is not established. Ramp is steeper than requested; treat as sloped access candidate, not an authored navigation incline. Output is RGB with baked checkerboard despite transparency request. Preserve original; request background-only magenta correction for existing extractor.

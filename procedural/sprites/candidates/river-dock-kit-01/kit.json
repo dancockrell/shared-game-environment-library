@@ -9,7 +9,12 @@
   "camera": "fixed-high-three-quarter",
   "lighting": "upper-left-daylight",
   "coordinateConvention": "estimated anchor pixels relative to trimmed image; placement pivots, not collision geometry",
-  "matingEdges": {"status":"unestablished","seamless":false,"requiresAuthoredGeometry":true},
+  "matingEdges": {"status":"estimated-unverified","seamless":false,"requiresAuthoredGeometry":true,"endpointOrder":"screen-left to screen-right; same correspondence on both sockets","navigationAuthority":false},
+  "geometry": {
+    "dock-straight": {"status":"estimated-unverified","deckSurface":[[4,165],[280,3],[390,73],[120,233]],"connectors":{"near":{"type":"timber-deck-end","edge":[[4,165],[120,233]]},"far":{"type":"timber-deck-end","edge":[[280,3],[390,73]]}}},
+    "dock-corner": {"status":"estimated-unverified","deckSurface":[[4,154],[251,3],[393,88],[264,179],[316,211],[218,276]],"connectors":{"far":{"type":"timber-deck-end","edge":[[251,3],[393,88]]},"branch":{"type":"timber-deck-branch","edge":[[218,276],[316,211]]}},"notes":"Branch endpoint slope is incompatible with straight end sprites without a new direction asset."},
+    "access-ramp": {"status":"estimated-unverified","deckSurface":[[3,245],[207,3],[338,72],[121,310]],"connectors":{"low":{"type":"ramp-low-end","edge":[[3,245],[121,310]]},"high":{"type":"ramp-high-end","edge":[[207,3],[338,72]]}},"notes":"Incline changes elevation. No deck-height match established, excluded from assembled chain."}
+  },
   "components": [
     {"id":"dock-straight","cell":0,"imageSize":[393,316],"anchor":[196,285],"semanticTags":["wooden-dock","plank-deck"],"layer":"platform","suggestedReviewWidth":180},
     {"id":"dock-corner","cell":1,"imageSize":[399,360],"anchor":[200,320],"semanticTags":["wooden-dock","corner-deck"],"layer":"platform","suggestedReviewWidth":180},

@@ -1,0 +1,19 @@
+// Regenerate the offline component review from canonical kit metadata and solver.
+import {readFileSync, writeFileSync} from 'node:fs';
+import {alignSpriteEdge} from '../../../../tools/sprite-room-review.mjs';
+const kit=JSON.parse(readFileSync(new URL('./kit.json',import.meta.url),'utf8'));
+const html=`<!doctype html><meta charset="utf-8"><title>Dock assembly candidate</title>
+<style>body{background:#263634;color:#efdfb8;font:16px system-ui;margin:20px}canvas{display:block;max-width:100%;background:#425856}label{display:block;margin:12px 0}pre{white-space:pre-wrap}img{image-rendering:pixelated}</style>
+<main><h1>Dock components: estimated assembly</h1><p>Three exact PNG instances. Translation and uniform scale only. No rotation, mirroring, navigation or seamless admission.</p>
+<label><input id="overlay" type="checkbox" checked> Show deck surfaces and connector residuals</label><canvas width="1100" height="650"></canvas><pre id="report"></pre>
+<script>const kit=${JSON.stringify(kit)}; const alignSpriteEdge=${alignSpriteEdge.toString()};
+const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d'),instances=[],joins=[];
+function world(instance,p){return [instance.x+p[0]*instance.scale,instance.y+p[1]*instance.scale]}
+function edge(instance,name){return kit.geometry[instance.id].connectors[name].edge.map(p=>world(instance,p))}
+function attach(fixed,name,id,movingName){const fit=alignSpriteEdge(edge(fixed,name),kit.geometry[id].connectors[movingName].edge,6);const instance={id,x:fit.offset[0],y:fit.offset[1],scale:fit.scale};instances.push(instance);joins.push({error:fit.error,a:edge(fixed,name),b:edge(instance,movingName)});return instance}
+const corner={id:'dock-corner',x:90,y:260,scale:1};instances.push(corner);const middle=attach(corner,'far','dock-straight','near');attach(middle,'far','dock-straight','near');
+const images={};Promise.all(['dock-straight','dock-corner','access-ramp'].map(async id=>{const c=kit.components.find(c=>c.id===id);const im=new Image;im.src='extracted-01/cell_'+String(Math.floor(c.cell/3)).padStart(2,'0')+'_'+String(c.cell%3).padStart(2,'0')+'.png';await im.decode();images[id]=im})).then(()=>{draw();document.body.dataset.ready='true'}).catch(e=>document.querySelector('#report').textContent=e.stack);
+function draw(){ctx.clearRect(0,0,1100,650);ctx.imageSmoothingEnabled=false;ctx.save();ctx.translate(0,90);ctx.scale(.82,.82);for(const i of [...instances].reverse()){ctx.drawImage(images[i.id],i.x,i.y,images[i.id].width*i.scale,images[i.id].height*i.scale)}if(document.querySelector('#overlay').checked){for(const i of instances){const p=kit.geometry[i.id].deckSurface.map(p=>world(i,p));ctx.beginPath();p.forEach(([x,y],n)=>n?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.strokeStyle='#78f6e1';ctx.lineWidth=2;ctx.stroke()}for(const j of joins){for(const [line,color] of [[j.a,'#ffe259'],[j.b,'#f679d0']]){ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(...line[0]);ctx.lineTo(...line[1]);ctx.stroke()}}}ctx.restore();document.querySelector('#report').textContent='Endpoint residuals (source review pixels): '+joins.map(j=>j.error.toFixed(3)).join(', ')+'\\nTolerance: 6 px for inspection only. Deck rails/skirts may overlap even when top endpoints agree.\\nRamp excluded: elevation unresolved. Corner branch excluded: different edge direction requires new art.\\nThese estimates are not collision polygons, walkable space, or MUD exits.'}
+document.querySelector('#overlay').onchange=draw;</script>`;
+writeFileSync(new URL('./assembly-review.html',import.meta.url),html.replace('ctx.translate(0,90);ctx.scale(.82,.82);','const minY=Math.min(...instances.map(i=>i.y));ctx.translate(0,30-minY*.82);ctx.scale(.82,.82);'));
+console.log('Wrote assembly-review.html from kit.json and canonical alignSpriteEdge');
