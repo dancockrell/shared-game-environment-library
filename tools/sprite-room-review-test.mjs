@@ -13,6 +13,9 @@ for (const bad of [ [[0,0],[0,0]], [[0,0],[-10,0]], [[0,0],[0,10]], [[0,0],[NaN,
 assert.throws(() => alignSpriteEdge([[0,0],[10,0]], [[0,0],[10,0]], -1))
 assert.throws(() => alignSpriteEdge([[0,0],[10,0]], [[0,0],[10,0]], Infinity))
 assert.deepEqual(alignSpriteEdge(fixed,moving), alignSpriteEdge(fixed,moving))
+assert.throws(() => alignSpriteEdge([[0,0],[20,0]], [[0,0],[10,0]], 1, 1))
+assert.deepEqual(alignSpriteEdge([[0,0],[20,0]], [[0,0],[10,0]], 0, 2), {scale:2,offset:[0,0],error:0})
+assert.throws(() => alignSpriteEdge(fixed,moving,1,NaN))
 console.log('PASS deterministic edge alignment, explicit tolerance, no rotation/mirror and invalid-input rejection')
 
 const path = 'procedural/sprites/candidates/barana-drydock-01/room.json'

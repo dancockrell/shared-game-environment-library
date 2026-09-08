@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto'
 // Align authored edge endpoints using translation and positive uniform scale.
 // No rotation/mirroring of baked light. Pixel tolerance is an explicit review
 // allowance, not proof of a watertight join, collision or graph connectivity.
-export function alignSpriteEdge(fixedEdge, movingEdge, tolerance = 1) {
+export function alignSpriteEdge(fixedEdge, movingEdge, tolerance = 1, requiredScale = null) {
   const edge = value => Array.isArray(value) && value.length === 2 && value.every(
     point => Array.isArray(point) && point.length === 2 && point.every(Number.isFinite))
   if (!edge(fixedEdge) || !edge(movingEdge) || !Number.isFinite(tolerance) || tolerance < 0)
@@ -17,7 +17,11 @@ export function alignSpriteEdge(fixedEdge, movingEdge, tolerance = 1) {
   const wx = b[0] - a[0], wy = b[1] - a[1]
   const length2 = vx * vx + vy * vy
   if (!Number.isFinite(length2) || length2 === 0) throw new Error('Degenerate moving edge')
-  const scale = (wx * vx + wy * vy) / length2
+  // A production kit can lock scale so adjoining pieces cannot silently grow
+  // or shrink to conceal inconsistent source geometry. Null permits review fit.
+  if (requiredScale !== null && (!Number.isFinite(requiredScale) || requiredScale <= 0))
+    throw new Error('Invalid required scale')
+  const scale = requiredScale ?? (wx * vx + wy * vy) / length2
   if (!Number.isFinite(scale) || scale <= 0) throw new Error('Join requires rotation or mirroring, or has no extent')
   const offset = [a[0] - c[0] * scale, a[1] - c[1] * scale]
   const error = Math.hypot(d[0] * scale + offset[0] - b[0], d[1] * scale + offset[1] - b[1])
