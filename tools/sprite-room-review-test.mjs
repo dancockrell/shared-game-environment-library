@@ -2,7 +2,18 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { inside, validate, build } from './sprite-room-review.mjs'
+import { inside, validate, build, alignSpriteEdge } from './sprite-room-review.mjs'
+
+assert.deepEqual(alignSpriteEdge([[10,20],[30,40]], [[2,3],[12,13]], 0), {scale:2,offset:[6,14],error:0})
+const fixed = [[0,0],[100,1]], moving = [[0,0],[50,0]]
+assert.equal(alignSpriteEdge(fixed, moving, 1).error, 1)
+assert.throws(() => alignSpriteEdge(fixed, moving, 0.9))
+for (const bad of [ [[0,0],[0,0]], [[0,0],[-10,0]], [[0,0],[0,10]], [[0,0],[NaN,0]] ])
+  assert.throws(() => alignSpriteEdge([[0,0],[10,0]], bad))
+assert.throws(() => alignSpriteEdge([[0,0],[10,0]], [[0,0],[10,0]], -1))
+assert.throws(() => alignSpriteEdge([[0,0],[10,0]], [[0,0],[10,0]], Infinity))
+assert.deepEqual(alignSpriteEdge(fixed,moving), alignSpriteEdge(fixed,moving))
+console.log('PASS deterministic edge alignment, explicit tolerance, no rotation/mirror and invalid-input rejection')
 
 const path = 'procedural/sprites/candidates/barana-drydock-01/room.json'
 const room = JSON.parse(readFileSync(path, 'utf8'))

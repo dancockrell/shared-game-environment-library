@@ -4,6 +4,28 @@ import { pathToFileURL } from 'node:url'
 import { createHash } from 'node:crypto'
 
 // This function is also embedded in the offline reviewer: one placement rule.
+// Align authored edge endpoints using translation and positive uniform scale.
+// No rotation/mirroring of baked light. Pixel tolerance is an explicit review
+// allowance, not proof of a watertight join, collision or graph connectivity.
+export function alignSpriteEdge(fixedEdge, movingEdge, tolerance = 1) {
+  const edge = value => Array.isArray(value) && value.length === 2 && value.every(
+    point => Array.isArray(point) && point.length === 2 && point.every(Number.isFinite))
+  if (!edge(fixedEdge) || !edge(movingEdge) || !Number.isFinite(tolerance) || tolerance < 0)
+    throw new Error('Invalid edge coordinates or tolerance')
+  const a = fixedEdge[0], b = fixedEdge[1], c = movingEdge[0], d = movingEdge[1]
+  const vx = d[0] - c[0], vy = d[1] - c[1]
+  const wx = b[0] - a[0], wy = b[1] - a[1]
+  const length2 = vx * vx + vy * vy
+  if (!Number.isFinite(length2) || length2 === 0) throw new Error('Degenerate moving edge')
+  const scale = (wx * vx + wy * vy) / length2
+  if (!Number.isFinite(scale) || scale <= 0) throw new Error('Join requires rotation or mirroring, or has no extent')
+  const offset = [a[0] - c[0] * scale, a[1] - c[1] * scale]
+  const error = Math.hypot(d[0] * scale + offset[0] - b[0], d[1] * scale + offset[1] - b[1])
+  if (!offset.every(Number.isFinite) || !Number.isFinite(error) || error > tolerance)
+    throw new Error('Incompatible edge direction within tolerance')
+  return { scale, offset, error }
+}
+
 export function inside(point, polygon) {
   let hit = false
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
