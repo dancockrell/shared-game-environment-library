@@ -1,72 +1,24 @@
-# Tabletop Asset Contract
+# Shared 2D artwork contract
 
-## Scope
+Current user direction, 8 September 2026. All projects and shared packs use 2D artwork only. This replaces the former tabletop mesh/rig contract in place.
 
-This is the common technical language used by shared raw assets and by project-specific adapters. It is intentionally independent of DragonRealms and Project 42 lore.
+## Presentation and reuse
 
-## Coordinate and scale rules
+Produce detailed coherent pixel-art sprites at the approved fixed elevated three-quarter perspective. Reuse reviewed characters, creatures, scenery, props and effects from the shared 2D art folder, preserving their style and provenance. Cross-project reuse does not transfer project-specific lore or override a consumer's authoritative world facts.
 
-- Godot convention: +Y up, -Z forward for authored mesh orientation.
-- Static prop origin: floor contact point centered under its intended footprint.
-- Character/miniature origin: floor contact between the feet; root motion never moves the mesh origin away from the controller.
-- Units: 1 engine unit equals 1 meter. Scale must be declared, never inferred from viewport appearance.
-- Thumbnail camera: three-quarter view, neutral light, fixed per asset family.
-- Collider, navigation, selection ring, shadow proxy, and visual mesh are separate named layers.
+## Required sprite data
 
-## Shared environment grammar
+- Original source, creator/provider, license or generation provenance and content hashes.
+- True alpha or explicitly validated chroma extraction; no pale matte painted behind subject edges.
+- Explicit atlas rectangles, consistent pixel density, stable floor/foot pivots and safe padding.
+- Named actions and directions, ordered frames, frame durations, loop/one-shot behavior and coherent equipment/identity across poses.
+- Silhouette, equipment hands, overlaps and timing reviewed in native playback at intended size.
+- Consumer selection areas and gameplay collision remain separate from artwork. Art never changes authoritative movement, targeting or room connectivity.
 
-Reusable asset families should favor composable pieces:
+Generated sheets are candidates until masking, sequence, pivots and actual motion pass review. Provide rich useful poses and smooth transitions rather than counting duplicate frames as animation variety.
 
-- ground planes, edges, curbs, stairs, bridges, doors, arches, walls, roof segments, piers;
-- trees, hedges, flowers, roots, rocks, basalt, driftwood, reeds, water-edge dressing;
-- benches, barrels, crates, tables, lanterns, market dressing, neutral shrine pieces, workshop and tavern dressing;
-- neutral weapons, shields, tools, armour silhouettes, boats and ship fragments.
+## Retired production
 
-An asset that depends on a named town, race, faction, god, guild, or character belongs in a project adapter, not here.
+No 3D model packs, mesh/rig/cloth builders, image-to-model generation, 3D-to-sprite baking or future restart of archived 3D work. The user's earlier preservation and six-month revisit plan is superseded across all projects. Do not admit model renders as substitutes for the approved sprite style.
 
-## Material slots
-
-Each model must use semantically named slots when applicable:
-
-`base`, `trim_metal`, `wood`, `stone`, `cloth_primary`, `cloth_secondary`, `leather`, `foliage`, `water`, `emissive`, `skin`, `hair_or_fur`, `eye`.
-
-Use only slots that physically apply. Names are an interface for palette normalization and tooling, not an instruction to create fake detail.
-
-## Rig and attachment rules
-
-The shared miniature system supports a bounded number of high-quality rig families rather than one rig per NPC:
-
-- medium humanlike;
-- short/stout humanlike;
-- tall/broad humanlike;
-- hulking humanoid;
-- feline humanoid;
-- reptilian humanoid;
-- ordinary furry humanoid;
-- alternate beast/digitigrade family;
-- creature families by body plan, not humanoid reskins.
-
-Compatible head assemblies use a declared neck-ring radius, socket transform, forward axis, eye line, and material zones. Hair, hats, helmets, hoods, masks, ears, horns, beards, crests, tails, weapons, shields, and tools attach through named sockets. A component may declare incompatibilities to prevent clipping and lore-breaking combinations in consuming games.
-
-## Common event states
-
-Every admitted compatible rig maps the subset it supports to:
-
-`idle -> orient -> short_step -> ready -> attack -> hit | miss | block -> cast -> affected -> defeat`
-
-The game’s authoritative logic selects events. The asset controller only renders confirmed state. Project-specific animations can extend the vocabulary without changing these meanings.
-
-## Required metadata tags
-
-Every asset manifest declares: `assetId`, `assetKind`, `domain`, `scaleMeters`, `forwardAxis`, `pivotPolicy`, `collisionPolicy`, `materialSlots`, `lodPolicy`, `thumbnailPolicy`, `selectionHook`, `statusHook`, `provenanceId`, `licenseStatus`, and `admissionStatus`.
-
-## Visual standard
-
-The shared library supplies readable, modifiable physical structure. It should support painted-resin, illustrated, or hand-painted scene direction without imposing photorealism. Literal correctness and a neutral fallback are preferred to a beautiful but wrong semantic asset.
-
-For the painted tabletop fantasy family, the controlling approved visual target
-and acceptance criteria are in [Shared model production](../docs/MODEL_PRODUCTION.md#approved-visual-reference---controlling-art-target).
-Use its exact approved reference when assessing finish. The low-poly source
-catalog and technical foundation renders do not establish final art quality.
-Other physical/style families can remain discoverable without being presented
-as matching this target.
+Asset deletion, caller migration and package validation remain separately verified operations. This documentation amendment does not claim old files are gone or consumers already converted. Historical source/license records remain accurate; they are not permission to resume the retired pipeline.

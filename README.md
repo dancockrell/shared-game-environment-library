@@ -1,37 +1,9 @@
 # Shared Game Environment Library
 
-A public, provenance-first source library for reusable game environment, prop, material, and tabletop-miniature infrastructure.
+The shared art folder is the cross-project style, reuse and provenance authority for **2D pixel artwork only**. Use the approved fixed elevated three-quarter perspective and coherent authored animation.
 
-This repository contains:
+Follow the [shared 2D artwork contract](contracts/TABLETOP_ASSET_CONTRACT.md), [asset intake](docs/ASSET_INTAKE.md) and [license policy](docs/ASSET_LICENSE_POLICY.md). Review original sources, genuine transparency, frame boundaries, pivots, directions and timing before admitting assets to a game.
 
-- technical contracts for scale, pivots, collision, materials, LODs, thumbnails, selection hooks, and animation states;
-- a strict CC0-only approved-source lane;
-- explicit quarantine lanes for candidates, generated references, and paid-source records;
-- machine-readable asset metadata and a documented intake procedure;
-- licensed upstream source archives and material-map seeds, each with checksums and provenance reports;
-- small, literal-use source-origin packs for roads, maritime props, fortifications, and modular sci-fi interiors;
-- derivative resource packs only when their source members and deterministic build output are recorded.
+The previous model catalog, mesh builders and deferred 3D workshop are retired for every project under the user's 8 September 2026 instruction. Existing source ledgers and licenses describe historical payloads, not current production approval. This checkout may still contain legacy files until deletion and dependency migration are separately verified; this README does not claim a completed purge.
 
-It deliberately does not contain project lore, character identities, proprietary art, paid-store source files, or unreviewed generated files.
-
-## Use the right layer
-
-The [shared Rust procedural scene builder](docs/PROCEDURAL_SCENE_BUILDER.md)
-is in `procedural/`, with Godot and Unity editor adapters. It is an early,
-bounded geometry/composition implementation, not a completed world generator.
-
-See [model production](docs/MODEL_PRODUCTION.md) for the cross-game build order,
-DR Companion handoff review, provisional budgets, and reproducible model review.
-
-`assets/approved_cc0/` preserves original vetted inputs. It is not a runtime folder.
-
-`resource_packs/` holds small packs selected by literal use. A pack can be source-origin or derivative, yet still be waiting for a consuming engine to review scale, pivots, materials, collision, LODs, and visual fit.
-
-The catalogs provide the blind-machine-readable view:
-
-- [library taxonomy](catalog/library-taxonomy.json) defines stable cross-project vocabulary;
-- [approved source ledger](catalog/approved-source-ledger.json) records archive-level CC0 sources;
-- [approved material ledger](catalog/approved-material-ledger.json) records PBR map source sets and expected color spaces;
-- [resource-pack ledger](catalog/resource-pack-ledger.json) indexes the literal-use packs and their individual output hashes.
-
-See [the intake procedure](docs/ASSET_INTAKE.md), [the license policy](docs/ASSET_LICENSE_POLICY.md), [the tabletop asset contract](contracts/TABLETOP_ASSET_CONTRACT.md), and [the starter source catalog](catalog/source-catalog.json).
+Current sprite candidates live under `procedural/sprites/candidates/`. Candidate status is not visual acceptance or runtime admission. Preserve original generation provenance and inspect actual playback in the consuming game. Reuse coherent approved artwork before generating new variants.

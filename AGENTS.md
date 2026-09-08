@@ -112,3 +112,7 @@ agent's claim merely because it looks stale.
 > Generated from `~/.claude/CLAUDE.md` by `dev/claude-config/stamp-rules.py`. Do not edit this block: edit the source and re-run. The full working agreements live in that file.
 
 <!-- END CANONICAL RULE: never-fork -->
+
+## Current art authority
+
+All projects and shared packs use 2D artwork only. Follow [the shared 2D contract](contracts/TABLETOP_ASSET_CONTRACT.md). No new model, rig, garment simulation or deferred revival jobs. Keep legacy evidence distinct from active production; documentation changes do not prove asset deletion or runtime migration.

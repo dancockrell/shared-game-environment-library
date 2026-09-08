@@ -1,3 +1,5 @@
+> **Retired 3D implementation history — 8 September 2026.** All projects now use [2D artwork](../../contracts/TABLETOP_ASSET_CONTRACT.md). Any model-building, retention or future-restart instructions below are superseded. Preserve accurate historical evidence, not an active production queue. Asset deletion and consumer migration are separately unverified.
+
 # River-port construction study — 2026-09-05
 
 ## Consumer-owned assembly recipes
