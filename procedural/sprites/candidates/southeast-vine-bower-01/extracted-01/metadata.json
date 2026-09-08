@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1402,
+    1122
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 100,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1122
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1402
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1402,
+        1122
+      ],
+      "trim_rect_in_cell": [
+        151,
+        24,
+        1250,
+        1038
+      ],
+      "source_trim_rect": [
+        151,
+        24,
+        1250,
+        1038
+      ],
+      "size": [
+        1099,
+        1014
+      ],
+      "rgba_sha256": "e5a1ffe9eff911920258d79fb9acfc445ddf5d4b6dc3020efa7ae90ee42b9e1e",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "421193e913e3a8c9baa847f4c9049c30b8b054c631c16f8329f2467fc47bdf9e"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\southeast-vine-bower-01\\source-02-magenta.png",
+  "source_sha256": "e399608e6beaedcc5369d4aa06699a2c998026702c13b6b8db09ce76b4e732f1",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
