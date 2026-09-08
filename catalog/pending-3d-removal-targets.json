@@ -43,5 +43,28 @@
   "preserve": [
     "resource_packs/character-support/illustrated-adult-adventurers",
     "Olympus flat SVG symbols, card atlas and owl illustration sources"
+  ],
+  "files": [
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/bind.log",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/body-alternative.md",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/capture_figures.gd",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/capture_miniatures.gd",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/diorama-release-notes.md",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/equipment.log",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/figure-animation.txt",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/grip.log",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/hoplite-connectivity.json",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/manifest.json",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/ninth-export.log",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/ninth-release-notes.md",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/olympus-export.log",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/olympus-release-notes.md",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/paint-import.log",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/ready-review.log",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/reuse-inventory.md",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/review-fixture.gd",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/review-test.glb",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/sanctuary-release-notes.md",
+    "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/surfaces-export.log"
   ]
 }

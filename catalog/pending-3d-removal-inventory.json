@@ -1,7 +1,7 @@
 {
   "status": "pending_not_deleted",
-  "fileCount": 1963,
-  "bytes": 1575621260,
+  "fileCount": 1984,
+  "bytes": 1576085956,
   "files": [
     {
       "path": "assets/approved_cc0/Kenney/kenney-castle-kit/intake-report.json",
@@ -9817,6 +9817,111 @@
       "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/art-source/olympus/equipment-v002/hoplite.glb",
       "bytes": 2037556,
       "sha256": "f2122aa3aab557ba39691836d03ae2b588b32178114fecea7d3e482232d1dfe8"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/bind.log",
+      "bytes": 1631,
+      "sha256": "421371ea52b169e63b2f209e41448be34b9d86d099e8bc9e27138b3da652231b"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/body-alternative.md",
+      "bytes": 2369,
+      "sha256": "96fd839b7469334f5931c77092ac806afb0a417202c9df26b749f840d6ff0504"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/capture_figures.gd",
+      "bytes": 841,
+      "sha256": "a351f132e7212f5df75e4640336c296d1a3243bbddcafd01ba825bded7616742"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/capture_miniatures.gd",
+      "bytes": 926,
+      "sha256": "e08e6ec6493dc6f74ae261fbc5ab36913fcc6d28bb29ee554377e4404bb6aa71"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/diorama-release-notes.md",
+      "bytes": 1649,
+      "sha256": "a8abd58fcd8e8c50850cad607c2fb852a571db893ebb4e07a7bad98a5329655f"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/equipment.log",
+      "bytes": 1627,
+      "sha256": "b62d85ac93993f6f4653a54553ab661b7e168b7ecb576723cc757055bfd4c095"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/figure-animation.txt",
+      "bytes": 1098,
+      "sha256": "2332900ead454a3b15bfdf857dd0ddec923ba52af73640769acbb84c75502eac"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/grip.log",
+      "bytes": 1609,
+      "sha256": "94bdab062bee7e011e36ea0aec59b3013c09b8b1297cd814fe0d81a11abdfc80"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/hoplite-connectivity.json",
+      "bytes": 5391,
+      "sha256": "d8adce00bfa58f56d9f9a84d8cf498e46f379c83a37402481731eb8bade81037"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/manifest.json",
+      "bytes": 401343,
+      "sha256": "47672771695798ce82698adbea6eb939555c95ba0eab1b4d75817f4e4d16c74a"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/ninth-export.log",
+      "bytes": 4942,
+      "sha256": "2c712b5e67016bad55508cb0a55f55dbe4746a0db5719d7d7a1a16e65f3db442"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/ninth-release-notes.md",
+      "bytes": 2058,
+      "sha256": "cedc6033290300e9332267935ff0706671fa199a24fa5fd23dcf9d1c690efbdb"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/olympus-export.log",
+      "bytes": 8123,
+      "sha256": "93edfe9adb5df2dd9b2bb742c78e01bd26165d923f8445c483fd0a5b2ff58f7a"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/olympus-release-notes.md",
+      "bytes": 1980,
+      "sha256": "4126793dec29e089f1a44a1c4413000f548fa2467fc965e9713dc4fc09c9a58e"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/paint-import.log",
+      "bytes": 73,
+      "sha256": "4baf4c984becce5dc78acadc5991bc9c3b4bd96a2d38767ac14365b6aa36486c"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/ready-review.log",
+      "bytes": 1589,
+      "sha256": "84540dbc0434853f7089a1e48b479d61d0c91327ac8b9c35bb92f32e02babb8f"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/reuse-inventory.md",
+      "bytes": 8745,
+      "sha256": "237654df45dece8efbe9a9aa1e9429693352b11f280a70cf56ea48a43ed5e758"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/review-fixture.gd",
+      "bytes": 595,
+      "sha256": "7c939fd7c1d9c374573dd2e7fbfe6f72573e2f154e637aaf7f918d8a27a89c59"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/review-test.glb",
+      "bytes": 2952,
+      "sha256": "9e2491c89a908ef3e3dd22d7008b7b288306a92db91d78a3bf6073a49023aa64"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/sanctuary-release-notes.md",
+      "bytes": 1960,
+      "sha256": "54db1b2276dfcead9678513c5772a83a9dd6bcd2f2a5f8358233f7ac363d0b43"
+    },
+    {
+      "path": "assets/candidates_needing_review/olympus-legacy-2d-only-2026-09-08/work-residue/surfaces-export.log",
+      "bytes": 13195,
+      "sha256": "1049c3b2da59d967e42820268e5b0893f805b253c7d0353783b322caea940bca"
     }
   ]
 }
