@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "crossing-mudflat-ground-01",
+  "status": "candidate",
+  "runtimeAdmission": false,
+  "type": "opaque-ground-material",
+  "selectedSource": "source-02.png",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bounds": {
+    "status": "image-extent-only",
+    "rect": [
+      0,
+      0,
+      1536,
+      1024
+    ],
+    "navigationAuthority": false
+  },
+  "seamless": false,
+  "sourceRoomIds": [
+    "1-641",
+    "1-645"
+  ],
+  "sources": [
+    {
+      "path": "source-01.png",
+      "sha256": "60c0c02e74563e0ce5b7ce51f9004240239f984abf0e511c9ebc8d3c68c960a1",
+      "status": "rejected-dry-golden"
+    },
+    {
+      "path": "source-02.png",
+      "sha256": "cfa7dbd441f2e76f3429320b63bfe7520d6f411300d74e1a6e4bc7583b9b0843",
+      "status": "candidate-inspected"
+    }
+  ],
+  "review": {
+    "sourceVisualInspected": true,
+    "mountedGameplayReviewed": false,
+    "limitations": [
+      "No automatic 641–648 coverage",
+      "Not algae-covered grey mud for643",
+      "Not firm foreground for648",
+      "No props, paths or depth authority",
+      "Granular relief remains; evaluate at gameplay scale"
+    ],
+    "provenance": "GENERATION.md"
+  }
+}
