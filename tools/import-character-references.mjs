@@ -109,4 +109,3 @@ if (check) {
   await writeFile(packPath,serialized);
 }
 console.log((check ? 'Verified' : 'Imported') + ' ' + candidates.length + ' concepts, ' + inputAssets.size + ' style inputs, and ' + candidates.length + ' exact prompts; originals preserved.');
-
