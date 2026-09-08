@@ -1,0 +1,82 @@
+{
+  "status": "comparison-only-not-runtime-admitted",
+  "source_sha256": "9439551d5c9bd11eb5865748da07b79e8fdd4c83f5b83ec122b9e53222cc4ad7",
+  "method": "BOX area sample to96 alpha-bbox height,64RGBcolors,no dither,binary alpha128; NEAREST presentation",
+  "source_body_height": 592,
+  "frames": [
+    {
+      "direction": "se",
+      "bbox": [
+        215,
+        26,
+        499,
+        618
+      ],
+      "native_dimensions": [
+        98,
+        104
+      ],
+      "native_pivot": [
+        58,
+        100
+      ],
+      "scale_from_source": 0.16216216216216217
+    },
+    {
+      "direction": "sw",
+      "bbox": [
+        152,
+        26,
+        425,
+        626
+      ],
+      "native_dimensions": [
+        97,
+        102
+      ],
+      "native_pivot": [
+        46,
+        100
+      ],
+      "scale_from_source": 0.16
+    },
+    {
+      "direction": "ne",
+      "bbox": [
+        215,
+        10,
+        479,
+        596
+      ],
+      "native_dimensions": [
+        99,
+        107
+      ],
+      "native_pivot": [
+        57,
+        98
+      ],
+      "scale_from_source": 0.16382252559726962
+    },
+    {
+      "direction": "nw",
+      "bbox": [
+        159,
+        10,
+        438,
+        607
+      ],
+      "native_dimensions": [
+        98,
+        105
+      ],
+      "native_pivot": [
+        48,
+        98
+      ],
+      "scale_from_source": 0.16080402010050251
+    }
+  ],
+  "no_generation": true,
+  "credits": 0
+}

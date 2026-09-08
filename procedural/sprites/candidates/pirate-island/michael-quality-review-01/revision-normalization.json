@@ -1,0 +1,66 @@
+[
+  {
+    "direction": "se",
+    "raw_size": [
+      297,
+      605
+    ],
+    "normalized_body_height": 592,
+    "chosen_pivot_in_resized_cutout": [
+      146,
+      591
+    ],
+    "paste_in_existing_frame": [
+      210,
+      28
+    ]
+  },
+  {
+    "direction": "sw",
+    "raw_size": [
+      288,
+      608
+    ],
+    "normalized_body_height": 600,
+    "chosen_pivot_in_resized_cutout": [
+      142,
+      599
+    ],
+    "paste_in_existing_frame": [
+      146,
+      28
+    ]
+  },
+  {
+    "direction": "ne",
+    "raw_size": [
+      283,
+      592
+    ],
+    "normalized_body_height": 586,
+    "chosen_pivot_in_resized_cutout": [
+      140,
+      585
+    ],
+    "paste_in_existing_frame": [
+      207,
+      12
+    ]
+  },
+  {
+    "direction": "nw",
+    "raw_size": [
+      289,
+      595
+    ],
+    "normalized_body_height": 597,
+    "chosen_pivot_in_resized_cutout": [
+      145,
+      596
+    ],
+    "paste_in_existing_frame": [
+      153,
+      12
+    ]
+  }
+]

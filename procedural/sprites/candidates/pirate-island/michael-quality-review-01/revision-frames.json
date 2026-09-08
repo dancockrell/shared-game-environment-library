@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "sourceSha256": "bcb3c5c2ed31921cd8ffec3110b6d8e04acee969a2199a4fc1099f167b5b1b3b",
+  "status": "rejected-normalized-preparation-use-revision-native-frames",
+  "provenance": "shared-game-environment-library/procedural/sprites/candidates/pirate-island/michael-quality-review-01/REVISION_REVIEW.md",
+  "frames": [
+    {
+      "id": "michael.idle.se",
+      "action": "idle",
+      "direction": "se",
+      "rect": [
+        0,
+        0,
+        607,
+        640
+      ],
+      "footPivot": [
+        356,
+        619
+      ],
+      "durationSeconds": 1,
+      "loop": true
+    },
+    {
+      "id": "michael.idle.sw",
+      "action": "idle",
+      "direction": "sw",
+      "rect": [
+        607,
+        0,
+        607,
+        640
+      ],
+      "footPivot": [
+        288,
+        627
+      ],
+      "durationSeconds": 1,
+      "loop": true
+    },
+    {
+      "id": "michael.idle.ne",
+      "action": "idle",
+      "direction": "ne",
+      "rect": [
+        0,
+        640,
+        607,
+        655
+      ],
+      "footPivot": [
+        347,
+        597
+      ],
+      "durationSeconds": 1,
+      "loop": true
+    },
+    {
+      "id": "michael.idle.nw",
+      "action": "idle",
+      "direction": "nw",
+      "rect": [
+        607,
+        640,
+        607,
+        655
+      ],
+      "footPivot": [
+        298,
+        608
+      ],
+      "durationSeconds": 1,
+      "loop": true
+    }
+  ]
+}
