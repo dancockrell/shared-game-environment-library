@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1536,
+    1024
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1024
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1536
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        322,
+        81,
+        1219,
+        917
+      ],
+      "source_trim_rect": [
+        322,
+        81,
+        1219,
+        917
+      ],
+      "size": [
+        897,
+        836
+      ],
+      "rgba_sha256": "077cdb0e57a6a260cc22b2ebb6cd6082fae7168b963c76fd3670ceaf30f58615",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "804377de550667198f2b995d9c729d9991d4460738bc0596760fe31f2001675b"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\drowned-shrine-01\\source.png",
+  "source_sha256": "3636a015dccca0578ffc631f78ebc454d0c0b8f8e9a3d98b4114202f986d253b",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
