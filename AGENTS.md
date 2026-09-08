@@ -112,3 +112,10 @@ agent's claim merely because it looks stale.
 > Generated from `~/.claude/CLAUDE.md` by `dev/claude-config/stamp-rules.py`. Do not edit this block: edit the source and re-run. The full working agreements live in that file.
 
 <!-- END CANONICAL RULE: never-fork -->
+
+
+## Current art direction
+
+Owner direction, 8 September 2026: all projects use 2D artwork only. Do not acquire, generate, admit, restore or reuse 3D models, rigs, model builders, volumetric scenery or model-only material packs. The owner requested permanent deletion, including shared packs and archived copies.
+
+Only 2D sources may enter active catalogs. Pending rejected 3D payloads are not a fallback. Do not silently describe pending deletion as completed.

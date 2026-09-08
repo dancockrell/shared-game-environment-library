@@ -13,7 +13,7 @@
   "properties": {
     "assetId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$" },
     "admissionStatus": { "enum": ["source_verified_not_downloaded", "candidate", "approved", "quarantined", "rejected"] },
-    "assetKind": { "enum": ["model", "texture", "hdri", "material", "vfx_reference", "rig_component", "archive"] },
+    "assetKind": { "enum": ["sprite", "illustration", "scene", "tileset", "ui", "vfx_reference", "archive"] },
     "domain": { "enum": ["terrain", "flora", "geology", "water", "architecture", "neutral_prop", "weapon", "armour", "material", "rig_infrastructure", "vfx"] },
     "sourceUrl": { "type": "string", "format": "uri" },
     "sourcePublisher": { "type": "string", "minLength": 1 },

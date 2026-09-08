@@ -12,8 +12,19 @@
       "archiveFilename": "kenney_nature-kit.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["flora", "geology", "terrain", "bridges", "water_edge", "caves"],
-      "styleTags": ["stylized_3d", "low_poly", "paintable_base"],
+      "typeTags": [
+        "flora",
+        "geology",
+        "terrain",
+        "bridges",
+        "water_edge",
+        "caves"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
       "qualityRole": "foundational natural environment grammar"
     },
     {
@@ -25,8 +36,18 @@
       "archiveFilename": "kenney_furniture-kit.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["interiors", "furniture", "domestic", "workshop", "neutral_props"],
-      "styleTags": ["stylized_3d", "low_poly", "paintable_base"],
+      "typeTags": [
+        "interiors",
+        "furniture",
+        "domestic",
+        "workshop",
+        "neutral_props"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
       "qualityRole": "generic interior vocabulary"
     },
     {
@@ -38,8 +59,18 @@
       "archiveFilename": "kenney_space-kit.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["science_fiction", "spacecraft", "planets", "space_props", "vehicles"],
-      "styleTags": ["stylized_3d", "low_poly", "paintable_base"],
+      "typeTags": [
+        "science_fiction",
+        "spacecraft",
+        "planets",
+        "space_props",
+        "vehicles"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
       "qualityRole": "broad science-fiction scene language"
     },
     {
@@ -51,8 +82,19 @@
       "archiveFilename": "kenney_modular-space-kit_1.0.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["science_fiction", "modular_architecture", "interiors", "stations", "doors", "walls"],
-      "styleTags": ["stylized_3d", "modular", "paintable_base"],
+      "typeTags": [
+        "science_fiction",
+        "modular_architecture",
+        "interiors",
+        "stations",
+        "doors",
+        "walls"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "modular",
+        "paintable_base"
+      ],
       "qualityRole": "science-fiction interior grammar"
     },
     {
@@ -64,8 +106,19 @@
       "archiveFilename": "kenney_racing-kit.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["modern", "vehicles", "roads", "tracks", "barriers", "signage"],
-      "styleTags": ["stylized_3d", "low_poly", "paintable_base"],
+      "typeTags": [
+        "modern",
+        "vehicles",
+        "roads",
+        "tracks",
+        "barriers",
+        "signage"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
       "qualityRole": "vehicle and route-building vocabulary"
     },
     {
@@ -77,8 +130,19 @@
       "archiveFilename": "kenney_city-kit-roads.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["modern", "roads", "sidewalks", "traffic", "street_furniture", "signage"],
-      "styleTags": ["stylized_3d", "modular", "paintable_base"],
+      "typeTags": [
+        "modern",
+        "roads",
+        "sidewalks",
+        "traffic",
+        "street_furniture",
+        "signage"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "modular",
+        "paintable_base"
+      ],
       "qualityRole": "modern circulation and street grammar"
     },
     {
@@ -90,8 +154,19 @@
       "archiveFilename": "kenney_city-kit-industrial_2.0.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["modern", "industrial", "warehouses", "factories", "infrastructure", "energy"],
-      "styleTags": ["stylized_3d", "modular", "paintable_base"],
+      "typeTags": [
+        "modern",
+        "industrial",
+        "warehouses",
+        "factories",
+        "infrastructure",
+        "energy"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "modular",
+        "paintable_base"
+      ],
       "qualityRole": "industrial and utility scene language"
     },
     {
@@ -103,8 +178,18 @@
       "archiveFilename": "kenney_city-kit-commercial_2.1.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["modern", "commercial", "city", "buildings", "streetscape"],
-      "styleTags": ["stylized_3d", "modular", "paintable_base"],
+      "typeTags": [
+        "modern",
+        "commercial",
+        "city",
+        "buildings",
+        "streetscape"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "modular",
+        "paintable_base"
+      ],
       "qualityRole": "commercial city massing"
     },
     {
@@ -116,8 +201,18 @@
       "archiveFilename": "kenney_city-kit-suburban_20.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["modern", "suburban", "houses", "yards", "streetscape"],
-      "styleTags": ["stylized_3d", "low_poly", "paintable_base"],
+      "typeTags": [
+        "modern",
+        "suburban",
+        "houses",
+        "yards",
+        "streetscape"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
       "qualityRole": "residential settlement vocabulary"
     },
     {
@@ -129,8 +224,19 @@
       "archiveFilename": "kenney_pirate-kit.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["water", "ships", "docks", "coastal", "nautical_props", "tropical"],
-      "styleTags": ["stylized_3d", "low_poly", "paintable_base"],
+      "typeTags": [
+        "water",
+        "ships",
+        "docks",
+        "coastal",
+        "nautical_props",
+        "tropical"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
       "qualityRole": "nautical and coastal vocabulary"
     },
     {
@@ -142,8 +248,18 @@
       "archiveFilename": "kenney_watercraft-pack.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["water", "vehicles", "boats", "ships", "harbors"],
-      "styleTags": ["stylized_3d", "low_poly", "paintable_base"],
+      "typeTags": [
+        "water",
+        "vehicles",
+        "boats",
+        "ships",
+        "harbors"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "low_poly",
+        "paintable_base"
+      ],
       "qualityRole": "water vehicle vocabulary"
     },
     {
@@ -155,9 +271,21 @@
       "archiveFilename": "kenney_castle-kit.zip",
       "licenseSpdx": "CC0-1.0",
       "licenseEvidencePath": "License.txt",
-      "typeTags": ["fantasy", "fortification", "castle", "walls", "towers", "stone_architecture"],
-      "styleTags": ["stylized_3d", "modular", "paintable_base"],
+      "typeTags": [
+        "fantasy",
+        "fortification",
+        "castle",
+        "walls",
+        "towers",
+        "stone_architecture"
+      ],
+      "styleTags": [
+        "stylized_3d",
+        "modular",
+        "paintable_base"
+      ],
       "qualityRole": "fortification and stone-building grammar"
     }
-  ]
+  ],
+  "currentArtPolicy": "2D only; historical 3D sources and packs are rejected and pending deletion, never eligible for acquisition or reuse."
 }

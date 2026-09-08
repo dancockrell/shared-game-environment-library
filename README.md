@@ -1,34 +1,9 @@
 # Shared Game Environment Library
 
-A public, provenance-first source library for reusable game environment, prop, material, and tabletop-miniature infrastructure.
+Owner direction, 8 September 2026: all projects use 2D artwork only. Do not acquire, generate, admit, restore or reuse 3D models, rigs, model builders, volumetric scenery or model-only material packs. The owner requested permanent deletion, including shared packs and archived copies.
 
-This repository contains:
+The supported production lane is shared 2D sprites, painted scenes, flat effects, illustrations and UI. Preserve coherent style, perspective, palette, frame order, transparency, pivots and provenance. The existing illustrated adult adventurer reference pack remains available for 2D reference use; project owners decide runtime admission.
 
-- technical contracts for scale, pivots, collision, materials, LODs, thumbnails, selection hooks, and animation states;
-- a strict CC0-only approved-source lane;
-- explicit quarantine lanes for candidates, generated references, and paid-source records;
-- machine-readable asset metadata and a documented intake procedure;
-- licensed upstream source archives and material-map seeds, each with checksums and provenance reports;
-- small, literal-use source-origin packs for roads, maritime props, fortifications, and modular sci-fi interiors;
-- derivative resource packs only when their source members and deterministic build output are recorded.
+**Removal status:** automatic approval review rejected the attempted shared 3D deletion without a specific reason. Those payloads still exist and are prohibited from use. The exact pending inventory is `catalog/pending-3d-removal-inventory.json`; it is an inventory, not a deletion receipt. No asset backup was made by this cleanup.
 
-It does not own project lore or character identities, and it does not admit paid-store source files or generated images as CC0 by assumption. At the owner's request, generated character artwork may be shared as explicitly labeled reference packs with source IDs, prompts, parent hashes and review state. Character names used as source identifiers do not transfer game lore or approval authority into this library.
-
-## Use the right layer
-
-`assets/approved_cc0/` preserves original vetted inputs. It is not a runtime folder.
-
-`resource_packs/` holds small packs selected by literal use. A pack can be source-origin or derivative, yet still be waiting for a consuming engine to review scale, pivots, materials, collision, LODs, and visual fit.
-
-The catalogs provide the blind-machine-readable view:
-
-- [library taxonomy](catalog/library-taxonomy.json) defines stable cross-project vocabulary;
-- [approved source ledger](catalog/approved-source-ledger.json) records archive-level CC0 sources;
-- [approved material ledger](catalog/approved-material-ledger.json) records PBR map source sets and expected color spaces;
-- [resource-pack ledger](catalog/resource-pack-ledger.json) indexes the literal-use packs and their individual output hashes.
-
-The [illustrated adult adventurer reference pack](resource_packs/character-support/illustrated-adult-adventurers/pack.json) contributes ten generated concepts and their shared style input. These PNGs can guide illustration and modeling; they are not 3D models, rigs, CC0 sources or engine-approved assets. Exact prompts are beside the pack. Search existing library packs before making new assets, then contribute reusable results with their complete ancestry.
-
-See [the intake procedure](docs/ASSET_INTAKE.md), [the license policy](docs/ASSET_LICENSE_POLICY.md), [the tabletop asset contract](contracts/TABLETOP_ASSET_CONTRACT.md), and [the starter source catalog](catalog/source-catalog.json).
-
-Read the [cross-project production strategy](docs/CROSS_PROJECT_ASSET_STRATEGY.md) before generating or purchasing assets. It records the zero-budget Olympus policy, verified Magnific browser route, body/rig reuse requirements, and existing model-source package so agents do not duplicate paid work.
+See [production strategy](docs/CROSS_PROJECT_ASSET_STRATEGY.md), [intake](docs/ASSET_INTAKE.md), [license policy](docs/ASSET_LICENSE_POLICY.md), and [2D asset contract](contracts/TABLETOP_ASSET_CONTRACT.md).

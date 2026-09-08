@@ -79,7 +79,7 @@ const pack = {
   packId: 'character-support.illustrated-adult-adventurers.v1',
   displayName: 'Illustrated Adult Adventurer References',
   packType: 'character-support', authoringStatus: 'reference_only', engineEligibility: 'reference_only',
-  style: { renderLanguage: ['illustrated_color', 'detailed_character_concept'], physicalSubject: ['adult_human_adventurer', 'adult_fox_woman', 'period_equipment'], sceneRoles: ['character_visual_reference', 'costume_reference', 'modeling_reference'] },
+  style: { renderLanguage: ['illustrated_color', 'detailed_character_concept'], physicalSubject: ['adult_human_adventurer', 'adult_fox_woman', 'period_equipment'], sceneRoles: ['character_visual_reference', 'costume_reference', 'illustration_reference'] },
   sourceLineage: { kind: 'generated_reference_export', sourceProject: manifest.project, sourceManifest: basename(manifestPath), sourceManifestSha256: hash(raw), sourceThreadId: manifest.source_thread_id, upstreamLicenseSpdx: 'NOASSERTION', sourceMembers: outputs.map(x=>x.generation.creationId), updatePolicy: 'Regenerate from project manifest. Project remains owner of identity and approval; shared pack is a derived reference export.' },
   reusePolicy: { purpose: 'Shared inspiration and modeling references; no inferred training permission or ready-made rig/mesh.', combinations: 'New combinations and alterations must keep every exact input asset ID/hash and its relationship, operation, prompt and changed properties. Preserve originals.', publication: 'Owner directs testing, integration and push to the existing repository; verify remote Git and LFS availability. No separate publication approval gate. Reference status remains independent of game approval.', rights: 'Generated outputs are not CC0 merely because library metadata is CC0; terms evidence remains unverified.' },
   outputs,
@@ -109,3 +109,4 @@ if (check) {
   await writeFile(packPath,serialized);
 }
 console.log((check ? 'Verified' : 'Imported') + ' ' + candidates.length + ' concepts, ' + inputAssets.size + ' style inputs, and ' + candidates.length + ' exact prompts; originals preserved.');
+

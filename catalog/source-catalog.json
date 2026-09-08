@@ -11,9 +11,23 @@
       "publisher": "Kenney",
       "licenseClaim": "CC0-1.0",
       "licenseEvidenceUrl": "https://kenney.nl/assets/nature-kit",
-      "domains": ["flora", "geology", "terrain"],
-      "tags": ["trees", "rocks", "foliage"],
-      "reviewRequired": ["download exact archive", "capture archive checksum", "capture license evidence", "review model scale and pivots", "review semantics"]
+      "domains": [
+        "flora",
+        "geology",
+        "terrain"
+      ],
+      "tags": [
+        "trees",
+        "rocks",
+        "foliage"
+      ],
+      "reviewRequired": [
+        "download exact archive",
+        "capture archive checksum",
+        "capture license evidence",
+        "review model scale and pivots",
+        "review semantics"
+      ]
     },
     {
       "sourceId": "kenney-pirate-kit",
@@ -22,9 +36,24 @@
       "publisher": "Kenney",
       "licenseClaim": "CC0-1.0",
       "licenseEvidenceUrl": "https://kenney.nl/assets/pirate-kit",
-      "domains": ["neutral_prop", "water", "architecture"],
-      "tags": ["boats", "ships", "island", "tropical"],
-      "reviewRequired": ["download exact archive", "capture archive checksum", "capture license evidence", "review literal semantics", "review Godot import fit"]
+      "domains": [
+        "neutral_prop",
+        "water",
+        "architecture"
+      ],
+      "tags": [
+        "boats",
+        "ships",
+        "island",
+        "tropical"
+      ],
+      "reviewRequired": [
+        "download exact archive",
+        "capture archive checksum",
+        "capture license evidence",
+        "review literal semantics",
+        "review Godot import fit"
+      ]
     },
     {
       "sourceId": "quaternius-ultimate-nature",
@@ -33,9 +62,23 @@
       "publisher": "Quaternius",
       "licenseClaim": "CC0-1.0",
       "licenseEvidenceUrl": "https://quaternius.com/packs/ultimatenature.html",
-      "domains": ["flora", "geology", "terrain"],
-      "tags": ["biomes", "rocks", "plants"],
-      "reviewRequired": ["download exact archive", "capture archive checksum", "capture license evidence", "inspect supported file formats", "review palette-normalization fit"]
+      "domains": [
+        "flora",
+        "geology",
+        "terrain"
+      ],
+      "tags": [
+        "biomes",
+        "rocks",
+        "plants"
+      ],
+      "reviewRequired": [
+        "download exact archive",
+        "capture archive checksum",
+        "capture license evidence",
+        "inspect supported file formats",
+        "review palette-normalization fit"
+      ]
     },
     {
       "sourceId": "quaternius-modular-weapons",
@@ -44,9 +87,23 @@
       "publisher": "Quaternius",
       "licenseClaim": "CC0-1.0",
       "licenseEvidenceUrl": "https://quaternius.com/packs/medievalweapons.html",
-      "domains": ["weapon", "neutral_prop"],
-      "tags": ["sword", "bow", "shield", "tool"],
-      "reviewRequired": ["download exact archive", "capture archive checksum", "capture license evidence", "review hand socket and scale", "review collision and silhouette"]
+      "domains": [
+        "weapon",
+        "neutral_prop"
+      ],
+      "tags": [
+        "sword",
+        "bow",
+        "shield",
+        "tool"
+      ],
+      "reviewRequired": [
+        "download exact archive",
+        "capture archive checksum",
+        "capture license evidence",
+        "review hand socket and scale",
+        "review collision and silhouette"
+      ]
     },
     {
       "sourceId": "poly-haven",
@@ -55,9 +112,26 @@
       "publisher": "Poly Haven",
       "licenseClaim": "CC0-1.0",
       "licenseEvidenceUrl": "https://polyhaven.com/license",
-      "domains": ["material", "texture", "hdri"],
-      "tags": ["pbr", "stone", "ground", "water", "lighting"],
-      "reviewRequired": ["select individual source", "capture exact asset URL", "capture file checksum", "review material semantics", "review texture budget"]
+      "domains": [
+        "material",
+        "texture",
+        "hdri"
+      ],
+      "tags": [
+        "pbr",
+        "stone",
+        "ground",
+        "water",
+        "lighting"
+      ],
+      "reviewRequired": [
+        "select individual source",
+        "capture exact asset URL",
+        "capture file checksum",
+        "review material semantics",
+        "review texture budget"
+      ]
     }
-  ]
+  ],
+  "currentArtPolicy": "2D only; historical 3D sources and packs are rejected and pending deletion, never eligible for acquisition or reuse."
 }

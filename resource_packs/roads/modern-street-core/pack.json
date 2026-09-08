@@ -131,5 +131,7 @@
     "suburban",
     "modern",
     "cc0_source"
-  ]
+  ],
+  "policyStatus": "rejected_3d_pending_deletion",
+  "policyNote": "Owner direction, 8 September 2026: all projects use 2D artwork only. Do not acquire, generate, admit, restore or reuse 3D models, rigs, model builders, volumetric scenery or model-only material packs. The owner requested permanent deletion, including shared packs and archived copies."
 }

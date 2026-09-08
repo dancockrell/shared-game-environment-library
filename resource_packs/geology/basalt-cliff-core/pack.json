@@ -5,11 +5,34 @@
   "authoringStatus": "derivative",
   "engineEligibility": "source_ready_not_engine_reviewed",
   "style": {
-    "renderLanguage": ["stylized_3d", "low_poly", "paintable_base"],
-    "physicalSubject": ["basalt", "cliff", "cave_approach", "rock_formation"],
-    "sceneRoles": ["foreground_anchor", "path_boundary", "cave_mouth_dressing", "coastal_escarpment"],
-    "paletteIntent": ["charcoal", "warm_black", "desaturated_brown", "optional_moss_overlay"],
-    "forbiddenClaims": ["named_location", "culture_specific_architecture", "project_specific_landmark"]
+    "renderLanguage": [
+      "stylized_3d",
+      "low_poly",
+      "paintable_base"
+    ],
+    "physicalSubject": [
+      "basalt",
+      "cliff",
+      "cave_approach",
+      "rock_formation"
+    ],
+    "sceneRoles": [
+      "foreground_anchor",
+      "path_boundary",
+      "cave_mouth_dressing",
+      "coastal_escarpment"
+    ],
+    "paletteIntent": [
+      "charcoal",
+      "warm_black",
+      "desaturated_brown",
+      "optional_moss_overlay"
+    ],
+    "forbiddenClaims": [
+      "named_location",
+      "culture_specific_architecture",
+      "project_specific_landmark"
+    ]
   },
   "sourceLineage": {
     "kind": "CC0_derived",
@@ -31,7 +54,9 @@
       "originPolicy": "floor_centered_derivative_local_origin",
       "forwardAxis": "-Z",
       "scaleMeters": 1,
-      "materialSlots": ["stone"],
+      "materialSlots": [
+        "stone"
+      ],
       "collisionPolicy": "pending_authored_static_collision",
       "lodPolicy": "pending",
       "thumbnailPolicy": "pending_fixed_three_quarter_view",
@@ -48,6 +73,18 @@
     "createdAt": "2026-09-03"
   },
   "searchTags": [
-    "geology", "basalt", "cliff", "rock", "cave", "coast", "volcanic", "stylized", "low_poly", "cc0_derived", "neutral_environment"
-  ]
+    "geology",
+    "basalt",
+    "cliff",
+    "rock",
+    "cave",
+    "coast",
+    "volcanic",
+    "stylized",
+    "low_poly",
+    "cc0_derived",
+    "neutral_environment"
+  ],
+  "policyStatus": "rejected_3d_pending_deletion",
+  "policyNote": "Owner direction, 8 September 2026: all projects use 2D artwork only. Do not acquire, generate, admit, restore or reuse 3D models, rigs, model builders, volumetric scenery or model-only material packs. The owner requested permanent deletion, including shared packs and archived copies."
 }

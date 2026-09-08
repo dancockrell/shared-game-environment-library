@@ -24,23 +24,60 @@
   "domains": [
     {
       "id": "environment-natural",
-      "groups": ["geology", "terrain", "flora", "water", "weather", "biomes"]
+      "groups": [
+        "geology",
+        "terrain",
+        "flora",
+        "water",
+        "weather",
+        "biomes"
+      ]
     },
     {
       "id": "environment-built",
-      "groups": ["fantasy", "historic", "maritime", "modern", "industrial", "urban", "suburban", "sci-fi", "interior"]
+      "groups": [
+        "fantasy",
+        "historic",
+        "maritime",
+        "modern",
+        "industrial",
+        "urban",
+        "suburban",
+        "sci-fi",
+        "interior"
+      ]
     },
     {
       "id": "objects-and-gear",
-      "groups": ["furniture", "props", "weapons", "armor", "tools", "vehicles", "watercraft"]
+      "groups": [
+        "furniture",
+        "props",
+        "weapons",
+        "armor",
+        "tools",
+        "vehicles",
+        "watercraft"
+      ]
     },
     {
       "id": "rendering-foundation",
-      "groups": ["materials", "decals", "lighting", "sky", "vfx", "audio"]
+      "groups": [
+        "materials",
+        "decals",
+        "lighting",
+        "sky",
+        "vfx",
+        "audio"
+      ]
     },
     {
       "id": "character-support",
-      "groups": ["rigs", "animation-tests", "silhouette-references", "clothing-modules"]
+      "groups": [
+        "rigs",
+        "animation-tests",
+        "silhouette-references",
+        "clothing-modules"
+      ]
     }
   ],
   "requiredResourcePackTags": [
@@ -59,5 +96,6 @@
     "literalUse=street-road AND styleTags contains modern",
     "physicalType=watercraft AND originKind=upstream_cc0",
     "domain=rendering-foundation AND technicalReviewState=passed"
-  ]
+  ],
+  "currentArtPolicy": "2D only; historical 3D sources and packs are rejected and pending deletion, never eligible for acquisition or reuse."
 }

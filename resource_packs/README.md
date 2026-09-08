@@ -1,3 +1,9 @@
+# Current policy: 2D only
+
+Owner direction, 8 September 2026: all projects use 2D artwork only. Do not acquire, generate, admit, restore or reuse 3D models, rigs, model builders, volumetric scenery or model-only material packs. The owner requested permanent deletion, including shared packs and archived copies.
+
+Any model pack described below is rejected and pending deletion. Historical details do not authorize reuse.
+
 # Resource packs
 
 Resource packs are the working unit of this library. They are organized by **physical type** and **authoring lineage**, never by a consuming game.

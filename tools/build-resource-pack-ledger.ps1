@@ -11,6 +11,12 @@ $entries = [System.Collections.Generic.List[object]]::new()
 
 foreach ($packFile in $packFiles) {
     $pack = Get-Content -Raw -LiteralPath $packFile.FullName | ConvertFrom-Json
+    if ($pack.policyStatus -eq 'rejected_3d_pending_deletion') { continue }
+    foreach ($output in $pack.outputs) {
+        if ($output.format -notin @('PNG', 'JPG', 'JPEG', 'WEBP', 'SVG', 'GIF')) {
+            throw "Only 2D artwork may enter the active ledger: $($pack.packId)"
+        }
+    }
     $outputEntries = [System.Collections.Generic.List[object]]::new()
     foreach ($output in $pack.outputs) {
         $assetPath = Join-Path $packFile.Directory.FullName $output.path
@@ -40,7 +46,7 @@ foreach ($packFile in $packFiles) {
 
 [ordered]@{
     ledgerVersion = 1
-    policy = 'Search this ledger by literal pack type, scene role, source lineage, or tags before selecting a physical asset. Individual outputs remain non-runtime until their engine eligibility changes.'
+    policy = '2D artwork only. Rejected model packs remain on disk pending deletion and are excluded from this active ledger. Reference availability does not imply runtime approval.'
     resourcePackCount = $entries.Count
     assetCount = @($entries.outputs).Count
     entries = @($entries)

@@ -816,5 +816,6 @@
         "visual": "archive_only_individual_asset_review_pending"
       }
     }
-  ]
+  ],
+  "currentArtPolicy": "2D only; historical 3D sources and packs are rejected and pending deletion, never eligible for acquisition or reuse."
 }
