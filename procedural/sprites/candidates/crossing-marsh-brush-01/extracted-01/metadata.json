@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1484,
+    1060
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1060
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1484
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1484,
+        1060
+      ],
+      "trim_rect_in_cell": [
+        81,
+        146,
+        1406,
+        898
+      ],
+      "source_trim_rect": [
+        81,
+        146,
+        1406,
+        898
+      ],
+      "size": [
+        1325,
+        752
+      ],
+      "rgba_sha256": "c29f4fd38abe91ec093cd88e1bcc2756ec4f78271318f02c40c562d12df7a82c",
+      "components_before_filter": 9,
+      "components_kept": 9,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "6dfac0986caac1c387464705e75f45b9c9080c0efc6d0709676d121cb28eaa9a"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\crossing-marsh-brush-01\\source-01-magenta.png",
+  "source_sha256": "9082ffd4c2eb7256216d0a21efc5e9e3f94690199080af4db33060d8fa657e93",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
