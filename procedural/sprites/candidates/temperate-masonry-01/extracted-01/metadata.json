@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1536,
+    1024
+  ],
+  "columns": 3,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    500,
+    1024
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      502,
+      1011,
+      1536
+    ],
+    [
+      0,
+      462,
+      948,
+      1536
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        502,
+        500
+      ],
+      "trim_rect_in_cell": [
+        69,
+        152,
+        452,
+        448
+      ],
+      "source_trim_rect": [
+        69,
+        152,
+        452,
+        448
+      ],
+      "size": [
+        383,
+        296
+      ],
+      "rgba_sha256": "3b07aa744cb73b2f6b2e30113bed059f722e21dfe53755da7fd0bcd56f3a807e",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "764f1fde811d424887a7101ffd89cb360521f20e8cd9793c9486504538829cfb"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        502,
+        0,
+        1011,
+        500
+      ],
+      "trim_rect_in_cell": [
+        50,
+        125,
+        467,
+        444
+      ],
+      "source_trim_rect": [
+        552,
+        125,
+        969,
+        444
+      ],
+      "size": [
+        417,
+        319
+      ],
+      "rgba_sha256": "b020893ceaf86d4cbd36e612405e8b91f2a2fc434fb0efc281335f62805f0b04",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "462468fc54679aa9fa9ac3669f3518f19bcee7e9aaacfe3481a2d4c81da3e0da"
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "file": "cell_00_02.png",
+      "source_rect": [
+        1011,
+        0,
+        1536,
+        500
+      ],
+      "trim_rect_in_cell": [
+        43,
+        79,
+        434,
+        470
+      ],
+      "source_trim_rect": [
+        1054,
+        79,
+        1445,
+        470
+      ],
+      "size": [
+        391,
+        391
+      ],
+      "rgba_sha256": "57a39922a5158e16c5f0db42293b9d4e770c5fdd75b9138ad3b214c9efe48dde",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "46875ef5befcd76fc218116545d4d9208877b59b575e0432a55628b17938ca25"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        500,
+        462,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        129,
+        32,
+        376,
+        388
+      ],
+      "source_trim_rect": [
+        129,
+        532,
+        376,
+        888
+      ],
+      "size": [
+        247,
+        356
+      ],
+      "rgba_sha256": "1f233c88758f76a1200851a4c2769c5937161c3899c579315ca207029ccf5060",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "3fb5370b64850591fdc146289f950edeacc4be229e485873e6d1275a1ba3525b"
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        462,
+        500,
+        948,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        88,
+        99,
+        411,
+        383
+      ],
+      "source_trim_rect": [
+        550,
+        599,
+        873,
+        883
+      ],
+      "size": [
+        323,
+        284
+      ],
+      "rgba_sha256": "e8ef27323043f1a6921a4a2151dc2d6df343a8211f40296c6e1af8d76af6297d",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "0ec9fd8d0ff8f420d7c05be4603b9548a8f2c2f67aa2a99df6001eacd76e2245"
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "file": "cell_01_02.png",
+      "source_rect": [
+        948,
+        500,
+        1536,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        76,
+        111,
+        465,
+        401
+      ],
+      "source_trim_rect": [
+        1024,
+        611,
+        1413,
+        901
+      ],
+      "size": [
+        389,
+        290
+      ],
+      "rgba_sha256": "f25f7dc8fe6132794407ec74259ecb3a427896b3a62874d0ee85f60bdb3ed35c",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "6df3c95b140d3575c9478a495de858890cf7e8ef05a8e7bc272d5a74daec8fb7"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\temperate-masonry-01\\source-02-magenta.png",
+  "source_sha256": "03b562aea7bbe18b4ea47deb453b1375536a8de23d46a826e7a1bc594b8fe5d9",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}

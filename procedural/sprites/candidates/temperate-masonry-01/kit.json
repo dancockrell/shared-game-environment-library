@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "temperate-masonry-01",
+  "status": "extracted-candidate",
+  "source": "source-02-magenta.png",
+  "sourceSha256": "03b562aea7bbe18b4ea47deb453b1375536a8de23d46a826e7a1bc594b8fe5d9",
+  "extraction": "extracted-01/metadata.json",
+  "camera": "fixed-high-three-quarter",
+  "lighting": "upper-left-daylight",
+  "coordinateConvention": "anchor and bounds in trimmed-image pixels; bounds right/bottom exclusive; anchors visually estimated, not collision footprints",
+  "runtimeAdmission": false,
+  "components": [
+    {"id":"stone-wall-straight","cell":0,"bounds":[0,0,383,296],"anchor":[192,249],"semanticTags":["stone-wall"],"layer":"boundary","tileable":false},
+    {"id":"stone-wall-corner","cell":1,"bounds":[0,0,417,319],"anchor":[218,300],"semanticTags":["stone-wall","corner"],"layer":"boundary","tileable":false},
+    {"id":"timber-stone-doorway","cell":2,"bounds":[0,0,391,391],"anchor":[228,342],"semanticTags":["closed-door","timber-framing","stone-infill"],"layer":"boundary","requiresExplicitReview":true},
+    {"id":"stone-arch-doorway","cell":3,"bounds":[0,0,247,356],"anchor":[124,320],"semanticTags":["closed-door","stone-arch"],"layer":"boundary","requiresExplicitReview":true},
+    {"id":"stone-stairs-four","cell":4,"bounds":[0,0,323,284],"anchor":[148,253],"semanticTags":["stone-stairs"],"layer":"prop","requiresExplicitReview":true},
+    {"id":"low-stone-parapet","cell":5,"bounds":[0,0,389,290],"anchor":[194,250],"semanticTags":["low-stone-wall","parapet"],"layer":"boundary","tileable":false}
+  ],
+  "restrictions": ["No runtime admission", "No automatic mirroring", "No seamless join guarantee", "Anchors are not collision footprints", "Door art cannot create or modify authoritative exits or lock states", "Stair art cannot imply elevation without room evidence", "Timber doorway includes stone infill and is not a full building", "Scale and occlusion require consumer review"]
+}
