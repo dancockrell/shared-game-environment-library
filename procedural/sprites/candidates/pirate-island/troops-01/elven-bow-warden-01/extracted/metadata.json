@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1024,
+    1536
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1536
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1024
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "trim_rect_in_cell": [
+        228,
+        95,
+        920,
+        1420
+      ],
+      "source_trim_rect": [
+        228,
+        95,
+        920,
+        1420
+      ],
+      "size": [
+        692,
+        1325
+      ],
+      "rgba_sha256": "727c9e599bb5d841036bb2be52c631b4c78e0d01d42b74a949c95778fbb610a5",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "ac30f289503ee0b1753a7b3c5b6f63f4383d1d7b3f7726385de6f9951c7fe78d"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\troops-01\\elven-bow-warden-01\\keyed.png",
+  "source_sha256": "004d61eae46e13027048e7d8e6c15cddb1de8389204f816d3da0d06a7536cf6b",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}

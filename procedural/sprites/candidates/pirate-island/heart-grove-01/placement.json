@@ -1,0 +1,47 @@
+{
+  "entrance": [
+    15,
+    24
+  ],
+  "pivot": [
+    350,
+    1100
+  ],
+  "width": 140,
+  "scale": 0.1440329218106996,
+  "source_size": [
+    972,
+    1211
+  ],
+  "source_sha256": "7283ea1a91b11e65be6dc2a50c22ebe0367fd1bed7cede8ecc259295719b9936",
+  "terrain_sha256": "5b5af8b60df58e402ec69f9d6788ee788c60238ebc68fd38d60654e7583cf976",
+  "navigation_sha256": "30455b324665bacc3988c0ff6214d4cb5589bda72bcec00cf7710efa390bb6de",
+  "blocked_offsets": [
+    [
+      0,
+      -1
+    ],
+    [
+      1,
+      -1
+    ],
+    [
+      2,
+      -1
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      2,
+      0
+    ]
+  ],
+  "footprint_on_existing_land": true,
+  "no_existing_overlap": true,
+  "entrance_walkable": true,
+  "path_steps_from_start": 13,
+  "runtime_admission": false,
+  "method": "Offline point-in-polygon/grown-rect mask plus cardinal BFS; mirrors inspected scene contract, not executed Godot navigation"
+}
