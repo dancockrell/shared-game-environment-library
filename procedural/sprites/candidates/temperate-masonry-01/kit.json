@@ -9,6 +9,45 @@
   "lighting": "upper-left-daylight",
   "coordinateConvention": "anchor and bounds in trimmed-image pixels; bounds right/bottom exclusive; anchors visually estimated, not collision footprints",
   "runtimeAdmission": false,
+  "geometry": {
+    "status": "visually-estimated-not-collision-authority",
+    "coordinateSpace": "trimmed-image pixels; same coordinates as component bounds",
+    "joinPolicy": "Ground-point abutment is not a seamless join. Compare full edge direction/length before joining. No rotation or mirroring. A tall doorway jamb may intentionally rise above a low wall, but cannot be accepted as a matching full-height seam.",
+    "stone-wall-straight": {
+      "footprint": [[9,184],[53,167],[380,249],[337,294]],
+      "connectors": {
+        "left-end": {"edge":[[9,184],[9,49]],"ground":[9,184],"role":"wall-end","fullHeightJoin":true},
+        "right-end": {"edge":[[337,294],[337,150]],"ground":[337,294],"role":"wall-end","fullHeightJoin":true}
+      },
+      "groundTangent": [328,110]
+    },
+    "stone-wall-corner": {
+      "footprint": [[5,211],[60,190],[229,284],[411,209],[411,258],[229,318],[66,217],[31,230]],
+      "connectors": {
+        "left-arm-end": {"edge":[[5,211],[5,70]],"ground":[5,211],"role":"wall-end","fullHeightJoin":false},
+        "right-arm-end": {"edge":[[411,258],[411,133]],"ground":[411,258],"role":"wall-end","fullHeightJoin":false}
+      },
+      "restrictions": ["Two arms have different projected tangents; connector matching alone cannot make either seamless", "Corner geometry needs authored seam overlays before admission"]
+    },
+    "timber-stone-doorway": {
+      "footprint": [[4,300],[157,390],[389,323],[239,244]],
+      "connectors": {
+        "front-left-jamb": {"edge":[[157,390],[157,183]],"ground":[157,390],"role":"door-jamb","fullHeightJoin":false},
+        "front-right-jamb": {"edge":[[389,323],[389,159]],"ground":[389,323],"role":"door-jamb","fullHeightJoin":false}
+      },
+      "groundTangent": [232,-67],
+      "restrictions": ["Frontage slopes opposite straight wall; reject inline continuation without another directional wall asset"]
+    },
+    "stone-arch-doorway": {
+      "footprint": [[4,309],[45,319],[92,300],[221,355],[246,338],[185,298],[63,276]],
+      "connectors": {
+        "left-jamb-base": {"edge":[[12,307],[12,246]],"ground":[12,307],"role":"low-wall-abutment","fullHeightJoin":false},
+        "right-jamb-base": {"edge":[[220,352],[220,291]],"ground":[220,352],"role":"low-wall-abutment","fullHeightJoin":false}
+      },
+      "groundTangent": [208,45],
+      "restrictions": ["Base abutment example only; jamb is taller than low wall", "Ground tangent differs from wall by roughly six degrees, so not a straight seamless continuation"]
+    }
+  },
   "components": [
     {"id":"stone-wall-straight","cell":0,"bounds":[0,0,383,296],"anchor":[192,249],"semanticTags":["stone-wall"],"layer":"boundary","tileable":false},
     {"id":"stone-wall-corner","cell":1,"bounds":[0,0,417,319],"anchor":[218,300],"semanticTags":["stone-wall","corner"],"layer":"boundary","tileable":false},
