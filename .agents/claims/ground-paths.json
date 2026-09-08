@@ -1,0 +1,1 @@
+{"schema_version":1,"task_id":"ground-paths","agent":"masonry_sprite_kit","summary":"Flat cobblestone and worn grass path overlay candidates","status":"active","paths":["procedural/sprites/candidates/ground-paths-01/"],"coordination":{"notes":"Ground-only source production, no DR edit, no server or runtime admission."},"completion":{"commit":null,"checks":[]}}
