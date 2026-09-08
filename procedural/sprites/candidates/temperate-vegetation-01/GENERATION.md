@@ -12,6 +12,12 @@ Source SHA256: `0b6745748800b40b5a7cfb9ab89d7c52bae22f5eff9d2a188885c07ee47a7f53
 
 ## Extraction checkpoint
 
+## Independent native-scale review
+
+Read-only reviewer checked trees at 180px width and shrubs/hedges at 130px width. Six hashes match extraction metadata. Minimum cell margin is 9px; no silhouette clipping. All cutouts have genuine binary alpha. Bramble retains six strongly magenta pixels, negligible at tested size but still a final-cleanup concern. Five other cutouts have none.
+
+Do not use a uniform width: slender tree would become 368px tall against oak 209px. Calibrate by target height per species. Hedge and bramble pivots lie on transparent ground and are valid only as estimated placement pivots, not collision footprints. No shadows or reviewed occlusion masks are supplied. Candidate approved only for a first composition experiment, not broad room population.
+
 Reused the Cattle Trail `sprite_grid.py` adaptive-gutter extractor with `--columns 3 --rows 2 --min-component-pixels 1 --key-difference 255`. Per-row adaptive cuts found six separate components with zero cut warnings; no fixed equal-cell slicing was used. No RGB color was keyed away. The extractor thresholds source alpha at 128 and keeps every detached component; original alpha remains in source-01.png. No scaling applied. Metadata records all bounds and hashes. `kit.json` supplies names, estimated ground anchors and semantic restrictions. These are not seamless tiles and are not admitted to the client yet.
 
 Six discrete subjects, coherent palette and detailed sprite shading. The requested regular grid was not followed: the oak spans beyond a one-third column and the top row is taller. Do not slice using equal grid cells. Use reviewed per-object bounds. Flowering shrub and berries imply season and must not be placed universally. Hedge corner is a visual component, not a graph exit or proof of traversability. Alpha channel, native-scale legibility, extraction and actual client composition remain to be verified. No rooms receive coverage credit from this source sheet.
