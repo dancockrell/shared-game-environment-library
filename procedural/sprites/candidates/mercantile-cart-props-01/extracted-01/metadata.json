@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1920,
+    819
+  ],
+  "columns": 3,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    819
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      716,
+      1264,
+      1920
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        716,
+        819
+      ],
+      "trim_rect_in_cell": [
+        85,
+        157,
+        662,
+        629
+      ],
+      "source_trim_rect": [
+        85,
+        157,
+        662,
+        629
+      ],
+      "size": [
+        577,
+        472
+      ],
+      "rgba_sha256": "0a03d1dc40b48d2e549d796759f1e1c79b07593b39380c2023899168530d4780",
+      "components_before_filter": 3,
+      "components_kept": 3,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "044502fdf210a8f835659992adaf951072e7f3100c2359918e96f80b6f5278a1"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        716,
+        0,
+        1264,
+        819
+      ],
+      "trim_rect_in_cell": [
+        55,
+        200,
+        486,
+        601
+      ],
+      "source_trim_rect": [
+        771,
+        200,
+        1202,
+        601
+      ],
+      "size": [
+        431,
+        401
+      ],
+      "rgba_sha256": "ab2dbb2c9e0e48da499dc1f61ef3218b903527291923e0f327c12fa9af0dce07",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "e2f96986e1985f17a357a5e211d4b5563d6477aa7209e7723afb25b7845b6798"
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "file": "cell_00_02.png",
+      "source_rect": [
+        1264,
+        0,
+        1920,
+        819
+      ],
+      "trim_rect_in_cell": [
+        62,
+        280,
+        567,
+        616
+      ],
+      "source_trim_rect": [
+        1326,
+        280,
+        1831,
+        616
+      ],
+      "size": [
+        505,
+        336
+      ],
+      "rgba_sha256": "395f5e67d97ec65e519475e1a5beb70d911b2d19c1555064043385d873e00d89",
+      "components_before_filter": 16,
+      "components_kept": 16,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "8911b0430334effaa432f3460353414a8d4d3ac4c589b9bed457a6e2a1b6125c"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\mercantile-cart-props-01\\source-01.png",
+  "source_sha256": "e3102189f3ea3a54c7a994e1721cdf9ad01b1ab403fb1f649acb3c334c388007",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
