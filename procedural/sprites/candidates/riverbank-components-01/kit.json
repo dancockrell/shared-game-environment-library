@@ -1,0 +1,21 @@
+{
+  "schemaVersion":1,
+  "id":"riverbank-components-01",
+  "status":"extracted-candidate",
+  "runtimeAdmission":false,
+  "source":"source-01.png",
+  "sourceSha256":"d00429f9567c8896dd9305571f2ea2bba57dd72ca4a5f83fc5bf2c6bf0045151",
+  "extraction":"extracted-01/metadata.json",
+  "camera":"fixed-high-three-quarter",
+  "lighting":"upper-left-daylight",
+  "coordinateConvention":"estimated placement anchors in trimmed image pixels; no collision or navigation authority",
+  "components":[
+    {"id":"earth-bank-descending","cell":0,"imageSize":[465,356],"anchor":[232,210],"semanticTags":["earth-bank","grass-bank"],"layer":"boundary","screenAxis":"upper-left-to-lower-right","suggestedReviewWidth":200},
+    {"id":"earth-bank-ascending","cell":1,"imageSize":[469,344],"anchor":[234,220],"semanticTags":["earth-bank","grass-bank"],"layer":"boundary","screenAxis":"lower-left-to-upper-right","suggestedReviewWidth":200},
+    {"id":"stone-quay-ascending","cell":2,"imageSize":[482,324],"anchor":[241,210],"semanticTags":["stone-quay","stone-edge"],"layer":"boundary","screenAxis":"lower-left-to-upper-right","suggestedReviewWidth":200},
+    {"id":"stone-quay-descending","cell":3,"imageSize":[481,352],"anchor":[240,210],"semanticTags":["stone-quay","stone-edge"],"layer":"boundary","screenAxis":"upper-left-to-lower-right","suggestedReviewWidth":200},
+    {"id":"reed-clump","cell":4,"imageSize":[264,340],"anchor":[132,320],"semanticTags":["reed","cattail"],"layer":"prop","suggestedReviewWidth":60},
+    {"id":"muddy-gravel-patch","cell":5,"imageSize":[444,216],"anchor":[222,110],"semanticTags":["mud","gravel"],"layer":"ground-overlay","suggestedReviewWidth":130}
+  ],
+  "restrictions":["Bounded strips, not seamless terrain tiles","Screen axis is not a compass direction or MUD exit","No automatic mirroring: both directions already drawn with baked daylight","Bank heights and quay heights not metric, no collision footprint supplied","Reed with seedheads implies a seasonal plant state, not universal vegetation","Source soft alpha was thresholded at 128 by existing extractor; faint edge pixels may be lost","No named DragonRealms location assigned","Native scale suggestions need consumer review"]
+}
