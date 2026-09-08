@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "id": "crossing-building-details-sheet-01",
+  "status": "source-candidate",
+  "runtimeAdmitted": false,
+  "source": "source-01-magenta.png",
+  "sourceSha256": "9713ae0aefbac317b68c0ef32b5d4b74b52a1d22b0a6e77dbd4d1e8e13183c19",
+  "extraction": "extracted-01/metadata.json",
+  "usableCandidateCount": 12,
+  "rejectedCount": 0,
+  "components": [
+    {
+      "id": "closed-plank-door",
+      "file": "extracted-01/cell_00_00.png",
+      "size": [
+        182,
+        300
+      ],
+      "anchor": [
+        90,
+        282
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "door",
+        "wood",
+        "closed"
+      ],
+      "mount": "wall",
+      "sha256": "054976b5c28fe4b41233f84dbd87729bc2dd3106d56b2adebb7d491a7a70f0af",
+      "mountingLimits": "Threshold mount; no wall supplied and no lock/passability state implied.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "arched-wood-door",
+      "file": "extracted-01/cell_00_01.png",
+      "size": [
+        180,
+        308
+      ],
+      "anchor": [
+        89,
+        291
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "door",
+        "wood",
+        "arch",
+        "closed"
+      ],
+      "mount": "wall",
+      "sha256": "fb0f519d5a9435f56500844756f6284c3b2f9502f12c8d160f308bc4431d618c",
+      "mountingLimits": "Threshold mount; curved frame requires compatible opening, not existing masonry seam.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "shuttered-window",
+      "file": "extracted-01/cell_00_02.png",
+      "size": [
+        207,
+        254
+      ],
+      "anchor": [
+        104,
+        231
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "window",
+        "wood",
+        "shutters"
+      ],
+      "mount": "wall",
+      "sha256": "46708598ca2688ad04806561b8332d3afa190f12c65a7fb1187f6822dc76d810",
+      "mountingLimits": "Lower sill mount, not ground pivot; static closed appearance.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "empty-window-frame",
+      "file": "extracted-01/cell_00_03.png",
+      "size": [
+        208,
+        261
+      ],
+      "anchor": [
+        104,
+        239
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "window",
+        "frame",
+        "wood"
+      ],
+      "mount": "wall",
+      "sha256": "ebd89d93f980804a54c72ffb10dd42db41cbce29c789f6e7f2393cc35ea3ab40",
+      "mountingLimits": "Open center is alpha; consumer must provide wall opening/background, not paint frame over intact wall and claim opening.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "stone-chimney",
+      "file": "extracted-01/cell_01_00.png",
+      "size": [
+        206,
+        290
+      ],
+      "anchor": [
+        102,
+        271
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "chimney",
+        "stone"
+      ],
+      "mount": "roof",
+      "sha256": "952423e7b2cb2d4563d19347197da36690ff5d9ceea8bc39a7bb86f5d9023e7d",
+      "mountingLimits": "Roof penetration/base mount; roof slope/occlusion must be matched, no chimney smoke or interior passage.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "brick-chimney",
+      "file": "extracted-01/cell_01_01.png",
+      "size": [
+        182,
+        273
+      ],
+      "anchor": [
+        91,
+        254
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "chimney",
+        "brick"
+      ],
+      "mount": "roof",
+      "sha256": "655b4ba4e95101db14404118603017d06714ed634f38c2b9fd72bcbc556ac39a",
+      "mountingLimits": "Roof penetration/base mount; stone base is part of art, roof occlusion requires deliberate overlap.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "wood-three-step-flight",
+      "file": "extracted-01/cell_01_02.png",
+      "size": [
+        285,
+        257
+      ],
+      "anchor": [
+        139,
+        232
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "stairs",
+        "wood"
+      ],
+      "mount": "ground",
+      "sha256": "178b4d43a84a0966173b8827c3973d4681baa73f6f031aca041f48ecb138fbeb",
+      "mountingLimits": "Landing must be matched to actual doorway height and axis; no seamless stair-door claim.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "stone-two-step-flight",
+      "file": "extracted-01/cell_01_03.png",
+      "size": [
+        290,
+        204
+      ],
+      "anchor": [
+        146,
+        180
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "steps",
+        "stone"
+      ],
+      "mount": "ground",
+      "sha256": "6bb8659e22e1768e5843987f0cf2844b21ea0b84618db2239f0bf348d413be2d",
+      "mountingLimits": "Low broad two-tier alternative to existing taller masonry stairs; no path/navigation authority.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "small-porch-platform",
+      "file": "extracted-01/cell_02_00.png",
+      "size": [
+        311,
+        229
+      ],
+      "anchor": [
+        153,
+        205
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "porch",
+        "platform",
+        "wood"
+      ],
+      "mount": "ground",
+      "sha256": "c0c702cf75e918c3f6c6481f07cae95371b996d8933a74cf358a9ac3a9d81ae8",
+      "mountingLimits": "Short visible legs, no stairs; surface mounting depth differs from floor contact.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "blue-cloth-awning",
+      "file": "extracted-01/cell_02_01.png",
+      "size": [
+        307,
+        221
+      ],
+      "anchor": [
+        155,
+        39
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "awning",
+        "cloth",
+        "blue"
+      ],
+      "mount": "wall",
+      "sha256": "1b5f194142d5ded9f71878ccaa3cb34f5ba65addd5fae87850b45f4a41d097f4",
+      "mountingLimits": "Upper back support mount; requires matching wall direction and draw-order, not a ground object.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "iron-hanging-bracket",
+      "file": "extracted-01/cell_02_02.png",
+      "size": [
+        189,
+        157
+      ],
+      "anchor": [
+        18,
+        76
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "bracket",
+        "iron"
+      ],
+      "mount": "wall",
+      "sha256": "ffd0f4da478072a0fc6081df2b0a133494bbb1db144795b3217a469fa1e74038",
+      "mountingLimits": "Wall-plate center mount; no hanging item supplied, bracket projects right in image.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    },
+    {
+      "id": "wood-railing-segment",
+      "file": "extracted-01/cell_02_03.png",
+      "size": [
+        269,
+        229
+      ],
+      "anchor": [
+        135,
+        199
+      ],
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "railing",
+        "wood"
+      ],
+      "mount": "ground",
+      "sha256": "9ba5193191ad7c29e16231b475adcaa1d26d82898c737e6325e0dafe78ee9701",
+      "mountingLimits": "Two-post ground contact estimate; bounded segment not certified seamless.",
+      "anchorAuthority": "visually-estimated-source-pixels-not-collision"
+    }
+  ],
+  "restrictions": [
+    "Generic architecture; no named room assignment without prose evidence",
+    "Fixed high three-quarter and upper-left lighting; no automatic rotation/mirroring",
+    "Candidate individual parts, not certified mutually seamless kit",
+    "Generated relative sizes vary: windows larger than half-door requested; consumers must author relative scales and wall mounting deliberately",
+    "Wall and roof anchors do not mean ground pivots; no underlay cutout/occlusion implementation provided"
+  ]
+}
