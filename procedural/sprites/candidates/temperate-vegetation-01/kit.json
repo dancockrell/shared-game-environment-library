@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "temperate-vegetation-01",
+  "status": "extracted-candidate",
+  "source": "source-01.png",
+  "sourceSha256": "0b6745748800b40b5a7cfb9ab89d7c52bae22f5eff9d2a188885c07ee47a7f53",
+  "extraction": "extracted-01/metadata.json",
+  "camera": "fixed-high-three-quarter",
+  "lighting": "upper-left-daylight",
+  "coordinateConvention": "anchor pixels relative to trimmed image, estimates pending mounted review",
+  "runtimeAdmission": false,
+  "components": [
+    {"id":"oak","cell":0,"anchor":[270,605],"semanticTags":["oak","deciduous-tree"],"layer":"boundary","season":"leaf-on"},
+    {"id":"slender-deciduous","cell":1,"anchor":[145,590],"semanticTags":["deciduous-tree"],"layer":"boundary","season":"leaf-on"},
+    {"id":"flowering-shrub","cell":2,"anchor":[169,312],"semanticTags":["flowering-shrub"],"layer":"prop","season":"flowering-and-fruiting-artistic-combination","requiresExplicitReview":true},
+    {"id":"hedge-straight","cell":3,"anchor":[212,270],"semanticTags":["hedge"],"layer":"boundary","season":"leaf-on","tileable":false},
+    {"id":"hedge-corner","cell":4,"anchor":[190,300],"semanticTags":["hedge"],"layer":"boundary","season":"leaf-on","tileable":false},
+    {"id":"bramble","cell":5,"anchor":[173,320],"semanticTags":["bramble"],"layer":"prop","season":"fruiting","requiresExplicitReview":true}
+  ],
+  "restrictions": ["No automatic mapping to fictional named tree species", "No automatic mirroring: baked lighting would reverse", "Do not infer a walkable opening from the hedge corner", "Footprints, occlusion and native scale remain to be reviewed"]
+}

@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 3,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 255,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    728,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      564,
+      886,
+      1254
+    ],
+    [
+      0,
+      461,
+      872,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        564,
+        728
+      ],
+      "trim_rect_in_cell": [
+        15,
+        38,
+        555,
+        664
+      ],
+      "source_trim_rect": [
+        15,
+        38,
+        555,
+        664
+      ],
+      "size": [
+        540,
+        626
+      ],
+      "rgba_sha256": "3eade4e4c6e9dca275e330d09321df14b353ff7916cca1502dae10b1dd6bf4ad",
+      "components_before_filter": 9,
+      "components_kept": 9,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "36174806b0bf76cb5f673607ea69f1952b56da73458082014f1062945ba160d5"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        564,
+        0,
+        886,
+        728
+      ],
+      "trim_rect_in_cell": [
+        11,
+        55,
+        310,
+        666
+      ],
+      "source_trim_rect": [
+        575,
+        55,
+        874,
+        666
+      ],
+      "size": [
+        299,
+        611
+      ],
+      "rgba_sha256": "c4b8c14646e425616ec9fc5b8fcbbe5053da934d3ae47cf0c627546a15cd1307",
+      "components_before_filter": 8,
+      "components_kept": 8,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "5d7c13416386c48102b6a9976713e8588acef5f49db41adb8584f827f31dfc03"
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "file": "cell_00_02.png",
+      "source_rect": [
+        886,
+        0,
+        1254,
+        728
+      ],
+      "trim_rect_in_cell": [
+        14,
+        332,
+        352,
+        664
+      ],
+      "source_trim_rect": [
+        900,
+        332,
+        1238,
+        664
+      ],
+      "size": [
+        338,
+        332
+      ],
+      "rgba_sha256": "023f7b558a01ed6f3b8e47b4b4727b7bbd20fda07c501a2b0099f99cf19df0f9",
+      "components_before_filter": 5,
+      "components_kept": 5,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "ccd8b8ecbfc6cccee41d296b044f18793a9343ae263f22e1237ef7bb6092bac5"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        728,
+        461,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        21,
+        97,
+        446,
+        387
+      ],
+      "source_trim_rect": [
+        21,
+        825,
+        446,
+        1115
+      ],
+      "size": [
+        425,
+        290
+      ],
+      "rgba_sha256": "4334db33dab2c4c6066f9cf73447f36feb4b026b9cb609bbcc7e88477fb11a2f",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "5b69ea291f98281bbee4e7d9b9920959a58fe1b335ce7b9a3337377a1bcc5a75"
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        461,
+        728,
+        872,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        15,
+        69,
+        394,
+        394
+      ],
+      "source_trim_rect": [
+        476,
+        797,
+        855,
+        1122
+      ],
+      "size": [
+        379,
+        325
+      ],
+      "rgba_sha256": "05aca3973164c477903b86e6cf2d44582cd0db15b1002bd6801bbd7c1b92cae3",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "28b6632e9b88d5f3b624ade096f6164a5aa405efc49c519184e65db419eb0bb2"
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "file": "cell_01_02.png",
+      "source_rect": [
+        872,
+        728,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        17,
+        62,
+        364,
+        403
+      ],
+      "source_trim_rect": [
+        889,
+        790,
+        1236,
+        1131
+      ],
+      "size": [
+        347,
+        341
+      ],
+      "rgba_sha256": "a05933e3d762392b79b6dee309a76c58745e5ead9afa716f4341949569c20a72",
+      "components_before_filter": 4,
+      "components_kept": 4,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "fc42c33a495f652fe6f258f4b6b8e55030cd861348e309d510d0c4e855e00c2b"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\temperate-vegetation-01\\source-01.png",
+  "source_sha256": "0b6745748800b40b5a7cfb9ab89d7c52bae22f5eff9d2a188885c07ee47a7f53",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
