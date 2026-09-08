@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "columns": 2,
+  "rows": 2,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    660,
+    1254
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      636,
+      1254
+    ],
+    [
+      0,
+      630,
+      1254
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        636,
+        660
+      ],
+      "trim_rect_in_cell": [
+        85,
+        178,
+        569,
+        536
+      ],
+      "source_trim_rect": [
+        85,
+        178,
+        569,
+        536
+      ],
+      "size": [
+        484,
+        358
+      ],
+      "rgba_sha256": "cd8f246f69215942b3cede2a2f655d46afa952705e248f3abab768198ce29f8d",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "072068ed1f6fded7e7c3a3512fa0268e51d963fe9ea7eefb55bc5ed92367ecf3"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        636,
+        0,
+        1254,
+        660
+      ],
+      "trim_rect_in_cell": [
+        69,
+        185,
+        518,
+        542
+      ],
+      "source_trim_rect": [
+        705,
+        185,
+        1154,
+        542
+      ],
+      "size": [
+        449,
+        357
+      ],
+      "rgba_sha256": "e9a85c8b02d376c699976736aa8868b52d01f523aef1a5a19612423d558c1b5c",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "87a819f4f5da96430d9142ade3b9e22cf4f5315f2ffe11cd225cbc9d00217fee"
+    },
+    {
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "file": "cell_01_00.png",
+      "source_rect": [
+        0,
+        660,
+        630,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        241,
+        119,
+        498,
+        382
+      ],
+      "source_trim_rect": [
+        241,
+        779,
+        498,
+        1042
+      ],
+      "size": [
+        257,
+        263
+      ],
+      "rgba_sha256": "33da4384491f1860c3b430f40d63e4fb71101f3e7ae651c713cd7ce3fd98ad4e",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "96d4c03678c2e9c06a6ff9fee20bba41af3986f7250a59e4f3a98d0674096c17"
+    },
+    {
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "file": "cell_01_01.png",
+      "source_rect": [
+        630,
+        660,
+        1254,
+        1254
+      ],
+      "trim_rect_in_cell": [
+        133,
+        125,
+        351,
+        382
+      ],
+      "source_trim_rect": [
+        763,
+        785,
+        981,
+        1042
+      ],
+      "size": [
+        218,
+        257
+      ],
+      "rgba_sha256": "42cecc672d67a6dcf1f2f3e878452da4637072fa58d81020625e8949dcdbeb4a",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "2bdd87a0a05175d16bbc6c29a229e8abb8ddeb2e165c44885c4797c40f461d98"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\southeast-green-props-01\\source-01.png",
+  "source_sha256": "3159feb59bd8a4461af929e5707e6b88690e1f0feebe0668c83999d0f2f7d969",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
