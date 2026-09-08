@@ -1,5 +1,13 @@
 # Ground experiment 01 — rejected
 
+## Ground experiment 02 — composition candidate
+
+Generated 2026-09-08 with built-in image generation, saved unchanged as ground-02.png. Sparse blade clusters and quiet base improve readability; not final grass quality and not proven seamless. Use one stretched room-sized base in the initial composition experiment, not repeated tiles until seam review. No runtime admission yet.
+
+Exact prompt:
+
+Create one reusable 2D game ground texture: a quiet olive-green lawn, top-down, classic detailed hand-drawn pixel-art RPG style. The ground must be MOSTLY broad, softly varied flat olive-green base color. Add widely spaced tiny clusters of recognizable short grass blades, each cluster only 3 to 7 angular strokes, with lots of calm empty green between clusters. Use restrained dark moss green and muted straw-green accents. Low contrast. Do NOT cover the whole surface in mottled multicolored squares or random noise. No checker pattern, no dithering carpet, no big tufts, no flowers, rocks, paths, trees, shadows, horizon, labels or borders. Square opaque texture with consistent color at all four edges, intended beneath separately placed sprites. Beautiful readable pixel clusters, 2D only, not a 3D render.
+
 2026-09-08, built-in image generation. No external paid API. Source retained as ground-01-rejected.png. Not runtime admitted.
 
 ## Exact prompt
