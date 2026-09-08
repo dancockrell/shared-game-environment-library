@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1385,
+    1136
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1136
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1385
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1385,
+        1136
+      ],
+      "trim_rect_in_cell": [
+        129,
+        32,
+        1257,
+        1084
+      ],
+      "source_trim_rect": [
+        129,
+        32,
+        1257,
+        1084
+      ],
+      "size": [
+        1128,
+        1052
+      ],
+      "rgba_sha256": "f308c046b0aac93cc1bb3589578c5768fabf1fcf22efd17e25297727031501b0",
+      "components_before_filter": 34,
+      "components_kept": 34,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "62eb7c5a157f60fe901dd80d4b3c1f8b98ea8a00ca1ef01bebae8debcc3ef10f"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\river-market-01\\source-magenta.png",
+  "source_sha256": "a8d3136efb07468432814361292198ccfdcaf89b26c3d63d114c9345d19e0794",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    975,
+    1614
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1614
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      975
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        975,
+        1614
+      ],
+      "trim_rect_in_cell": [
+        25,
+        64,
+        806,
+        1520
+      ],
+      "source_trim_rect": [
+        25,
+        64,
+        806,
+        1520
+      ],
+      "size": [
+        781,
+        1456
+      ],
+      "rgba_sha256": "347ed6deafb5bf5b89b0856fb7b4d893ed71d224b20704edc6f5268513e5856a",
+      "components_before_filter": 5,
+      "components_kept": 5,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "72614967d92697725b14731ff0cd49c6caffa81d98a8447fe3a3568ac1aeb672"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\fox-female-skirmisher-01\\keyed-source.png",
+  "source_sha256": "483cc2296f10c72e4071311ce496d05e52fe232258836538bce1ef99030a78af",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
