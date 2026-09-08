@@ -17,7 +17,7 @@
     "notes": "No overlap with active sprite candidate claims. No assets, generated policy blocks, licensing or existing untracked work changed."
   },
   "completion": {
-    "commit": null,
+    "commit": "22ca69f5abe280787a08715458ae7352193f8cd7",
     "checks": [
       "Document-only update; no asset or runtime modifications",
       "Generated policy block preserved byte-for-byte in content",
