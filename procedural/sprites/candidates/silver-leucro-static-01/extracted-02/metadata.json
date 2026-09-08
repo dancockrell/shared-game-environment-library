@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1536,
+    1024
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1024
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1536
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        236,
+        108,
+        1299,
+        950
+      ],
+      "source_trim_rect": [
+        236,
+        108,
+        1299,
+        950
+      ],
+      "size": [
+        1063,
+        842
+      ],
+      "rgba_sha256": "cfe2178ec54f3addbe9dd56727668f0e3165534731e5fc9cb6ce332c76a5c9a7",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "9e0ff1d7c1b1fd963138eafd38b9789bf4e9966a24120f5d8b7136c6189f263f"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\silver-leucro-static-01\\source-02.png",
+  "source_sha256": "53ab167b4987a5a8675e3d6c5021088b8152ffd16e81a9294a63bfb42e20cc7a",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
