@@ -1,0 +1,42 @@
+{
+  "schemaVersion":1,
+  "id":"north-weaponsmith-frontage-01",
+  "status":"reuse-binding-candidate",
+  "runtimeAdmission":false,
+  "source":"../crossing-building-fronts-01/extracted-01/cell_00_01.png",
+  "sourceSha256":"fdf163b0a53452df2091721146f87e7bd3c1a465e68c6aae90f0640de78652ed",
+  "generationRecord":"../crossing-building-fronts-01/GENERATION.md",
+  "camera":"fixed-high-three-quarter",
+  "lighting":"upper-left-daylight",
+  "coordinateConvention":"trimmed source pixels; estimated polygons/pivots are not collision authority",
+  "component": {
+    "id":"plain-timber-workshop",
+    "bounds":[0,0,496,459],
+    "pivot":[190,427],
+    "doorAnchor":[136,420],
+    "doorAnchorMeaning":"estimated center of outer threshold on front-left visible facade",
+    "doorThresholdEdge":[[76,390],[191,431]],
+    "footprint":[[22,365],[211,458],[479,342],[285,278]],
+    "interpretationTags":["timber-walls","slate-like-shingle-roof","closed-door","small-workshop"]
+  },
+  "northPathBinding": {
+    "roomKey":"1-14",
+    "pathFarEndpoint":[678.75,464.25],
+    "uniformScale":0.8,
+    "imageTopLeft":[569.95,128.25],
+    "pivotWorld":[721.95,469.85],
+    "height":367.2,
+    "validation":"topLeft + doorAnchor * scale = pathFarEndpoint exactly; no rotation or mirroring",
+    "limitations":["Existing hedge run crosses the interpreted entrance approach; parent must author a deliberate opening/occlusion, not paste building behind an impassable strip","This binding does not admit floor collision or map geometry","Single facade is an interpretation, not historical or textual reconstruction"]
+  },
+  "sourceEvidence": {
+    "outsideRoom":"1-14",
+    "connectedMapRoom":"1-191",
+    "move":"go weaponsmith's",
+    "verifiedPage":"https://elanthipedia.play.net/Milgrym%27s_Weapons",
+    "pageRoomId":"19801",
+    "facts":["Weaponsmith beyond privet hedge and narrow cobblestone stretch","Connected showroom is plain and businesslike","Interior has weapon merchandise on pine surfaces"],
+    "unsupportedExteriorDetails":["wall material","roof material and shape","door wood and closed visual state","window position","building dimensions"],
+    "knownDataConflict":"public/roomtext/1.json 1-191 currently contains Berolt's Dry Goods prose, not Milgrym; not used as evidence"
+  }
+}
