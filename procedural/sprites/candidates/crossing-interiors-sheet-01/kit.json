@@ -1,0 +1,19 @@
+{
+ "schemaVersion":1,"id":"crossing-interiors-sheet-01","status":"reviewed-candidate","runtimeAdmitted":false,
+ "source":"source-02.png","sourceSha256":"21924a305f7f0e92c2cd6a8db398f3a06ee316284d42b002f76fc0d9bf4b0271",
+ "geometryAuthority":"Manual image-space anchors only, not world dimensions or collision. Per-cell hashes and source trims in extracted-02/metadata.json.",
+ "components":[
+  {"id":"oak-rectangular-table","file":"extracted-02/cell_00_00.png","size":[311,240],"anchor":[155,190],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","table","rectangular","oak"]},
+  {"id":"oak-round-table","file":"extracted-02/cell_00_01.png","size":[249,231],"anchor":[124,185],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","table","round","oak"]},
+  {"id":"oak-backed-chair","file":"extracted-02/cell_00_02.png","size":[162,247],"anchor":[81,216],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","chair","oak"]},
+  {"id":"oak-round-stool","file":"extracted-02/cell_00_03.png","size":[147,177],"anchor":[73,150],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","stool","oak"]},
+  {"id":"oak-long-bench","file":"extracted-02/cell_01_00.png","size":[296,205],"anchor":[148,170],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","bench","oak"]},
+  {"id":"oak-single-bed-cream","file":"extracted-02/cell_01_01.png","size":[293,286],"anchor":[146,214],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","bed","linen","oak"]},
+  {"id":"oak-closed-wardrobe","file":"extracted-02/cell_01_02.png","size":[208,311],"anchor":[104,282],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","wardrobe","closed","oak"]},
+  {"id":"oak-empty-bookshelf","file":"extracted-02/cell_01_03.png","size":[215,309],"anchor":[107,278],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","bookshelf","empty","oak"]},
+  {"id":"oak-shop-counter","file":"extracted-02/cell_02_00.png","size":[302,238],"anchor":[151,202],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","counter","shop","oak"]},
+  {"id":"oak-empty-peg-rack","file":"extracted-02/cell_02_01.png","size":[259,125],"anchor":[129,62],"mount":"wall","status":"reviewed-candidate","semanticTags":["interior","furniture","rack","empty","wall","oak"]},
+  {"id":"oak-washbasin-stand","file":"extracted-02/cell_02_02.png","size":[213,234],"anchor":[106,201],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","furniture","washbasin","ceramic","oak"]},
+  {"id":"stone-unlit-hearth","file":"extracted-02/cell_02_03.png","size":[230,302],"anchor":[115,276],"mount":"ground","status":"reviewed-candidate","semanticTags":["interior","structure","hearth","unlit","stone"]}
+ ]
+}

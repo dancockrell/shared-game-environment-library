@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>Interior sheet gameplay-size review</title>
+<style>body{background:#27352f;color:#efdec0;font:15px system-ui;margin:20px}main{display:grid;grid-template-columns:repeat(4,220px);gap:12px}.cell{height:210px;background:#405347;padding:8px;text-align:center}.stage{height:168px;display:flex;align-items:center;justify-content:center}img{max-width:160px;max-height:160px;image-rendering:pixelated}small{display:block}</style>
+<h1>Interior furniture —12 extracted static candidates</h1><p>Actual transparent PNGs.160px maximum dimension; smaller stool/chair at96/128px. No runtime admission or physical scale claim.</p><main id="grid"></main>
+<script>
+const names=['Rectangular table','Round table','Backed chair','Round stool','Long bench','Single bed','Closed wardrobe','Empty bookshelf','Shop counter','Empty wall rack','Washbasin stand','Unlit hearth'];
+Promise.all(names.map(async(name,i)=>{const d=document.createElement('div');d.className='cell';const s=document.createElement('div');s.className='stage';const im=new Image();im.src=`extracted-02/cell_${String(Math.floor(i/4)).padStart(2,'0')}_${String(i%4).padStart(2,'0')}.png`;if(i===3)im.style.maxHeight='96px';if(i===2)im.style.maxHeight='128px';s.append(im);d.append(s);const label=document.createElement('small');label.textContent=name;d.append(label);document.querySelector('main').append(d);await im.decode()})).then(()=>document.body.dataset.ready='true');
+</script>
