@@ -1,0 +1,32 @@
+# Crossing town utility sheet — production record
+
+One built-in imagegen call produced one4×3 sheet, not twelve independent renders. One source file; twelve extracted cells; **eleven reviewed candidates and one rejected stall frame**. No correction call: extraction as a whole succeeded, so the authorized correction condition was not met.
+
+## Contract and reuse decisions
+
+Fixed elevated three-quarter detailed illustrated pixel-art, upper-left daylight, isolated generic town/cargo objects on flat magenta. Actual Cattle Trail gameplay screenshot was inspected and supplied as style-only reference: `C:/Users/Admin/Documents/Codex/2026-09-07/referenced-chatgpt-conversation-this-is-an-2/outputs/cattle-trail/companion-room.png` SHA256 `e28c787bf1ef8758edc1a99bb2433f53a0b4ddfd1eb637222535ade658539c79`.
+
+Existing inventory checked: Cattle Trail camp has a metal-bound flat chest, upright sealed barrel and hay trough; Mercantile has overturned cart and burlap bales; dock kit has timber dock sections/rope/bollard, no utility crates. New slots therefore use a plain nailed shipping crate, empty slat crate, open barrel, horizontal cradled barrel, tied sacks, detached wheel, upright empty handcart, empty trestle table, bare stall frame, lantern post, blank sign and water trough. These fill state/construction gaps rather than replace existing equivalents. No old art modified.
+
+Representative exact Crossing prose read from `dr-companion/data/art/room-descriptions-exact.json`:75 describes cargo bales, oxcart, wagons and barrows;641 describes crates and decayed warehouse;97 describes traders and buildings. These justify reusable market/cargo vocabulary only. The sheet does not assert every object occurs in those rooms; signs, lamp and trough are generic utility candidates, not invented room facts or inventories.
+
+## Exact prompt
+
+Use case: stylized-concept. Create ONE production sprite SHEET asset: exactly FOUR columns by THREE rows, 12 separate objects, 2048x1536 landscape. Every cell equal512x512 with generous pure #FF00FF magenta separation and at least40px blank padding. Flat uniform opaque magenta chroma-key background everywhere outside objects including internal openings. No checkerboard, gradients, ambient ground shadow or scenery. Fixed elevated three-quarter 2D detailed illustrated PIXEL ART matching attached actual Cattle Trail gameplay reference: crisp dark outlines, broad readable pixel clusters, hand-crafted warm weathered timber, subdued metal, controlled highlights. Not 3D, not realistic texture noise. Same camera and upper-left daylight across ALL cells, distinct crisp silhouettes. Match a high-quality game sprite sheet, not individual product renders. Each object entirely contained in its own cell, centered, as large and detailed as comfortably fits while preserving padding; logical final game scale is provided later through metadata. Do not connect adjacent cells, no cell borders/labels/numbers/text. EXACT reading order: ROW1 col1 a CLOSED PLAIN NAILED SHIPPING CRATE with rough crossed wood slats, no ornate bands or treasure chest; col2 an OPEN EMPTY rectangular slat crate with clearly visible empty interior, no lid floating nearby; col3 an OPEN EMPTY upright barrel with dark hollow interior, wooden staves and simple iron hoops; col4 a CLOSED HORIZONTAL wooden barrel resting securely on a small low wooden cradle, circular end visible. ROW2 col1 TWO tied cloth cargo sacks together, different sizes, no spilled contents; col2 ONE detached wooden spoked wagon wheel standing/leaning slightly, no cart; col3 one UPRIGHT EMPTY two-wheel wooden handcart with handles, cart box visible and no ox/driver/cargo; col4 one EMPTY wooden market trestle table. ROW3 col1 one SMALL BARE market stall FRAME with four posts and pitched simple roof support rafters, no cloth canopy, signage or goods, magenta visible through its structure; col2 one STREET LANTERN on a freestanding weathered wooden post with modest iron bracket, warm contained lantern glow only and no ground illumination; col3 one BLANK wooden signboard on a short freestanding post, no marks/letters/symbols; col4 one LOW RECTANGULAR wooden WATER TROUGH with visible still blue-grey water, not straw/hay, on short legs. No actors/animals, no branded iconography, no pasted UI, no plants, no cobbles, no floor patches. These are generic original fantasy-town utility assets inspired by reusable Crossing market/cargo needs, not an illustration of any exact room. All12 must remain isolated and independently extractable.
+
+## Output and extraction
+
+Built-in output `exec-d93a28e9-742f-4a5e-a06b-cee96e46fae7.png`, copied byte-identically tosource-01.png, original retained. SHA256`05e50d44a67dfb4a46637262f7027d94c69088c87b4fd9e0d529df64e90083c3`. Requested2048×1536, actual1448×1086; native pixels preserved, no upscale.
+
+Used existing `../cattle-trail/sprite_grid.py`, columns4 rows3, min-component-pixels1, default magenta difference25 andalpha threshold128. Exact extractor hash, adaptive source rectangles, crop rectangles, dimensions and PNG hashes live inextracted-01/metadata.json. Twelve cells extracted; no warnings; no custom matting algorithm. No dropped connected components. Internal magenta openings keyed as expected.
+
+## Batch review
+
+`build-review.py` assembles one contact sheet mechanically from exact PNGs, nearest-neighbor156–160px heights and alternating light/dark backgrounds. Source images remain unchanged. Reviewed actualreview.png: crate construction, open containers, cargo, wheel, handcart, table, lamp, blank sign and water trough are readable and coherent. Some ground supports have inferred depths or missing multi-contact geometry; kit explicitly leaves footprints null where unsafe. Contact envelopes are conservative estimates only, not physical slabs or game collision.
+
+Cell08 bare stall frame rejected: solid pale/pink scraps remain between rafters and are visible at160px. No false twelve-item usable count, no admission of that frame, no extra correction/generation. All other cells are reviewed source candidates, not finished runtime assets. Lighting/time-of-day for lantern, fluid motion and repeated-state continuity unverified. Artifacts preserved for later source repair.
+
+## Delivery boundary
+
+Source package only. No DR runtime imports, room placements, browsers, new servers, per-object renders, paid APIs, push or CI. Parent catalog consumer can index kit.components including explicit rejected state; it must not turn candidate count into final admission.
+

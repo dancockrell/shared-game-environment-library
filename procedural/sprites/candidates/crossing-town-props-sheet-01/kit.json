@@ -1,0 +1,607 @@
+{
+  "schemaVersion": 1,
+  "id": "crossing-town-props-sheet-01",
+  "status": "reviewed-candidate",
+  "runtimeAdmission": false,
+  "source": "source-01.png",
+  "sourceSha256": "05e50d44a67dfb4a46637262f7027d94c69088c87b4fd9e0d529df64e90083c3",
+  "sourceSize": [
+    1448,
+    1086
+  ],
+  "requestedSize": [
+    2048,
+    1536
+  ],
+  "grid": {
+    "columns": 4,
+    "rows": 3,
+    "extraction": "extracted-01/metadata.json",
+    "rectConvention": "left/top/right/bottom; right and bottom exclusive"
+  },
+  "counts": {
+    "requested": 12,
+    "extracted": 12,
+    "reviewedCandidates": 11,
+    "rejected": 1
+  },
+  "camera": "fixed-elevated-three-quarter",
+  "lighting": "upper-left-daylight",
+  "components": [
+    {
+      "id": "shipping-crate",
+      "file": "extracted-01/cell_00_00.png",
+      "size": [
+        260,
+        288
+      ],
+      "sha256": "243db3ed6138fd004b2c3ead6e4dec25cfb400f98d65a79e9ceaabea145a865b",
+      "anchor": [
+        130,
+        282
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "shipping",
+        "crate"
+      ],
+      "sourceRect": [
+        50,
+        48,
+        310,
+        336
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            5,
+            214
+          ],
+          [
+            129,
+            165
+          ],
+          [
+            255,
+            216
+          ],
+          [
+            130,
+            286
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "empty-slat-crate",
+      "file": "extracted-01/cell_00_01.png",
+      "size": [
+        284,
+        279
+      ],
+      "sha256": "883159696a22949089efae7874f06b41d0de5019ae768c64b25dd69500c35159",
+      "anchor": [
+        145,
+        273
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "empty",
+        "slat",
+        "crate"
+      ],
+      "sourceRect": [
+        404,
+        48,
+        688,
+        327
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            5,
+            199
+          ],
+          [
+            141,
+            150
+          ],
+          [
+            280,
+            207
+          ],
+          [
+            150,
+            277
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "open-barrel",
+      "file": "extracted-01/cell_00_02.png",
+      "size": [
+        209,
+        285
+      ],
+      "sha256": "6bcd54d4adc3219f4efefda571ebacb3912b98312e252fc33ea9b83bdb0fe187",
+      "anchor": [
+        108,
+        280
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "open",
+        "barrel"
+      ],
+      "sourceRect": [
+        800,
+        42,
+        1009,
+        327
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            25,
+            246
+          ],
+          [
+            104,
+            225
+          ],
+          [
+            191,
+            248
+          ],
+          [
+            171,
+            278
+          ],
+          [
+            55,
+            282
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "cradled-barrel",
+      "file": "extracted-01/cell_00_03.png",
+      "size": [
+        270,
+        283
+      ],
+      "sha256": "bd53cc3899f374e6a25d81077947efdb6ecfaec64fc09fbf726ff39ab0d54368",
+      "anchor": [
+        160,
+        271
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "cradled",
+        "barrel"
+      ],
+      "sourceRect": [
+        1129,
+        57,
+        1399,
+        340
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            10,
+            220
+          ],
+          [
+            170,
+            200
+          ],
+          [
+            269,
+            236
+          ],
+          [
+            240,
+            282
+          ],
+          [
+            40,
+            253
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "sack-pair",
+      "file": "extracted-01/cell_01_00.png",
+      "size": [
+        290,
+        282
+      ],
+      "sha256": "3191a3cece0e8e6a1532cc224b7506ad4ac3d8caf7e93d35bfbaeddaf7c0d8af",
+      "anchor": [
+        148,
+        272
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "sack",
+        "pair"
+      ],
+      "sourceRect": [
+        31,
+        407,
+        321,
+        689
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            6,
+            211
+          ],
+          [
+            175,
+            199
+          ],
+          [
+            289,
+            248
+          ],
+          [
+            263,
+            280
+          ],
+          [
+            86,
+            268
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "detached-wheel",
+      "file": "extracted-01/cell_01_01.png",
+      "size": [
+        241,
+        281
+      ],
+      "sha256": "ac6f4268384fddbf5fcd3448a85fa4b6c90ab66f16a9c4bb95082d261bea0514",
+      "anchor": [
+        124,
+        275
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "detached",
+        "wheel"
+      ],
+      "sourceRect": [
+        419,
+        402,
+        660,
+        683
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            75,
+            270
+          ],
+          [
+            151,
+            252
+          ],
+          [
+            199,
+            267
+          ],
+          [
+            157,
+            280
+          ],
+          [
+            96,
+            280
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "empty-handcart",
+      "file": "extracted-01/cell_01_02.png",
+      "size": [
+        329,
+        293
+      ],
+      "sha256": "1a2aad91a61971f7ee8a54ffdf0e88679be58037833b6cf270bceb1cac9aad66",
+      "anchor": [
+        189,
+        280
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "empty",
+        "handcart"
+      ],
+      "sourceRect": [
+        744,
+        398,
+        1073,
+        691
+      ],
+      "reviewHeight": 160,
+      "footprint": null,
+      "geometryLimit": "Multi-contact support geometry not authored; do not infer underpasses from transparent openings",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "trestle-table",
+      "file": "extracted-01/cell_01_03.png",
+      "size": [
+        323,
+        260
+      ],
+      "sha256": "1067ffbfd5e6bd5d04be37955abf917508069607fbc422823e329f0c2e9816f0",
+      "anchor": [
+        161,
+        247
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "trestle",
+        "table"
+      ],
+      "sourceRect": [
+        1110,
+        431,
+        1433,
+        691
+      ],
+      "reviewHeight": 160,
+      "footprint": null,
+      "geometryLimit": "Multi-contact support geometry not authored; do not infer underpasses from transparent openings",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "bare-stall-frame",
+      "file": "extracted-01/cell_02_00.png",
+      "size": [
+        309,
+        341
+      ],
+      "sha256": "52c7783c0cb969f5259f084364aacafffd1e8e0fb0790d47044b2d04b015d0cb",
+      "anchor": [
+        150,
+        332
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "rejected",
+      "semanticTags": [
+        "bare",
+        "stall",
+        "frame"
+      ],
+      "sourceRect": [
+        26,
+        720,
+        335,
+        1061
+      ],
+      "reviewHeight": 160,
+      "footprint": null,
+      "geometryLimit": "Multi-contact support geometry not authored; do not infer underpasses from transparent openings",
+      "review": "Rejected: pale/magenta-looking solid scraps between roof rafters survive key and remain visible at160px; not clean bare frame"
+    },
+    {
+      "id": "lantern-post",
+      "file": "extracted-01/cell_02_01.png",
+      "size": [
+        172,
+        344
+      ],
+      "sha256": "96dbcef170a13d78587cf631aef8a8f8ffa53b38323615d2d374a5ce4257e364",
+      "anchor": [
+        27,
+        338
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "lantern",
+        "post"
+      ],
+      "sourceRect": [
+        471,
+        717,
+        643,
+        1061
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            3,
+            316
+          ],
+          [
+            27,
+            306
+          ],
+          [
+            50,
+            321
+          ],
+          [
+            48,
+            341
+          ],
+          [
+            21,
+            343
+          ],
+          [
+            2,
+            330
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "blank-sign",
+      "file": "extracted-01/cell_02_02.png",
+      "size": [
+        212,
+        310
+      ],
+      "sha256": "d7961452ecf5e67904fd75937010f2c2d1dd678f10352b52a920fcb17e96c772",
+      "anchor": [
+        104,
+        304
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "blank",
+        "sign"
+      ],
+      "sourceRect": [
+        796,
+        735,
+        1008,
+        1045
+      ],
+      "reviewHeight": 160,
+      "footprint": {
+        "space": "source-image",
+        "status": "estimated-ground-footprint",
+        "points": [
+          [
+            84,
+            291
+          ],
+          [
+            109,
+            281
+          ],
+          [
+            128,
+            294
+          ],
+          [
+            122,
+            309
+          ],
+          [
+            90,
+            308
+          ]
+        ],
+        "evidence": "Estimated conservative visible contact envelope from source cutout. Not measured physical geometry, not MUD collision or passability; hidden rear contact inferred."
+      },
+      "geometryLimit": "Estimated contact requires consumer scale/layout validation",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    },
+    {
+      "id": "water-trough",
+      "file": "extracted-01/cell_02_03.png",
+      "size": [
+        318,
+        248
+      ],
+      "sha256": "7aedf8754fde988df2cb5042b21bd303e7a92917834e03456cedda386a21b6f8",
+      "anchor": [
+        148,
+        236
+      ],
+      "anchorStatus": "estimated-source-image-contact",
+      "mount": "ground",
+      "status": "reviewed-candidate",
+      "semanticTags": [
+        "water",
+        "trough"
+      ],
+      "sourceRect": [
+        1105,
+        773,
+        1423,
+        1021
+      ],
+      "reviewHeight": 156,
+      "footprint": null,
+      "geometryLimit": "Multi-contact support geometry not authored; do not infer underpasses from transparent openings",
+      "review": "Accepted as source candidate after one156–160px contact review; not final runtime admission"
+    }
+  ],
+  "review": "review.png",
+  "restrictions": [
+    "Generic utility motifs; no exact room placement or actual inventory claim",
+    "Single sheet is not a scale chart; consumers must apply object-specific scale",
+    "No animation, state transitions, collision or seamless assembly asserted",
+    "No mirroring of baked lighting",
+    "Source source01 native1448x1086; no upsample to requested size",
+    "Rejected stall remains preserved, excluded from candidate count"
+  ]
+}
