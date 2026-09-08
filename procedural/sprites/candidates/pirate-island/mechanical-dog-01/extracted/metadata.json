@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1330,
+    1182
+  ],
+  "columns": 1,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1182
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      1330
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        1330,
+        1182
+      ],
+      "trim_rect_in_cell": [
+        195,
+        12,
+        1194,
+        1155
+      ],
+      "source_trim_rect": [
+        195,
+        12,
+        1194,
+        1155
+      ],
+      "size": [
+        999,
+        1143
+      ],
+      "rgba_sha256": "79468e38f7d3d3dfcdfc9af5f3fac23b1f69cb971002003a0e5746e2ebefadbd",
+      "components_before_filter": 1,
+      "components_kept": 1,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "48b1867de2f0a09ef7c5e6cf11bb2fddb80f7a062cc34d61a1bd0ed4242e7253"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\pirate-island\\mechanical-dog-01\\keyed.png",
+  "source_sha256": "f2f7ae9ac81c449ed35ffda9ff0172a93d67d62d0d3e5f2df01972b94e4c08ec",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
