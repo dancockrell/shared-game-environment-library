@@ -1,0 +1,8 @@
+{
+ "schemaVersion":1,"id":"crossing-decayed-pylon-01","status":"source-candidate","runtimeAdmitted":false,
+ "file":"extracted-01/cell_00_00.png","sha256":"d06dc675e105fabd94b134ea0f430305d5893d5b534164e98b328cd375a482c5","size":[226,1163],"pivot":[113,1150],
+ "footprint":{"space":"source-image","status":"estimated-ground-footprint","points":[[12,1104],[107,1088],[216,1108],[180,1144],[108,1162],[29,1133]],"evidence":"Small projected contact envelope around ragged lower wood ends. Some bottom support depth inferred; upper shaft excluded. Estimated placement footprint, not MUD collision authority."},
+ "orientation":"upright, fixed elevated three-quarter","sourceRoomKeys":["1-641","1-647"],"excludedRoomState":{"1-646":"Explicitly collapsed/fallen pylon requires separately authored fallen artwork; do not rotate this sprite"},
+ "semanticLimits":["Natural wood knots are not facial features","Weathering color, diameter, length, splinter pattern and stains interpreted","Incomplete piling only; no warehouse platform, makeshift dwelling or passage represented","Crop is about5.15times taller than wide; keep uniform scaling, do not stretch to imply different timber geometry"],
+ "reviewHeights":[100,160,240],"extraction":"Existing cattle-trail sprite_grid 1x1, alpha threshold128 removes generated low-alpha backdrop halo; no source RGB repaint or rescale"
+}
