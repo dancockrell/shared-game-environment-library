@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "status": "extracted_candidates_pending_visual_review",
+  "source_size": [
+    1536,
+    1024
+  ],
+  "columns": 2,
+  "rows": 1,
+  "rect_convention": "left/top/right/bottom; right and bottom exclusive",
+  "processing": {
+    "magenta_difference": 25,
+    "source_alpha_threshold": 128,
+    "min_component_pixels": 1,
+    "connectivity": 4,
+    "rescaled": false,
+    "all_retained_components_preserved": true
+  },
+  "ycuts": [
+    0,
+    1024
+  ],
+  "xcuts_by_row": [
+    [
+      0,
+      762,
+      1536
+    ]
+  ],
+  "review_warnings": [],
+  "cells": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "file": "cell_00_00.png",
+      "source_rect": [
+        0,
+        0,
+        762,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        93,
+        424,
+        672,
+        708
+      ],
+      "source_trim_rect": [
+        93,
+        424,
+        672,
+        708
+      ],
+      "size": [
+        579,
+        284
+      ],
+      "rgba_sha256": "75f29c5bff7cd4684e425fe3bab85af51e00450d543285444224618ad5f99cfc",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "dbc5c1073bfa2bee5de4efea47b3ec13adc9bfdf31c19ee01c397ba44bbf8ddc"
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "file": "cell_00_01.png",
+      "source_rect": [
+        762,
+        0,
+        1536,
+        1024
+      ],
+      "trim_rect_in_cell": [
+        90,
+        389,
+        687,
+        680
+      ],
+      "source_trim_rect": [
+        852,
+        389,
+        1449,
+        680
+      ],
+      "size": [
+        597,
+        291
+      ],
+      "rgba_sha256": "243c33c47dbd315496219905527c5be66d3674b28cc4419e3f189a66ac30cddd",
+      "components_before_filter": 2,
+      "components_kept": 2,
+      "removed_small_component_pixels": 0,
+      "png_sha256": "613c3f50d2c8216ac36fc846add36c4d85c0ed3ff32eb0ac4246738e8dfcb5ae"
+    }
+  ],
+  "source": "C:\\Users\\Admin\\Documents\\Codex\\2026-09-04\\referenced-chatgpt-conversation-this-is-an\\work\\shared-catalog\\procedural\\sprites\\candidates\\privet-hedge-clusters-01\\source-02-magenta.png",
+  "source_sha256": "a9d13f395b277c4d9cacbbc4abab107ffdd53ea41b33ba523a4d264bb9b77fee",
+  "extractor_sha256": "d6aa76d7ba4f74209b3022ead3b4a8fbc0704a03a4f34b04059b215ce4f0ac4d"
+}
