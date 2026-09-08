@@ -1,5 +1,15 @@
 # Flat ground path overlay candidates
 
+## Current source: corrected genuine alpha, 2026-09-08
+
+`source-02-alpha-correction.png`, built-in `exec-06195077-4346-4098-86eb-5a9ce11fc9db.png`, SHA256 `ecff27407c6c3921878f2fab66640c3c6d7d2577b734ab7ab8da9afff92e6004`, is actual RGBA with alpha range 0–255. One bounded background-extraction edit used original source-01 as explicit input. Four subject identities/positions broadly preserved, but generative edit changed fringe and grass coloring, so not pixel-exact preservation. Existing sprite_grid produces `extracted-03` with binary alpha threshold 128 and zero cut warnings; source retains original soft alpha. `kit.json` now points only to corrected source/extraction.
+
+Exact correction prompt:
+
+Background extraction edit only. Make this exact four-sprite ground overlay sheet genuinely transparent RGBA with transparent empty pixels, NOT a picture of a checkerboard. Remove ALL bright magenta background and the pink/red color contamination on the ragged earth/grass edges. Restore those contaminated edge pixels to their natural warm earth brown or olive grass color, with clean alpha outside. Keep exact four sprite identities, stone arrangement, grass direction, shapes, positions, scale, cropping and camera unchanged. No new background, no grey/white checker pattern, no extra objects, no shadows, no geometry changes. Real alpha transparency is the deliverable.
+
+`alpha-correction-review.png` inspected at 200px wide on both dark and light backgrounds. Earlier conspicuous pink outline is no longer visible at this size; source review passes as a candidate. Grass looks more yellow/olive than Town Green and still requires palette compatibility review. No gameplay or runtime admission. Old review.png and extracted-01/02 remain historical rejected evidence, not current recommendations. No second extraction implementation or green-key extension was added.
+
 Built-in imagegen, 2026-09-08, no paid API. Actual Cattle Trail gameplay reference viewed and explicitly supplied: `C:/Users/Admin/Documents/Codex/2026-09-07/referenced-chatgpt-conversation-this-is-an-2/outputs/cattle-trail/companion-room.png`, SHA256 `e28c787bf1ef8758edc1a99bb2433f53a0b4ddfd1eb637222535ade658539c79`.
 
 ## Description evidence
